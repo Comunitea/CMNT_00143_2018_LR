@@ -15,7 +15,7 @@ class SaleOrder(models.Model):
 
     @api.multi
     def _prepare_invoice(self):
-        invoice_vals = super(Saleorder, self)._prepare_invoice()
+        invoice_vals = super(SaleOrder, self)._prepare_invoice()
         return invoice_vals
 
     @api.multi
