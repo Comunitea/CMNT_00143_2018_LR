@@ -12,11 +12,12 @@
                 <group string="Las rias">
                     <group>
                         <field name="associate"/>
-                        <field name="direct" />
+                        <field name="cash_payment" />
                     </group>
                     <group  attrs="{'invisible': [('associate', '=', False)]}">
                         <field name="financiable_payment" attrs="{'invisible': [('associate', '=', False)]}"/>
                         <field name="urgent" attrs="{'invisible': [('associate', '=', False)]}"/>
+                        <field name="direct" attrs="{'invisible': [('associate', '=', False)]}"/>
                     </group>
                 </group>
 
