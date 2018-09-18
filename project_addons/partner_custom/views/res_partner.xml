@@ -5,21 +5,22 @@
     <record id="custom_res_partner_view" model="ir.ui.view">
         <field name="name">custom.res.partner.view</field>
         <field name="model">res.partner</field>
-        <field name="inherit_id" ref="account.view_partner_property_form"/>
+        <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//group[@name='accounting_entries']" position="after">
+            <!--xpath expr="//group[@name='accounting_entries']" position="after"-->
+            <field name="customer">
                 <group string="Las rias">
                     <group>
                         <field name="associate"/>
+                        <field name="direct" />
                     </group>
                     <group  attrs="{'invisible': [('associate', '=', False)]}">
                         <field name="financiable_payment" attrs="{'invisible': [('associate', '=', False)]}"/>
-                        <field name="direct" attrs="{'invisible': [('associate', '=', False)]}"/>
                         <field name="urgent" attrs="{'invisible': [('associate', '=', False)]}"/>
                     </group>
                 </group>
-
-            </xpath>
+            </field>
+            <!--/xpath-->
             <!--xpath expr="//group[@name='sale']" position="inside">
             <field name="associate"></field>
             </xpath-->

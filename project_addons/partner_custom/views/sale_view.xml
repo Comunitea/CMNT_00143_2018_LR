@@ -11,11 +11,11 @@
                 <group string="Las rias">
                     <group>
                         <field name="associate"/>
+                        <field name="direct"/>
                     </group>
                     <group attrs="{'invisible': [('associate', '=', False)]}">
                         <field name="financiable_payment"/>
                         <field name="urgent"/>
-                        <field name="direct"/>
                     </group>
                 </group>
             </xpath>
