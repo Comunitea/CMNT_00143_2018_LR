@@ -7,8 +7,8 @@
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
-            <!--xpath expr="//group[@name='accounting_entries']" position="after"-->
-            <field name="customer" position="after">
+            <xpath expr="//group[@name='sale']" position="after">
+
                 <group string="Las rias">
                     <group>
                         <field name="associate"/>
@@ -19,8 +19,8 @@
                         <field name="urgent" attrs="{'invisible': [('associate', '=', False)]}"/>
                     </group>
                 </group>
-            </field>
-            <!--/xpath-->
+
+            </xpath>
             <!--xpath expr="//group[@name='sale']" position="inside">
             <field name="associate"></field>
             </xpath-->
