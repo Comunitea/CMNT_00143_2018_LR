@@ -8,7 +8,7 @@
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
             <!--xpath expr="//group[@name='accounting_entries']" position="after"-->
-            <field name="customer">
+            <field name="customer" position="after">
                 <group string="Las rias">
                     <group>
                         <field name="associate"/>
