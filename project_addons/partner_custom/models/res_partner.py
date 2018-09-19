@@ -47,24 +47,25 @@ class ResPartner(models.Model):
     @api.multi
     def check_associate(self, active=False):
         for partner in self:
-            res = partner.get_associate_account(active)
+            res = partner.get_associate_contract(active)
             if res:
                 partner.message_post("Se ha creado un nuevo contrato")
 
 
     @api.model
-    def get_associate_account(self, active, create_if_active=False):
+    def get_associate_contract(self, active, create_if_active=False):
 
         company_id = self.company_id or self.env.user.company_id
         new_tag = self.env.ref('partner_custom.analytic_tag_name_associate_quote')
         contract_domain = [('name', '=', new_tag.name), ('company_id', '=', company_id.id),
                            ('contract_type', '=', 'sale')]
-        contract = self.env['account.analytic.contract'].search(contract_domain, limit=1)
-
+        contract_template_id = self.env['account.analytic.contract'].search(contract_domain, limit=1)
+        if not contract_template_id:
+            raise ValidationError(_("No contract template for {}".format(new_tag.name)))
 
         domain = [('partner_id', '=', self.id),
                   ('recurring_invoices', '=', True),
-                  ('contract_template_id', '=', contract.id)]
+                  ('contract_template_id', '=', contract_template_id.id)]
         analytic_obj = self.env['account.analytic.account']
         #Desactivamos los contratos si deja de ser asociado
         if not active:
@@ -80,7 +81,7 @@ class ResPartner(models.Model):
             analytic_id = analytic_obj.search(domain, limit=1)
             if analytic_id:
                 vals = {'active': True,
-                        'recurring_next_date': start_date + analytic_id.get_relative_delta(contract.recurring_rule_type, contract.recurring_interval)}
+                        'recurring_next_date': start_date + analytic_id.get_relative_delta(contract_template_id.recurring_rule_type, contract_template_id.recurring_interval)}
                 analytic_id.write(vals)
                 return analytic_id
 
@@ -91,13 +92,13 @@ class ResPartner(models.Model):
             'partner_id': self.id,
             'company_id': company_id.id,
             'recurring_invoices': True,
-            'contract_template_id': contract.id,
+            'contract_template_id': contract_template_id.id,
             'tag_ids': [(6,0, [new_tag.id])]
         }
         account_id = analytic_obj.new(vals)
         account_id._onchange_contract_template_id()
         values = analytic_obj._convert_to_write(account_id._cache)
-        recurring_next_date = start_date + account_id.get_relative_delta(contract.recurring_rule_type, contract.recurring_interval)
+        recurring_next_date = start_date + account_id.get_relative_delta(contract_template_id.recurring_rule_type, contract_template_id.recurring_interval)
         values.update(date_start=start_date, recurring_next_date=recurring_next_date)
         analytic_id = analytic_obj.create(values)
         return analytic_id

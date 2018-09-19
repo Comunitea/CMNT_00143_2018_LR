@@ -6,13 +6,27 @@ from dateutil.relativedelta import relativedelta
 
 class AccountAnalyticAccount(models.Model):
 
-    _inherit= 'account.analytic.account'
+    _inherit= ['account.analytic.account']
 
     recurring_rule_type = fields.Selection(selection_add=[('monthlyfirstday', 'Month(s) first day'),])
 
     @api.model
     def get_relative_delta(self, recurring_rule_type, interval):
         res = super(AccountAnalyticAccount, self).get_relative_delta(recurring_rule_type, interval)
+        if recurring_rule_type == 'monthlyfirstday':
+            return relativedelta(months=interval, day=1)
+        return res
+
+
+class AccountAnalyticContract(models.Model):
+
+    _inherit= ['account.analytic.contract']
+
+    recurring_rule_type = fields.Selection(selection_add=[('monthlyfirstday', 'Month(s) first day'),])
+
+    @api.model
+    def get_relative_delta(self, recurring_rule_type, interval):
+        res = super(AccountAnalyticContract, self).get_relative_delta(recurring_rule_type, interval)
         if recurring_rule_type == 'monthlyfirstday':
             return relativedelta(months=interval, day=1)
         return res
