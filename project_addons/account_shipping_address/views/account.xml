@@ -55,9 +55,6 @@
             <field name="partner_id" position="after">
                 <field name="partner_shipping_id"/>
             </field>
-            <xpath expr="//group/filter[@string='Partner']" position="after">
-                <filter string="Delivery Address" domain="[]" context="{'group_by':'partner_shipping_id'}"/>
-            </xpath>
         </field>
     </record>
 
