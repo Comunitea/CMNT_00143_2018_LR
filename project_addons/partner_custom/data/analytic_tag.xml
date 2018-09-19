@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<odoo noupdate="1">
+    <record id="analytic_tag_name_associate_quote" model="account.analytic.tag">
+        <field name="name">Cuota Socio</field>
+    </record>
+</odoo>

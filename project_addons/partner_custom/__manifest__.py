@@ -11,10 +11,11 @@
     'application': False,
     'installable': True,
     'depends': [
-        'base','account','sale'
+        'base','account','sale', 'contract'
 
     ],
     'data': [
+        'data/analytic_tag.xml',
         'views/res_partner.xml',
         'views/config_file.xml',
         'views/sale_view.xml',

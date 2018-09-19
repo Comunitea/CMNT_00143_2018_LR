@@ -10,7 +10,7 @@
             <xpath expr="//group[@name='sale']" position="after">
                 <group string="Las rias" attrs="{'invisible': [('customer', '=', False)]}">
                     <group>
-                        <field name="associate"/>
+                        <field name="associate" context="{'default_associate_id': active_id}"/>
                         <field name="cash_payment" />
                     </group>
                     <group  attrs="{'invisible': [('associate', '=', False)]}">
@@ -22,7 +22,24 @@
             </xpath>
         </field>
     </record>
+    <record id="custom_res_partner_view_hide_button_contract" model="ir.ui.view">
+        <field name="name">custom.res.partner.view.hide.button.contract</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="contract.view_partner_form"/>
+        <field name="arch" type="xml">
 
+            <xpath expr="//field[@name='sale_contract_count']/.." position="attributes">
+                <attribute name="attrs">
+                    {'invisible': [('associate', '=', False)]}
+                </attribute>
+            </xpath>
+            <xpath expr="//field[@name='purchase_contract_count']/.." position="attributes">
+                <attribute name="attrs">
+                    {'invisible': [('associate', '=', False)]}
+                </attribute>
+            </xpath>
+        </field>
+    </record>
 
 </odoo>
 

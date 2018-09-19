@@ -37,4 +37,3 @@ class SaleOrder(models.Model):
                 'direct': False,
             }
         self.update(values)
-
