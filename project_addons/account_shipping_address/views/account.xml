@@ -47,6 +47,20 @@
         </field>
     </record>
 
+    <record id="view_account_move_line_filter_delivery" model="ir.ui.view">
+        <field name="name">account.move.line.filter.delivery</field>
+        <field name="model">account.move.line</field>
+        <field name="inherit_id" ref="account.view_account_move_line_filter"/>
+        <field name="arch" type="xml">
+            <field name="partner_id" position="after">
+                <field name="partner_shipping_id"/>
+            </field>
+            <xpath expr="//group/filter[@string='Partner']" position="after">
+                <filter string="Delivery Address" domain="[]" context="{'group_by':'partner_shipping_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
     <record id="partner_view_buttons_address" model="ir.ui.view">
         <field name="name">res.partner.form</field>
         <field name="model">res.partner</field>
