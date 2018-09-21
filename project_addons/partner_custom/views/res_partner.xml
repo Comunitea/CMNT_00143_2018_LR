@@ -53,6 +53,21 @@
             </xpath>
         </field>
     </record>
+
+    <record id="custom_res_partner_view_lr_filter" model="ir.ui.view">
+        <field name="name">custom.res.partner.lr.filter</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='type_company']" position="after">
+                <separator/>
+                    <filter string="Associate" name="associate" domain="[('associate','=',1)]"/>
+                <separator/>
+                    <filter string="Cash Payment" name="cash_payment" domain="[('cash_payment','=',1)]"/>
+            </xpath>
+        </field>
+    </record>
+
     <record id="custom_res_partner_view_hide_button_contract" model="ir.ui.view">
         <field name="name">custom.res.partner.view.hide.button.contract</field>
         <field name="model">res.partner</field>

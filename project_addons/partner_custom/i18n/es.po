@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 11.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-09-19 08:07+0000\n"
-"PO-Revision-Date: 2018-09-19 08:07+0000\n"
+"POT-Creation-Date: 2018-09-21 08:18+0000\n"
+"PO-Revision-Date: 2018-09-21 08:18+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -24,8 +24,14 @@ msgstr "Cuenta analítica"
 #: model:ir.model.fields,field_description:partner_custom.field_res_partner_associate
 #: model:ir.model.fields,field_description:partner_custom.field_res_users_associate
 #: model:ir.model.fields,field_description:partner_custom.field_sale_order_associate
+#: model:ir.ui.view,arch_db:partner_custom.custom_res_partner_view_lr_filter
 msgid "Associate"
 msgstr "Socio"
+
+#. module: partner_custom
+#: model:ir.ui.view,arch_db:partner_custom.custom_res_partner_view_lr_filter
+msgid "Cash Payment"
+msgstr "Contado"
 
 #. module: partner_custom
 #: model:ir.model.fields,field_description:partner_custom.field_res_partner_cash_payment
@@ -146,8 +152,3 @@ msgstr "account.analytic.contract"
 msgid "res.config.settings"
 msgstr "res.config.settings"
 
-#. module: partner_custom
-#: selection:account.analytic.account,recurring_rule_type:0
-#: selection:account.analytic.contract,recurring_rule_type:0
-msgid "Month(s) last day"
-msgstr "Mes(es) último día"
