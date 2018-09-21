@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- © 2018 Comunitea
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+<odoo>
+     <record id="custom_view_partner_max_debit_form" model="ir.ui.view">
+        <field name="name">custom.res.partner.max.debitview</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="account.view_partner_property_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='property_payment_term_id']" position="after">
+                <field name="sepa_max_debit"/>
+            </xpath>
+        </field>
+     </record>
+
+</odoo>
+
