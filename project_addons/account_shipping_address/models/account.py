@@ -8,7 +8,7 @@ class AccountMoveLine(models.Model):
 
     _inherit = 'account.move.line'
 
-    partner_shipping_id = fields.Many2one('res.partner', 'Delivery Address')
+    partner_shipping_id = fields.Many2one('res.partner', 'Invoice Address')
 
     @api.onchange('partner_id')
     def _onchange_delivery_address(self):
@@ -19,17 +19,17 @@ class AccountMoveLine(models.Model):
     def _prepare_payment_line_vals(self, payment_order):
         res = super(AccountMoveLine, self)._prepare_payment_line_vals(
             payment_order)
-        if not res.get('partner_bank_id') and self.partner_shipping_id or \
+        if not res.get('partner_bank_id') and self.partner_id or \
                 (not self.partner_bank_id and not self.mandate_id):
-            if len(self.partner_shipping_id.bank_ids) == 1:
-                res['partner_bank_id'] = self.partner_shipping_id.bank_ids.id
+            if len(self.partner_id.bank_ids) == 1:
+                res['partner_bank_id'] = self.partner_id.bank_ids.id
         mandate = self.env['account.banking.mandate']
         if not self.mandate_id:
             partner_bank_id = res.get('partner_bank_id', False)
             if partner_bank_id:
                 domain = [('partner_bank_id', '=', partner_bank_id)]
             else:
-                domain = [('partner_id', '=', self.partner_shipping_id.id)]
+                domain = [('partner_id', '=', self.partner_id.id)]
             domain.append(('state', '=', 'valid'))
             mandate = mandate.search(domain, limit=1)
             if not mandate:
@@ -43,7 +43,7 @@ class AccountMoveLine(models.Model):
 
     def _prepare_analytic_line(self):
         vals = super(AccountMoveLine, self)._prepare_analytic_line()
-        vals[0]['partner_shipping_id'] = self.partner_shipping_id.id
+        vals[0]['partner_shipping_id'] = self.partner_id.id
         return vals
 
 class AccountInvoice(models.Model):
@@ -53,7 +53,7 @@ class AccountInvoice(models.Model):
     def group_lines(self, iml, line):
         res = super(AccountInvoice, self).group_lines(iml, line)
         for move in res:
-            move[2]['partner_shipping_id'] = self.partner_shipping_id.id
+            move[2]['partner_shipping_id'] = self.partner_id.id
         return res
 
     def set_mandate(self):
@@ -63,12 +63,12 @@ class AccountInvoice(models.Model):
             self.mandate_id = self.partner_shipping_id.valid_mandate_id
         return res
 
-    @api.onchange('partner_shipping_id')
-    def onchange_shipping_id(self):
-        self.set_mandate()
+    #@api.onchange('partner_shipping_id')
+    #def onchange_shipping_id(self):
+    #    self.set_mandate()
 
 class AccountAnalyticLine(models.Model):
 
     _inherit = 'account.analytic.line'
 
-    partner_shipping_id = fields.Many2one('res.partner', 'Delivery Address')
+    partner_shipping_id = fields.Many2one('res.partner', 'Invoice Address')
