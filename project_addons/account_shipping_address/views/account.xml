@@ -64,7 +64,7 @@
         <field name="inherit_id" ref="account_payment_mode.partner_view_buttons"/>
         <field name="arch" type="xml">
             <group name="banks" position="attributes">
-                <attribute name="attrs">{'invisible': [('parent_id', '!=', False), ('type', '!=', 'delivery')]}</attribute>
+                <attribute name="attrs">{'invisible': [('parent_id', '!=', False), ('type', '!=', 'invoice')]}</attribute>
             </group>
 
         </field>
