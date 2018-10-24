@@ -10,3 +10,6 @@ class VirtualFair(models.Model):
     _name = 'virtual.fair'
 
     name = fields.Char('Name')
+    date_start = fields.Date(string='Start Date')
+    date_end = fields.Date(string='End Date')
+

@@ -8,6 +8,8 @@
                 <sheet>
                     <group>
                         <field name="name"/>
+                        <field name="date_start"/>
+                        <field name="date_end"/>
                     </group>
                 </sheet> 
             </form>
@@ -19,6 +21,8 @@
         <field name="arch" type="xml">
             <tree string="Virtual Fair">
                 <field name="name"/>
+                <field name="date_start"/>
+                <field name="date_end"/>
             </tree>
         </field>
     </record>
