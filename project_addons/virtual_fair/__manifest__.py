@@ -14,6 +14,7 @@
         'base',
     ],
     'data': [
+        'security/ir.model.access.csv',
         'views/virtual_fair.xml',
         'wizard/virtual_fair_import_wzd.xml',
     ],

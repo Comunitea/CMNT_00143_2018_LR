@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_virtual_fair,access_virtual_fair,model_virtual_fair,base.group_user,1,1,1,1
+access_fair_customer_line,access_fair_customer_line,model_fair_customer_line,base.group_user,1,1,1,1
+access_fair_supplier_line,access_fair_supplier_line,model_fair_supplier_line,base.group_user,1,1,1,1
+access_condition_line,access_condition_line,model_condition_line,base.group_user,1,1,1,1
+access_section_line,access_section_line,model_section_line,base.group_user,1,1,1,1
