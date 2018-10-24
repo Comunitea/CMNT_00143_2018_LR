@@ -15,25 +15,105 @@ class VirtualFair(models.TransientModel):
     file = fields.Binary(string='File', required=True)
     fair_filename = fields.Char(string='Fair Filename')
 
+    @api.model
+    def _get_header_vals(self, xml_root):
+        return {
+            'name': xml_root.text,
+            'id_name': xml_root.get('id'),
+            'date_start': xml_root.get('fDesde'),
+            'date_end': xml_root.get('fHasta'),
+        }
+
+    @api.model
+    def _get_customer_line_vals(self, xml_root):
+        res = []
+        for cust in xml_root.find('Clientes').iterchildren():
+            vals = {
+                'facturation': cust.get('facturacion'),
+                'ref_int': cust.get('refInt'),
+                'customer_type': cust.get('tipoCliente'),
+                'condition_type': cust.get('tipoCondicion'),
+                'value': cust.text,
+            }
+            res.append((0, 0, vals))
+        return res
+
+    @api.model
+    def _get_section_vals(self, cond):
+        res = []
+        if cond.find('Tramo') is None:
+            return res
+        for sect in cond.iterchildren():
+            vals = {
+                'ean': sect.get('ean'),
+                'linf': sect.get('lInf'),
+                'lsup': sect.get('lSup'),
+                'value': sect.text
+            }
+            res.append((0, 0, vals))
+        return res
+
+    @api.model
+    def _get_condition_vals(self, supp):
+        res = []
+        if supp.find('condicion') is None:
+            return res
+        for cond in supp.iterchildren():
+            section_vals = self._get_section_vals(cond)
+            vals = {
+                'facturation': cond.get('facturacion'),
+                'condition_type': cond.get('tipoCondicion'),
+                'section_ids': section_vals
+            }
+            res.append((0, 0, vals))
+        return res
+
+    @api.model
+    def _get_supplier_line_vals(self, xml_root):
+        res = []
+        for supp in xml_root.find('Proveedores').iterchildren():
+            condition_vals = self._get_condition_vals(supp)
+            vals = {
+                'ref_int': supp.get('refInt') or '-',
+                'condition_ids': condition_vals
+            }
+            res.append((0, 0, vals))
+        return res
+
     @api.multi
     def import_fair(self):
         self.ensure_one()
+
+        # Read Xml File
+        vf_pool = self.env['virtual.fair']
         file_data = base64.b64decode(self.file)
         try:
             xml_root = etree.fromstring(file_data)
         except Exception as e:
             raise UserError(_(
                     "This XML file is not XML-compliant. Error: %s") % e)
-        date_start = xml_root.get('fDesde')
-        date_end = xml_root.get('fHasta')
-        name = xml_root.text
 
-        vals = {
-            'name': name,
-            'date_start': date_start,
-            'date_end': date_end,
-        }
-        fair = self.env['virtual.fair'].create(vals)
+        # If already imported unlink old fair
+        exist_fairs = vf_pool.search([('id_name', '=', xml_root.get('id'))])
+        if exist_fairs:
+            exist_fairs.unlink()
+
+        # Create fair model
+        vals = self._get_header_vals(xml_root)
+        fair = vf_pool.create(vals)
+
+        # Creating related customers
+        line_vals = self._get_customer_line_vals(xml_root)
+        if line_vals:
+            fair.write({'customer_ids': line_vals})
+
+        # Creating related suppliers
+        line_vals = []
+        line_vals = self._get_supplier_line_vals(xml_root)
+        if line_vals:
+            fair.write({'supplier_ids': line_vals})
+
+        # Open Form View
         if fair:
             action = self.env.ref('virtual_fair.action_virtual_fair').\
                 read()[0]

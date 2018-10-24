@@ -6,11 +6,70 @@
         <field name="arch" type="xml">
             <form string="Virtual Fair">
                 <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
                     <group>
-                        <field name="name"/>
+                        <field name="id_name"/>
                         <field name="date_start"/>
                         <field name="date_end"/>
                     </group>
+                    <notebook>
+                        <page string="Customers">
+                            <group string="Customers">
+                                <field name="customer_ids" nolabel="1">
+                                    <tree>
+                                        <field name="facturation"/>
+                                        <field name="ref_int"/>
+                                        <field name="customer_type"/>
+                                        <field name="condition_type"/>
+                                        <field name="value"/>
+                                    </tree>
+                                </field>
+                            </group>
+                        </page>
+                        <page string="Suppliers">
+                            <group string="Suppliers">
+                                <field name="supplier_ids" nolabel="1">
+                                    <tree>
+                                        <field name="ref_int"/>
+                                    </tree>
+                                    <form>
+                                        <group>
+                                            <field name="ref_int"/>
+                                        </group>
+                                        <group string="Conditions">
+                                            <field name="condition_ids" nolabel="1">
+                                                <tree>
+                                                    <field name="facturation"/>
+                                                    <field name="condition_type"/>
+                                                </tree>
+                                                <form>
+                                                    <group>
+                                                        <field name="facturation"/>
+                                                        <field name="condition_type"/>
+                                                    </group>
+                                                    <group string="Sections">
+                                                        <field name="section_ids" nolabel="1">
+                                                            <tree>
+                                                                <field name="ean"/>
+                                                                <field name="linf"/>
+                                                                <field name="lsup"/>
+                                                                <field name="value"/>
+                                                            </tree>
+                                                        </field>
+                                                    </group>
+                                                </form>
+                                            </field>
+                                        </group>
+                                    </form>
+                                </field>
+                            </group>
+                        </page>
+                    </notebook>
+                    
                 </sheet> 
             </form>
         </field>
@@ -21,6 +80,7 @@
         <field name="arch" type="xml">
             <tree string="Virtual Fair">
                 <field name="name"/>
+                <field name="id_name"/>
                 <field name="date_start"/>
                 <field name="date_end"/>
             </tree>
