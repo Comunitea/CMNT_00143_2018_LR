@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Rules -->
+    <record id="view_virtual_fair_form" model="ir.ui.view">
+        <field name="model">virtual.fair</field>
+        <field name="arch" type="xml">
+            <form string="Virtual Fair">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                    </group>
+                </sheet> 
+            </form>
+        </field>
+    </record>
+
+    <record id="view_virtual_fair_tree" model="ir.ui.view">
+        <field name="model">virtual.fair</field>
+        <field name="arch" type="xml">
+            <tree string="Virtual Fair">
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+
+    <record id="action_virtual_fair" model="ir.actions.act_window">
+        <field name="name">Virtuals Fairs</field>
+        <field name="res_model">virtual.fair</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_virtual_fair" name="Virtual Fair" parent="contacts.menu_contacts" sequence="4"/>
+    <menuitem id="menu_action_virtual_fair" name="Virtual Fair" action="action_virtual_fair"  parent="menu_virtual_fair" sequence="4"/>
+    
+    
+</odoo>
