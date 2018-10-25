@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Rules -->
+
+    <!-- VIRTUAL FAIR VIEWS -->
     <record id="view_virtual_fair_form" model="ir.ui.view">
         <field name="model">virtual.fair</field>
         <field name="arch" type="xml">
-            <form string="Virtual Fair">
+            <form string="Virtual Fair" create="false" edit="false" delete="false">
                 <sheet>
                     <div class="oe_title">
                         <h1>
-                            <field name="name" readonly="1"/>
+                            <field name="name"/>
                         </h1>
                     </div>
-                    <group>
+                    <group col="6">
                         <field name="id_name"/>
                         <field name="date_start"/>
                         <field name="date_end"/>
@@ -19,53 +20,12 @@
                     <notebook>
                         <page string="Customers">
                             <group string="Customers">
-                                <field name="customer_ids" nolabel="1">
-                                    <tree>
-                                        <field name="facturation"/>
-                                        <field name="ref_int"/>
-                                        <field name="customer_type"/>
-                                        <field name="condition_type"/>
-                                        <field name="value"/>
-                                    </tree>
-                                </field>
+                                <field name="customer_ids" nolabel="1"/>
                             </group>
                         </page>
                         <page string="Suppliers">
                             <group string="Suppliers">
-                                <field name="supplier_ids" nolabel="1">
-                                    <tree>
-                                        <field name="ref_int"/>
-                                    </tree>
-                                    <form>
-                                        <group>
-                                            <field name="ref_int"/>
-                                        </group>
-                                        <group string="Conditions">
-                                            <field name="condition_ids" nolabel="1">
-                                                <tree>
-                                                    <field name="facturation"/>
-                                                    <field name="condition_type"/>
-                                                </tree>
-                                                <form>
-                                                    <group>
-                                                        <field name="facturation"/>
-                                                        <field name="condition_type"/>
-                                                    </group>
-                                                    <group string="Sections">
-                                                        <field name="section_ids" nolabel="1">
-                                                            <tree>
-                                                                <field name="ean"/>
-                                                                <field name="linf"/>
-                                                                <field name="lsup"/>
-                                                                <field name="value"/>
-                                                            </tree>
-                                                        </field>
-                                                    </group>
-                                                </form>
-                                            </field>
-                                        </group>
-                                    </form>
-                                </field>
+                                <field name="supplier_ids" nolabel="1"/>
                             </group>
                         </page>
                     </notebook>
@@ -78,7 +38,7 @@
     <record id="view_virtual_fair_tree" model="ir.ui.view">
         <field name="model">virtual.fair</field>
         <field name="arch" type="xml">
-            <tree string="Virtual Fair">
+            <tree string="Virtual Fair" create="false" edit="false" delete="false">
                 <field name="name"/>
                 <field name="id_name"/>
                 <field name="date_start"/>
@@ -95,8 +55,142 @@
         <field name="view_mode">tree,form</field>
     </record>
 
-    <menuitem id="menu_virtual_fair" name="Virtual Fair" parent="contacts.menu_contacts" sequence="4"/>
-    <menuitem id="menu_action_virtual_fair" name="Virtual Fair" action="action_virtual_fair"  parent="menu_virtual_fair" sequence="4"/>
+    <!-- CUSTOMER LINES VIEWS -->
+    <record id="view_fair_customer_line_tree" model="ir.ui.view">
+        <field name="name">view.fair.customer.line.tree</field>
+        <field name="model">fair.customer.line</field>
+        <field name="arch" type="xml">
+            <tree string="Virtual Fair" create="false" edit="false" delete="false">
+                <field name="ref_int"/>
+                <field name="customer_id"/>
+                <field name="condition_type"/>
+                <field name="value"/>
+                <field name="term_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_fair_customer_line_form" model="ir.ui.view">
+        <field name="name">view.fair.customer.line.form</field>
+        <field name="model">fair.customer.line</field>
+        <field name="arch" type="xml">
+            <form string="Virtual Fair" create="false" edit="false" delete="false">
+                <group col="4">
+                    <field name="customer_id"/>
+                    <field name="term_id"/>
+                </group>
+                <group string="File Fields" col="4">
+                    <field name="ref_int"/>
+                    <field name="facturation"/>
+                    <field name="customer_type"/>
+                    <field name="condition_type"/>
+                    <field name="value"/>
+                </group>
+            </form>
+        </field>
+    </record>
+
+     <!-- SUPPLIER LINES VIEWS -->
+    <record id="view_fair_supplier_line_tree" model="ir.ui.view">
+        <field name="name">view.fair.supplier.line.tree</field>
+        <field name="model">fair.supplier.line</field>
+        <field name="arch" type="xml">
+            <tree string="Virtual Fair" create="false" edit="false" delete="false">
+                <field name="ref_int"/>
+                <field name="supplier_id"/>
+                <field name="condition_type"/>
+                <field name="value"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_fair_supplier_line_form" model="ir.ui.view">
+        <field name="name">view.fair.customer.line.form</field>
+        <field name="model">fair.supplier.line</field>
+        <field name="arch" type="xml">
+            <form create="false" edit="false" delete="false">
+                <group>
+                    <field name="supplier_id"/>
+                </group>
+                 <group string="File Fields" col="4">
+                    <field name="ref_int"/>
+                    <field name="facturation"/>
+                    <field name="condition_type"/>
+                    <field name="value"/>
+                </group>
+                <group string="Conditions">
+                    <field name="condition_ids" nolabel="1"/>
+                </group>
+            </form>
+        </field>
+    </record>
+
+
+    <!-- CONDITIONS LINES VIEWS -->
+    <record id="view_condition_line_tree" model="ir.ui.view">
+        <field name="name">view.condition.line.tree</field>
+        <field name="model">condition.line</field>
+        <field name="arch" type="xml">
+            <tree string="Virtual Fair" create="false" edit="false" delete="false">
+                <field name="facturation"/>
+                <field name="condition_type"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_condition_line_form" model="ir.ui.view">
+        <field name="name">view.condition.line.form</field>
+        <field name="model">condition.line</field>
+        <field name="arch" type="xml">
+            <form create="false" edit="false" delete="false">
+                <group col="4">
+                    <field name="facturation"/>
+                    <field name="condition_type"/>
+                </group>
+                <group string="Sections">
+                    <field name="section_ids" nolabel="1"/>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <!-- SECTIONS LINES VIEWS -->
+    <record id="view_section_line_tree" model="ir.ui.view">
+        <field name="name">view.section.line.tree</field>
+        <field name="model">section.line</field>
+        <field name="arch" type="xml">
+            <tree string="Virtual Fair" create="false" edit="false" delete="false">
+                <field name="ean"/>
+                <field name="linf"/>
+                <field name="lsup"/>
+                <field name="value"/>
+                <field name="term_id"/>
+            </tree>
+        </field>
+    </record>
+
+     <!-- SECTIONS LINES VIEWS -->
+    <record id="view_section_line_form" model="ir.ui.view">
+        <field name="name">view.section.line.form</field>
+        <field name="model">section.line</field>
+        <field name="arch" type="xml">
+            <form string="Virtual Fair" create="false" edit="false" delete="false">
+                <group>
+                    <field name="term_id"/>
+                </group>
+                <group string="File Fields">
+                    <field name="ean"/>
+                    <field name="linf"/>
+                    <field name="lsup"/>
+                    <field name="value"/>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <menuitem id="menu_virtual_fair" name="Virtual Fairs"  web_icon="virtual_fair,static/description/fair.png" sequence="0"/>
+    <menuitem id="menu_importers" name="Importers" parent="menu_virtual_fair" sequence="1"/>
+    <menuitem id="menu_action_virtual_fair" name="Virtual Fair" action="action_virtual_fair"  parent="menu_importers" sequence="4"/>
     
     
 </odoo>

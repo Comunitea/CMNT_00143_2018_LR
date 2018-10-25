@@ -29,6 +29,8 @@ class CustomerLines(models.Model):
     customer_type = fields.Char('Custopmer Type')
     condition_type = fields.Char('Condition Type')
     value = fields.Char('Value')
+    customer_id = fields.Many2one('res.partner', 'Customer')
+    term_id = fields.Many2one('account.payment.term', 'Payment Terms')
 
 
 class SupplierLines(models.Model):
@@ -39,6 +41,10 @@ class SupplierLines(models.Model):
     ref_int = fields.Char('Ref Int')
     condition_ids = fields.One2many('condition.line', 'line_id',
                                     'Conditions')
+    facturation = fields.Char('Facturation')
+    condition_type = fields.Char('Condition Type')
+    value = fields.Char('Value')
+    supplier_id = fields.Many2one('res.partner', 'Supplier')
 
 
 class ConditionLine(models.Model):
@@ -56,6 +62,7 @@ class SectionLine(models.Model):
 
     condition_id = fields.Many2one('condition.line', string='Fair')
     ean = fields.Char('Ean')
-    linf = fields.Char('LInf')
-    lsup = fields.Char('LSup')
+    linf = fields.Float('LInf')
+    lsup = fields.Float('LSup')
     value = fields.Char('Value')
+    term_id = fields.Many2one('account.payment.term', 'Payment Terms')

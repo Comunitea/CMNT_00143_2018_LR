@@ -16,6 +16,30 @@ class VirtualFair(models.TransientModel):
     fair_filename = fields.Char(string='Fair Filename')
 
     @api.model
+    def _get_partner_id_by_ref(self, ref):
+        res = False
+        if ref:
+            domain = [('ref', '=', ref)]
+            partner = self.env['res.partner'].search(domain, limit=1)
+            if partner:
+                res = partner.id
+        return res
+
+    @api.model
+    def _get_term_id_by_name(self, term_name):
+        res = False
+        if term_name:
+            domain = [('name', '=', term_name)]
+            term = self.env['account.payment.term'].search(domain, limit=1)
+            if term:
+                res = term.id
+        return res
+    
+    @api.model
+    def _str2float(self, str):
+        return str.replace('.', '').replace(',', '.')
+
+    @api.model
     def _get_header_vals(self, xml_root):
         return {
             'name': xml_root.text,
@@ -24,16 +48,29 @@ class VirtualFair(models.TransientModel):
             'date_end': xml_root.get('fHasta'),
         }
 
+
     @api.model
     def _get_customer_line_vals(self, xml_root):
         res = []
         for cust in xml_root.find('Clientes').iterchildren():
+            # Get partner
+            ref = cust.get('refInt')
+            customer_id = self._get_partner_id_by_ref(ref)
+
+            # Get payment term
+            term_name = cust.text
+            term_id = self._get_term_id_by_name(term_name)
+
+            # Set vals
             vals = {
                 'facturation': cust.get('facturacion'),
-                'ref_int': cust.get('refInt'),
+                'ref_int': cust.get('refInt') or _('**ALL**'),
                 'customer_type': cust.get('tipoCliente'),
-                'condition_type': cust.get('tipoCondicion'),
-                'value': cust.text,
+                'condition_type': cust.get('tipoCondicion') or
+                _('**BY_CONDITIONS**'),
+                'value': term_name,
+                'customer_id': customer_id,
+                'term_id': term_id,
             }
             res.append((0, 0, vals))
         return res
@@ -44,12 +81,16 @@ class VirtualFair(models.TransientModel):
         if cond.find('Tramo') is None:
             return res
         for sect in cond.iterchildren():
+            term_name = sect.text
+            term_id = self._get_term_id_by_name(term_name)
             vals = {
                 'ean': sect.get('ean'),
-                'linf': sect.get('lInf'),
-                'lsup': sect.get('lSup'),
-                'value': sect.text
+                'linf': self._str2float(sect.get('lInf')),
+                'lsup': self._str2float(sect.get('lSup')),
+                'value': term_name,
+                'term_id': term_id
             }
+            print(vals)
             res.append((0, 0, vals))
         return res
 
@@ -73,9 +114,18 @@ class VirtualFair(models.TransientModel):
         res = []
         for supp in xml_root.find('Proveedores').iterchildren():
             condition_vals = self._get_condition_vals(supp)
+
+            ref = supp.get('refInt')
+            supplier_id = self._get_partner_id_by_ref(ref)
+
             vals = {
-                'ref_int': supp.get('refInt') or '-',
-                'condition_ids': condition_vals
+                'ref_int': ref or _('**ALL**'),
+                'condition_ids': condition_vals,
+                'facturation': supp.get('facturacion'),
+                'condition_type': supp.get('tipoCondicion') or
+                _('-BY_CONDITIONS-'),
+                'value': supp.text,
+                'supplier_id': supplier_id,
             }
             res.append((0, 0, vals))
         return res
