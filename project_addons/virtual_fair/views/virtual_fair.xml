@@ -189,8 +189,7 @@
     </record>
 
     <menuitem id="menu_virtual_fair" name="Virtual Fairs"  web_icon="virtual_fair,static/description/fair.png" sequence="0"/>
-    <menuitem id="menu_importers" name="Importers" parent="menu_virtual_fair" sequence="1"/>
-    <menuitem id="menu_action_virtual_fair" name="Virtual Fair" action="action_virtual_fair"  parent="menu_importers" sequence="4"/>
+    <menuitem id="menu_action_virtual_fair" name="Virtual Fairs" action="action_virtual_fair"  parent="menu_virtual_fair" sequence="1"/>
     
     
 </odoo>

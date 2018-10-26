@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<odoo>
+    <data noupdate="1">
+         <record id="param_import_route" model="ir.config_parameter">
+            <field name="key">param_import_route</field>
+            <field name="value">/opt/troya/invoices/transfer</field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_invoice_supplier_import_wzd_form" model="ir.ui.view">
+        <field name="name">view.invoice.supplier.import.wzd.form</field>
+        <field name="model">invoice.supplier.import.wzd</field>
+        <field name="arch" type="xml">
+            <form string="Virtual Fair">
+                <div name="help">
+                    <p>The following path is where invoice supplier files are located</p>
+                    <p>It is setted by a system parameter</p>
+                </div>
+                <group>
+                    <field name="path"/>
+                </group>
+
+                <footer>
+                    <button name="import_btn" type="object" class="btn-primary" string="Import"/>
+                    <button special="cancel" string="Cancel" class="oe_link"/>
+                </footer> 
+            </form>
+        </field>
+    </record>
+
+   
+    <record id="action_supplier_invoice_import" model="ir.actions.act_window">
+        <field name="name">Import SUpplier Invoices</field>
+        <field name="res_model">invoice.supplier.import.wzd</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+       
+    <menuitem id="menu_invoice_supplier_import" name="Import Supplier Invoices" action="action_supplier_invoice_import" parent="menu_importers" sequence="1"/>
+    
+    
+</odoo>

@@ -15,7 +15,9 @@
     ],
     'data': [
         'security/ir.model.access.csv',
+        'data/parameter.xml',
         'views/virtual_fair.xml',
         'wizard/virtual_fair_import_wzd.xml',
+        'wizard/invoice_supplier_import_wzd.xml',
     ],
 }

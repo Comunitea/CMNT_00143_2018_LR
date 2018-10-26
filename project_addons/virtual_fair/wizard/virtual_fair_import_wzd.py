@@ -8,7 +8,7 @@ from odoo.exceptions import UserError
 import base64
 
 
-class VirtualFair(models.TransientModel):
+class VirtualFairImportWzd(models.TransientModel):
 
     _name = 'virtual.fair.import.wzd'
 
@@ -34,7 +34,7 @@ class VirtualFair(models.TransientModel):
             if term:
                 res = term.id
         return res
-    
+
     @api.model
     def _str2float(self, str):
         return str.replace('.', '').replace(',', '.')
@@ -47,7 +47,6 @@ class VirtualFair(models.TransientModel):
             'date_start': xml_root.get('fDesde'),
             'date_end': xml_root.get('fHasta'),
         }
-
 
     @api.model
     def _get_customer_line_vals(self, xml_root):
