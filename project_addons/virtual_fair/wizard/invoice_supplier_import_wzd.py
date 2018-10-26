@@ -2,11 +2,10 @@
 # © 2018 Comunitea
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from odoo import models, fields, api
-import os
-import base64
+from odoo import models, fields, api, _
+from odoo.exceptions import UserError
+from datetime import datetime
 import glob
-import csv
 
 
 class InvoiceSupplierImportWzd(models.TransientModel):
@@ -69,28 +68,60 @@ class InvoiceSupplierImportWzd(models.TransientModel):
             }
             res.append(map_dic)
         return res
-    
+
+    @api.model
+    def _format_date(self, oldformat):
+        newformat = ''
+        if oldformat:
+            datetimeobject = datetime.strptime(oldformat, '%Y%m%d')
+            newformat = datetimeobject.strftime('%Y-%m-%d')
+        return newformat
+
     @api.model
     def _get_invoice_vals(self, hvals):
-        domain = [('ref', '=', hvals['proveedor'])]
+        # Get supplier
+        supplier_ref = hvals.get('proveedor', False)
+        domain = [('ref', '=', supplier_ref)]
         supplier = self.env['res.partner'].search(domain, limit=1)
+        if not supplier:
+            raise UserError(
+                _('Supplier ref %s can not be founded' % supplier_ref))
+
+        # Get type invoice
+        type_inv = 'in_invoice'
+        if hvals.get('ind_abono', False) == '1':
+            type_inv = 'in_refund'
+
+        # Get date invoice
+        date_invoice = self._format_date(hvals.get('fecha_fra', False))
+        # Get date
+        date = self._format_date(hvals.get('fec_contable', False))
+        # Get digit_date
+        digit_date = self._format_date(hvals.get('fec_registro', False))
         invoice_vals = {
-            'name': hvals['registro'],
             'partner_id': supplier.id,
-            'origin': '',
-            'type': 'in_invoice',
+            'name': hvals.get('registro', ''),
+            'origin': _('Supplier Importation'),
+            'type': type_inv,
             'account_id': supplier.property_account_payable_id.id,
-            # # 'journal_id': journal_id,
-            # 'currency_id': self.pricelist_id.currency_id.id,
-            # 'comment': self.note,
-            # 'payment_term_id': self.payment_term_id.id,
-            # 'fiscal_position_id': self.fiscal_position_id.id or self.partner_invoice_id.property_account_position_id.id,
-            # 'company_id': self.company_id.id,
+            'reference': hvals.get('num_fra', ''),
+            'date_invoice': date_invoice,
+            'date': date,
+            'digit_date': digit_date,
+            'num_ass': hvals.get('socio', ''),
+            'num_conf': hvals.get('num_confor', ''),
+            'featured': True if hvals.get('ind_colab', '') == 'S' else False,
             'user_id': self._uid
-            # 'team_id': self.team_id.id
+            # # 'journal_id':
+            # 'currency_id':
+            # 'comment':
+            # 'payment_term_id':
+            # 'fiscal_position_id':
+            # 'company_id':
+            # 'team_id':
         }
         return invoice_vals
-    
+
     @api.model
     def create_invoices(self, header_vals):
         """
@@ -109,7 +140,8 @@ class InvoiceSupplierImportWzd(models.TransientModel):
         if len(invoices) > 1:
             action['domain'] = [('id', 'in', invoices.ids)]
         elif len(invoices) == 1:
-            action['views'] = [(self.env.ref('account.invoice_form').id, 'form')]
+            action['views'] = [(self.env.ref('account.invoice_form').id,
+                               'form')]
             action['res_id'] = invoices.ids[0]
         else:
             action = {'type': 'ir.actions.act_window_close'}
@@ -118,8 +150,7 @@ class InvoiceSupplierImportWzd(models.TransientModel):
     @api.multi
     def import_btn(self):
         # Read files
-        header_files, base_files = self._get_import_files()        
-
+        header_files, base_files = self._get_import_files()
         # Get a list of dics with each line values in orther to create
         # from it the invoices
         header_vals = []

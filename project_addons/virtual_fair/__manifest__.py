@@ -12,11 +12,13 @@
     'installable': True,
     'depends': [
         'base',
+        'account'
     ],
     'data': [
         'security/ir.model.access.csv',
         'data/parameter.xml',
         'views/virtual_fair.xml',
+        'views/account_invoice.xml',
         'wizard/virtual_fair_import_wzd.xml',
         'wizard/invoice_supplier_import_wzd.xml',
     ],
