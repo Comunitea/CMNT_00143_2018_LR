@@ -16,6 +16,9 @@ class InvoiceSupplierImportWzd(models.TransientModel):
 
     @api.model
     def default_get(self, fields):
+        """
+        Read system parameter to get the path where search for files
+        """
         res = super(InvoiceSupplierImportWzd, self).default_get(fields)
         param = self.env.ref('virtual_fair.param_import_route')
         res.update({'path': param.value})
@@ -135,13 +138,67 @@ class InvoiceSupplierImportWzd(models.TransientModel):
         return res
 
     @api.model
+    def parse_base_file(self, bfile):
+        """
+        Return a list o dics, each dic represent a invoice line
+        """
+        res = []
+        f = open(bfile, 'r')
+        file_lines = f.read().splitlines()
+        for fline in file_lines:
+            line = fline.split('\t')
+            map_dic = {
+                'registro': line[0],
+                'tipo_reg': line[1],
+                'base': line[2],
+                'cuota': line[3],
+
+            }
+            res.append(map_dic)
+        return res
+
+    @api.model
+    def _get_invoice_line_vals(self, bvals):
+        invoice_name = bvals.get('registro', '')
+        domain = [('name', '=', invoice_name)]
+        inv_obj = self.env['account.invoice'].search(domain, limit=1)
+        if not inv_obj:
+            raise UserError(_('Invoice % not founf' % invoice_name))
+
+        # Get account
+        cat = self.env['product.category'].search([], limit=1)
+        account_id = cat.property_account_expense_categ_id.id
+        # TODO: Impuestos
+        line_vals = {
+            'name': _('From Supplier Import'),
+            'quantity': 1.0,
+            'price_unit': bvals.get('base', '1'),
+            'account_id': account_id,
+            'invoice_id': inv_obj.id
+        }
+        return line_vals
+
+    @api.model
+    def create_invoice_lines(self, base_vals):
+        """
+        Return creatred invoices
+        """
+        il_pool = self.env['account.invoice.line']
+        res = il_pool
+        for bvals in base_vals:
+            vals = self._get_invoice_line_vals(bvals)
+            res += il_pool.create(vals)
+        return res
+
+    @api.model
     def action_view_invoice(self, invoices):
         action = self.env.ref('account.action_invoice_tree1').read()[0]
         if len(invoices) > 1:
             action['domain'] = [('id', 'in', invoices.ids)]
         elif len(invoices) == 1:
-            action['views'] = [(self.env.ref('account.invoice_form').id,
-                               'form')]
+            action['views'] = [
+                (self.env.ref('account.invoice_supplier_form').id,
+                 'form')]
             action['res_id'] = invoices.ids[0]
         else:
             action = {'type': 'ir.actions.act_window_close'}
@@ -159,6 +216,11 @@ class InvoiceSupplierImportWzd(models.TransientModel):
 
         created_invoices = self.create_invoices(header_vals)
 
+        base_vals = []
+        for bfile in base_files:
+            base_vals.extend(self.parse_base_file(bfile))
+
+        self.create_invoice_lines(base_vals)
         if created_invoices:
             return self.action_view_invoice(created_invoices)
         return
