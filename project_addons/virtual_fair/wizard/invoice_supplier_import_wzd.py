@@ -158,6 +158,21 @@ class InvoiceSupplierImportWzd(models.TransientModel):
         return res
 
     @api.model
+    def _get_tax_ids(self, bvals):
+        tax_ids = []
+        base = float(bvals.get('base', '0.0'))
+        tax = float(bvals.get('cuota', '0.0'))
+        amount = round((tax / (base or 1.0)) * 100.0, 2)
+        domain = [
+            ('type_tax_use', '=', 'purchase'),
+            ('amount', '=', amount)
+        ]
+        taxes = self.env['account.tax'].search(domain, limit=1)
+        if taxes:
+            tax_ids = taxes.ids
+        return tax_ids
+
+    @api.model
     def _get_invoice_line_vals(self, bvals):
         invoice_name = bvals.get('registro', '')
         domain = [('name', '=', invoice_name)]
@@ -169,12 +184,14 @@ class InvoiceSupplierImportWzd(models.TransientModel):
         cat = self.env['product.category'].search([], limit=1)
         account_id = cat.property_account_expense_categ_id.id
         # TODO: Impuestos
+        tax_ids = self._get_tax_ids(bvals)
         line_vals = {
             'name': _('From Supplier Import'),
             'quantity': 1.0,
             'price_unit': bvals.get('base', '1'),
             'account_id': account_id,
-            'invoice_id': inv_obj.id
+            'invoice_id': inv_obj.id,
+            'invoice_line_tax_ids': [(6, 0, tax_ids)]
         }
         return line_vals
 
@@ -222,5 +239,6 @@ class InvoiceSupplierImportWzd(models.TransientModel):
 
         self.create_invoice_lines(base_vals)
         if created_invoices:
+            created_invoices.set_fair_conditions()
             return self.action_view_invoice(created_invoices)
         return

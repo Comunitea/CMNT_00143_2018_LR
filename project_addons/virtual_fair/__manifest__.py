@@ -21,5 +21,6 @@
         'views/account_invoice.xml',
         'wizard/virtual_fair_import_wzd.xml',
         'wizard/invoice_supplier_import_wzd.xml',
+        'views/importation_log.xml',
     ],
 }
