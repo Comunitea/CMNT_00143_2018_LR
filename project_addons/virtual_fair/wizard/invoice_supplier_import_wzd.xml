@@ -10,6 +10,7 @@
                     <p>It is setted by a system parameter</p>
                 </div>
                 <group>
+                    <field name="name"/>
                     <field name="path"/>
                 </group>
 

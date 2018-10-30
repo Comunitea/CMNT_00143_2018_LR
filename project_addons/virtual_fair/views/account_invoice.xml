@@ -17,6 +17,7 @@
                         <field name="num_ass"/>
                         <field name="num_conf"/>
                         <field name="featured"/>
+                        <field name="log_id"/>
                     </group>
                 </page>
             </notebook>

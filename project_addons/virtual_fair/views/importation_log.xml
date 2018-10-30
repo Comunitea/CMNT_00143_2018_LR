@@ -5,8 +5,17 @@
     <record id="view_importation_log_form" model="ir.ui.view">
         <field name="model">importation.log</field>
         <field name="arch" type="xml">
-            <form string="Importation Log" create="false" edit="false" delete="false">
+            <form string="Importation Log">
                 <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_invoice"
+                            type="object"
+                            class="oe_stat_button"
+                            icon="fa-pencil-square-o"
+                            attrs="{'invisible': [('invoice_count', '=', 0)]}">
+                            <field name="invoice_count" widget="statinfo" string="Invoices"/>
+                        </button>
+                    </div>
                     <div class="oe_title">
                         <h1>
                             <field name="name"/>
@@ -26,7 +35,7 @@
     <record id="view_importation_log_tree" model="ir.ui.view">
         <field name="model">importation.log</field>
         <field name="arch" type="xml">
-            <tree string="Importation Log" create="false" edit="false" delete="false">
+            <tree string="Importation Log">
                 <field name="name"/>
                 <field name="date"/>
             </tree>
@@ -48,6 +57,8 @@
         <field name="arch" type="xml">
             <tree string="Importation Log" create="false" edit="false" delete="false">
                 <field name="name"/>
+                <field name="filename"/>
+                <field name="nline"/>
             </tree>
         </field>
     </record>
@@ -59,6 +70,8 @@
             <form string="Importation Log" create="false" edit="false" delete="false">
                 <group>
                     <field name="name"/>
+                    <field name="filename"/>
+                    <field name="nline"/>
                 </group>
             </form>
         </field>

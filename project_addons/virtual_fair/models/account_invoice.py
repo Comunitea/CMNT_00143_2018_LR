@@ -12,6 +12,7 @@ class AccountInvoice(models.Model):
     num_ass = fields.Char('Num Associated')
     num_conf = fields.Char('Conformation number')
     featured = fields.Boolean('Featured')
+    log_id = fields.Many2one('importation.log', string='Log')
 
     @api.multi
     def set_fair_conditions(self):
