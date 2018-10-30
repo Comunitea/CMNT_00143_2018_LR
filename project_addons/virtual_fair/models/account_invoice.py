@@ -7,12 +7,19 @@ class AccountInvoice(models.Model):
 
     _inherit = 'account.invoice'
 
+    def _error_exist(self):
+        for inv in self:
+            if inv.log_line_ids:
+                inv.error_exist = True
+
     fair_id = new_field = fields.Many2one('virtual.fair', 'Virtual Fair')
     digit_date = fields.Date('Digit Date')
     num_ass = fields.Char('Num Associated')
     num_conf = fields.Char('Conformation number')
     featured = fields.Boolean('Featured')
     log_id = fields.Many2one('importation.log', string='Log')
+    log_line_ids = fields.One2many('log.line', 'invoice_id', string='Log')
+    error_exist = fields.Boolean('Base error', compute='_error_exist')
 
     @api.multi
     def set_fair_conditions(self):
@@ -35,7 +42,7 @@ class AccountInvoice(models.Model):
                 fair = self.env['virtual.fair'].search(domain, limit=1)
                 if not fair:
                     continue
-            
+
             fair = line.fair_id
             term_id = False
             if line.condition_type not in ['DESCUENTO_EUR', 'DESCUENTO_PCT']:
@@ -46,7 +53,7 @@ class AccountInvoice(models.Model):
                                 term_id = s.term_id.id
                                 break
             # TODO: Aplicar descuentos
-                            
+
             vals = {'fair_id': fair.id}
             if term_id:
                 vals.update({'payment_term_id': term_id})

@@ -5,7 +5,7 @@
     <record id="view_importation_log_form" model="ir.ui.view">
         <field name="model">importation.log</field>
         <field name="arch" type="xml">
-            <form string="Importation Log">
+            <form string="Importation Log" create="false" edit="false">
                 <sheet>
                     <div class="oe_button_box" name="button_box">
                         <button name="action_view_invoice"
@@ -23,9 +23,14 @@
                     </div>
                     <group>
                         <field name="date"/>
+                        <field name="header_errors" invisible="1"/>
+                        <field name="base_errors" invisible="1"/>
                     </group>
-                    <group string="Log Lines">
-                        <field name="line_ids" nolabel="1"/>
+                    <group string="Header Error Lines" attrs="{'invisible': [('header_errors', '=', False)]}">
+                        <field name="hline_ids" nolabel="1"/>
+                    </group>
+                    <group string="Bases Error Lines" attrs="{'invisible': [('base_errors', '=', False)]}">
+                        <field name="bline_ids" nolabel="1"/>
                     </group>
                 </sheet> 
             </form>
@@ -35,7 +40,7 @@
     <record id="view_importation_log_tree" model="ir.ui.view">
         <field name="model">importation.log</field>
         <field name="arch" type="xml">
-            <tree string="Importation Log">
+            <tree string="Importation Log" create="false" edit="false">
                 <field name="name"/>
                 <field name="date"/>
             </tree>
@@ -59,6 +64,7 @@
                 <field name="name"/>
                 <field name="filename"/>
                 <field name="nline"/>
+                <field name="invoice_id"/>
             </tree>
         </field>
     </record>
@@ -72,6 +78,7 @@
                     <field name="name"/>
                     <field name="filename"/>
                     <field name="nline"/>
+                    <field name="invoice_id"/>
                 </group>
             </form>
         </field>
