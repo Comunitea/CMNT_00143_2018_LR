@@ -12,7 +12,6 @@
     'installable': True,
     'depends': [
         'base','account','sale', 'contract'
-
     ],
     'data': [
         'data/analytic_tag.xml',
