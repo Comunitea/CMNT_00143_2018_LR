@@ -4,6 +4,6 @@ access_fair_customer_line,access_fair_customer_line,model_fair_customer_line,bas
 access_fair_supplier_line,access_fair_supplier_line,model_fair_supplier_line,base.group_user,1,1,1,1
 access_condition_line,access_condition_line,model_condition_line,base.group_user,1,1,1,1
 access_section_line,access_section_line,model_section_line,base.group_user,1,1,1,1
-access_importation_line,access_importation_line,model_importation_line,base.group_user,1,1,1,1
+access_importation_log,access_importation_log,model_importation_log,base.group_user,1,1,1,1
 access_log_line,access_log_line,model_log_line,base.group_user,1,1,1,1
 
