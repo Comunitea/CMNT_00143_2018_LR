@@ -85,7 +85,7 @@
     </record>
 
     
-    <menuitem id="menu_action_importation_log" name="Importation Logs" action="action_importation_log"  parent="menu_importers" sequence="12"/>
+    <menuitem id="menu_action_importation_log" name="Importation Logs" action="action_importation_log"  parent="menu_models" sequence="12"/>
     
     
 </odoo>
