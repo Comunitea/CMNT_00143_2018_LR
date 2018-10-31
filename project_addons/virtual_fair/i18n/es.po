@@ -463,7 +463,7 @@ msgstr "Importación de proveedor"
 #: code:addons/virtual_fair/wizard/invoice_supplier_import_wzd.py:135
 #, python-format
 msgid "Supplier reference %s could not be founded"
-msgstr "La referencia del proveedor: %s, no se puedo encontrar"
+msgstr "La referencia del proveedor: %s, no se pudo encontrar"
 
 #. module: virtual_fair
 #: model:ir.model.fields,field_description:virtual_fair.field_virtual_fair_supplier_ids

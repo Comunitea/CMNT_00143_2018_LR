@@ -132,8 +132,8 @@ class InvoiceSupplierImportWzd(models.TransientModel):
         domain = [('ref', '=', supplier_ref)]
         supplier = self.env['res.partner'].search(domain, limit=1)
         if not supplier:
-            msg = _('Supplier reference %s could not be founded' %
-                    supplier_ref)
+            msg = _('Supplier reference %s could not be founded') %\
+                supplier_ref
             self.log_id.create_log_line(msg, hvals)
             return {}
 
@@ -251,7 +251,7 @@ class InvoiceSupplierImportWzd(models.TransientModel):
         domain = [('name', '=', invoice_name)]
         inv_obj = self.env['account.invoice'].search(domain, limit=1)
         if not inv_obj:
-            msg = _('Invoice %s not found' % invoice_name)
+            msg = _('Invoice %s not found') % invoice_name
             self.log_id.create_log_line(msg, bvals)
             return {}
 
