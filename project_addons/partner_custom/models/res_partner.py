@@ -39,11 +39,11 @@ class ResPartner(models.Model):
 
         partner.property_product_pricelist = self.env['product.pricelist'].browse(int(ICP.get_param(field_pricelist)))
 
-
     @api.model
     def create(self, vals):
         res = super(ResPartner, self).create(vals)
-        if vals.get('ref', False):
+        from_import = self._context.get('import_file', False)
+        if vals.get('ref', False) and not from_import:
             self.env['ir.model.data'].sudo().create({
                     'name': vals['ref'],
                     'model': 'res.partner',
