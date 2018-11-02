@@ -10,6 +10,7 @@
                     <p>It is setted by a system parameter</p>
                 </div>
                 <group>
+                    <field name="name"/>
                     <field name="path"/>
                 </group>
 
@@ -29,8 +30,8 @@
         <field name="target">new</field>
     </record>
 
-       
-    <menuitem id="menu_invoice_supplier_import" name="Import Supplier Invoices" action="action_supplier_invoice_import" parent="menu_importers" sequence="1"/>
+    
+    <menuitem id="menu_invoice_supplier_import" name="Import Supplier Invoices" action="action_supplier_invoice_import" parent="menu_invoice_importers" sequence="1"/>
     
     
 </odoo>

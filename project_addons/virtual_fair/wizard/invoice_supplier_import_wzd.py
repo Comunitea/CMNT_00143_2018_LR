@@ -12,7 +12,9 @@ class InvoiceSupplierImportWzd(models.TransientModel):
 
     _name = 'invoice.supplier.import.wzd'
 
+    name = fields.Char(string='Name')
     path = fields.Char(string='Path')
+    log_id = fields.Many2one(comodel_name='importation.log', string='Log')
 
     @api.model
     def default_get(self, fields):
@@ -37,7 +39,20 @@ class InvoiceSupplierImportWzd(models.TransientModel):
                 header_files.append(file)
             elif 'bas' in file_name:
                 base_files.append(file)
+
+        if not header_files and not base_files:
+            raise UserError(_('Nothing to import'))
         return header_files, base_files
+
+    @api.model
+    def check_header_line(self, line, nline, hfile):
+        """
+        Check for correct length
+        """
+        res = False
+        if len(line) != 18:
+            res = True
+        return res
 
     @api.model
     def parse_header_file(self, hfile):
@@ -47,27 +62,44 @@ class InvoiceSupplierImportWzd(models.TransientModel):
         res = []
         f = open(hfile, 'r')
         file_lines = f.read().splitlines()
+        nline = 0
         for fline in file_lines:
+            nline += 1
             line = fline.split('\t')
+
+            # CHECK FOR ERRORS IN LINE
+            if (self.check_header_line(line, nline, hfile)):
+                msg = _('No correct length')
+                hvals = {
+                    'nline': nline,
+                    'filename': hfile,
+                    'type': 'cab',
+                }
+                self.log_id.create_log_line(msg, hvals)
+                continue
             map_dic = {
                 'registro': line[0],
-                'tipo_reg': line[1],
+                # 'tipo_reg': line[1],
                 'proveedor': line[2],
                 'num_fra': line[3],
                 'fecha_fra': line[4],
-                'total': line[5],
+                # 'total': line[5],
                 'ind_abono': line[6],
                 'fec_registro': line[7],
                 'fec_contable': line[8],
                 'socio': line[9],
                 'num_confor': line[10],
                 'ind_colab': line[11],
-                'forma_pago': line[12],
-                'fec_vto': line[13],
-                'cia': line[14],
-                'dto_pp': line[16],
-                'itpf': line[16],
+                # 'forma_pago': line[12],
+                # 'fec_vto': line[13],
+                # 'cia': line[14],
+                # 'dto_pp': line[16],
+                # 'itpf': line[16],
                 'ruta': line[17],
+                # for log
+                'nline': nline,
+                'filename': hfile,
+                'type': 'cab',
             }
             res.append(map_dic)
         return res
@@ -82,13 +114,30 @@ class InvoiceSupplierImportWzd(models.TransientModel):
 
     @api.model
     def _get_invoice_vals(self, hvals):
+        # Find exisating invoice
+        reference = hvals.get('num_fra', '')
+        if reference:
+            domain = [
+                ('reference', '=', reference)
+            ]
+            exist_inv = self.env['account.invoice'].search(domain, limit=1)
+            if exist_inv and exist_inv.state == 'draft':
+                exist_inv.unlink()
+            elif exist_inv and exist_inv.state != 'draft':
+                msg = _('Invoice with reference %s already imported' %
+                        reference)
+                self.log_id.create_log_line(msg, hvals)
         # Get supplier
         supplier_ref = hvals.get('proveedor', False)
-        domain = [('ref', '=', supplier_ref)]
+        supplier = False
+        if supplier_ref:
+            domain = [('id_prov', '=', int(supplier_ref))]
         supplier = self.env['res.partner'].search(domain, limit=1)
         if not supplier:
-            raise UserError(
-                _('Supplier ref %s can not be founded' % supplier_ref))
+            msg = _('Supplier identifier %s could not be founded') %\
+                supplier_ref
+            self.log_id.create_log_line(msg, hvals)
+            return {}
 
         # Get type invoice
         type_inv = 'in_invoice'
@@ -107,7 +156,7 @@ class InvoiceSupplierImportWzd(models.TransientModel):
             'origin': _('Supplier Importation'),
             'type': type_inv,
             'account_id': supplier.property_account_payable_id.id,
-            'reference': hvals.get('num_fra', ''),
+            'reference': reference,
             'date_invoice': date_invoice,
             'date': date,
             'digit_date': digit_date,
@@ -134,7 +183,15 @@ class InvoiceSupplierImportWzd(models.TransientModel):
         res = inv_pool
         for hvals in header_vals:
             vals = self._get_invoice_vals(hvals)
-            res += inv_pool.create(vals)
+            if vals:
+                res += inv_pool.create(vals)
+        return res
+
+    @api.model
+    def check_base_line(self, line, nline):
+        res = False
+        if len(line) != 4:
+            res = True
         return res
 
     @api.model
@@ -145,13 +202,31 @@ class InvoiceSupplierImportWzd(models.TransientModel):
         res = []
         f = open(bfile, 'r')
         file_lines = f.read().splitlines()
+        nline = 0
         for fline in file_lines:
+            nline += 1
             line = fline.split('\t')
+
+            # CHECK FOR ERRORS IN LINE
+            if (self.check_base_line(line, nline)):
+                msg = _('No correct length')
+                hvals = {
+                    'nline': nline,
+                    'filename': bfile,
+                    'type': 'cab',
+                }
+                self.log_id.create_log_line(msg, hvals)
+                continue
+
             map_dic = {
                 'registro': line[0],
                 'tipo_reg': line[1],
                 'base': line[2],
                 'cuota': line[3],
+                # for log
+                'nline': nline,
+                'filename': bfile,
+                'type': 'bas'
 
             }
             res.append(map_dic)
@@ -162,7 +237,7 @@ class InvoiceSupplierImportWzd(models.TransientModel):
         tax_ids = []
         base = float(bvals.get('base', '0.0'))
         tax = float(bvals.get('cuota', '0.0'))
-        amount = round((tax / (base or 1.0)) * 100.0, 2)
+        amount = int(round((tax / (base or 1.0)) * 100.0, 0))
         domain = [
             ('type_tax_use', '=', 'purchase'),
             ('amount', '=', amount)
@@ -173,18 +248,24 @@ class InvoiceSupplierImportWzd(models.TransientModel):
         return tax_ids
 
     @api.model
-    def _get_invoice_line_vals(self, bvals):
+    def _get_invoice_line_vals(self, bvals, nline):
         invoice_name = bvals.get('registro', '')
         domain = [('name', '=', invoice_name)]
         inv_obj = self.env['account.invoice'].search(domain, limit=1)
         if not inv_obj:
-            raise UserError(_('Invoice % not founf' % invoice_name))
+            msg = _('Invoice %s not found') % invoice_name
+            self.log_id.create_log_line(msg, bvals)
+            return {}
 
         # Get account
         cat = self.env['product.category'].search([], limit=1)
         account_id = cat.property_account_expense_categ_id.id
-        # TODO: Impuestos
+
+        # Get taxes
         tax_ids = self._get_tax_ids(bvals)
+        if not tax_ids:
+            msg = _('No tax founded.')
+            self.log_id.create_log_line(msg, bvals, inv_obj.id)
         line_vals = {
             'name': _('From Supplier Import'),
             'quantity': 1.0,
@@ -202,27 +283,33 @@ class InvoiceSupplierImportWzd(models.TransientModel):
         """
         il_pool = self.env['account.invoice.line']
         res = il_pool
+        nline = 0
         for bvals in base_vals:
-            vals = self._get_invoice_line_vals(bvals)
-            res += il_pool.create(vals)
+            nline += 1
+            vals = self._get_invoice_line_vals(bvals, nline)
+            if vals:
+                res += il_pool.create(vals)
         return res
 
     @api.model
-    def action_view_invoice(self, invoices):
-        action = self.env.ref('account.action_invoice_tree1').read()[0]
-        if len(invoices) > 1:
-            action['domain'] = [('id', 'in', invoices.ids)]
-        elif len(invoices) == 1:
+    def action_view_import_log(self):
+        if self.log_id:
+            action = self.env.ref('virtual_fair.action_importation_log').\
+                read()[0]
             action['views'] = [
-                (self.env.ref('account.invoice_supplier_form').id,
-                 'form')]
-            action['res_id'] = invoices.ids[0]
+                (self.env.ref('virtual_fair.view_importation_log_form').id,
+                    'form')]
+            action['res_id'] = self.log_id.id
         else:
             action = {'type': 'ir.actions.act_window_close'}
         return action
 
     @api.multi
     def import_btn(self):
+        # Create importation log record
+        log = self.env['importation.log'].create({'name': self.name,
+                                                  'date': fields.Date.today()})
+        self.log_id = log.id
         # Read files
         header_files, base_files = self._get_import_files()
         # Get a list of dics with each line values in orther to create
@@ -240,5 +327,5 @@ class InvoiceSupplierImportWzd(models.TransientModel):
         self.create_invoice_lines(base_vals)
         if created_invoices:
             created_invoices.set_fair_conditions()
-            return self.action_view_invoice(created_invoices)
-        return
+            self.log_id.write({'invoice_ids': [(6, 0, created_invoices.ids)]})
+        return self.action_view_import_log()

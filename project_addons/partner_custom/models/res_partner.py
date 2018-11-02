@@ -18,7 +18,8 @@ class ResPartner(models.Model):
     financiable_payment = fields.Boolean('Financiable', help="Default financiable for partner orders\n60 days due date >> Minus 1% in discount")
     cash_payment = fields.Boolean('Cash payment', help="Default payment for partner orders")
     direct = fields.Boolean('Direct', help='If checked, Serie 2')
-    urgent = fields.Boolean('Urgent', help = 'Default urgent for partner orders\nPlus 3.20%')
+    urgent = fields.Boolean('Urgent', help='Default urgent for partner orders\nPlus 3.20%')
+    id_prov = fields.Integer('Id Prov')
 
     @api.onchange('associate')
     def _onchange_associate(self):
@@ -39,11 +40,11 @@ class ResPartner(models.Model):
 
         partner.property_product_pricelist = self.env['product.pricelist'].browse(int(ICP.get_param(field_pricelist)))
 
-
     @api.model
     def create(self, vals):
         res = super(ResPartner, self).create(vals)
-        if vals.get('ref', False):
+        from_import = self._context.get('import_file', False)
+        if vals.get('ref', False) and not from_import:
             self.env['ir.model.data'].sudo().create({
                     'name': vals['ref'],
                     'model': 'res.partner',

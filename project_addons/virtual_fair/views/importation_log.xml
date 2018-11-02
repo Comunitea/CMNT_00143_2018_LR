@@ -5,8 +5,17 @@
     <record id="view_importation_log_form" model="ir.ui.view">
         <field name="model">importation.log</field>
         <field name="arch" type="xml">
-            <form string="Importation Log" create="false" edit="false" delete="false">
+            <form string="Importation Log" create="false" edit="false">
                 <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_invoice"
+                            type="object"
+                            class="oe_stat_button"
+                            icon="fa-pencil-square-o"
+                            attrs="{'invisible': [('invoice_count', '=', 0)]}">
+                            <field name="invoice_count" widget="statinfo" string="Invoices"/>
+                        </button>
+                    </div>
                     <div class="oe_title">
                         <h1>
                             <field name="name"/>
@@ -14,9 +23,14 @@
                     </div>
                     <group>
                         <field name="date"/>
+                        <field name="header_errors" invisible="1"/>
+                        <field name="base_errors" invisible="1"/>
                     </group>
-                    <group string="Log Lines">
-                        <field name="line_ids" nolabel="1"/>
+                    <group string="Header Error Lines" attrs="{'invisible': [('header_errors', '=', False)]}">
+                        <field name="hline_ids" nolabel="1"/>
+                    </group>
+                    <group string="Bases Error Lines" attrs="{'invisible': [('base_errors', '=', False)]}">
+                        <field name="bline_ids" nolabel="1"/>
                     </group>
                 </sheet> 
             </form>
@@ -26,7 +40,7 @@
     <record id="view_importation_log_tree" model="ir.ui.view">
         <field name="model">importation.log</field>
         <field name="arch" type="xml">
-            <tree string="Importation Log" create="false" edit="false" delete="false">
+            <tree string="Importation Log" create="false" edit="false">
                 <field name="name"/>
                 <field name="date"/>
             </tree>
@@ -48,6 +62,9 @@
         <field name="arch" type="xml">
             <tree string="Importation Log" create="false" edit="false" delete="false">
                 <field name="name"/>
+                <field name="filename"/>
+                <field name="nline"/>
+                <field name="invoice_id"/>
             </tree>
         </field>
     </record>
@@ -59,13 +76,16 @@
             <form string="Importation Log" create="false" edit="false" delete="false">
                 <group>
                     <field name="name"/>
+                    <field name="filename"/>
+                    <field name="nline"/>
+                    <field name="invoice_id"/>
                 </group>
             </form>
         </field>
     </record>
 
-    
-    <menuitem id="menu_action_importation_log" name="Importation Logs" action="action_importation_log"  parent="menu_importers" sequence="12"/>
+    <menuitem id="menu_invoice_importers" name="Importation" parent="account.menu_finance_payables" sequence="10"/>
+    <menuitem id="menu_action_importation_log" name="Importation Logs" action="action_importation_log"  parent="menu_invoice_importers" sequence="12"/>
     
     
 </odoo>

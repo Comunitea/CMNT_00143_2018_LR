@@ -11,12 +11,17 @@
         <field name="arch" type="xml">
             <notebook position="inside">
                 <page string="Supplier Importation">
-                    <group>
+                    <group col="4">
                         <field name="fair_id"/>
                         <field name="digit_date"/>
                         <field name="num_ass"/>
                         <field name="num_conf"/>
                         <field name="featured"/>
+                        <field name="log_id"/>
+                        <field name="error_exist" invisible="1"/>
+                    </group>
+                    <group string="Error Lines" attrs="{'invisible': [('error_exist', '=', False)]}">
+                        <field name="log_line_ids" nolabel="1"/>
                     </group>
                 </page>
             </notebook>

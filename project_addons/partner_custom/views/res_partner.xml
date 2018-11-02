@@ -27,6 +27,17 @@
         </field>
      </record>
 
+     <record id="custom_view_partner_form" model="ir.ui.view">
+        <field name="name">custom.res.partner.view.form</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <field name="lang" position="after">
+                <field name="id_prov"/>
+            </field>
+        </field>
+     </record>
+
 
     <record id="custom_res_partner_view" model="ir.ui.view">
         <field name="name">custom.res.partner.view</field>
