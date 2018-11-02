@@ -84,8 +84,8 @@
         </field>
     </record>
 
-    
-    <menuitem id="menu_action_importation_log" name="Importation Logs" action="action_importation_log"  parent="menu_models" sequence="12"/>
+    <menuitem id="menu_invoice_importers" name="Importation" parent="account.menu_finance_payables" sequence="10"/>
+    <menuitem id="menu_action_importation_log" name="Importation Logs" action="action_importation_log"  parent="menu_invoice_importers" sequence="12"/>
     
     
 </odoo>

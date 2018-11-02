@@ -237,7 +237,7 @@ class InvoiceSupplierImportWzd(models.TransientModel):
         tax_ids = []
         base = float(bvals.get('base', '0.0'))
         tax = float(bvals.get('cuota', '0.0'))
-        amount = round((tax / (base or 1.0)) * 100.0, 2)
+        amount = int(round((tax / (base or 1.0)) * 100.0, 0))
         domain = [
             ('type_tax_use', '=', 'purchase'),
             ('amount', '=', amount)
