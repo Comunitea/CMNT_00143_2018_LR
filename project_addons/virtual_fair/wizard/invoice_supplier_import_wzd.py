@@ -129,10 +129,12 @@ class InvoiceSupplierImportWzd(models.TransientModel):
                 self.log_id.create_log_line(msg, hvals)
         # Get supplier
         supplier_ref = hvals.get('proveedor', False)
-        domain = [('ref', '=', supplier_ref)]
+        supplier = False
+        if supplier_ref:
+            domain = [('id_prov', '=', int(supplier_ref))]
         supplier = self.env['res.partner'].search(domain, limit=1)
         if not supplier:
-            msg = _('Supplier reference %s could not be founded') %\
+            msg = _('Supplier identifier %s could not be founded') %\
                 supplier_ref
             self.log_id.create_log_line(msg, hvals)
             return {}

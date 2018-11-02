@@ -24,7 +24,7 @@ class AccountInvoice(models.Model):
     @api.multi
     def set_fair_conditions(self):
         """
-        Change conditions based on virtual fair
+        Change conditions based on virtual fair. Only search for payment terms
         """
         for inv in self:
             amount = inv.amount_total
@@ -35,15 +35,8 @@ class AccountInvoice(models.Model):
             ]
             line = self.env['fair.supplier.line'].search(domain, limit=1)
             if not line:
-                domain = [
-                    ('date_start', '<=', fields.date.today()),
-                    ('date_end', '>=', fields.date.today()),
-                ]
-                fair = self.env['virtual.fair'].search(domain, limit=1)
-                if not fair:
-                    continue
+                continue
 
-            fair = line.fair_id
             term_id = False
             if line.condition_type not in ['DESCUENTO_EUR', 'DESCUENTO_PCT']:
                 for cond in line.condition_ids:
@@ -52,9 +45,8 @@ class AccountInvoice(models.Model):
                             if amount >= s.linf and amount <= s.lsup:
                                 term_id = s.term_id.id
                                 break
-            # TODO: Aplicar descuentos
 
-            vals = {'fair_id': fair.id}
+            vals = {'fair_id': line.fair_id.id}
             if term_id:
                 vals.update({'payment_term_id': term_id})
             inv.write(vals)
