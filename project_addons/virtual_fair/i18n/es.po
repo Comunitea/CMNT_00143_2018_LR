@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 11.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-11-05 11:01+0000\n"
-"PO-Revision-Date: 2018-11-05 11:01+0000\n"
+"POT-Creation-Date: 2018-11-05 17:37+0000\n"
+"PO-Revision-Date: 2018-11-05 17:37+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -56,6 +56,7 @@ msgid "Bases Error Lines"
 msgstr "Líneas error en bases"
 
 #. module: virtual_fair
+#: model:ir.ui.view,arch_db:virtual_fair.view_direct_invoice_wzd_form
 #: model:ir.ui.view,arch_db:virtual_fair.view_invoice_supplier_import_wzd_form
 #: model:ir.ui.view,arch_db:virtual_fair.view_virtual_fair_import_wzd_form
 msgid "Cancel"
@@ -80,7 +81,18 @@ msgid "Conformation number"
 msgstr "Nº conformación"
 
 #. module: virtual_fair
+#: model:ir.actions.act_window,name:virtual_fair.action_view_direct_invoice_wzd
+msgid "Create Direct Invoices"
+msgstr "Crear facturas directo"
+
+#. module: virtual_fair
+#: model:ir.ui.view,arch_db:virtual_fair.view_direct_invoice_wzd_form
+msgid "Create Invoices"
+msgstr "Crear facturas"
+
+#. module: virtual_fair
 #: model:ir.model.fields,field_description:virtual_fair.field_condition_line_create_uid
+#: model:ir.model.fields,field_description:virtual_fair.field_direct_invoice_wzd_create_uid
 #: model:ir.model.fields,field_description:virtual_fair.field_fair_customer_line_create_uid
 #: model:ir.model.fields,field_description:virtual_fair.field_fair_supplier_line_create_uid
 #: model:ir.model.fields,field_description:virtual_fair.field_importation_log_create_uid
@@ -94,6 +106,7 @@ msgstr "Creado por"
 
 #. module: virtual_fair
 #: model:ir.model.fields,field_description:virtual_fair.field_condition_line_create_date
+#: model:ir.model.fields,field_description:virtual_fair.field_direct_invoice_wzd_create_date
 #: model:ir.model.fields,field_description:virtual_fair.field_fair_customer_line_create_date
 #: model:ir.model.fields,field_description:virtual_fair.field_fair_supplier_line_create_date
 #: model:ir.model.fields,field_description:virtual_fair.field_importation_log_create_date
@@ -138,6 +151,7 @@ msgstr "Fecha digitalización"
 
 #. module: virtual_fair
 #: model:ir.model.fields,field_description:virtual_fair.field_condition_line_display_name
+#: model:ir.model.fields,field_description:virtual_fair.field_direct_invoice_wzd_display_name
 #: model:ir.model.fields,field_description:virtual_fair.field_fair_customer_line_display_name
 #: model:ir.model.fields,field_description:virtual_fair.field_fair_supplier_line_display_name
 #: model:ir.model.fields,field_description:virtual_fair.field_importation_log_display_name
@@ -214,6 +228,7 @@ msgid "File type"
 msgstr "Tipo fichero"
 
 #. module: virtual_fair
+#: code:addons/virtual_fair/wizard/direct_invoice_wzd.py:76
 #: code:addons/virtual_fair/wizard/invoice_supplier_import_wzd.py:278
 #, python-format
 msgid "From Supplier Import"
@@ -236,6 +251,7 @@ msgstr "Cabeceras"
 
 #. module: virtual_fair
 #: model:ir.model.fields,field_description:virtual_fair.field_condition_line_id
+#: model:ir.model.fields,field_description:virtual_fair.field_direct_invoice_wzd_id
 #: model:ir.model.fields,field_description:virtual_fair.field_fair_customer_line_id
 #: model:ir.model.fields,field_description:virtual_fair.field_fair_supplier_line_id
 #: model:ir.model.fields,field_description:virtual_fair.field_importation_log_id
@@ -322,6 +338,11 @@ msgid "It is setted by a system parameter"
 msgstr "Se establece con un parámetro del sistema"
 
 #. module: virtual_fair
+#: model:ir.ui.view,arch_db:virtual_fair.view_direct_invoice_wzd_form
+msgid "It will create ditrect invoices"
+msgstr "Este asistente generará las facturas de directo"
+
+#. module: virtual_fair
 #: model:ir.model.fields,field_description:virtual_fair.field_section_line_linf
 msgid "LInf"
 msgstr "Límite inf"
@@ -333,6 +354,7 @@ msgstr "Límite sup"
 
 #. module: virtual_fair
 #: model:ir.model.fields,field_description:virtual_fair.field_condition_line___last_update
+#: model:ir.model.fields,field_description:virtual_fair.field_direct_invoice_wzd___last_update
 #: model:ir.model.fields,field_description:virtual_fair.field_fair_customer_line___last_update
 #: model:ir.model.fields,field_description:virtual_fair.field_fair_supplier_line___last_update
 #: model:ir.model.fields,field_description:virtual_fair.field_importation_log___last_update
@@ -346,6 +368,7 @@ msgstr "Última modificación en"
 
 #. module: virtual_fair
 #: model:ir.model.fields,field_description:virtual_fair.field_condition_line_write_uid
+#: model:ir.model.fields,field_description:virtual_fair.field_direct_invoice_wzd_write_uid
 #: model:ir.model.fields,field_description:virtual_fair.field_fair_customer_line_write_uid
 #: model:ir.model.fields,field_description:virtual_fair.field_fair_supplier_line_write_uid
 #: model:ir.model.fields,field_description:virtual_fair.field_importation_log_write_uid
@@ -359,6 +382,7 @@ msgstr "Última actualización de"
 
 #. module: virtual_fair
 #: model:ir.model.fields,field_description:virtual_fair.field_condition_line_write_date
+#: model:ir.model.fields,field_description:virtual_fair.field_direct_invoice_wzd_write_date
 #: model:ir.model.fields,field_description:virtual_fair.field_fair_customer_line_write_date
 #: model:ir.model.fields,field_description:virtual_fair.field_fair_supplier_line_write_date
 #: model:ir.model.fields,field_description:virtual_fair.field_importation_log_write_date
@@ -493,6 +517,7 @@ msgstr "Valor"
 #: model:ir.model.fields,field_description:virtual_fair.field_account_invoice_fair_id
 #: model:ir.model.fields,field_description:virtual_fair.field_account_invoice_new_field
 #: model:ir.ui.view,arch_db:virtual_fair.view_condition_line_tree
+#: model:ir.ui.view,arch_db:virtual_fair.view_direct_invoice_wzd_form
 #: model:ir.ui.view,arch_db:virtual_fair.view_fair_customer_line_form
 #: model:ir.ui.view,arch_db:virtual_fair.view_fair_customer_line_tree
 #: model:ir.ui.view,arch_db:virtual_fair.view_fair_supplier_line_tree
@@ -525,6 +550,11 @@ msgstr "Importador ferias virtuales"
 #: model:ir.model,name:virtual_fair.model_condition_line
 msgid "condition.line"
 msgstr "condition.line"
+
+#. module: virtual_fair
+#: model:ir.model,name:virtual_fair.model_direct_invoice_wzd
+msgid "direct.invoice.wzd"
+msgstr "direct.invoice.wzd"
 
 #. module: virtual_fair
 #: model:ir.model,name:virtual_fair.model_fair_customer_line
