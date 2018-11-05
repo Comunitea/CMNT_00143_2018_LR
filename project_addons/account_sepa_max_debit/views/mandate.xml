@@ -17,7 +17,7 @@
      <template id="sepa_direct_debit_mandate_document_fix_icon" inherit_id="account_banking_sepa_direct_debit.sepa_direct_debit_mandate_document">
         <xpath expr="//img" position="replace">
             <!-- <img t-if="doc.company_id.logo" t-att-src="'data:image/png;base64,%s' %  to_text(doc.company_id.logo)" style="max-height: 45px;"/> -->
-            <img t-if="doc.company_id.logo" t-att-src="'data:image/png;base64,%s' %  to_text(doc.company_id.logo)" style="weight: 150x; width: 150px;"/>
+            <img t-if="doc.company_id.logo" t-att-src="'data:image/png;base64,%s' %  to_text(doc.company_id.logo)" style="weight: 150px; width: 150px;"/>
         </xpath>
 
         <xpath expr="//img/.." position="after">
