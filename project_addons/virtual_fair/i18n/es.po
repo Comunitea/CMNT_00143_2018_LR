@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 11.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-11-02 10:49+0000\n"
-"PO-Revision-Date: 2018-11-02 10:49+0000\n"
+"POT-Creation-Date: 2018-11-05 11:01+0000\n"
+"PO-Revision-Date: 2018-11-05 11:01+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -33,6 +33,11 @@ msgstr "**TODOS**"
 #, python-format
 msgid "**BY_CONDITIONS**"
 msgstr "**POR_CONDICIONES**"
+
+#. module: virtual_fair
+#: model:ir.model.fields,field_description:virtual_fair.field_account_invoice_associate_id
+msgid "Associate"
+msgstr "Socio"
 
 #. module: virtual_fair
 #: selection:log.line,type:0
@@ -209,7 +214,7 @@ msgid "File type"
 msgstr "Tipo fichero"
 
 #. module: virtual_fair
-#: code:addons/virtual_fair/wizard/invoice_supplier_import_wzd.py:270
+#: code:addons/virtual_fair/wizard/invoice_supplier_import_wzd.py:278
 #, python-format
 msgid "From Supplier Import"
 msgstr "Desde importación de proveedores"
@@ -294,7 +299,7 @@ msgid "Invoice"
 msgstr "Factura"
 
 #. module: virtual_fair
-#: code:addons/virtual_fair/wizard/invoice_supplier_import_wzd.py:256
+#: code:addons/virtual_fair/wizard/invoice_supplier_import_wzd.py:264
 #, python-format
 msgid "Invoice %s not found"
 msgstr "Factura %s no encontrada"
@@ -382,13 +387,13 @@ msgstr "Nombre"
 
 #. module: virtual_fair
 #: code:addons/virtual_fair/wizard/invoice_supplier_import_wzd.py:72
-#: code:addons/virtual_fair/wizard/invoice_supplier_import_wzd.py:212
+#: code:addons/virtual_fair/wizard/invoice_supplier_import_wzd.py:220
 #, python-format
 msgid "No correct length"
 msgstr "La longitud de la línea no es correcta"
 
 #. module: virtual_fair
-#: code:addons/virtual_fair/wizard/invoice_supplier_import_wzd.py:267
+#: code:addons/virtual_fair/wizard/invoice_supplier_import_wzd.py:275
 #, python-format
 msgid "No tax founded."
 msgstr "No se encontró el impuesto."
@@ -448,7 +453,7 @@ msgid "Supplier"
 msgstr "Proveedor"
 
 #. module: virtual_fair
-#: code:addons/virtual_fair/wizard/invoice_supplier_import_wzd.py:156
+#: code:addons/virtual_fair/wizard/invoice_supplier_import_wzd.py:163
 #: model:ir.ui.view,arch_db:virtual_fair.account_invoice_form_import
 #, python-format
 msgid "Supplier Importation"

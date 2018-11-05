@@ -15,6 +15,7 @@
                         <field name="fair_id"/>
                         <field name="digit_date"/>
                         <field name="num_ass"/>
+                        <field name="associate_id"/>
                         <field name="num_conf"/>
                         <field name="featured"/>
                         <field name="log_id"/>

@@ -15,6 +15,7 @@ class AccountInvoice(models.Model):
     fair_id = new_field = fields.Many2one('virtual.fair', 'Virtual Fair')
     digit_date = fields.Date('Digit Date')
     num_ass = fields.Char('Num Associated')
+    associate_id = fields.Many2one('res.partner', 'Associate')
     num_conf = fields.Char('Conformation number')
     featured = fields.Boolean('Featured')
     log_id = fields.Many2one('importation.log', string='Log')
