@@ -11,10 +11,12 @@
     'application': False,
     'installable': True,
     'depends': [
-        'base','account_banking_sepa_direct_debit'
+        'base',
+        'account_banking_sepa_direct_debit'
 
     ],
     'data': [
         'views/res_partner.xml',
+        'views/mandate.xml',
     ],
 }
