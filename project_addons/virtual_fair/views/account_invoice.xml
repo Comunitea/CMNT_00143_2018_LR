@@ -4,6 +4,7 @@
 
 <odoo>
 
+    <!-- Add fields for supplier invoices imported -->
     <record id="account_invoice_form_import" model="ir.ui.view">
         <field name="name">account_invoice_form_import</field>
         <field name="model">account.invoice</field>
@@ -18,7 +19,9 @@
                         <field name="associate_id"/>
                         <field name="num_conf"/>
                         <field name="featured"/>
+                        <field name="featured_percent"/>
                         <field name="log_id"/>
+                        <field name="customer_invoice_id"/>
                         <field name="error_exist" invisible="1"/>
                     </group>
                     <group string="Error Lines" attrs="{'invisible': [('error_exist', '=', False)]}">
@@ -26,6 +29,37 @@
                     </group>
                 </page>
             </notebook>
+        </field>
+    </record>
+
+    <!-- Avoid refund invoice readonly and invisible -->
+    <record id="account_invoice_form_view_refund_always" model="ir.ui.view">
+        <field name="name">account.invoice.form.view.refund.always</field>
+        <field name="model">account.invoice</field>
+        <field name="inherit_id" ref="account_invoice_refund_link.view_customer_account_invoice_add_refunds_details_form"/>
+        <field name="arch" type="xml">
+            <field name="refund_invoice_id" position="attributes">
+                <attribute name="attrs"></attribute>
+                <attribute name="readonly">0</attribute>
+            </field>
+
+             <field name="refund_reason" position="attributes">
+                <attribute name="readonly">0</attribute>
+            </field>
+        </field>
+    </record>
+
+    <!-- Adds button to view supplier invoices -->
+    <record id="invoice_form_link_supplier_invoices" model="ir.ui.view">
+        <field name="name">invoice_form_link_supplier_invoices</field>
+        <field name="model">account.invoice</field>
+        <field name="inherit_id" ref="account.invoice_form"/>
+        <field name="arch" type="xml">
+            <div name="button_box" position="inside">
+                <button name="action_view_supplier_invoices" type="object" class="oe_stat_button" icon="fa-file-text">
+                    <field name="supplier_invoices_count"  widget="statinfo" string="Supplier Invoices"/>
+                </button>
+            </div>
         </field>
     </record>
 

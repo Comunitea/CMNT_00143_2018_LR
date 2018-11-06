@@ -4,3 +4,4 @@
 from . import virtual_fair  # noqa
 from . import account_invoice  # noqa
 from . import importation_log  # noqa
+from . import company  # noqa

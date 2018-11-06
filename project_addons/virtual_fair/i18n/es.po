@@ -6,14 +6,19 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 11.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-11-05 17:37+0000\n"
-"PO-Revision-Date: 2018-11-05 17:37+0000\n"
+"POT-Creation-Date: 2018-11-06 17:41+0000\n"
+"PO-Revision-Date: 2018-11-06 17:41+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: virtual_fair
+#: model:ir.model.fields,field_description:virtual_fair.field_account_invoice_supplier_invoices_count
+msgid "# Suipplier Invoices"
+msgstr "# Facturas Proveedor"
 
 #. module: virtual_fair
 #: model:ir.model.fields,field_description:virtual_fair.field_importation_log_invoice_count
@@ -63,6 +68,16 @@ msgid "Cancel"
 msgstr "Cancelar"
 
 #. module: virtual_fair
+#: model:ir.model,name:virtual_fair.model_res_company
+msgid "Companies"
+msgstr "Compañías"
+
+#. module: virtual_fair
+#: model:ir.model.fields,field_description:virtual_fair.field_direct_line_section_company_id
+msgid "Company"
+msgstr "Compañía"
+
+#. module: virtual_fair
 #: model:ir.model.fields,field_description:virtual_fair.field_condition_line_condition_type
 #: model:ir.model.fields,field_description:virtual_fair.field_fair_customer_line_condition_type
 #: model:ir.model.fields,field_description:virtual_fair.field_fair_supplier_line_condition_type
@@ -93,6 +108,7 @@ msgstr "Crear facturas"
 #. module: virtual_fair
 #: model:ir.model.fields,field_description:virtual_fair.field_condition_line_create_uid
 #: model:ir.model.fields,field_description:virtual_fair.field_direct_invoice_wzd_create_uid
+#: model:ir.model.fields,field_description:virtual_fair.field_direct_line_section_create_uid
 #: model:ir.model.fields,field_description:virtual_fair.field_fair_customer_line_create_uid
 #: model:ir.model.fields,field_description:virtual_fair.field_fair_supplier_line_create_uid
 #: model:ir.model.fields,field_description:virtual_fair.field_importation_log_create_uid
@@ -107,6 +123,7 @@ msgstr "Creado por"
 #. module: virtual_fair
 #: model:ir.model.fields,field_description:virtual_fair.field_condition_line_create_date
 #: model:ir.model.fields,field_description:virtual_fair.field_direct_invoice_wzd_create_date
+#: model:ir.model.fields,field_description:virtual_fair.field_direct_line_section_create_date
 #: model:ir.model.fields,field_description:virtual_fair.field_fair_customer_line_create_date
 #: model:ir.model.fields,field_description:virtual_fair.field_fair_supplier_line_create_date
 #: model:ir.model.fields,field_description:virtual_fair.field_importation_log_create_date
@@ -122,6 +139,11 @@ msgstr "Creado en"
 #: model:ir.model.fields,field_description:virtual_fair.field_fair_customer_line_customer_id
 msgid "Customer"
 msgstr "Cliente"
+
+#. module: virtual_fair
+#: model:ir.model.fields,field_description:virtual_fair.field_account_invoice_customer_invoice_id
+msgid "Customer Invoice"
+msgstr "Factura cliente"
 
 #. module: virtual_fair
 #: model:ir.model.fields,field_description:virtual_fair.field_virtual_fair_customer_ids
@@ -150,8 +172,14 @@ msgid "Digit Date"
 msgstr "Fecha digitalización"
 
 #. module: virtual_fair
+#: model:ir.ui.view,arch_db:virtual_fair.view_company_form_direct_invoicing_cfg
+msgid "Direct Invoicing"
+msgstr "Facturación directa"
+
+#. module: virtual_fair
 #: model:ir.model.fields,field_description:virtual_fair.field_condition_line_display_name
 #: model:ir.model.fields,field_description:virtual_fair.field_direct_invoice_wzd_display_name
+#: model:ir.model.fields,field_description:virtual_fair.field_direct_line_section_display_name
 #: model:ir.model.fields,field_description:virtual_fair.field_fair_customer_line_display_name
 #: model:ir.model.fields,field_description:virtual_fair.field_fair_supplier_line_display_name
 #: model:ir.model.fields,field_description:virtual_fair.field_importation_log_display_name
@@ -206,8 +234,27 @@ msgstr "Nombre fichero feria"
 
 #. module: virtual_fair
 #: model:ir.model.fields,field_description:virtual_fair.field_account_invoice_featured
+#: model:product.product,name:virtual_fair.featured_product
+#: model:product.template,name:virtual_fair.featured_product_product_template
 msgid "Featured"
 msgstr "Colaboración"
+
+#. module: virtual_fair
+#: model:ir.model.fields,field_description:virtual_fair.field_res_company_featured_line_ids
+#: model:ir.ui.view,arch_db:virtual_fair.view_company_form_direct_invoicing_cfg
+msgid "Featured Lines"
+msgstr "Líneas colaboración"
+
+#. module: virtual_fair
+#: model:ir.model.fields,field_description:virtual_fair.field_account_invoice_featured_percent
+msgid "Featured Percent"
+msgstr "Porcentaje colaboración"
+
+#. module: virtual_fair
+#: code:addons/virtual_fair/models/account_invoice.py:139
+#, python-format
+msgid "Featured amount"
+msgstr "Importe colaboración"
 
 #. module: virtual_fair
 #: model:ir.model.fields,field_description:virtual_fair.field_log_line_filename
@@ -228,7 +275,7 @@ msgid "File type"
 msgstr "Tipo fichero"
 
 #. module: virtual_fair
-#: code:addons/virtual_fair/wizard/direct_invoice_wzd.py:76
+#: code:addons/virtual_fair/wizard/direct_invoice_wzd.py:74
 #: code:addons/virtual_fair/wizard/invoice_supplier_import_wzd.py:278
 #, python-format
 msgid "From Supplier Import"
@@ -252,6 +299,7 @@ msgstr "Cabeceras"
 #. module: virtual_fair
 #: model:ir.model.fields,field_description:virtual_fair.field_condition_line_id
 #: model:ir.model.fields,field_description:virtual_fair.field_direct_invoice_wzd_id
+#: model:ir.model.fields,field_description:virtual_fair.field_direct_line_section_id
 #: model:ir.model.fields,field_description:virtual_fair.field_fair_customer_line_id
 #: model:ir.model.fields,field_description:virtual_fair.field_fair_supplier_line_id
 #: model:ir.model.fields,field_description:virtual_fair.field_importation_log_id
@@ -309,6 +357,11 @@ msgid "Importation Logs"
 msgstr "Logs importación"
 
 #. module: virtual_fair
+#: model:ir.model.fields,field_description:virtual_fair.field_direct_line_section_linf
+msgid "Inf Limit"
+msgstr "Límite inferior"
+
+#. module: virtual_fair
 #: model:ir.model,name:virtual_fair.model_account_invoice
 #: model:ir.model.fields,field_description:virtual_fair.field_log_line_invoice_id
 msgid "Invoice"
@@ -355,6 +408,7 @@ msgstr "Límite sup"
 #. module: virtual_fair
 #: model:ir.model.fields,field_description:virtual_fair.field_condition_line___last_update
 #: model:ir.model.fields,field_description:virtual_fair.field_direct_invoice_wzd___last_update
+#: model:ir.model.fields,field_description:virtual_fair.field_direct_line_section___last_update
 #: model:ir.model.fields,field_description:virtual_fair.field_fair_customer_line___last_update
 #: model:ir.model.fields,field_description:virtual_fair.field_fair_supplier_line___last_update
 #: model:ir.model.fields,field_description:virtual_fair.field_importation_log___last_update
@@ -369,6 +423,7 @@ msgstr "Última modificación en"
 #. module: virtual_fair
 #: model:ir.model.fields,field_description:virtual_fair.field_condition_line_write_uid
 #: model:ir.model.fields,field_description:virtual_fair.field_direct_invoice_wzd_write_uid
+#: model:ir.model.fields,field_description:virtual_fair.field_direct_line_section_write_uid
 #: model:ir.model.fields,field_description:virtual_fair.field_fair_customer_line_write_uid
 #: model:ir.model.fields,field_description:virtual_fair.field_fair_supplier_line_write_uid
 #: model:ir.model.fields,field_description:virtual_fair.field_importation_log_write_uid
@@ -383,6 +438,7 @@ msgstr "Última actualización de"
 #. module: virtual_fair
 #: model:ir.model.fields,field_description:virtual_fair.field_condition_line_write_date
 #: model:ir.model.fields,field_description:virtual_fair.field_direct_invoice_wzd_write_date
+#: model:ir.model.fields,field_description:virtual_fair.field_direct_line_section_write_date
 #: model:ir.model.fields,field_description:virtual_fair.field_fair_customer_line_write_date
 #: model:ir.model.fields,field_description:virtual_fair.field_fair_supplier_line_write_date
 #: model:ir.model.fields,field_description:virtual_fair.field_importation_log_write_date
@@ -450,6 +506,11 @@ msgid "Payment Terms"
 msgstr "Plazos de pago"
 
 #. module: virtual_fair
+#: model:ir.model.fields,field_description:virtual_fair.field_direct_line_section_percent
+msgid "Percent (%)"
+msgstr "Porcentaje (%)"
+
+#. module: virtual_fair
 #: model:ir.model.fields,field_description:virtual_fair.field_fair_customer_line_ref_int
 #: model:ir.model.fields,field_description:virtual_fair.field_fair_supplier_line_ref_int
 msgid "Ref Int"
@@ -472,6 +533,11 @@ msgid "Start Date"
 msgstr "Fecha de inicio"
 
 #. module: virtual_fair
+#: model:ir.model.fields,field_description:virtual_fair.field_direct_line_section_lsup
+msgid "Sup Limit"
+msgstr "Límite superior"
+
+#. module: virtual_fair
 #: model:ir.model.fields,field_description:virtual_fair.field_fair_supplier_line_supplier_id
 msgid "Supplier"
 msgstr "Proveedor"
@@ -482,6 +548,11 @@ msgstr "Proveedor"
 #, python-format
 msgid "Supplier Importation"
 msgstr "Importación de proveedor"
+
+#. module: virtual_fair
+#: model:ir.ui.view,arch_db:virtual_fair.invoice_form_link_supplier_invoices
+msgid "Supplier Invoices"
+msgstr "Facturas proveedor"
 
 #. module: virtual_fair
 #: code:addons/virtual_fair/wizard/invoice_supplier_import_wzd.py:137
@@ -555,6 +626,11 @@ msgstr "condition.line"
 #: model:ir.model,name:virtual_fair.model_direct_invoice_wzd
 msgid "direct.invoice.wzd"
 msgstr "direct.invoice.wzd"
+
+#. module: virtual_fair
+#: model:ir.model,name:virtual_fair.model_direct_line_section
+msgid "direct.line.section"
+msgstr "direct.line.section"
 
 #. module: virtual_fair
 #: model:ir.model,name:virtual_fair.model_fair_customer_line

@@ -141,7 +141,7 @@ class InvoiceSupplierImportWzd(models.TransientModel):
 
         # Get type invoice
         type_inv = 'in_invoice'
-        if hvals.get('ind_abono', False) == '1':
+        if hvals.get('ind_abono', False) == '0':
             type_inv = 'in_refund'
 
         # Get date invoice
@@ -334,6 +334,7 @@ class InvoiceSupplierImportWzd(models.TransientModel):
 
         self.create_invoice_lines(base_vals)
         if created_invoices:
-            created_invoices.set_fair_conditions()
+            created_invoices.set_fair_supplier_conditions()
+            created_invoices.set_supplier_featured_percent()
             self.log_id.write({'invoice_ids': [(6, 0, created_invoices.ids)]})
         return self.action_view_import_log()

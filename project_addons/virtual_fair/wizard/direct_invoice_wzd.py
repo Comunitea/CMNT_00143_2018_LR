@@ -3,9 +3,6 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import models, fields, api, _
-from lxml import etree
-from odoo.exceptions import UserError
-import base64
 
 
 class DirectInvoiceWzd(models.TransientModel):
@@ -18,7 +15,7 @@ class DirectInvoiceWzd(models.TransientModel):
         if len(invoices) > 1:
             action['domain'] = [('id', 'in', invoices.ids)]
         elif len(invoices) == 1:
-            action['views'] = [(self.env.ref('account.invoice_form').id, 
+            action['views'] = [(self.env.ref('account.invoice_form').id,
                                'form')]
             action['res_id'] = invoices.ids[0]
         else:
@@ -32,7 +29,8 @@ class DirectInvoiceWzd(models.TransientModel):
             'partner_id': inv.associate_id.id,
             'name': '/',
             'origin': ','.join(invoices.mapped('name')),
-            'type': 'out_invoice',
+            'type':
+            'out_invoice' if inv.type == 'in_invoice' else 'out_refund',
             'account_id': inv.associate_id.property_account_receivable_id.id,
             # 'reference': reference,
             'date_invoice': fields.Date.today(),
@@ -104,12 +102,16 @@ class DirectInvoiceWzd(models.TransientModel):
             invoice_objs = inv_grouped[associate_id]
             vals = self._get_invoice_vals(invoice_objs)
             inv = self.env['account.invoice'].create(vals)
-            created_invoices += inv
 
+            created_invoices += inv
+            # Write link between supplier and created invoice
+            invoice_objs.write({'customer_invoice_id': inv.id})
             # Create lines
             line_vals = self._get_line_vals(inv, invoice_objs)
             if line_vals:
                 inv.write({'invoice_line_ids': line_vals})
 
         if created_invoices:
+            created_invoices.set_fair_supplier_conditions()
+            created_invoices.set_featured_line()
             return self.action_view_invoice(created_invoices)
