@@ -6,7 +6,7 @@
         <field name="inherit_id" ref="account_payment_order.account_payment_line_create_form"/>
         <field name="arch" type="xml">
             <field name="due_date" position="before">
-                <field  name="start_due_date"/>
+                <field name="start_due_date"/>
             </field>
         </field>
     </record>
