@@ -8,6 +8,10 @@
             <field name="due_date" position="before">
                 <field name="start_due_date"/>
             </field>
+
+            <field name="due_date" position="attributes">
+                <attribute name="string">To Due Date</attribute>
+            </field>
         </field>
     </record>
 

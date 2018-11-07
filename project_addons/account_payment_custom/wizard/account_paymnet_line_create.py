@@ -7,7 +7,7 @@ class AccountPaymentLineCreate(models.TransientModel):
     _inherit = 'account.payment.line.create'
     _description = 'Wizard to create payment lines'
 
-    start_due_date = fields.Date(string="Start Due Date")
+    start_due_date = fields.Date(string="From Due Date")
 
     @api.multi
     def _prepare_move_line_domain(self):
