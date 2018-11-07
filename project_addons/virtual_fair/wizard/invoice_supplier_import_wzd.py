@@ -157,6 +157,8 @@ class InvoiceSupplierImportWzd(models.TransientModel):
             domain = [('ref', '=', num_ass), ('customer', '=', True)]
             p = self.env['res.partner'].search(domain, limit=1)
             associate_id = p.id if p else False
+        # featured = True if hvals.get('ind_colab', '') == 'S' else False
+        featured = True if associate_id else False
         invoice_vals = {
             'partner_id': supplier.id,
             'name': hvals.get('registro', ''),
@@ -170,8 +172,9 @@ class InvoiceSupplierImportWzd(models.TransientModel):
             'num_ass': num_ass,
             'associate_id': associate_id,
             'num_conf': hvals.get('num_confor', ''),
-            'featured': True if hvals.get('ind_colab', '') == 'S' else False,
-            'user_id': self._uid
+            'featured': featured,
+            'user_id': self._uid,
+            'from_import': True,
             # # 'journal_id':
             # 'currency_id':
             # 'comment':

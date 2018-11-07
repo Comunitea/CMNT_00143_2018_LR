@@ -12,7 +12,7 @@ class AccountInvoice(models.Model):
             if inv.log_line_ids:
                 inv.error_exist = True
 
-    fair_id = new_field = fields.Many2one('virtual.fair', 'Virtual Fair')
+    fair_id = fields.Many2one('virtual.fair', 'Virtual Fair')
     digit_date = fields.Date('Digit Date')
     num_ass = fields.Char('Num Associated')
     associate_id = fields.Many2one('res.partner', 'Associate')
@@ -26,6 +26,8 @@ class AccountInvoice(models.Model):
                                           'Customer Invoice', readonly=True)
     supplier_invoices_count = fields.Integer('# Suipplier Invoices',
                                              compute='_count_supplier_invoice')
+    from_import = fields.Boolean('From supplier import', readonly=True)
+    from_supplier = fields.Boolean('From supplier invoice', readonly=True)
 
     @api.multi
     def _count_supplier_invoice(self):

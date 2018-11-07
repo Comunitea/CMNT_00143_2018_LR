@@ -34,7 +34,8 @@ class DirectInvoiceWzd(models.TransientModel):
             'account_id': inv.associate_id.property_account_receivable_id.id,
             # 'reference': reference,
             'date_invoice': fields.Date.today(),
-            'user_id': self._uid
+            'user_id': self._uid,
+            'from_supplier': True,
         }
         return vals
 

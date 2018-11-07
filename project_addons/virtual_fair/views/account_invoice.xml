@@ -13,6 +13,7 @@
             <notebook position="inside">
                 <page string="Supplier Importation">
                     <group col="4">
+                        <field name="from_import"/>
                         <field name="fair_id"/>
                         <field name="digit_date"/>
                         <field name="num_ass"/>
@@ -60,6 +61,36 @@
                     <field name="supplier_invoices_count"  widget="statinfo" string="Supplier Invoices"/>
                 </button>
             </div>
+
+            <xpath expr="//page[@name='other_info']//field[@name='origin']" position="after">
+                <field name="from_supplier"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- account.invoice inherit search view -->
+    <record id="view_account_invoice_filter_custom" model="ir.ui.view">
+        <field name="name">account.invoice.inherit.view.search</field>
+        <field name="model">account.invoice</field>
+        <field name="inherit_id" ref="account.view_account_invoice_filter"/>
+        <field name="arch" type="xml">
+            <filter name="activities_upcoming_all" position="after">
+                    <separator/>
+                     <filter name="imported" string="From Supplier Importation" domain="[('from_import','=', True)]"/>
+                     <filter name="from_supplier" string="From Supplier Invoice" domain="[('from_supplier','=', True)]"/>
+                     <filter name="with_fair" string="Fair related" domain="[('fair_id','!=', False)]"/>
+                     <filter name="with_featured_percent" string="Featured related" domain="[('featured_percent', '=', False)]"/>
+                    <separator/>
+                    <filter name="customer_invoiced" string="Invoice Customer Pending" domain="[('associate_id','!=', False), ('customer_invoice_id','=', False)]"/>
+                    <filter name="customer_invoiced" string="Customer Invoiced" domain="[('associate_id','!=', False), ('customer_invoice_id','!=', False)]"/>
+            </filter>
+            <filter name="status" position="after">
+                <separator/>
+                <filter string="Associate" context="{'group_by':'associate_id'}"/>
+                <filter string="Fair" context="{'group_by':'fair_id'}"/>
+                <filter string="Importation Log" context="{'group_by':'log_id'}"/>
+                <filter string="Customer Invoice" context="{'group_by':'customer_invoice_id'}"/>
+            </filter>
         </field>
     </record>
 
