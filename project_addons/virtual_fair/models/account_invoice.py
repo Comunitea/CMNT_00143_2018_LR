@@ -48,8 +48,8 @@ class AccountInvoice(models.Model):
         if len(invoices) > 1:
             action['domain'] = [('id', 'in', invoices.ids)]
         elif len(invoices) == 1:
-            action['views'] = [(self.env.ref('account.invoice_supplier_form').id,
-                               'form')]
+            action['views'] = [
+                (self.env.ref('account.invoice_supplier_form').id, 'form')]
             action['res_id'] = invoices.ids[0]
         else:
             action = {'type': 'ir.actions.act_window_close'}
