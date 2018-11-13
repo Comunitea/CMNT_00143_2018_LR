@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="account_analytic_contract_view_form" model="ir.ui.view">
+        <field name="name">account.analytic.contract.inherit.view.form</field>
+        <field name="model">account.analytic.contract</field>
+        <field name="inherit_id" ref="contract.account_analytic_contract_view_form"/>
+        <field name="arch" type="xml">
+            <group name="group_legend" position="after">
+                <separator string="recurrring payment order"/>
+                <group>
+                    <group>
+                        <label for="recurring_payment_interval"/>
+                        <div>
+                            <field name="recurring_payment_interval" class="oe_inline" required="True"/>
+                            <field name="recurring_payment_rule_type" class="oe_inline" required="True"/>
+                        </div>
+                    </group>
+                </group>
+            </group>
+        </field>
+    </record>
+</odoo>
