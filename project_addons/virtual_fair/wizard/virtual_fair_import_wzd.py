@@ -122,7 +122,7 @@ class VirtualFairImportWzd(models.TransientModel):
                 'condition_ids': condition_vals,
                 'facturation': supp.get('facturacion'),
                 'condition_type': supp.get('tipoCondicion') or
-                _('**-BY_CONDITIONS-**'),
+                _('**BY_CONDITIONS**'),
                 'value': supp.text,
                 'supplier_id': supplier_id,
             }

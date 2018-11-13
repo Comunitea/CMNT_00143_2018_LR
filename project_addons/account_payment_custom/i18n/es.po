@@ -1,0 +1,37 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* account_payment_custom
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 11.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-11-07 17:52+0000\n"
+"PO-Revision-Date: 2018-11-07 17:52+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: account_payment_custom
+#: model:ir.model.fields,field_description:account_payment_custom.field_account_payment_line_create_start_due_date
+msgid "From Due Date"
+msgstr "Desde fecha vencimiento"
+
+#. module: account_payment_custom
+#: model:ir.model,name:account_payment_custom.model_account_payment_order
+msgid "Payment Order"
+msgstr "Orden de pago"
+
+#. module: account_payment_custom
+#: model:ir.ui.view,arch_db:account_payment_custom.account_payment_line_create_form_start_due_date
+msgid "To Due Date"
+msgstr "Hasta fecha vencimiento"
+
+#. module: account_payment_custom
+#: model:ir.model,name:account_payment_custom.model_account_payment_line_create
+msgid "Wizard to create payment lines"
+msgstr "Asistente para crear líneas de pago"
+

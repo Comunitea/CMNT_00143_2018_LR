@@ -1,8 +1,8 @@
 # © 2018 Comunitea
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 {
-    'name': 'Maximum Debit Amount ',
-    'summary': 'Limit the maximun amount by debit order',
+    'name': 'Account Payment Custom ',
+    'summary': 'Customizations over payments',
     'version': '11.0.1.0.0',
     'category': 'Payment',
     'website': 'comunitea.com',
@@ -16,7 +16,6 @@
 
     ],
     'data': [
-        'views/res_partner.xml',
-        'views/mandate.xml',
-    ],
+        'wizard/account_paymnet_line_create_view.xml'
+    ]
 }

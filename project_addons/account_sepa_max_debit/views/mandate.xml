@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- © 2018 Comunitea
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+<odoo>
+
+    <!-- Overwrited to put derfault spanish language when not parter if -->
+    <template id="account_banking_sepa_direct_debit.sepa_direct_debit_mandate">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.basic_layout">
+                    <t t-call="account_banking_sepa_direct_debit.sepa_direct_debit_mandate_document" t-lang="doc.partner_id.lang or 'es_ES'"/>
+                </t>
+            </t>
+        </t>
+    </template>
+
+     <template id="sepa_direct_debit_mandate_document_fix_icon" inherit_id="account_banking_sepa_direct_debit.sepa_direct_debit_mandate_document">
+        <xpath expr="//img" position="replace">
+            <!-- <img t-if="doc.company_id.logo" t-att-src="'data:image/png;base64,%s' %  to_text(doc.company_id.logo)" style="max-height: 45px;"/> -->
+            <img t-if="doc.company_id.logo" t-att-src="'data:image/png;base64,%s' %  to_text(doc.company_id.logo)" style="width: 150px;"/>
+        </xpath>
+
+        <xpath expr="//img/.." position="after">
+            <div class="col-xs-9 text-right">
+                <span t-field="doc.partner_id.ref"/>
+            </div>
+        </xpath>
+
+        <xpath expr="//span[@t-field='doc.partner_bank_id.acc_number']" position="replace">
+            <t t-if="doc.partner_id.ref and doc.partner_bank_id.acc_number and doc.partner_bank_id.acc_number != doc.partner_id.ref">
+                <span t-field="doc.partner_bank_id.acc_number"/>
+            </t>
+            <t t-if="doc.partner_id.ref and doc.partner_bank_id.acc_number and doc.partner_bank_id.acc_number == doc.partner_id.ref">
+                <span style='color:white;margin-right:1.25em; display:inline-block;'>-</span>
+
+            </t>
+        </xpath>
+     </template>
+
+</odoo>
+

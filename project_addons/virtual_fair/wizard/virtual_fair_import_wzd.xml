@@ -28,8 +28,7 @@
         <field name="target">new</field>
     </record>
 
-    <menuitem id="menu_importers" name="Importers" parent="menu_virtual_fair" sequence="10"/>
-    <menuitem id="menu_import_virtual_fair" name="Import Virtual Fair" action="action_import_virtual_fair" parent="menu_importers" sequence="1"/>
+    <menuitem id="menu_import_virtual_fair" name="Import Virtual Fair" action="action_import_virtual_fair" parent="menu_virtual_fair" sequence="1"/>
     
     
 </odoo>

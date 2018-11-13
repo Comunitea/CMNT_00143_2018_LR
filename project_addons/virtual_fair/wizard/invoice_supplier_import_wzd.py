@@ -129,17 +129,19 @@ class InvoiceSupplierImportWzd(models.TransientModel):
                 self.log_id.create_log_line(msg, hvals)
         # Get supplier
         supplier_ref = hvals.get('proveedor', False)
-        domain = [('ref', '=', supplier_ref)]
+        supplier = False
+        if supplier_ref:
+            domain = [('id_prov', '=', int(supplier_ref))]
         supplier = self.env['res.partner'].search(domain, limit=1)
         if not supplier:
-            msg = _('Supplier reference %s could not be founded') %\
+            msg = _('Supplier identifier %s could not be founded') %\
                 supplier_ref
             self.log_id.create_log_line(msg, hvals)
             return {}
 
         # Get type invoice
         type_inv = 'in_invoice'
-        if hvals.get('ind_abono', False) == '1':
+        if hvals.get('ind_abono', False) == '0':
             type_inv = 'in_refund'
 
         # Get date invoice
@@ -148,6 +150,15 @@ class InvoiceSupplierImportWzd(models.TransientModel):
         date = self._format_date(hvals.get('fec_contable', False))
         # Get digit_date
         digit_date = self._format_date(hvals.get('fec_registro', False))
+        # Get associate
+        associate_id = False
+        num_ass = hvals.get('socio', '')
+        if num_ass:
+            domain = [('ref', '=', num_ass), ('customer', '=', True)]
+            p = self.env['res.partner'].search(domain, limit=1)
+            associate_id = p.id if p else False
+        # featured = True if hvals.get('ind_colab', '') == 'S' else False
+        featured = True if associate_id else False
         invoice_vals = {
             'partner_id': supplier.id,
             'name': hvals.get('registro', ''),
@@ -158,10 +169,12 @@ class InvoiceSupplierImportWzd(models.TransientModel):
             'date_invoice': date_invoice,
             'date': date,
             'digit_date': digit_date,
-            'num_ass': hvals.get('socio', ''),
+            'num_ass': num_ass,
+            'associate_id': associate_id,
             'num_conf': hvals.get('num_confor', ''),
-            'featured': True if hvals.get('ind_colab', '') == 'S' else False,
-            'user_id': self._uid
+            'featured': featured,
+            'user_id': self._uid,
+            'from_import': True,
             # # 'journal_id':
             # 'currency_id':
             # 'comment':
@@ -235,7 +248,7 @@ class InvoiceSupplierImportWzd(models.TransientModel):
         tax_ids = []
         base = float(bvals.get('base', '0.0'))
         tax = float(bvals.get('cuota', '0.0'))
-        amount = round((tax / (base or 1.0)) * 100.0, 2)
+        amount = int(round((tax / (base or 1.0)) * 100.0, 0))
         domain = [
             ('type_tax_use', '=', 'purchase'),
             ('amount', '=', amount)
@@ -324,6 +337,7 @@ class InvoiceSupplierImportWzd(models.TransientModel):
 
         self.create_invoice_lines(base_vals)
         if created_invoices:
-            created_invoices.set_fair_conditions()
+            created_invoices.set_fair_supplier_conditions()
+            created_invoices.set_supplier_featured_percent()
             self.log_id.write({'invoice_ids': [(6, 0, created_invoices.ids)]})
         return self.action_view_import_log()
