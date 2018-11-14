@@ -1,10 +1,10 @@
 # © 2018 Comunitea
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 {
-    'name': 'Account Payment Custom ',
-    'summary': 'Customizations over payments',
+    'name': 'Account Invoice Custom ',
+    'summary': 'Customizations over Invoices',
     'version': '11.0.1.0.0',
-    'category': 'Payment',
+    'category': 'Custom',
     'website': 'comunitea.com',
     'author': 'Comunitea',
     'license': 'AGPL-3',
@@ -12,10 +12,8 @@
     'installable': True,
     'depends': [
         'base',
-        'account_banking_sepa_direct_debit'
-
+        'account'
     ],
     'data': [
-        'wizard/account_paymnet_line_create_view.xml'
     ]
 }
