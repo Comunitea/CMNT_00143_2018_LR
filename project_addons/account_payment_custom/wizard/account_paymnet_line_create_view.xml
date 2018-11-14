@@ -5,8 +5,8 @@
         <field name="model">account.payment.line.create</field>
         <field name="inherit_id" ref="account_payment_order.account_payment_line_create_form"/>
         <field name="arch" type="xml">
-            <field name="due_date" position="before">
-                <field name="start_due_date"/>
+            <field name="due_date" position="after">
+                <field name="start_due_date"  attrs="{'invisible': [('date_type', '!=', 'due')]}"/>
             </field>
 
             <field name="due_date" position="attributes">
