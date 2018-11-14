@@ -17,8 +17,8 @@ class AccountPaymentLineCreate(models.TransientModel):
 
         domain2 = domain.copy()
         if ('date_maturity', '=', False) in domain and self.start_due_date:
-            # Modifico el dominio para que los enncuentre sin fecha
-            # o cuyo vencimiento esté en el ranfo
+            # Modifico el dominio para que los encuentre sin fecha
+            # o cuyo vencimiento esté en el rango
             indx = domain.index(('date_maturity', '=', False))
             t1 = domain.pop(indx)
             t2 = domain.pop(indx - 1)
@@ -30,8 +30,7 @@ class AccountPaymentLineCreate(models.TransientModel):
             if self.allow_negative:
                 # Si hay fecha de inicio, el rango no se aplica en abonos
                 # así que vuelvo a añadir la condición para ignorarlos.
-
-                # Ahora en el domain2, hago la misma búysqueda pero sin el
+                # Ahora en el domain2, hago la misma búsqueda pero sin el
                 # rango, y solo para los negativos
                 if self.order_id.payment_type == 'outbound':
                     domain.append(('credit', '>', 0))
