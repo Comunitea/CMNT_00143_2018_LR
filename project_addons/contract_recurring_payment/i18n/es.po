@@ -1,0 +1,138 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* contract_recurring_payment
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 11.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-11-13 12:32+0000\n"
+"PO-Revision-Date: 2018-11-13 12:32+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: contract_recurring_payment
+#: model:ir.model,name:contract_recurring_payment.model_account_analytic_account
+msgid "Analytic Account"
+msgstr "Cuenta analítica"
+
+#. module: contract_recurring_payment
+#: model:ir.ui.view,arch_db:contract_recurring_payment.account_analytic_account_form_inh
+msgid "Create payments"
+msgstr "Crear ordenes de cobro"
+
+#. module: contract_recurring_payment
+#: model:ir.model.fields,field_description:contract_recurring_payment.field_account_analytic_account_date_end_payment
+msgid "Date End"
+msgstr "Fecha fin"
+
+#. module: contract_recurring_payment
+#: model:ir.model.fields,field_description:contract_recurring_payment.field_account_analytic_account_date_start_payment
+msgid "Date Start"
+msgstr "Fecha de inicio"
+
+#. module: contract_recurring_payment
+#: model:ir.model.fields,field_description:contract_recurring_payment.field_account_analytic_account_recurring_payment_next_date
+msgid "Date of Next Payment"
+msgstr "Fecha de siguiente pago"
+
+#. module: contract_recurring_payment
+#: selection:account.analytic.account,recurring_payment_rule_type:0
+#: selection:account.analytic.contract,recurring_payment_rule_type:0
+msgid "Day(s)"
+msgstr "Día(s)"
+
+#. module: contract_recurring_payment
+#: model:ir.model.fields,field_description:contract_recurring_payment.field_account_analytic_account_recurring_payment
+msgid "Generate recurring payments automatically"
+msgstr "Generar ordenes de cobro automaticamente"
+
+#. module: contract_recurring_payment
+#: selection:account.analytic.account,recurring_payment_rule_type:0
+#: selection:account.analytic.contract,recurring_payment_rule_type:0
+msgid "Month(s)"
+msgstr "Mes(es)"
+
+#. module: contract_recurring_payment
+#: selection:account.analytic.account,recurring_payment_rule_type:0
+#: selection:account.analytic.contract,recurring_payment_rule_type:0
+msgid "Month(s) last day"
+msgstr "Month(s) last day"
+
+#. module: contract_recurring_payment
+#: model:ir.model.fields,field_description:contract_recurring_payment.field_account_analytic_account_payment_qty
+msgid "Payment quantity"
+msgstr "Cantidad a cobrar"
+
+#. module: contract_recurring_payment
+#: model:ir.model.fields,field_description:contract_recurring_payment.field_account_analytic_account_recurring_payment_rule_type
+#: model:ir.model.fields,field_description:contract_recurring_payment.field_account_analytic_contract_recurring_payment_rule_type
+msgid "Recurrence"
+msgstr "Recurrencia"
+
+#. module: contract_recurring_payment
+#: model:ir.model.fields,field_description:contract_recurring_payment.field_account_analytic_account_recurring_payment_interval
+#: model:ir.model.fields,field_description:contract_recurring_payment.field_account_analytic_contract_recurring_payment_interval
+msgid "Repeat Every"
+msgstr "Repetir cada"
+
+#. module: contract_recurring_payment
+#: model:ir.model.fields,help:contract_recurring_payment.field_account_analytic_account_recurring_payment_interval
+#: model:ir.model.fields,help:contract_recurring_payment.field_account_analytic_contract_recurring_payment_interval
+msgid "Repeat every (Days/Week/Month/Year)"
+msgstr "Repetir cada (días/semana/mes/año)"
+
+#. module: contract_recurring_payment
+#: model:ir.model.fields,help:contract_recurring_payment.field_account_analytic_account_recurring_payment_rule_type
+#: model:ir.model.fields,help:contract_recurring_payment.field_account_analytic_contract_recurring_payment_rule_type
+msgid "Specify Interval for automatic payment order generation."
+msgstr "Specify Interval for automatic payment order generation."
+
+#. module: contract_recurring_payment
+#: selection:account.analytic.account,recurring_payment_rule_type:0
+#: selection:account.analytic.contract,recurring_payment_rule_type:0
+msgid "Week(s)"
+msgstr "Semana(s)"
+
+#. module: contract_recurring_payment
+#: selection:account.analytic.account,recurring_payment_rule_type:0
+#: selection:account.analytic.contract,recurring_payment_rule_type:0
+msgid "Year(s)"
+msgstr "Año(s)"
+
+#. module: contract_recurring_payment
+#: code:addons/contract_recurring_payment/models/account_analytic_account.py:50
+#, python-format
+msgid "You must review start and end payment dates!\n"
+"%s"
+msgstr "You must review start and end payment dates!\n"
+"%s"
+
+#. module: contract_recurring_payment
+#: model:ir.actions.server,name:contract_recurring_payment.account_analytic_account_ir_cron_ir_actions_server
+#: model:ir.cron,cron_name:contract_recurring_payment.account_analytic_account_ir_cron
+#: model:ir.cron,name:contract_recurring_payment.account_analytic_account_ir_cron
+msgid "account.analytic.account.ir.cron"
+msgstr "account.analytic.account.ir.cron"
+
+#. module: contract_recurring_payment
+#: model:ir.model,name:contract_recurring_payment.model_account_analytic_contract
+msgid "account.analytic.contract"
+msgstr "account.analytic.contract"
+
+#. module: contract_recurring_payment
+#: code:addons/contract_recurring_payment/models/account_analytic_account.py:70
+#, python-format
+msgid "can not find a customer mandate"
+msgstr "No se puede encontrar un mandato para el cliente"
+
+#. module: contract_recurring_payment
+#: model:ir.ui.view,arch_db:contract_recurring_payment.account_analytic_account_form_inh
+#: model:ir.ui.view,arch_db:contract_recurring_payment.account_analytic_contract_view_form
+msgid "recurrring payment order"
+msgstr "Ordenes de cobro recurrentes"
+

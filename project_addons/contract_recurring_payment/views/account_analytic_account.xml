@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- account.analytic.account inherit form view -->
+    <record id="account_analytic_account_form_inh" model="ir.ui.view">
+        <field name="name">account.analytic.account.inherit.view.form</field>
+        <field name="model">account.analytic.account</field>
+        <field name="inherit_id" ref="contract.account_analytic_account_recurring_form_form"/>
+        <field name="arch" type="xml">
+            <group name="group_legend" position="after">
+                <separator string="recurrring payment order" attrs="{'invisible': [('recurring_payment', '!=', True)]}"/>
+                <div>
+                    <field name="recurring_payment" class="oe_inline"/>
+                    <label for="recurring_payment"/>
+                    <button name="recurring_create_payment"
+                            type="object"
+                            attrs="{'invisible': ['|', ('recurring_payment', '!=', True)]}"
+                            string="Create payments"
+                            class="oe_link"
+                            groups="base.group_no_one"
+                            />
+                </div>
+                <group attrs="{'invisible': [('recurring_payment', '!=', True)]}">
+                    <group>
+                        <label for="recurring_payment_interval"/>
+                        <div>
+                            <field name="recurring_payment_interval" class="oe_inline" required="True"/>
+                            <field name="recurring_payment_rule_type" class="oe_inline" required="True"/>
+                        </div>
+                        <field name="payment_qty"/>
+                    </group>
+                    <group>
+                        <field name="date_start_payment" attrs="{'required': [('recurring_payment', '=', True)]}"/>
+                        <field name="date_end_payment"/>
+                        <field name="recurring_payment_next_date" attrs="{'required': [('recurring_payment', '=', True)]}"/>
+                    </group>
+                </group>
+            </group>
+            <field name="payment_mode_id" position="attributes">
+                <attribute name="attrs">{'required': [('recurring_payment', '=', True)]}</attribute>
+            </field>
+        </field>
+    </record>
+</odoo>
