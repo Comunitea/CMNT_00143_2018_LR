@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 11.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-09-21 08:03+0000\n"
-"PO-Revision-Date: 2018-09-21 08:03+0000\n"
+"POT-Creation-Date: 2018-11-15 12:14+0000\n"
+"PO-Revision-Date: 2018-11-15 12:14+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -21,8 +21,29 @@ msgid "Contact"
 msgstr "Contacto"
 
 #. module: account_sepa_max_debit
+#: model:ir.ui.view,arch_db:account_sepa_max_debit.account_payment_order_form_add_ignored
+msgid "Ignored Transactions"
+msgstr "Transacciones ignoradas"
+
+#. module: account_sepa_max_debit
 #: model:ir.model.fields,field_description:account_sepa_max_debit.field_res_partner_sepa_max_debit
 #: model:ir.model.fields,field_description:account_sepa_max_debit.field_res_users_sepa_max_debit
 msgid "Maximum Debit Receipt"
 msgstr "Importe máximo por recibo"
+
+#. module: account_sepa_max_debit
+#: model:ir.model,name:account_sepa_max_debit.model_account_payment_line
+msgid "Payment Lines"
+msgstr "Líneas de pago"
+
+#. module: account_sepa_max_debit
+#: model:ir.model,name:account_sepa_max_debit.model_account_payment_order
+#: model:ir.model.fields,field_description:account_sepa_max_debit.field_account_payment_line_order_id2
+msgid "Payment Order"
+msgstr "Orden de pago"
+
+#. module: account_sepa_max_debit
+#: model:ir.model.fields,field_description:account_sepa_max_debit.field_account_payment_order_ignored_payment_line_ids
+msgid "Transaction Lines Ignored"
+msgstr "Líneas de transacción ignoradas"
 

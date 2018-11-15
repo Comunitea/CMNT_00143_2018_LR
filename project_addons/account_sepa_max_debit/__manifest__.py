@@ -12,11 +12,13 @@
     'installable': True,
     'depends': [
         'base',
+        'account_payment_order',
         'account_banking_sepa_direct_debit'
 
     ],
     'data': [
         'views/res_partner.xml',
         'views/mandate.xml',
+        'views/account_payment_order_view.xml',
     ],
 }
