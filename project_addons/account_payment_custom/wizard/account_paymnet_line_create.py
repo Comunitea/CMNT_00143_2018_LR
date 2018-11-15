@@ -12,26 +12,36 @@ class AccountPaymentLineCreate(models.TransientModel):
 
     @api.multi
     def _prepare_move_line_domain(self):
+        """
+        Este método ya devuelve el domain permitiendo negativos,
+        sin la condicíon de (debit/credit, >, 0).
+        Se permite filtrar los efectos por fecha de inicio también, con lo
+        que se reordena el domain de búsqueda. Pero como la fecha de inicio
+        no debe aplicarse para los efectos de rectificativas, hay que
+        desdoblar el domain en 2, uno con los efectos positivos sin fecha,
+        o con fecha en rango, y otro con los negativos sin fecha o hasta la
+        fecha dada.
+        """
         domain = super(AccountPaymentLineCreate, self).\
             _prepare_move_line_domain()
 
-        domain2 = domain.copy()
+        domain2 = domain.copy()  # Copia domain para buscar los negativos
+
         if ('date_maturity', '=', False) in domain and self.start_due_date:
-            # Modifico el dominio para que los encuentre sin fecha
-            # o cuyo vencimiento esté en el rango
+            # Modifico el dominio para que los encuentre  efectos sin fecha
+            # o cuyo vencimiento esté en el rango. Lo reordeno para que
+            # sea sin fecha o con fecha en rango
             indx = domain.index(('date_maturity', '=', False))
-            t1 = domain.pop(indx)
-            t2 = domain.pop(indx - 1)
+            t1 = domain.pop(indx)  # date_maturyty = False
+            t2 = domain.pop(indx - 1)  # date_maturyty <= X
             t3 = ('date_maturity', '>=', self.start_due_date)
             domain.insert(indx-1, t1)
             domain.insert(indx, t2)
             domain.insert(indx+1, t3)
 
             if self.allow_negative:
-                # Si hay fecha de inicio, el rango no se aplica en abonos
-                # así que vuelvo a añadir la condición para ignorarlos.
-                # Ahora en el domain2, hago la misma búsqueda pero sin el
-                # rango, y solo para los negativos
+                # Vuelvo a añadir la condición de solo efectos positivos, para
+                # el domain 1, y la de solo negativos para el domain 2
                 if self.order_id.payment_type == 'outbound':
                     domain.append(('credit', '>', 0))
                     domain2.append(('credit', '<=', 0))
@@ -39,6 +49,7 @@ class AccountPaymentLineCreate(models.TransientModel):
                     domain.append(('debit', '>', 0))
                     domain2.append(('debit', '<=', 0))
 
+                # Obtengo los domains normalizados para poder aplicar el OR
                 d1 = expression.normalize_domain(domain)
                 d2 = expression.normalize_domain(domain2)
                 domain = expression.OR([d1, d2])
