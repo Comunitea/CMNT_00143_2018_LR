@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_mandate_form_add_journals" model="ir.ui.view">
+        <field name="name">account.banking.mandate.inherit.view.form</field>
+        <field name="model">account.banking.mandate</field>
+        <field name="inherit_id" ref="account_banking_mandate.view_mandate_form"/>
+        <field name="arch" type="xml">
+            <field name="last_debit_date" position="after">
+                <field name="journal_ids" widget="many2many_tags"/>
+            </field>
+
+        </field>
+    </record>
+</odoo>
