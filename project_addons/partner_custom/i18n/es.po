@@ -40,6 +40,12 @@ msgid "Cash payment"
 msgstr "Contado"
 
 #. module: partner_custom
+#: model:ir.model.fields,field_description:partner_custom.field_res_partner_old_customer
+#: model:ir.model.fields,field_description:partner_custom.field_res_users_old_customer
+msgid "Old Customer"
+msgstr "Antiguo cliente"
+
+#. module: partner_custom
 #: model:ir.model,name:partner_custom.model_res_partner
 msgid "Contact"
 msgstr "Contacto"
