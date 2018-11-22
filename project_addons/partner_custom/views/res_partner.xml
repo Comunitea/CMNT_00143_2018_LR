@@ -80,7 +80,7 @@
         </field>
     </record>
 
-    <record id="custom_res_partner_view_hide_button_contract" model="ir.ui.view">
+    <!--record id="custom_res_partner_view_hide_button_contract" model="ir.ui.view">
         <field name="name">custom.res.partner.view.hide.button.contract</field>
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="contract.view_partner_form"/>
@@ -97,7 +97,7 @@
                 </attribute>
             </xpath>
         </field>
-    </record>
+    </record-->
 
 </odoo>
 
