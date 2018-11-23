@@ -1,10 +1,9 @@
-
 # © 2018 Comunitea
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
-from datetime import datetime
+from datetime import datetime, date, timedelta
 import glob
 
 
@@ -12,8 +11,8 @@ class InvoiceSupplierImportWzd(models.TransientModel):
 
     _name = 'invoice.supplier.import.wzd'
 
-    name = fields.Char(string='Name')
-    path = fields.Char(string='Path')
+    name = fields.Char()
+    path = fields.Char()
     log_id = fields.Many2one(comodel_name='importation.log', string='Log')
 
     @api.model
@@ -60,48 +59,48 @@ class InvoiceSupplierImportWzd(models.TransientModel):
         Return a list o dics, each dic represent a invoice header
         """
         res = []
-        f = open(hfile, 'r')
-        file_lines = f.read().splitlines()
-        nline = 0
-        for fline in file_lines:
-            nline += 1
-            line = fline.split('\t')
+        with open(hfile, 'r') as f:
+            file_lines = f.read().splitlines()
+            nline = 0
+            for fline in file_lines:
+                nline += 1
+                line = fline.split('\t')
 
-            # CHECK FOR ERRORS IN LINE
-            if (self.check_header_line(line, nline, hfile)):
-                msg = _('No correct length')
-                hvals = {
+                # CHECK FOR ERRORS IN LINE
+                if (self.check_header_line(line, nline, hfile)):
+                    msg = _('No correct length')
+                    hvals = {
+                        'nline': nline,
+                        'filename': hfile,
+                        'type': 'cab',
+                    }
+                    self.log_id.create_log_line(msg, hvals)
+                    continue
+                map_dic = {
+                    'registro': line[0],
+                    # 'tipo_reg': line[1],
+                    'proveedor': line[2],
+                    'num_fra': line[3],
+                    'fecha_fra': line[4],
+                    # 'total': line[5],
+                    'ind_abono': line[6],
+                    'fec_registro': line[7],
+                    'fec_contable': line[8],
+                    'socio': line[9],
+                    'num_confor': line[10],
+                    'ind_colab': line[11],
+                    # 'forma_pago': line[12],
+                    # 'fec_vto': line[13],
+                    # 'cia': line[14],
+                    # 'dto_pp': line[16],
+                    # 'itpf': line[16],
+                    'ruta': line[17],
+                    # for log
                     'nline': nline,
                     'filename': hfile,
                     'type': 'cab',
                 }
-                self.log_id.create_log_line(msg, hvals)
-                continue
-            map_dic = {
-                'registro': line[0],
-                # 'tipo_reg': line[1],
-                'proveedor': line[2],
-                'num_fra': line[3],
-                'fecha_fra': line[4],
-                # 'total': line[5],
-                'ind_abono': line[6],
-                'fec_registro': line[7],
-                'fec_contable': line[8],
-                'socio': line[9],
-                'num_confor': line[10],
-                'ind_colab': line[11],
-                # 'forma_pago': line[12],
-                # 'fec_vto': line[13],
-                # 'cia': line[14],
-                # 'dto_pp': line[16],
-                # 'itpf': line[16],
-                'ruta': line[17],
-                # for log
-                'nline': nline,
-                'filename': hfile,
-                'type': 'cab',
-            }
-            res.append(map_dic)
+                res.append(map_dic)
         return res
 
     @api.model
@@ -109,24 +108,13 @@ class InvoiceSupplierImportWzd(models.TransientModel):
         newformat = ''
         if oldformat:
             datetimeobject = datetime.strptime(oldformat, '%Y%m%d')
-            newformat = datetimeobject.strftime('%Y-%m-%d')
+            newformat = fields.Date.to_string(datetimeobject)
         return newformat
 
     @api.model
     def _get_invoice_vals(self, hvals):
         # Find exisating invoice
         reference = hvals.get('num_fra', '')
-        if reference:
-            domain = [
-                ('reference', '=', reference)
-            ]
-            exist_inv = self.env['account.invoice'].search(domain, limit=1)
-            if exist_inv and exist_inv.state == 'draft':
-                exist_inv.unlink()
-            elif exist_inv and exist_inv.state != 'draft':
-                msg = _('Invoice with reference %s already imported' %
-                        reference)
-                self.log_id.create_log_line(msg, hvals)
         # Get supplier
         supplier_ref = hvals.get('proveedor', False)
         supplier = False
@@ -146,8 +134,12 @@ class InvoiceSupplierImportWzd(models.TransientModel):
 
         # Get date invoice
         date_invoice = self._format_date(hvals.get('fecha_fra', False))
+        if fields.Date.from_string(date_invoice) > date.today():
+            msg = _('Invoice date is after today')
+            self.log_id.create_log_line(msg, hvals)
+            return {}
         # Get date
-        date = self._format_date(hvals.get('fec_contable', False))
+        date_ = self._format_date(hvals.get('fec_contable', False))
         # Get digit_date
         digit_date = self._format_date(hvals.get('fec_registro', False))
         # Get associate
@@ -167,7 +159,7 @@ class InvoiceSupplierImportWzd(models.TransientModel):
             'account_id': supplier.property_account_payable_id.id,
             'reference': reference,
             'date_invoice': date_invoice,
-            'date': date,
+            'date': date_,
             'digit_date': digit_date,
             'num_ass': num_ass,
             'associate_id': associate_id,
@@ -195,7 +187,21 @@ class InvoiceSupplierImportWzd(models.TransientModel):
         for hvals in header_vals:
             vals = self._get_invoice_vals(hvals)
             if vals:
-                res += inv_pool.create(vals)
+                new_invoice = inv_pool.create(vals)
+                res += new_invoice
+                invoice_date = fields.Date.from_string(
+                    new_invoice.date_invoice)
+                if invoice_date + timedelta(days=365) < date.today():
+                    msg = _('Invoice date has more than 365 days')
+                    self.log_id.create_log_line(msg, hvals, new_invoice.id)
+                if new_invoice.check_duplicate_supplier():
+                    msg = _(
+                        'The invoice from supplier %s and number %s \
+                        alredery exists') % \
+                        (new_invoice.partner_id.name,
+                         new_invoice.clean_reference)
+                    self.log_id.create_log_line(msg, hvals, new_invoice.id)
+
         return res
 
     @api.model
@@ -211,36 +217,36 @@ class InvoiceSupplierImportWzd(models.TransientModel):
         Return a list o dics, each dic represent a invoice line
         """
         res = []
-        f = open(bfile, 'r')
-        file_lines = f.read().splitlines()
-        nline = 0
-        for fline in file_lines:
-            nline += 1
-            line = fline.split('\t')
+        with open(bfile, 'r') as f:
+            file_lines = f.read().splitlines()
+            nline = 0
+            for fline in file_lines:
+                nline += 1
+                line = fline.split('\t')
 
-            # CHECK FOR ERRORS IN LINE
-            if (self.check_base_line(line, nline)):
-                msg = _('No correct length')
-                hvals = {
+                # CHECK FOR ERRORS IN LINE
+                if (self.check_base_line(line, nline)):
+                    msg = _('No correct length')
+                    hvals = {
+                        'nline': nline,
+                        'filename': bfile,
+                        'type': 'cab',
+                    }
+                    self.log_id.create_log_line(msg, hvals)
+                    continue
+
+                map_dic = {
+                    'registro': line[0],
+                    'tipo_reg': line[1],
+                    'base': line[2],
+                    'cuota': line[3],
+                    # for log
                     'nline': nline,
                     'filename': bfile,
-                    'type': 'cab',
+                    'type': 'bas'
+
                 }
-                self.log_id.create_log_line(msg, hvals)
-                continue
-
-            map_dic = {
-                'registro': line[0],
-                'tipo_reg': line[1],
-                'base': line[2],
-                'cuota': line[3],
-                # for log
-                'nline': nline,
-                'filename': bfile,
-                'type': 'bas'
-
-            }
-            res.append(map_dic)
+                res.append(map_dic)
         return res
 
     @api.model

@@ -25,5 +25,6 @@
         'wizard/virtual_fair_import_wzd.xml',
         'wizard/invoice_supplier_import_wzd.xml',
         'wizard/direct_invoice_wzd.xml',
+        'wizard/duplicate_invoice_manual_check.xml'
     ],
 }

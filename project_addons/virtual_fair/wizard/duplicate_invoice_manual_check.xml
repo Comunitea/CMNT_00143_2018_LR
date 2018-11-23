@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="duplicate_invoice_manual_check_view_form" model="ir.ui.view">
+        <field name="name">duplicate.invoice.manual.check.wizard.view.form</field>
+        <field name="model">duplicate.invoice.manual.check.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Check duplicate invoices">
+                <group>
+                    <field name="has_invoices" invisible="1"/>
+                    <field name="invoices" nolabel="1"
+                           readonly="1"
+                           attrs="{'invisible': [('has_invoices', '=', False)]}">
+                        <tree>
+                            <field name="partner_id"/>
+                            <field name="reference"/>
+                            <field name="state" invisible="1"/>
+                        </tree>
+                    </field>
+                </group>
+                <footer>
+                    <button string='Check invoices' name="check_invoices"
+                            type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-default" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <act_window name="Check duplicate invoices"
+        res_model="duplicate.invoice.manual.check.wizard"
+        src_model="account.invoice"
+        view_id="duplicate_invoice_manual_check_view_form"
+        view_mode="form"
+        target="new"
+        key2="multi"
+        id="duplicate_invoice_manual_check_wizard_action"/>
+</odoo>
