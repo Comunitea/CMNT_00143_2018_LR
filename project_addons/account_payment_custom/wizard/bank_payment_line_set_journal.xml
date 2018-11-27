@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="bank_payment_line_set_journal_form" model="ir.ui.view">
+        <field name="name">bank.payment.line.set.journal.form</field>
+        <field name="model">bank.payment.line.set.journal</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Set journal and payment mode">
+                <group>
+                    <field name="payment_mode_id"/>
+                    <field name="journal_id" domain="[('type', '=', 'bank')]"/>
+                </group>
+                <footer>
+                    <button name="set_data" string="Set" type="object" class="oe_highlight"/>
+                    or
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <act_window name="Set journal"
+        res_model="bank.payment.line.set.journal"
+        src_model="bank.payment.line"
+        view_id="bank_payment_line_set_journal_form"
+        view_mode="form"
+        target="new"
+        key2="multi"
+        id="bank_payment_line_set_journal_action"/>
+
+</odoo>
