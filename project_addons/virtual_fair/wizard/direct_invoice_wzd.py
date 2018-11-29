@@ -28,7 +28,7 @@ class DirectInvoiceWzd(models.TransientModel):
         vals = {
             'partner_id': inv.associate_id.id,
             'name': '/',
-            'origin': ','.join(invoices.mapped('name')),
+            'origin': ','.join([x.name or '' for x in invoices]),
             'type':
             'out_invoice' if inv.type == 'in_invoice' else 'out_refund',
             'account_id': inv.associate_id.property_account_receivable_id.id,
