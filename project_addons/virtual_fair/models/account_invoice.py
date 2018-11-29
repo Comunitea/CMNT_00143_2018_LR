@@ -28,6 +28,14 @@ class AccountInvoice(models.Model):
                                              compute='_count_supplier_invoice')
     from_import = fields.Boolean('From supplier import', readonly=True)
     from_supplier = fields.Boolean('From supplier invoice', readonly=True)
+    clean_reference = fields.Char(compute='_compute_clean_reference',
+                                  store=True)
+
+    @api.depends('reference')
+    def _compute_clean_reference(self):
+        for invoice in self:
+            invoice.clean_reference = invoice.reference and \
+                invoice.reference.replace(" ", "") or ''
 
     @api.multi
     def _count_supplier_invoice(self):
@@ -165,3 +173,13 @@ class AccountInvoice(models.Model):
                 lsup = line.lsup
                 if (not linf or linf <= total) and (not lsup or lsup >= total):
                     inv.write({'featured_percent': line.percent})
+
+    def check_duplicate_supplier(self):
+        self.ensure_one()
+        if not self.reference:
+            return False
+        duplicate = self.env['account.invoice'].search(
+            [('partner_id', '=', self.partner_id.id),
+             ('clean_reference', '=', self.clean_reference),
+             ('id', '!=', self.id)])
+        return duplicate

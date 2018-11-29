@@ -21,9 +21,8 @@ class ImportationLog(models.Model):
                 log.base_errors = True
             log.invoice_count = len(log.invoice_ids)
 
-    name = fields.Char('Name')
-    date = fields.Date(string='Date',
-                       default=fields.Date.today(),
+    name = fields.Char()
+    date = fields.Date(default=fields.Date.today(),
                        readonly=True)
     invoice_ids = fields.One2many(comodel_name='account.invoice',
                                   inverse_name='log_id', string='Invoices')

@@ -35,3 +35,54 @@ msgstr "Hasta fecha vencimiento"
 msgid "Wizard to create payment lines"
 msgstr "Asistente para crear líneas de pago"
 
+#. module: account_payment_custom
+#: model:ir.ui.view,arch_db:account_payment_custom.account_payment_order_form
+msgid "<span>Payment lines</span>"
+msgstr "<span>Lineas de pago</span>"
+
+#. module: account_payment_custom
+#: model:ir.model,name:account_payment_custom.model_bank_payment_line
+msgid "Bank Payment Lines"
+msgstr "Líneas de pago bancario"
+
+#. module: account_payment_custom
+#: model:ir.ui.view,arch_db:account_payment_custom.bank_payment_line_set_journal_form
+msgid "Cancel"
+msgstr "Cancelar"
+
+#. module: account_payment_custom
+#: model:ir.ui.view,arch_db:account_payment_custom.bank_payment_line_set_journal_form
+msgid "Set"
+msgstr "Establecer"
+
+#. module: account_payment_custom
+#: model:ir.actions.act_window,name:account_payment_custom.bank_payment_line_set_journal_action
+msgid "Set journal"
+msgstr "Establecer diario"
+
+#. module: account_payment_custom
+#: model:ir.ui.view,arch_db:account_payment_custom.bank_payment_line_set_journal_form
+msgid "Set journal and payment mode"
+msgstr "Establecer diario y modo de pago"
+
+#. module: account_payment_custom
+#: model:ir.ui.view,arch_db:account_payment_custom.account_payment_order_form
+msgid "Split"
+msgstr "Partir orden"
+
+#. module: account_payment_custom
+#: model:ir.ui.view,arch_db:account_payment_custom.bank_payment_line_set_journal_form
+msgid "or"
+msgstr "o"
+
+#. module: account_payment_custom
+#: model:ir.model.fields,field_description:account_payment_custom.field_bank_payment_line_payment_mode_id
+#: model:ir.model.fields,field_description:account_payment_custom.field_bank_payment_line_set_journal_payment_mode_id
+msgid "Payment mode"
+msgstr "Modo de pago"
+
+#. module: account_payment_custom
+#: model:ir.model.fields,field_description:account_payment_custom.field_bank_payment_line_journal_id
+#: model:ir.model.fields,field_description:account_payment_custom.field_bank_payment_line_set_journal_journal_id
+msgid "Journal"
+msgstr "Diario"

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="account_payment_order_form" model="ir.ui.view">
+        <field name="name">account.payment.order.inherit.view.form</field>
+        <field name="model">account.payment.order</field>
+        <field name="inherit_id" ref="account_payment_order.account_payment_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@class='oe_title']" position="before">
+                <div class="oe_button_box" name="button_box">
+                    <button name="action_view_payment_line" type="object"
+                            class="oe_stat_button" icon="fa-list-ul" states="open">
+                        <span>Payment lines</span>
+                    </button>
+                </div>
+            </xpath>
+            <button name="action_cancel" position="after">
+                <button name="split_order" type="object" string="Split"
+                        states='open'/>
+            </button>
+        </field>
+    </record>
+</odoo>

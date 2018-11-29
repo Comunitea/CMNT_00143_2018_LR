@@ -20,6 +20,7 @@ class ResPartner(models.Model):
     direct = fields.Boolean('Direct', help='If checked, Serie 2')
     urgent = fields.Boolean('Urgent', help='Default urgent for partner orders\nPlus 3.20%')
     id_prov = fields.Integer('Id Prov')
+    old_customer = fields.Many2one('res.partner')
 
     @api.onchange('associate')
     def _onchange_associate(self):

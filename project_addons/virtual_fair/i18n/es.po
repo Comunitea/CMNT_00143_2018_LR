@@ -16,6 +16,17 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: virtual_fair
+#: model:ir.actions.act_window,name:virtual_fair.duplicate_invoice_manual_check_wizard_action
+#: model:ir.ui.view,arch_db:virtual_fair.duplicate_invoice_manual_check_view_form
+msgid "Check duplicate invoices"
+msgstr "Comprobar facturas duplicadas"
+
+#. module: virtual_fair
+#: model:ir.ui.view,arch_db:virtual_fair.duplicate_invoice_manual_check_view_form
+msgid "Check invoices"
+msgstr "Comprobar facturas"
+
+#. module: virtual_fair
 #: model:ir.model.fields,field_description:virtual_fair.field_account_invoice_supplier_invoices_count
 msgid "# Suipplier Invoices"
 msgstr "# Facturas Proveedor"
@@ -62,12 +73,36 @@ msgid "Bases Error Lines"
 msgstr "Líneas error en bases"
 
 #. module: virtual_fair
+#: model:ir.ui.view,arch_db:virtual_fair.duplicate_invoice_manual_check_view_form
 #: model:ir.ui.view,arch_db:virtual_fair.view_direct_invoice_wzd_form
 #: model:ir.ui.view,arch_db:virtual_fair.view_invoice_supplier_import_wzd_form
 #: model:ir.ui.view,arch_db:virtual_fair.view_virtual_fair_import_wzd_form
 msgid "Cancel"
 msgstr "Cancelar"
 
+#. module: virtual_fair
+#: code:addons/virtual_fair/wizard/invoice_supplier_import_wzd.py:209
+#, python-format
+msgid "The invoice from supplier %s and number %s                         alredery exists"
+msgstr "La factura del proveedor %s con número %s                         ya existe"
+
+#. module: virtual_fair
+#: code:addons/virtual_fair/wizard/invoice_supplier_import_wzd.py:206
+#, python-format
+msgid "Invoice date has more than 365 days"
+msgstr "Fecha de factura mayor a 365 días"
+
+#. module: virtual_fair
+#: code:addons/virtual_fair/wizard/invoice_supplier_import_wzd.py:149
+#, python-format
+msgid "Invoice date is after today"
+msgstr "La fecha de factura es posterior a hoy"
+
+#. module: virtual_fair
+#: code:addons/virtual_fair/wizard/invoice_supplier_import_wzd.py:126
+#, python-format
+msgid "Invoice with reference %s already imported"
+msgstr "La factura con referencia: %s , ya está importada"
 #. module: virtual_fair
 #: model:ir.model,name:virtual_fair.model_res_company
 msgid "Companies"
