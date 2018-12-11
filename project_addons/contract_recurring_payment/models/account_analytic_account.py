@@ -35,7 +35,7 @@ class AccountAnalyticAccount(models.Model):
             ('date_end_payment', '=', False),
             ('date_end_payment', '>=', today),
         ])
-        return contracts.recurring_create_invoice()
+        return contracts.recurring_create_payment()
 
     def recurring_create_payment(self):
         for contract in self:
