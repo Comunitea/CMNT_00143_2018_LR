@@ -12,8 +12,8 @@
     'installable': True,
     'depends': [
         'base',
-        'account_banking_sepa_direct_debit'
-
+        'account_banking_sepa_direct_debit',
+        'account_payment_return',
     ],
     'data': [
         'wizard/account_paymnet_line_create_view.xml',
