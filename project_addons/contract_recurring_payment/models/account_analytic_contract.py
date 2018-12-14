@@ -22,3 +22,19 @@ class AccountAnalyticContract(models.Model):
         string='Repeat Every',
         help="Repeat every (Days/Week/Month/Year)",
     )
+
+    recurring_voucher_rule_type = fields.Selection(
+        [('daily', 'Day(s)'),
+         ('weekly', 'Week(s)'),
+         ('monthly', 'Month(s)'),
+         ('yearly', 'Year(s)'),
+         ],
+        default='monthly',
+        string='Recurrence',
+        help="Specify Interval for automatic payment order generation.",
+    )
+    recurring_voucher_interval = fields.Integer(
+        default=1,
+        string='Repeat Every',
+        help="Repeat every (Days/Week/Month/Year)",
+    )

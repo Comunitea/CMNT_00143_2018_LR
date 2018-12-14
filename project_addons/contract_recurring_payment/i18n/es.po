@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 11.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-11-13 12:32+0000\n"
-"PO-Revision-Date: 2018-11-13 12:32+0000\n"
+"POT-Creation-Date: 2018-12-13 18:44+0000\n"
+"PO-Revision-Date: 2018-12-13 18:44+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,9 +16,24 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: contract_recurring_payment
+#: model:ir.model,name:contract_recurring_payment.model_account_voucher
+msgid "Accounting Voucher"
+msgstr "Recibos"
+
+#. module: contract_recurring_payment
 #: model:ir.model,name:contract_recurring_payment.model_account_analytic_account
 msgid "Analytic Account"
 msgstr "Cuenta analítica"
+
+#. module: contract_recurring_payment
+#: model:ir.model.fields,field_description:contract_recurring_payment.field_account_voucher_contract_id
+msgid "Contrato"
+msgstr "Contrato"
+
+#. module: contract_recurring_payment
+#: model:ir.ui.view,arch_db:contract_recurring_payment.account_analytic_account_form_inh
+msgid "Create Vouchers"
+msgstr "Crear recibos"
 
 #. module: contract_recurring_payment
 #: model:ir.ui.view,arch_db:contract_recurring_payment.account_analytic_account_form_inh
@@ -31,7 +46,18 @@ msgid "Date End"
 msgstr "Fecha fin"
 
 #. module: contract_recurring_payment
+#: model:ir.model.fields,field_description:contract_recurring_payment.field_account_analytic_account_date_end_voucher
+msgid "Date End Contract"
+msgstr "Fecha final de contrato"
+
+#. module: contract_recurring_payment
+#: model:ir.model.fields,field_description:contract_recurring_payment.field_account_analytic_account_recurring_voucher_end_date
+msgid "Date Last Voucher"
+msgstr "Fecha del último recibo"
+
+#. module: contract_recurring_payment
 #: model:ir.model.fields,field_description:contract_recurring_payment.field_account_analytic_account_date_start_payment
+#: model:ir.model.fields,field_description:contract_recurring_payment.field_account_analytic_account_date_start_voucher
 msgid "Date Start"
 msgstr "Fecha de inicio"
 
@@ -42,7 +68,9 @@ msgstr "Fecha de siguiente pago"
 
 #. module: contract_recurring_payment
 #: selection:account.analytic.account,recurring_payment_rule_type:0
+#: selection:account.analytic.account,recurring_voucher_rule_type:0
 #: selection:account.analytic.contract,recurring_payment_rule_type:0
+#: selection:account.analytic.contract,recurring_voucher_rule_type:0
 msgid "Day(s)"
 msgstr "Día(s)"
 
@@ -52,8 +80,35 @@ msgid "Generate recurring payments automatically"
 msgstr "Generar ordenes de cobro automaticamente"
 
 #. module: contract_recurring_payment
+#: model:ir.model.fields,field_description:contract_recurring_payment.field_account_analytic_account_recurring_voucher
+msgid "Generate recurring vouchers automatically"
+msgstr "Generar recibos automáticamente"
+
+#. module: contract_recurring_payment
+#: model:ir.model.fields,field_description:contract_recurring_payment.field_account_analytic_account_voucher_journal_id
+msgid "Journal Voucher"
+msgstr "Diario de recibos"
+
+#. module: contract_recurring_payment
+#: model:ir.model.fields,field_description:contract_recurring_payment.field_account_analytic_account_mandate_id
+msgid "Mandate"
+msgstr "Mandato"
+
+#. module: contract_recurring_payment
+#: model:ir.model.fields,field_description:contract_recurring_payment.field_account_voucher_mandate_id
+msgid "Mandato"
+msgstr "Mandato"
+
+#. module: contract_recurring_payment
+#: model:ir.model.fields,field_description:contract_recurring_payment.field_account_voucher_payment_mode_id
+msgid "Mode de pago"
+msgstr "Mode de pago"
+
+#. module: contract_recurring_payment
 #: selection:account.analytic.account,recurring_payment_rule_type:0
+#: selection:account.analytic.account,recurring_voucher_rule_type:0
 #: selection:account.analytic.contract,recurring_payment_rule_type:0
+#: selection:account.analytic.contract,recurring_voucher_rule_type:0
 msgid "Month(s)"
 msgstr "Mes(es)"
 
@@ -61,7 +116,12 @@ msgstr "Mes(es)"
 #: selection:account.analytic.account,recurring_payment_rule_type:0
 #: selection:account.analytic.contract,recurring_payment_rule_type:0
 msgid "Month(s) last day"
-msgstr "Month(s) last day"
+msgstr "Mes(es) último día"
+
+#. module: contract_recurring_payment
+#: model:ir.model.fields,field_description:contract_recurring_payment.field_account_analytic_account_number_vouchers
+msgid "Number of vouchers"
+msgstr "Número de recibos"
 
 #. module: contract_recurring_payment
 #: model:ir.model.fields,field_description:contract_recurring_payment.field_account_analytic_account_payment_qty
@@ -70,46 +130,88 @@ msgstr "Cantidad a cobrar"
 
 #. module: contract_recurring_payment
 #: model:ir.model.fields,field_description:contract_recurring_payment.field_account_analytic_account_recurring_payment_rule_type
+#: model:ir.model.fields,field_description:contract_recurring_payment.field_account_analytic_account_recurring_voucher_rule_type
 #: model:ir.model.fields,field_description:contract_recurring_payment.field_account_analytic_contract_recurring_payment_rule_type
+#: model:ir.model.fields,field_description:contract_recurring_payment.field_account_analytic_contract_recurring_voucher_rule_type
 msgid "Recurrence"
 msgstr "Recurrencia"
 
 #. module: contract_recurring_payment
+#: model:ir.ui.view,arch_db:contract_recurring_payment.account_analytic_account_search_inh
+msgid "Recurring Vouchers"
+msgstr "Recibos recurrentes"
+
+#. module: contract_recurring_payment
+#: model:ir.ui.view,arch_db:contract_recurring_payment.account_analytic_contract_view_form
+msgid "Recurrring Voucher"
+msgstr "Recibo recurrente"
+
+#. module: contract_recurring_payment
+#: model:ir.ui.view,arch_db:contract_recurring_payment.account_analytic_account_form_inh
+msgid "Recurrring Vouchers"
+msgstr "Recibos recurrentes"
+
+#. module: contract_recurring_payment
 #: model:ir.model.fields,field_description:contract_recurring_payment.field_account_analytic_account_recurring_payment_interval
+#: model:ir.model.fields,field_description:contract_recurring_payment.field_account_analytic_account_recurring_voucher_interval
 #: model:ir.model.fields,field_description:contract_recurring_payment.field_account_analytic_contract_recurring_payment_interval
+#: model:ir.model.fields,field_description:contract_recurring_payment.field_account_analytic_contract_recurring_voucher_interval
 msgid "Repeat Every"
 msgstr "Repetir cada"
 
 #. module: contract_recurring_payment
 #: model:ir.model.fields,help:contract_recurring_payment.field_account_analytic_account_recurring_payment_interval
+#: model:ir.model.fields,help:contract_recurring_payment.field_account_analytic_account_recurring_voucher_interval
 #: model:ir.model.fields,help:contract_recurring_payment.field_account_analytic_contract_recurring_payment_interval
+#: model:ir.model.fields,help:contract_recurring_payment.field_account_analytic_contract_recurring_voucher_interval
 msgid "Repeat every (Days/Week/Month/Year)"
 msgstr "Repetir cada (días/semana/mes/año)"
 
 #. module: contract_recurring_payment
 #: model:ir.model.fields,help:contract_recurring_payment.field_account_analytic_account_recurring_payment_rule_type
+#: model:ir.model.fields,help:contract_recurring_payment.field_account_analytic_account_recurring_voucher_rule_type
 #: model:ir.model.fields,help:contract_recurring_payment.field_account_analytic_contract_recurring_payment_rule_type
+#: model:ir.model.fields,help:contract_recurring_payment.field_account_analytic_contract_recurring_voucher_rule_type
 msgid "Specify Interval for automatic payment order generation."
-msgstr "Specify Interval for automatic payment order generation."
+msgstr "Esepcificar intervalos para la generación de órdenes de pago."
+
+#. module: contract_recurring_payment
+#: model:ir.model.fields,field_description:contract_recurring_payment.field_account_analytic_account_total_voucher_qty
+msgid "Total vouchers quantity"
+msgstr "Importe total en recibos"
+
+#. module: contract_recurring_payment
+#: model:ir.actions.act_window,name:contract_recurring_payment.act_recurring_vouchers
+msgid "Voucher"
+msgstr "Recibos"
+
+#. module: contract_recurring_payment
+#: model:ir.model.fields,field_description:contract_recurring_payment.field_account_analytic_account_voucher_qty
+msgid "Voucher quantity"
+msgstr "Importe por recibo"
 
 #. module: contract_recurring_payment
 #: selection:account.analytic.account,recurring_payment_rule_type:0
+#: selection:account.analytic.account,recurring_voucher_rule_type:0
 #: selection:account.analytic.contract,recurring_payment_rule_type:0
+#: selection:account.analytic.contract,recurring_voucher_rule_type:0
 msgid "Week(s)"
 msgstr "Semana(s)"
 
 #. module: contract_recurring_payment
 #: selection:account.analytic.account,recurring_payment_rule_type:0
+#: selection:account.analytic.account,recurring_voucher_rule_type:0
 #: selection:account.analytic.contract,recurring_payment_rule_type:0
+#: selection:account.analytic.contract,recurring_voucher_rule_type:0
 msgid "Year(s)"
 msgstr "Año(s)"
 
 #. module: contract_recurring_payment
-#: code:addons/contract_recurring_payment/models/account_analytic_account.py:50
+#: code:addons/contract_recurring_payment/models/account_analytic_account.py:140
 #, python-format
 msgid "You must review start and end payment dates!\n"
 "%s"
-msgstr "You must review start and end payment dates!\n"
+msgstr "Debe revisar las fechas de pago inicial y final!\n"
 "%s"
 
 #. module: contract_recurring_payment
@@ -125,7 +227,8 @@ msgid "account.analytic.contract"
 msgstr "account.analytic.contract"
 
 #. module: contract_recurring_payment
-#: code:addons/contract_recurring_payment/models/account_analytic_account.py:70
+#: code:addons/contract_recurring_payment/models/account_analytic_account.py:160
+#: code:addons/contract_recurring_payment/models/account_analytic_account.py:214
 #, python-format
 msgid "can not find a customer mandate"
 msgstr "No se puede encontrar un mandato para el cliente"
@@ -135,4 +238,9 @@ msgstr "No se puede encontrar un mandato para el cliente"
 #: model:ir.ui.view,arch_db:contract_recurring_payment.account_analytic_contract_view_form
 msgid "recurrring payment order"
 msgstr "Ordenes de cobro recurrentes"
+
+#. module: contract_recurring_payment
+#: model:ir.ui.view,arch_db:contract_recurring_payment.account_analytic_account_form_inh
+msgid "⇒ Show recurring vouchers"
+msgstr "⇒ Mostrar recibos"
 

@@ -16,6 +16,16 @@
                         </div>
                     </group>
                 </group>
+                <separator string="Recurrring Voucher"/>
+                <group>
+                    <group>
+                        <label for="recurring_voucher_interval"/>
+                        <div>
+                            <field name="recurring_voucher_interval" class="oe_inline" required="True"/>
+                            <field name="recurring_voucher_rule_type" class="oe_inline" required="True"/>
+                        </div>
+                    </group>
+                </group>
             </group>
         </field>
     </record>
