@@ -52,14 +52,14 @@
                 </div>
             </div>
         </xpath>
+
         <xpath expr="//div[@class='page']" position="after">
             <t t-foreach="o.image_ids" t-as="image">
                 <div class="page" style="page-break-before: always">
-                    <img t-att-src="'data:image/png;base64,%s' % to_text(image.image_main)"/>
+                    <img t-att-src="'data:image/png;base64,%s' % to_text(image.image_main)" style="max-height:268mm; max-width: 210mm; height:auto; width:auto;"/>
                 </div>
             </t>
         </xpath>
-
     </template>
 
 </odoo>

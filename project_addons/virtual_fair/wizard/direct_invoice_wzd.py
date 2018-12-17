@@ -1,8 +1,13 @@
 
 # © 2018 Comunitea
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
-
+import base64
+import os
+import shutil
+import tempfile
+import subprocess
 from odoo import models, fields, api, _
+from odoo.exceptions import UserError
 
 
 class DirectInvoiceWzd(models.TransientModel):
@@ -82,6 +87,46 @@ class DirectInvoiceWzd(models.TransientModel):
             res.append((0, 0, line_vals))
         return res
 
+    def _copy_images(self, from_invoices, to_invoice):
+        sequence = 1
+
+        for invoice in from_invoices:
+            attachments = self.env['ir.attachment'].search([('res_id', '=', invoice.id), ('res_model', '=', 'account.invoice')])
+            for attachment in attachments:
+                new_attachments = self.env['ir.attachment']
+                if attachment.name.endswith('.tiff'):
+                    tempdir = tempfile.mkdtemp(invoice.number.replace('/', ''))
+                    with open(tempdir + '/attachment.tiff', 'wb') as f:
+                        f.write(base64.b64decode(attachment.datas))
+                    try:
+                        subprocess.run('convert {} {}'.format(tempdir + '/attachment.tiff', tempdir + '/attachment.png'), shell=True)
+                    except subprocess.CalledProcessError:
+                        raise UserError(_('Error converting tiff to png'))
+                    directory = os.listdir(tempdir)
+                    directory.sort()
+                    for png_file in directory:
+                        if png_file.endswith(".png"):
+                            with open(tempdir + '/' + png_file, 'rb') as f:
+                                new_attachments += self.env['ir.attachment'].create({
+                                    'name': png_file,
+                                    'type': 'binary',
+                                    'datas': base64.b64encode(f.read())
+                                })
+
+                    shutil.rmtree(tempdir)
+                else:
+                    new_attachments = attachment.copy({'res_id': False})
+                for new_attachment in new_attachments:
+                    self.env['base_multi_image.image'].create({
+                        'storage': 'filestore',
+                        'attachment_id': new_attachment.id,
+                        'owner_model': 'account.invoice',
+                        'owner_id': to_invoice.id,
+                        'sequence': sequence
+                    })
+                    sequence += 1
+
+
     @api.multi
     def create_invoices(self):
         self.ensure_one()
@@ -103,6 +148,7 @@ class DirectInvoiceWzd(models.TransientModel):
             invoice_objs = inv_grouped[associate_id]
             vals = self._get_invoice_vals(invoice_objs)
             inv = self.env['account.invoice'].create(vals)
+            self._copy_images(invoice_objs, inv)
 
             created_invoices += inv
             # Write link between supplier and created invoice

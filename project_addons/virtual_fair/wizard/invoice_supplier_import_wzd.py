@@ -1,6 +1,6 @@
 # © 2018 Comunitea
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
-
+import base64
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
 from datetime import datetime, date, timedelta
@@ -177,6 +177,18 @@ class InvoiceSupplierImportWzd(models.TransientModel):
         }
         return invoice_vals
 
+    def _create_attachment(self, image_route, invoice):
+        with open(image_route, 'rb') as image_file:
+            b64_image = base64.b64encode(image_file.read())
+            attachment = self.env['ir.attachment'].create({
+                'res_model': 'account.invoice',
+                'res_id': invoice.id,
+                'name': image_route.split('/')[-1],
+                'datas': b64_image,
+                'datas_fname': image_route.split('/')[-1],
+                })
+
+
     @api.model
     def create_invoices(self, header_vals):
         """
@@ -202,6 +214,8 @@ class InvoiceSupplierImportWzd(models.TransientModel):
                          new_invoice.clean_reference)
                     self.log_id.create_log_line(msg, hvals, new_invoice.id)
 
+                if hvals.get('ruta') and new_invoice:
+                    self._create_attachment(hvals.get('ruta'), new_invoice)
         return res
 
     @api.model
