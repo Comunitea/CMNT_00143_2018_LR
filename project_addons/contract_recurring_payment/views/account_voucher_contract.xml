@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_sale_receipt_contract_form" model="ir.ui.view">
+        <field name="name">account.voucher.sale.contract.form</field>
+        <field name="model">account.voucher</field>
+        <field name="inherit_id" ref="account_voucher.view_sale_receipt_form"/>
+        <field name="arch" type="xml">
+            <field name="account_date" position="after">
+                <field name="contract_id" />
+                <field name="payment_mode_id" />
+                <field name="mandate_id" />
+            </field>
+        </field>
+    </record>
+
+    <record id="view_sale_receipt_contract_list" model="ir.ui.view">
+        <field name="name">account.voucher.sale.contract.list</field>
+        <field name="model">account.voucher</field>
+        <field name="inherit_id" ref="account_voucher.view_voucher_tree"/>
+        <field name="arch" type="xml">
+            <field name="date" position="after">
+                <field name="date_due" />
+            </field>
+        </field>
+    </record>
+
+    <record id="view_voucher_filter_sale_inh" model="ir.ui.view">
+        <field name="name">account.voucher.sale.select.inherit.view.search</field>
+        <field name="model">account.voucher</field>
+        <field name="inherit_id" ref="account_voucher.view_voucher_filter_sale"/>
+        <field name="arch" type="xml">
+            <field name="journal_id" position="after" >
+                <separator/>
+                <field name="contract_id"/>
+            </field>
+        </field>
+    </record>
+
+
+    <record id="act_recurring_vouchers" model="ir.actions.act_window">
+        <field name="name">Voucher</field>
+        <field name="res_model">account.voucher</field>
+        <field name="view_ids"
+               eval="[(5, 0, 0),
+                      (0, 0, {'view_mode': 'tree', 'view_id': ref('account_voucher.view_voucher_tree')}),
+                      (0, 0, {'view_mode': 'form', 'view_id': ref('account_voucher.view_sale_receipt_form')})]"/>
+        <field name="search_view_id" eval="ref('account_voucher.view_voucher_filter_sale')"/>
+        <field name="context">{
+            'search_default_contract_id': [active_id],
+            'default_contract_id': active_id}
+        </field>
+    </record>
+</odoo>

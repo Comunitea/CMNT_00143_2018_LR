@@ -16,6 +16,7 @@
     'data': [
         'views/account_analytic_contract.xml',
         'views/account_analytic_account.xml',
+        'views/account_voucher_contract.xml',
         'data/payment_cron.xml'
     ],
 }

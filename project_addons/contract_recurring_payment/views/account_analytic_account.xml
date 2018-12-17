@@ -34,10 +34,61 @@
                         <field name="recurring_payment_next_date" attrs="{'required': [('recurring_payment', '=', True)]}"/>
                     </group>
                 </group>
+
+                <separator string="Recurrring Vouchers" attrs="{'invisible': [('recurring_voucher', '!=', True)]}"/>
+                <div>
+                    <field name="recurring_voucher" class="oe_inline"/>
+                    <label for="recurring_voucher"/>
+                    <button name="recurring_create_voucher"
+                            type="object"
+                            attrs="{'invisible': ['|', ('recurring_voucher', '!=', True)]}"
+                            string="Create Vouchers"
+                            class="oe_link"
+                            groups="base.group_no_one"
+                            />
+                    <button name="contract_recurring_payment.act_recurring_vouchers"
+                            type="action"
+                            attrs="{'invisible': [('recurring_voucher','!=',True)]}"
+                            string="⇒ Show recurring vouchers"
+                            class="oe_link"/>
+                </div>
+                <group attrs="{'invisible': [('recurring_voucher', '!=', True)]}">
+                    <group>
+                        <label for="recurring_voucher_interval"/>
+                        <div>
+                            <field name="recurring_voucher_interval" class="oe_inline" required="True"/>
+                            <field name="recurring_voucher_rule_type" class="oe_inline" required="True"/>
+                        </div>
+                        <field name="total_voucher_qty"/>
+                        <field name="number_vouchers"/>
+                        <field name="voucher_qty"/>
+                    </group>
+                    <group>
+                        <field name="voucher_journal_id" attrs="{'required': [('recurring_voucher', '=', True)]}"/>
+                        <field name="day_due" attrs="{'required': [('recurring_voucher', '=', True)]}"/>
+                        <field name="mandate_id" attrs="{'required': [('recurring_voucher', '=', True)]}"/>
+                        <field name="date_start_voucher" attrs="{'required': [('recurring_voucher', '=', True)]}"/>
+                        <field name="date_end_voucher"/>
+                        <field name="recurring_voucher_end_date" attrs="{'required': [('recurring_voucher', '=', True)]}"/>
+                    </group>
+                </group>
+
             </group>
             <field name="payment_mode_id" position="attributes">
-                <attribute name="attrs">{'required': [('recurring_payment', '=', True)]}</attribute>
+                <attribute name="attrs">{'required': ['|', ('recurring_payment', '=', True), ('recurring_voucher', '=', True)]}</attribute>
             </field>
         </field>
     </record>
+
+    <record id="account_analytic_account_search_inh" model="ir.ui.view">
+        <field name="name">account.analytic.account.inherit.view.search</field>
+        <field name="model">account.analytic.account</field>
+        <field name="inherit_id" ref="contract.view_account_analytic_account_contract_search"/>
+        <field name="arch" type="xml">
+            <filter name="recurring_invoices" position="after" >
+                    <filter name="recurring_vouchers" string="Recurring Vouchers" domain="[('recurring_voucher','=',True)]"/>
+            </filter>
+        </field>
+    </record>
+
 </odoo>
