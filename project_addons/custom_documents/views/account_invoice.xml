@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="invoice_form" model="ir.ui.view">
+        <field name="name">account.invoice.inherit.view.form</field>
+        <field name="model">account.invoice</field>
+        <field name="inherit_id" ref="account.invoice_form"/>
+        <field name="arch" type="xml">
+            <notebook position="inside">
+                <page string="Images">
+                    <field
+                        name="image_ids"
+                        nolabel="1"
+                        context="{
+                            'default_owner_model': 'account.invoice',
+                            'default_owner_id': id,
+                        }"
+                        mode="kanban"/>
+                </page>
+            </notebook>
+
+        </field>
+    </record>
+
+</odoo>
+
