@@ -91,7 +91,9 @@ class DirectInvoiceWzd(models.TransientModel):
         sequence = 1
 
         for invoice in from_invoices:
-            attachments = self.env['ir.attachment'].search([('res_id', '=', invoice.id), ('res_model', '=', 'account.invoice')])
+            attachments = self.env['ir.attachment'].search(
+                [('res_id', '=', invoice.id),
+                 ('res_model', '=', 'account.invoice')])
             for attachment in attachments:
                 new_attachments = self.env['ir.attachment']
                 if attachment.name.endswith('.tiff'):
@@ -99,7 +101,10 @@ class DirectInvoiceWzd(models.TransientModel):
                     with open(tempdir + '/attachment.tiff', 'wb') as f:
                         f.write(base64.b64decode(attachment.datas))
                     try:
-                        subprocess.run('convert {} {}'.format(tempdir + '/attachment.tiff', tempdir + '/attachment.png'), shell=True)
+                        from_tiff = tempdir + '/attachment.tiff'
+                        to_png = tempdir + '/attachment.png'
+                        subprocess.run('convert {} {}'.format(
+                            from_tiff, to_png), shell=True)
                     except subprocess.CalledProcessError:
                         raise UserError(_('Error converting tiff to png'))
                     directory = os.listdir(tempdir)
@@ -107,7 +112,7 @@ class DirectInvoiceWzd(models.TransientModel):
                     for png_file in directory:
                         if png_file.endswith(".png"):
                             with open(tempdir + '/' + png_file, 'rb') as f:
-                                new_attachments += self.env['ir.attachment'].create({
+                                new_attachments += new_attachments.create({
                                     'name': png_file,
                                     'type': 'binary',
                                     'datas': base64.b64encode(f.read())
