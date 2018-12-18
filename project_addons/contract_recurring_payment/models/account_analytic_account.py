@@ -51,10 +51,13 @@ class AccountAnalyticAccount(models.Model):
         comodel_name='account.banking.mandate',
         string='Mandate',)
     day_due = fields.Integer(string='Due day', default=25)
-
-    @api.onchange('number_vouchers', 'recurring_voucher_rule_type',
-                  'recurring_voucher_interval', 'day_due',
-                  'date_start_voucher')
+    supplier_id = fields.Many2one(comodel_name='res.partner',
+        string='Supplier', domain=[('supplier', '=', True),
+                                   ('company_type', '=', 'company')])
+    payment_mode_invoice_id = fields.Many2one(
+        comodel_name='account.payment.mode',
+        string='Payment mode for Invoices',
+        domain=[('payment_type', '=', 'inbound')])
 
     def get_first_due_date(self):
         start_date = fields.Datetime.from_string(
@@ -70,6 +73,9 @@ class AccountAnalyticAccount(models.Model):
                 first_due = first_due.replace(day=self.day_due)
         return first_due
 
+    @api.onchange('number_vouchers', 'recurring_voucher_rule_type',
+                  'recurring_voucher_interval', 'day_due',
+                  'date_start_voucher')
     def onchange_dates(self):
         first_due = self.get_first_due_date()
 
