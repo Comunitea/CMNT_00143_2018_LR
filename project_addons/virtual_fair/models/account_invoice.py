@@ -35,7 +35,7 @@ class AccountInvoice(models.Model):
     def _compute_clean_reference(self):
         for invoice in self:
             invoice.clean_reference = invoice.reference and \
-                invoice.reference.replace(" ", "") or ''
+                re.sub('[^A-Za-z0-9]+', '', invoice.reference) or ''
 
     @api.multi
     def _count_supplier_invoice(self):
@@ -174,12 +174,22 @@ class AccountInvoice(models.Model):
                 if (not linf or linf <= total) and (not lsup or lsup >= total):
                     inv.write({'featured_percent': line.percent})
 
+    def _check_duplicate_history(self):
+        duplicate = self.env['account.invoice.history'].search(
+            [('supplier_id', '=', self.partner_id.id),
+            ('associated_id', '=', self.associated_id.id),
+             ('clean_reference', '=', self.clean_reference),
+             ('fechaFraProv', '=', self.date_invoice)])
+
     def check_duplicate_supplier(self):
         self.ensure_one()
         if not self.reference:
             return False
         duplicate = self.env['account.invoice'].search(
             [('partner_id', '=', self.partner_id.id),
+            ('associated_id', '=', self.associated_id.id),
              ('clean_reference', '=', self.clean_reference),
+             ('date_invoice', '=', self.date_invoice),
              ('id', '!=', self.id)])
-        return duplicate
+        duplicate_2 += self._check_duplicate_history()
+        return duplicate or duplicate_2 or False

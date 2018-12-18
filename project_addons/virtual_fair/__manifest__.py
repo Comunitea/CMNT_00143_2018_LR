@@ -18,6 +18,7 @@
         'security/ir.model.access.csv',
         'data/parameter.xml',
         'data/product_data.xml',
+        'views/account_invoice_history.xml',
         'views/virtual_fair.xml',
         'views/importation_log.xml',
         'views/res_company.xml',

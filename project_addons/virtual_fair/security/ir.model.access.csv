@@ -7,4 +7,5 @@ access_section_line,access_section_line,model_section_line,base.group_user,1,1,1
 access_importation_log,access_importation_log,model_importation_log,base.group_user,1,1,1,1
 access_direct_line_section,access_direct_line_section,model_direct_line_section,base.group_user,1,1,1,1
 access_log_line,access_log_line,model_log_line,base.group_user,1,1,1,1
-
+access_account_invoice_history_base,access_account_invoice_history_base,model_account_invoice_history,base.group_user,1,0,0,0
+access_account_invoice_history_account,access_account_invoice_history_account,model_account_invoice_history,account.group_account_manager,1,1,1,1

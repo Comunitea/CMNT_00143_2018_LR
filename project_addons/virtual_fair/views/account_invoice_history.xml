@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="account_invoice_history_action" model="ir.actions.act_window">
+        <field name="name">Invoice history</field>
+        <field name="res_model">account.invoice.history</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem name="Invoice history" parent="account.account_account_menu" action="account_invoice_history_action" id="account_invoice_history_menu"/>
+</odoo>
