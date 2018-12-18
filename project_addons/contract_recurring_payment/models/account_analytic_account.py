@@ -52,9 +52,6 @@ class AccountAnalyticAccount(models.Model):
         string='Mandate',)
     day_due = fields.Integer(string='Due day', default=25)
 
-    @api.onchange('number_vouchers', 'recurring_voucher_rule_type',
-                  'recurring_voucher_interval', 'day_due',
-                  'date_start_voucher')
 
     def get_first_due_date(self):
         start_date = fields.Datetime.from_string(
@@ -70,6 +67,9 @@ class AccountAnalyticAccount(models.Model):
                 first_due = first_due.replace(day=self.day_due)
         return first_due
 
+    @api.onchange('number_vouchers', 'recurring_voucher_rule_type',
+                  'recurring_voucher_interval', 'day_due',
+                  'date_start_voucher')
     def onchange_dates(self):
         first_due = self.get_first_due_date()
 
