@@ -62,6 +62,8 @@
                         <field name="total_voucher_qty"/>
                         <field name="number_vouchers"/>
                         <field name="voucher_qty"/>
+                        <field name="supplier_id"/>
+                        <field name="payment_mode_invoice_id"/>
                     </group>
                     <group>
                         <field name="voucher_journal_id" attrs="{'required': [('recurring_voucher', '=', True)]}"/>

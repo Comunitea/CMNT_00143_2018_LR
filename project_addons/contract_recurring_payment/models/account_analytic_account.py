@@ -51,7 +51,13 @@ class AccountAnalyticAccount(models.Model):
         comodel_name='account.banking.mandate',
         string='Mandate',)
     day_due = fields.Integer(string='Due day', default=25)
-
+    supplier_id = fields.Many2one(comodel_name='res.partner',
+        string='Supplier', domain=[('supplier', '=', True),
+                                   ('company_type', '=', 'company')])
+    payment_mode_invoice_id = fields.Many2one(
+        comodel_name='account.payment.mode',
+        string='Payment mode for Invoices',
+        domain=[('payment_type', '=', 'inbound')])
 
     def get_first_due_date(self):
         start_date = fields.Datetime.from_string(
