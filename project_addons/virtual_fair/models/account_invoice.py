@@ -30,6 +30,7 @@ class AccountInvoice(models.Model):
     from_supplier = fields.Boolean('From supplier invoice', readonly=True)
     clean_reference = fields.Char(compute='_compute_clean_reference',
                                   store=True)
+    tag = fields.Char('Tag')
 
     @api.depends('reference')
     def _compute_clean_reference(self):

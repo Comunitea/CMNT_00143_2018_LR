@@ -154,6 +154,7 @@ class InvoiceSupplierImportWzd(models.TransientModel):
         invoice_vals = {
             'partner_id': supplier.id,
             'name': hvals.get('registro', ''),
+            'tag': hvals.get('registro', ''),
             'origin': _('Supplier Importation'),
             'type': type_inv,
             'account_id': supplier.property_account_payable_id.id,
