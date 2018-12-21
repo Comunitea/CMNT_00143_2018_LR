@@ -207,7 +207,7 @@ class InvoiceSupplierImportWzd(models.TransientModel):
                 if invoice_date + timedelta(days=365) < date.today():
                     msg = _('Invoice date has more than 365 days')
                     self.log_id.create_log_line(msg, hvals, new_invoice.id)
-                if new_invoice.check_duplicate_supplier():
+                if new_invoice.check_duplicate_all():
                     msg = _(
                         'The invoice from supplier %s and number %s \
                         alredery exists') % \

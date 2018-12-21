@@ -1,5 +1,6 @@
 # Copyright 2016 Acsone SA/NV
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
+import re
 from odoo import api, fields, models, _
 
 
@@ -182,25 +183,35 @@ class AccountInvoice(models.Model):
              ('supplier_id', '=', self.partner_id.id),
              ('partner_id', '=', self.associate_id.id)])
         if analytic_account:
-            invoice.invoice_line_ids.write(
+            self.invoice_line_ids.write(
                 {'account_analytic_id': analytic_account[0].id})
 
-    def _check_duplicate_history(self):
-        duplicate = self.env['account.invoice.history'].search(
-            [('supplier_id', '=', self.partner_id.id),
+    def check_duplicate_history(self):
+        equal_args = [
+            ('supplier_id', '=', self.partner_id.id),
             ('associate_id', '=', self.associate_id.id),
-             ('clean_reference', '=', self.clean_reference),
-             ('fechaFraProv', '=', self.date_invoice)])
+            ('fchaFra', '=', self.date_invoice),
+            ('etiqueta', '!=', self.tag)]
+        if not self._context.get('check_different_name'):
+            equal_args.append(('clean_reference', '=', self.clean_reference))
+        return self.env['account.invoice.history'].search(equal_args)
 
     def check_duplicate_supplier(self):
         self.ensure_one()
         if not self.reference:
             return False
-        duplicate = self.env['account.invoice'].search(
-            [('partner_id', '=', self.partner_id.id),
+        equal_args = [
+             ('partner_id', '=', self.partner_id.id),
              ('associate_id', '=', self.associate_id.id),
-             ('clean_reference', '=', self.clean_reference),
              ('date_invoice', '=', self.date_invoice),
-             ('id', '!=', self.id)])
+             ('id', '!=', self.id),
+             ('tag', '!=', self.tag)]
+        if not self._context.get('check_different_name'):
+            equal_args.append(('clean_reference', '=', self.clean_reference))
+        return self.env['account.invoice'].search(equal_args)
+
+    def check_duplicate_all(self):
+        duplicate = self.check_duplicate_supplier()
         duplicate_2 = self._check_duplicate_history()
         return duplicate or duplicate_2 or False
+

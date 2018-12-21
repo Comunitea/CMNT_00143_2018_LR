@@ -1,10 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <record id="account_invoice_history_view_tree" model="ir.ui.view">
+        <field name="name">account.invoice.history.view.tree</field>
+        <field name="model">account.invoice.history</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="fchaFra"/>
+                <field name="numFra"/>
+                <field name="codPr"/>
+                <field name="nomProv"/>
+                <field name="codS"/>
+                <field name="nombSocio"/>
+                <field name="etiqueta"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="account_invoice_history_view_search" model="ir.ui.view">
+        <field name="name">account.invoice.history.view.search</field>
+        <field name="model">account.invoice.history</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="fchaFra"/>
+                <field name="codPr"/>
+                <field name="nomProv"/>
+                <field name="codS"/>
+                <field name="nombSocio"/>
+                <field name="etiqueta"/>
+            </search>
+        </field>
+    </record>
+
     <record id="account_invoice_history_action" model="ir.actions.act_window">
         <field name="name">Invoice history</field>
         <field name="res_model">account.invoice.history</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="account_invoice_history_view_tree"/>
+        <field name="search_view_id" ref="account_invoice_history_view_search"/>
     </record>
 
     <menuitem name="Invoice history" parent="account.account_account_menu" action="account_invoice_history_action" id="account_invoice_history_menu"/>

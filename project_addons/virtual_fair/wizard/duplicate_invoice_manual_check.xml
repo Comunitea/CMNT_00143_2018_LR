@@ -7,15 +7,30 @@
         <field name="arch" type="xml">
             <form string="Check duplicate invoices">
                 <group>
+                    <field name="check_different_name" attrs="{'invisible': [('has_invoices', '=', True)]}"/>
                     <field name="has_invoices" invisible="1"/>
-                    <field name="invoices" nolabel="1"
+                    <field name="invoice_lines" nolabel="1"
+                            colspan="4"
                            readonly="1"
                            attrs="{'invisible': [('has_invoices', '=', False)]}">
                         <tree>
-                            <field name="partner_id"/>
-                            <field name="reference"/>
-                            <field name="state" invisible="1"/>
+                            <field name="orig_invoice"/>
+                            <field name="duplicate_invoices"/>
+                            <field name="duplicate_invoices_history"/>
                         </tree>
+                        <form>
+                            <group>
+                                <field name="orig_invoice"/>
+                            </group>
+                            <notebook>
+                                <page string="Invoices">
+                                    <field name="duplicate_invoices"/>
+                                </page>
+                                <page string="Invoice history">
+                                    <field name="duplicate_invoices_history"/>
+                                </page>
+                            </notebook>
+                        </form>
                     </field>
                 </group>
                 <footer>
