@@ -32,6 +32,17 @@ class AccountInvoice(models.Model):
     clean_reference = fields.Char(compute='_compute_clean_reference',
                                   store=True)
     tag = fields.Char('Tag')
+    analytic_account_id = fields.Many2one(
+        'account.analytic.account', compute='_compute_analytic_account_id')
+
+    def _compute_analytic_account_id(self):
+        for invoice in self:
+            analytic_accounts = invoice.mapped(
+                'invoice_line_ids.account_analytic_id')
+            if len(analytic_accounts) == 1:
+                invoice.analytic_account_id = analytic_accounts
+            else:
+                invoice.analytic_account_id = False
 
     @api.depends('reference')
     def _compute_clean_reference(self):
@@ -178,13 +189,14 @@ class AccountInvoice(models.Model):
 
     @api.multi
     def set_supplier_analytic_account(self):
-        analytic_account = self.env['account.analytic.account'].search(
-            [('recurring_voucher', '=', True),
-             ('supplier_id', '=', self.partner_id.id),
-             ('partner_id', '=', self.associate_id.id)])
-        if analytic_account:
-            self.invoice_line_ids.write(
-                {'account_analytic_id': analytic_account[0].id})
+        for invoice in self:
+            analytic_account = self.env['account.analytic.account'].search(
+                [('recurring_voucher', '=', True),
+                ('supplier_id', '=', invoice.partner_id.id),
+                ('partner_id', '=', invoice.associate_id.id)])
+            if analytic_account:
+                invoice.invoice_line_ids.write(
+                    {'account_analytic_id': analytic_account[0].id})
 
     def check_duplicate_history(self):
         equal_args = [
@@ -212,6 +224,5 @@ class AccountInvoice(models.Model):
 
     def check_duplicate_all(self):
         duplicate = self.check_duplicate_supplier()
-        duplicate_2 = self._check_duplicate_history()
+        duplicate_2 = self.check_duplicate_history()
         return duplicate or duplicate_2 or False
-

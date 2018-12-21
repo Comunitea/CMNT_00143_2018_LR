@@ -16,6 +16,39 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: virtual_fair
+#: code:addons/virtual_fair/wizard/invoice_supplier_import_wzd.py:194
+#, python-format
+msgid "Can't open the file %s"
+msgstr "No se puede abrir el archivo %s"
+
+#. module: virtual_fair
+#: model:ir.actions.act_window,name:virtual_fair.account_invoice_history_action
+#: model:ir.ui.menu,name:virtual_fair.account_invoice_history_menu
+#: model:ir.ui.view,arch_db:virtual_fair.duplicate_invoice_manual_check_view_form
+msgid "Invoice history"
+msgstr "Histórico de facturas"
+
+#. module: virtual_fair
+#: model:ir.model.fields,field_description:virtual_fair.field_duplicate_invoice_manual_check_wizard_check_different_name
+msgid "Search invoices with different number"
+msgstr "Buscar facturas con número diferente"
+
+#. module: virtual_fair
+#: model:ir.model.fields,field_description:virtual_fair.field_duplicate_invoice_manual_check_wizard_line_orig_invoice
+msgid "Orig Invoice"
+msgstr "Factura comprobada"
+
+#. module: virtual_fair
+#: model:ir.model.fields,field_description:virtual_fair.field_duplicate_invoice_manual_check_wizard_line_duplicate_invoices
+msgid "Duplicate Invoices"
+msgstr "Duplicados encontrados"
+
+#. module: virtual_fair
+#: model:ir.model.fields,field_description:virtual_fair.field_duplicate_invoice_manual_check_wizard_line_duplicate_invoices_history
+msgid "Duplicate Invoices History"
+msgstr "Duplicados encontrados en histórico"
+
+#. module: virtual_fair
 #: model:ir.model.fields,field_description:virtual_fair.field_account_invoice_supplier_invoices_count
 msgid "# Suipplier Invoices"
 msgstr "# Facturas Proveedor"

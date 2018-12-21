@@ -178,17 +178,21 @@ class InvoiceSupplierImportWzd(models.TransientModel):
         }
         return invoice_vals
 
-    def _create_attachment(self, image_route, invoice):
-        with open(image_route, 'rb') as image_file:
-            b64_image = base64.b64encode(image_file.read())
-            attachment = self.env['ir.attachment'].create({
-                'res_model': 'account.invoice',
-                'res_id': invoice.id,
-                'name': image_route.split('/')[-1],
-                'datas': b64_image,
-                'datas_fname': image_route.split('/')[-1],
-                })
-
+    def _create_attachment(self, hvals, invoice):
+        image_route = hvals.get('ruta')
+        try:
+            with open(image_route, 'rb') as image_file:
+                b64_image = base64.b64encode(image_file.read())
+                self.env['ir.attachment'].create({
+                    'res_model': 'account.invoice',
+                    'res_id': invoice.id,
+                    'name': image_route.split('/')[-1],
+                    'datas': b64_image,
+                    'datas_fname': image_route.split('/')[-1],
+                    })
+        except FileNotFoundError:
+            msg = _("Can't open the file %s") % image_route
+            self.log_id.create_log_line(msg, hvals, invoice.id)
 
     @api.model
     def create_invoices(self, header_vals):
@@ -216,7 +220,7 @@ class InvoiceSupplierImportWzd(models.TransientModel):
                     self.log_id.create_log_line(msg, hvals, new_invoice.id)
 
                 if hvals.get('ruta') and new_invoice:
-                    self._create_attachment(hvals.get('ruta'), new_invoice)
+                    self._create_attachment(hvals, new_invoice)
         return res
 
     @api.model

@@ -74,7 +74,9 @@ class DirectInvoiceWzd(models.TransientModel):
 
         # Create a line for each diferent tax
         for tax in group_line_tax:
-            tax_ids = self._get_purchase_tax(tax)
+            tax_ids = False
+            if tax:
+                tax_ids = self._get_purchase_tax(tax)
             price_unit = group_line_tax[tax]
             line_vals = {
                 'name': _('From Supplier Import'),
@@ -82,8 +84,10 @@ class DirectInvoiceWzd(models.TransientModel):
                 'price_unit': price_unit,
                 'account_id': account_id,
                 'invoice_id': inv.id,
-                'invoice_line_tax_ids': [(6, 0, tax_ids)]
+                'account_analytic_id': invoices[0].analytic_account_id.id,
             }
+            if tax_ids:
+                line_vals['invoice_line_tax_ids'] = [(6, 0, tax_ids)]
             res.append((0, 0, line_vals))
         return res
 
@@ -131,7 +135,6 @@ class DirectInvoiceWzd(models.TransientModel):
                     })
                     sequence += 1
 
-
     @api.multi
     def create_invoices(self):
         self.ensure_one()
@@ -143,14 +146,15 @@ class DirectInvoiceWzd(models.TransientModel):
         for inv in invoices:
             if not inv.associate_id:
                 continue
-            if inv.associate_id.id not in inv_grouped:
-                inv_grouped[inv.associate_id.id] = self.env['account.invoice']
-            inv_grouped[inv.associate_id.id] += inv
+            group_key = (inv.associate_id.id, inv.analytic_account_id)
+            if group_key not in inv_grouped:
+                inv_grouped[group_key] = self.env['account.invoice']
+            inv_grouped[group_key] += inv
 
         created_invoices = self.env['account.invoice']
-        for associate_id in inv_grouped:
+        for group_key in inv_grouped:
             # Create Invoice for each associate
-            invoice_objs = inv_grouped[associate_id]
+            invoice_objs = inv_grouped[group_key]
             vals = self._get_invoice_vals(invoice_objs)
             inv = self.env['account.invoice'].create(vals)
             self._copy_images(invoice_objs, inv)
