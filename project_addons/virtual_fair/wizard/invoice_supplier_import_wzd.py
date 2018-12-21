@@ -359,5 +359,6 @@ class InvoiceSupplierImportWzd(models.TransientModel):
         if created_invoices:
             created_invoices.set_fair_supplier_conditions()
             created_invoices.set_supplier_featured_percent()
+            created_invoices.set_supplier_analytic_account()
             self.log_id.write({'invoice_ids': [(6, 0, created_invoices.ids)]})
         return self.action_view_import_log()

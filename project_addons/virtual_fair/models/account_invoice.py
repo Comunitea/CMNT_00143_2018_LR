@@ -174,10 +174,20 @@ class AccountInvoice(models.Model):
                 if (not linf or linf <= total) and (not lsup or lsup >= total):
                     inv.write({'featured_percent': line.percent})
 
+    @api.multi
+    def set_supplier_analytic_account(self):
+        analytic_account = self.env['account.analytic.account'].search(
+            [('recurring_voucher', '=', True),
+             ('supplier_id', '=', self.partner_id.id),
+             ('partner_id', '=', self.associate_id.id)])
+        if analytic_account:
+            invoice.invoice_line_ids.write(
+                {'account_analytic_id': analytic_account[0].id})
+
     def _check_duplicate_history(self):
         duplicate = self.env['account.invoice.history'].search(
             [('supplier_id', '=', self.partner_id.id),
-            ('associated_id', '=', self.associated_id.id),
+            ('associate_id', '=', self.associate_id.id),
              ('clean_reference', '=', self.clean_reference),
              ('fechaFraProv', '=', self.date_invoice)])
 
@@ -187,9 +197,9 @@ class AccountInvoice(models.Model):
             return False
         duplicate = self.env['account.invoice'].search(
             [('partner_id', '=', self.partner_id.id),
-            ('associated_id', '=', self.associated_id.id),
+             ('associate_id', '=', self.associate_id.id),
              ('clean_reference', '=', self.clean_reference),
              ('date_invoice', '=', self.date_invoice),
              ('id', '!=', self.id)])
-        duplicate_2 += self._check_duplicate_history()
+        duplicate_2 = self._check_duplicate_history()
         return duplicate or duplicate_2 or False

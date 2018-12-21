@@ -31,9 +31,9 @@ class AccountInvoiceHistory(models.Model):
     linDirId = fields.Char()
     idProveedor = fields.Char()
 
-    associated_id = fields.Many2one(compute='_compute_associated_id', store=True)
+    associate_id = fields.Many2one(compute='_compute_associate_id', store=True)
     supplier_id = fields.Many2one(compute='_compute_supplier_id', store=True)
-    clean_ref = fields.Char(compute='_compute_clean_ref', store=True)
+    clean_reference = fields.Char(compute='_compute_clean_ref', store=True)
 
     @api.depends('numFra')
     def _compute_clean_reference(self):
@@ -44,14 +44,14 @@ class AccountInvoiceHistory(models.Model):
                 re.sub('[^A-Za-z0-9]+', '', inv_hist.numFra) or ''
 
     @api.depends('codSocio')
-    def _compute_associated_id(self):
+    def _compute_associate_id(self):
         for inv_hist in self:
             if not inv_hist.codSocio:
                 continue
             partner = self.env['res.partner'].search(
                 [('ref', '=', inv_hist.codSocio)])
             if partner:
-                inv_hist.associated_id = partner[0].id
+                inv_hist.associate_id = partner[0].id
 
     @api.depends('codProv')
     def _compute_supplier_id(self):
