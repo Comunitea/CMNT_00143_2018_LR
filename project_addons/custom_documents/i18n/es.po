@@ -55,3 +55,7 @@ msgstr "Imágenes"
 msgid "Invoice"
 msgstr "Factura"
 
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.report_invoice_document
+msgid "Expiration dates"
+msgstr "Vencimientos"

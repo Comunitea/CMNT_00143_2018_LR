@@ -7,4 +7,3 @@ class AccountInvoice(models.Model):
 
     _name = 'account.invoice'
     _inherit = [_name, "base_multi_image.owner"]
-
