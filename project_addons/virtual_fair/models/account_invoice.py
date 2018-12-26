@@ -57,6 +57,27 @@ class AccountInvoice(models.Model):
             count = self.search_count(domain)
             inv.supplier_invoices_count = count
 
+    @api.model
+    def _refund_cleanup_lines(self, lines):
+        super_lines = lines
+        if lines._name == 'account.invoice.line' and \
+                self._context.get('featured_error', False):
+            for line in lines:
+                if line.product_id.id != \
+                        self.env.ref('virtual_fair.featured_product').id:
+                    super_lines -= line
+        elif lines._name == 'account.invoice.tax' and \
+                self._context.get('featured_error', False):
+            # En este caso no se copian los impuestos para forzar a
+            # recalcularlos.
+            return False
+        res = super()._refund_cleanup_lines(super_lines)
+        if lines._name == 'account.invoice.line' and \
+                self._context.get('featured_error', False):
+            for line in res:
+                line[2]['price_unit'] = self._context.get('new_featured_price')
+        return res
+
     @api.multi
     def action_view_supplier_invoices(self):
         """
@@ -192,8 +213,8 @@ class AccountInvoice(models.Model):
         for invoice in self:
             analytic_account = self.env['account.analytic.account'].search(
                 [('recurring_voucher', '=', True),
-                ('supplier_id', '=', invoice.partner_id.id),
-                ('partner_id', '=', invoice.associate_id.id)])
+                 ('supplier_id', '=', invoice.partner_id.id),
+                 ('partner_id', '=', invoice.associate_id.id)])
             if analytic_account:
                 invoice.invoice_line_ids.write(
                     {'account_analytic_id': analytic_account[0].id})

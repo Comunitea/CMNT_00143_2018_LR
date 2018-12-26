@@ -305,6 +305,16 @@ msgid "Fair related"
 msgstr "Feria asociada"
 
 #. module: virtual_fair
+#: model:ir.model.fields,field_description:virtual_fair.field_account_invoice_refund_featured_error
+msgid "Featured Error"
+msgstr "Error en colaboración"
+
+#. module: virtual_fair
+#: model:ir.model.fields,field_description:virtual_fair.field_account_invoice_refund_new_featured_percentage
+msgid "New Featured Percentage"
+msgstr "Nuevo porcentaje de colaboración"
+
+#. module: virtual_fair
 #: model:ir.model.fields,field_description:virtual_fair.field_account_invoice_featured
 #: model:product.product,name:virtual_fair.featured_product
 #: model:product.template,name:virtual_fair.featured_product_product_template
