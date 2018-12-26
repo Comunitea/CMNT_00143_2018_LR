@@ -30,8 +30,9 @@ class DirectInvoiceWzd(models.TransientModel):
     @api.model
     def _get_invoice_vals(self, invoices):
         inv = invoices[0]
+        invoice_address = inv.associate_id.address_get(['invoice'])
         vals = {
-            'partner_id': inv.associate_id.id,
+            'partner_id': invoice_address['invoice'],
             'name': '/',
             'origin': ','.join([x.name or '' for x in invoices]),
             'type':
