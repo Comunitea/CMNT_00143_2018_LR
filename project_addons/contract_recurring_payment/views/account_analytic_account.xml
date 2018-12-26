@@ -68,7 +68,7 @@
                     <group>
                         <field name="voucher_journal_id" attrs="{'required': [('recurring_voucher', '=', True)]}"/>
                         <field name="day_due" attrs="{'required': [('recurring_voucher', '=', True)]}"/>
-                        <field name="mandate_id" attrs="{'required': [('recurring_voucher', '=', True)]}"/>
+                        <field name="mandate_id" attrs="{'required': [('recurring_voucher', '=', True)]}" domain="[('partner_id', '=', partner_id), ('state', '=', 'valid')]"/>
                         <field name="date_start_voucher" attrs="{'required': [('recurring_voucher', '=', True)]}"/>
                         <field name="date_end_voucher"/>
                         <field name="recurring_voucher_end_date" attrs="{'required': [('recurring_voucher', '=', True)]}"/>
