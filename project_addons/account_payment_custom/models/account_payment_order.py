@@ -1,6 +1,6 @@
 # © 2018 Comunitea
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
-from odoo import models
+from odoo import models, api
 
 
 class AccountPaymentOrder(models.Model):
@@ -53,3 +53,14 @@ class AccountPaymentOrder(models.Model):
             )[0]
         action['domain'] = [('id', 'in', orders._ids)]
         return action
+
+
+class AccountPaymentLine(models.Model):
+    _inherit = 'account.payment.line'
+
+    @api.multi
+    def payment_line_hashcode(self):
+        hashcode = super(AccountPaymentLine, self).payment_line_hashcode()
+        if self.move_line_id.move_id.voucher_ids:
+            hashcode += '-' + str(self.move_line_id.move_id.voucher_ids[0])
+        return hashcode
