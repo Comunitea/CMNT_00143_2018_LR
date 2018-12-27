@@ -12,7 +12,6 @@
 #
 ##############################################################################
 """Bootstrap a buildout-based project
-
 Simply run this script in a directory containing a buildout.cfg.
 The script accepts buildout command-line options, so you can
 use the -c option to specify an alternate configuration file.
@@ -32,12 +31,9 @@ tmpeggs = tempfile.mkdtemp(prefix='bootstrap-')
 
 usage = '''\
 [DESIRED PYTHON FOR BUILDOUT] bootstrap.py [options]
-
 Bootstraps a buildout-based project.
-
 Simply run this script in a directory containing a buildout.cfg, using the
 Python that you want bin/buildout to use.
-
 Note that by using --find-links to point to local resources, you can keep
 this script from going over the network.
 '''
@@ -49,8 +45,8 @@ parser.add_option("--version",
 parser.add_option("-t", "--accept-buildout-test-releases",
                   dest='accept_buildout_test_releases',
                   action="store_true", default=False,
-                  help=("Normally, if you do not specify a --version, the "
-                        "bootstrap script and buildout gets the newest "
+                  help=("Normally, if you do not specify a --buildout-version, "
+                        "the bootstrap script and buildout gets the newest "
                         "*final* versions of zc.buildout and its recipes and "
                         "extensions for you.  If you use this flag, "
                         "bootstrap and buildout will get the newest releases "
