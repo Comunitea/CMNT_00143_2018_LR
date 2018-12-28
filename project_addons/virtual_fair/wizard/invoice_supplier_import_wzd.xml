@@ -12,6 +12,7 @@
                 <group>
                     <field name="name"/>
                     <field name="path"/>
+                    <field name="journal_id"/>
                 </group>
 
                 <footer>

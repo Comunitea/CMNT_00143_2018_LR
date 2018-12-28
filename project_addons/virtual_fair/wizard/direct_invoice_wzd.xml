@@ -8,6 +8,9 @@
                 <div name="help">
                     <p>It will create ditrect invoices</p>
                 </div>
+                <group>
+                    <field name="journal_id"/>
+                </group>
                 <footer>
                     <button name="create_invoices" type="object" class="btn-primary" string="Create Invoices"/>
                     <button special="cancel" string="Cancel" class="oe_link"/>

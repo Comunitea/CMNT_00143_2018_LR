@@ -14,6 +14,7 @@ class InvoiceSupplierImportWzd(models.TransientModel):
     name = fields.Char()
     path = fields.Char()
     log_id = fields.Many2one(comodel_name='importation.log', string='Log')
+    journal_id = fields.Many2one('account.journal', 'Journal', required=True)
 
     @api.model
     def default_get(self, fields):
@@ -168,7 +169,7 @@ class InvoiceSupplierImportWzd(models.TransientModel):
             'featured': featured,
             'user_id': self._uid,
             'from_import': True,
-            # # 'journal_id':
+            'journal_id': self.journal_id.id
             # 'currency_id':
             # 'comment':
             # 'payment_term_id':

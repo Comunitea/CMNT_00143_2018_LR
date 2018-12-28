@@ -14,6 +14,8 @@ class DirectInvoiceWzd(models.TransientModel):
 
     _name = 'direct.invoice.wzd'
 
+    journal_id = fields.Many2one('account.journal', 'Journal', required=True)
+
     @api.multi
     def action_view_invoice(self, invoices):
         action = self.env.ref('account.action_invoice_tree1').read()[0]
@@ -42,6 +44,7 @@ class DirectInvoiceWzd(models.TransientModel):
             'date_invoice': fields.Date.today(),
             'user_id': self._uid,
             'from_supplier': True,
+            'journal_id': self.journal_id.id,
         }
         return vals
 
