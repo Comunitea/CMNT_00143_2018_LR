@@ -58,6 +58,8 @@ class AccountAnalyticAccount(models.Model):
         comodel_name='account.payment.mode',
         string='Payment mode for Invoices',
         domain=[('payment_type', '=', 'inbound')])
+    account_id = fields.Many2one(comodel_name='account.account',
+                                  string='Voucher Account')
 
     def get_first_due_date(self):
         start_date = fields.Datetime.from_string(
@@ -194,9 +196,11 @@ class AccountAnalyticAccount(models.Model):
                 self.message_post(_('can not find a customer mandate'))
                 continue
 
-            iter = 0
+            iter_num = 1
             date = first_due
-            while iter < contract.number_vouchers - 1:
+
+            while iter_num <= contract.number_vouchers:
+                name = "%s.%d" % (contract.name, iter_num)
                 account_voucher = self.env['account.voucher'].create(
                     {'partner_id': contract.partner_id.id,
                      'pay_now': 'pay_later',
@@ -211,16 +215,13 @@ class AccountAnalyticAccount(models.Model):
                      'payment_mode_id': contract.payment_mode_id.id,
                      'contract_id': contract.id,
                      'voucher_type': 'sale',
-                     'name': contract.name
+                     'number': name
                      })
-                account_ids = self.env['account.account'].search_read([(
-                    'code', 'like', '4380%')], ['id'])
-                account_id = account_ids and account_ids[0]['id'] or False
-                iter += 1
+                iter_num += 1
                 self.env['account.voucher.line'].create({
                     'voucher_id': account_voucher.id,
-                    'name': contract.name,
-                    'account_id': account_id,
+                    'name': name,
+                    'account_id': contract.account_id.id,
                     'account_analytic_id': contract.id,
                     'company_id': contract.company_id.id,
                     'quantity': 1,
@@ -230,3 +231,6 @@ class AccountAnalyticAccount(models.Model):
                     contract.recurring_voucher_rule_type,
                     contract.recurring_voucher_interval)
                 account_voucher.proforma_voucher()
+                account_voucher.write({
+                    'number': name
+                })
