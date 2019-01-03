@@ -14,7 +14,9 @@ class DirectInvoiceWzd(models.TransientModel):
 
     _name = 'direct.invoice.wzd'
 
-    journal_id = fields.Many2one('account.journal', 'Journal', required=True)
+    journal_id = fields.Many2one('account.journal', 'Journal',
+                                 domain="[('type', '=', 'sale')]",
+                                 required=True)
 
     @api.multi
     def action_view_invoice(self, invoices):
