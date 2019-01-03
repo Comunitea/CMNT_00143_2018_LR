@@ -1,0 +1,37 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* account_custom
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 11.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-01-03 18:48+0000\n"
+"PO-Revision-Date: 2019-01-03 18:48+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: account_custom
+#: model:ir.model,name:account_custom.model_account_move_line
+msgid "Journal Item"
+msgstr "Apunte contable"
+
+#. module: account_custom
+#: model:ir.model.fields,field_description:account_custom.field_account_move_line_country_id
+msgid "Partner Country"
+msgstr "País de la empresa"
+
+#. module: account_custom
+#: model:ir.model.fields,field_description:account_custom.field_account_move_line_account_position_id
+msgid "Partner Position"
+msgstr "Posición de la empresa"
+
+#. module: account_custom
+#: model:ir.model.fields,help:account_custom.field_account_move_line_account_position_id
+msgid "The fiscal position will determine taxes and accounts used for the partner."
+msgstr "La posición fiscal determinará los impuestos y cuentas utilizadas por el asociado."
+
