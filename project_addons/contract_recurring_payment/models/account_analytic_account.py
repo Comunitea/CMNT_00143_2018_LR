@@ -60,6 +60,8 @@ class AccountAnalyticAccount(models.Model):
         domain=[('payment_type', '=', 'inbound')])
     account_id = fields.Many2one(comodel_name='account.account',
                                   string='Voucher Account')
+    next_voucher_number = fields.Integer(string='Next Voucher Number',
+                                         default=1)
 
     def get_first_due_date(self):
         start_date = fields.Datetime.from_string(
@@ -200,7 +202,8 @@ class AccountAnalyticAccount(models.Model):
             date = first_due
 
             while iter_num <= contract.number_vouchers:
-                name = "%s.%d" % (contract.name, iter_num)
+                voucher_number = contract.next_voucher_number +iter_num -1
+                name = "%s.%d" % (contract.name, voucher_number)
                 account_voucher = self.env['account.voucher'].create(
                     {'partner_id': contract.partner_id.id,
                      'pay_now': 'pay_later',
