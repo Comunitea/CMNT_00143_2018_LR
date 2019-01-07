@@ -226,6 +226,16 @@ class ResPartner(models.Model):
         res = super(ResPartner, self).write(vals)
         if 'associate' in vals:
             self.check_associate(vals['associate'])
+        from_import = self._context.get('import_file', False)
+        for data in self:
+            if vals.get('ref', False) and not from_import:
+                data_id = self.env['ir.model.data'].sudo().search(
+                    [('model', '=', 'res.partner'), ('res_id', '=', data.id)]
+                )
+                data_id.write({
+                    'name': vals['ref']
+                })
+        return res
 
     @api.multi
     def check_associate(self, active=False):
