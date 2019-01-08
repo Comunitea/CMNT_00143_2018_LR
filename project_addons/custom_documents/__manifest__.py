@@ -13,6 +13,7 @@
         'base_multi_image'
     ],
     'data': [
+        'data/report_paperformat.xml',
         'views/report_invoice.xml',
         'views/report_templates.xml',
         'views/account_invoice.xml'
