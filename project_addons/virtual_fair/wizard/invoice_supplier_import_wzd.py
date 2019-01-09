@@ -182,7 +182,9 @@ class InvoiceSupplierImportWzd(models.TransientModel):
         return invoice_vals
 
     def _create_attachment(self, hvals, invoice):
-        image_route = hvals.get('ruta')
+        image_file = hvals.get('ruta')
+        file = image_file.split('/')[-1]
+        image_route = self.path + "/imagenes/" + file
         try:
             with open(image_route, 'rb') as image_file:
                 b64_image = base64.b64encode(image_file.read())
@@ -369,4 +371,5 @@ class InvoiceSupplierImportWzd(models.TransientModel):
             created_invoices.set_supplier_featured_percent()
             created_invoices.set_supplier_analytic_account()
             self.log_id.write({'invoice_ids': [(6, 0, created_invoices.ids)]})
+            created_invoices.compute_taxes()
         return self.action_view_import_log()
