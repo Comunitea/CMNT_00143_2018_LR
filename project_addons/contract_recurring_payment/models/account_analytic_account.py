@@ -200,7 +200,7 @@ class AccountAnalyticAccount(models.Model):
 
             iter_num = 1
             date = first_due
-
+            total_amount =0
             while iter_num <= contract.number_vouchers:
                 voucher_number = contract.next_voucher_number +iter_num -1
                 name = "%s.%d" % (contract.name, voucher_number)
@@ -220,7 +220,11 @@ class AccountAnalyticAccount(models.Model):
                      'voucher_type': 'sale',
                      'number': name
                      })
-                iter_num += 1
+
+                if iter_num == contract.number_vouchers:
+                    amount = contract.total_voucher_qty - total_amount
+                else:
+                    amount = contract.voucher_qty
                 self.env['account.voucher.line'].create({
                     'voucher_id': account_voucher.id,
                     'name': name,
@@ -228,8 +232,10 @@ class AccountAnalyticAccount(models.Model):
                     'account_analytic_id': contract.id,
                     'company_id': contract.company_id.id,
                     'quantity': 1,
-                    'price_unit': contract.voucher_qty
+                    'price_unit': amount
                 })
+                iter_num += 1
+                total_amount += amount
                 date = date + self.get_relative_delta(
                     contract.recurring_voucher_rule_type,
                     contract.recurring_voucher_interval)
