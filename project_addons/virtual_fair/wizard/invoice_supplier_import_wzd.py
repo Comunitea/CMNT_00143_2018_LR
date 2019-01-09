@@ -183,7 +183,7 @@ class InvoiceSupplierImportWzd(models.TransientModel):
 
     def _create_attachment(self, hvals, invoice):
         image_file = hvals.get('ruta')
-        file = image_file.split('/')[-1]
+        file = image_file.split('\\')[-1]
         image_route = self.path + "/imagenes/" + file
         try:
             with open(image_route, 'rb') as image_file:
