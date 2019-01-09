@@ -18,6 +18,8 @@ class ResPartner(models.Model):
     financiable_payment = fields.Boolean('Financiable', help="Default financiable for partner orders\n60 days due date >> Minus 1% in discount")
     cash_payment = fields.Boolean('Cash payment', help="Default payment for partner orders")
     direct = fields.Boolean('Direct', help='If checked, Serie 2')
+    no_group_direct_invoice = fields.Boolean('No Group Direct ',
+                                            help='No group Direct Invoices')
     urgent = fields.Boolean('Urgent', help='Default urgent for partner orders\nPlus 3.20%')
     id_prov = fields.Integer('Id Prov')
     old_customer = fields.Many2one('res.partner')

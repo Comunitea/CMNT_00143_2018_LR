@@ -12,7 +12,8 @@
     'installable': True,
     'depends': [
         'base',
-        'account'
+        'account',
+        'partner_custom'
     ],
     'data': [
         'security/ir.model.access.csv',

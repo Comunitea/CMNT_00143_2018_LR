@@ -60,6 +60,7 @@
                         <field name="financiable_payment" attrs="{'invisible': [('associate', '=', False)]}"/>
                         <field name="urgent" attrs="{'invisible': [('associate', '=', False)]}"/>
                         <field name="direct" attrs="{'invisible': [('associate', '=', False)]}"/>
+                        <field name="no_group_direct_invoice" attrs="{'invisible': [('direct', '=', False)]}"/>
                     </group>
                 </group>
             </xpath>

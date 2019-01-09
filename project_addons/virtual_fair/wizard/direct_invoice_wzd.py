@@ -152,7 +152,11 @@ class DirectInvoiceWzd(models.TransientModel):
         for inv in invoices:
             if not inv.associate_id:
                 continue
-            group_key = (inv.associate_id.id, inv.analytic_account_id)
+            if inv.associate_id.no_group_direct_invoice:
+                group_key = (0, inv.associate_id.id, inv.analytic_account_id)
+            else:
+                group_key = (inv.id, inv.associate_id.id,
+                             inv.analytic_account_id)
             if group_key not in inv_grouped:
                 inv_grouped[group_key] = self.env['account.invoice']
             inv_grouped[group_key] += inv
