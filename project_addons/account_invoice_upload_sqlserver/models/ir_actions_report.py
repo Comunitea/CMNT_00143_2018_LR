@@ -138,7 +138,6 @@ class IrActionsReport(models.Model):
             trusted)
         sql_connection.upload(record, pdf_file)
         sql_connection.close_cursor()
-        self.write({'log': '', 'state': 'uploaded'})
 
     @api.multi
     def postprocess_pdf_report(self, record, buffer):
