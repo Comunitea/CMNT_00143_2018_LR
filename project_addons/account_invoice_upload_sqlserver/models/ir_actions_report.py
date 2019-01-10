@@ -67,7 +67,6 @@ class UploadInvoice(object):
         self.cr.execute(
             query,
             (2127,
-             # Esto va a romper cuando una referencia no sea numérica
              record.partner_id.ref,
              # Esto va a romper en cuanto un diario no tenga como
              # codigo corto S#
@@ -91,7 +90,6 @@ class UploadInvoice(object):
         self.cr.execute(
             query,
             (2127,
-             # Esto va a romper cuando una referencia no sea numérica
              record.partner_id.ref,
              # Esto va a romper en cuanto un diario no tenga como codigo
              # corto S#
