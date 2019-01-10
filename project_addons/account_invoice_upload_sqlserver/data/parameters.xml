@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="param_driver" model="ir.config_parameter">
+        <field name="key">upload_invoice.driver</field>
+        <field name="value"></field>
+    </record>
+    <record id="param_server" model="ir.config_parameter">
+        <field name="key">upload_invoice.server</field>
+        <field name="value"></field>
+    </record>
+    <record id="param_database" model="ir.config_parameter">
+        <field name="key">upload_invoice.database</field>
+        <field name="value"></field>
+    </record>
+    <record id="param_user" model="ir.config_parameter">
+        <field name="key">upload_invoice.user</field>
+        <field name="value"></field>
+    </record>
+    <record id="param_password" model="ir.config_parameter">
+        <field name="key">upload_invoice.password</field>
+        <field name="value"></field>
+    </record>
+    <record id="param_table_name" model="ir.config_parameter">
+        <field name="key">upload_invoice.table_name</field>
+        <field name="value"></field>
+    </record>
+    <record id="param_trusted" model="ir.config_parameter">
+        <field name="key">upload_invoice.trusted</field>
+        <field name="value">no</field>
+    </record>
+</odoo>
