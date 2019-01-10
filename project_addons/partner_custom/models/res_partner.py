@@ -22,6 +22,7 @@ class ResPartner(models.Model):
                                             help='No group Direct Invoices')
     urgent = fields.Boolean('Urgent', help='Default urgent for partner orders\nPlus 3.20%')
     id_prov = fields.Integer('Id Prov')
+    cliente_id = fields.Integer('Id Cliente en WEB')
     old_customer = fields.Many2one('res.partner')
 
     @api.onchange('associate')

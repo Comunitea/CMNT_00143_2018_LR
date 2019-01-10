@@ -34,6 +34,7 @@
         <field name="arch" type="xml">
             <field name="lang" position="after">
                 <field name="id_prov"/>
+                <field name="cliente_id"/>
                 <field name="old_customer"/>
             </field>
         </field>
