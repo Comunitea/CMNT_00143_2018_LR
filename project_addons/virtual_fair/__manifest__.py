@@ -13,7 +13,8 @@
     'depends': [
         'base',
         'account',
-        'partner_custom'
+        'partner_custom',
+        'base_multi_image'
     ],
     'data': [
         'security/ir.model.access.csv',
