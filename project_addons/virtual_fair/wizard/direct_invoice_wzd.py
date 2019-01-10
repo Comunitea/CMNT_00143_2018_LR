@@ -8,6 +8,7 @@ import tempfile
 import subprocess
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
+from datetime import datetime, date, timedelta
 
 
 class DirectInvoiceWzd(models.TransientModel):
@@ -142,42 +143,83 @@ class DirectInvoiceWzd(models.TransientModel):
                     sequence += 1
 
     @api.multi
+    def _create_invoice(self, invoice_objs):
+        vals = self._get_invoice_vals(invoice_objs)
+        inv = self.env['account.invoice'].create(vals)
+        self._copy_images(invoice_objs, inv)
+
+        # Write link between supplier and created invoice
+        invoice_objs.write({'customer_invoice_id': inv.id})
+        # Create lines
+        line_vals = self._get_line_vals(inv, invoice_objs)
+        if line_vals:
+            inv.write({'invoice_line_ids': line_vals})
+        return inv
+
+    @api.multi
     def create_invoices(self):
         self.ensure_one()
         invoices = self.env['account.invoice'].\
             browse(self._context.get('active_ids', []))
         inv_grouped = {}
-
-        # Group by associate_id
+        not_grouped_invoices = self.env['account.invoice']
+        fair_invoices = self.env['account.invoice']
+        normal_invoices = self.env['account.invoice']
         for inv in invoices:
             if not inv.associate_id:
                 continue
+
             if inv.associate_id.no_group_direct_invoice:
-                group_key = (0, inv.associate_id.id, inv.analytic_account_id)
+                not_grouped_invoices += inv
             else:
-                group_key = (inv.id, inv.associate_id.id,
-                             inv.analytic_account_id)
-            if group_key not in inv_grouped:
-                inv_grouped[group_key] = self.env['account.invoice']
-            inv_grouped[group_key] += inv
+                if inv.fair_id:  # FACTURACIÓN FERIA
+                    fair_invoices += inv
+                else:
+                    if inv.amount_untaxed >= 500:  # FACTURACIÓN NORMAL
+                        normal_invoices += inv
+                    else:   #FACTURACIÓN QUINCENAL  Agrupada por socio
+                        group_key = (inv.associate_id.id,
+                             inv.analytic_account_id.id)
+                        if group_key not in inv_grouped:
+                            inv_grouped[group_key] = self.env['account.invoice']
+                        inv_grouped[group_key] += inv
 
         created_invoices = self.env['account.invoice']
-        for group_key in inv_grouped:
+
+        for group_key in inv_grouped: #QUINCENAL
             # Create Invoice for each associate
             invoice_objs = inv_grouped[group_key]
-            vals = self._get_invoice_vals(invoice_objs)
-            inv = self.env['account.invoice'].create(vals)
-            self._copy_images(invoice_objs, inv)
-
+            inv = self._create_invoice(invoice_objs)
+            pay_term = self.env['account.payment.term'].search(
+                [('name', 'like', '1v45d')])[0]
+            inv.write({'payment_term_id': pay_term.id})
             created_invoices += inv
-            # Write link between supplier and created invoice
-            invoice_objs.write({'customer_invoice_id': inv.id})
-            # Create lines
-            line_vals = self._get_line_vals(inv, invoice_objs)
-            if line_vals:
-                inv.write({'invoice_line_ids': line_vals})
+
+        for prov_inv in not_grouped_invoices:  #socios sin agrupacion
+            inv = self._create_invoice(prov_inv)
+            pay_term = self.env['account.payment.term'].search(
+                [('name', 'like', '1v15d')])[0]
+            inv.write({'payment_term_id': pay_term.id})
+            created_invoices += inv
+
+        for prov_inv in fair_invoices:  #Facturacion feria
+            inv = self._create_invoice(prov_inv)
+            pay_term = self.env['account.payment.term'].search(
+                [('name', 'like', '3v60d')])[0]
+            inv.write({'payment_term_id': pay_term.id})
+            created_invoices += inv
+
+        for prov_inv in normal_invoices:  #Facturacion normal
+            inv = self._create_invoice(prov_inv)
+            prov_inv._onchange_payment_term_date_invoice()
+            prov_date_due = fields.Date.from_string(prov_inv.date_due)
+            date_due = prov_date_due - timedelta(days=15)
+            inv.write({'payment_term_id': False,
+                       'date_due': fields.Datetime.to_string(date_due)})
+            created_invoices += inv
 
         if created_invoices:
             created_invoices.set_fair_supplier_conditions()
             created_invoices.set_featured_line()
+            created_invoices.compute_taxes()
             return self.action_view_invoice(created_invoices)
