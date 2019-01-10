@@ -6,6 +6,13 @@ from odoo.exceptions import UserError
 from datetime import datetime, date, timedelta
 import glob
 
+TAX_MAPPING = {
+    21: 'P_IVA21_BC',
+    4: 'P_IVA4_BC',
+    10: 'P_IVA10_BC',
+    13: 'P_IVA13_PT',
+    23: 'P_IVA23_PT',
+}
 
 class InvoiceSupplierImportWzd(models.TransientModel):
 
@@ -95,7 +102,7 @@ class InvoiceSupplierImportWzd(models.TransientModel):
                     # 'forma_pago': line[12],
                     # 'fec_vto': line[13],
                     # 'cia': line[14],
-                    # 'dto_pp': line[16],
+                     'dto_pp': line[16],
                     # 'itpf': line[16],
                     'ruta': line[17],
                     # for log
@@ -163,6 +170,7 @@ class InvoiceSupplierImportWzd(models.TransientModel):
             'account_id': supplier.property_account_payable_id.id,
             'reference': reference,
             'date_invoice': date_invoice,
+            'early_payment_discount': hvals.get('dto_pp',0),
             'date': date_,
             'digit_date': digit_date,
             'num_ass': num_ass,
@@ -279,9 +287,10 @@ class InvoiceSupplierImportWzd(models.TransientModel):
         base = float(bvals.get('base', '0.0'))
         tax = float(bvals.get('cuota', '0.0'))
         amount = int(round((tax / (base or 1.0)) * 100.0, 0))
+        tax_description = TAX_MAPPING[amount]
         domain = [
             ('type_tax_use', '=', 'purchase'),
-            ('amount', '=', amount)
+            ('description', '=', tax_description)
         ]
         taxes = self.env['account.tax'].search(domain, limit=1)
         if taxes:
@@ -367,7 +376,11 @@ class InvoiceSupplierImportWzd(models.TransientModel):
 
         self.create_invoice_lines(base_vals)
         if created_invoices:
-            created_invoices.set_fair_supplier_conditions()
+            created_invoices.filtered(
+                lambda i: i.fair_id).set_fair_supplier_conditions()
+            created_invoices.filtered(
+                lambda i: i.early_payment_discount > 0).\
+                button_compute_early_payment_disc()
             created_invoices.set_supplier_featured_percent()
             created_invoices.set_supplier_analytic_account()
             self.log_id.write({'invoice_ids': [(6, 0, created_invoices.ids)]})

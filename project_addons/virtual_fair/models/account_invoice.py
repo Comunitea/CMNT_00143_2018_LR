@@ -170,7 +170,7 @@ class AccountInvoice(models.Model):
             featured_amount = 0.0
             for sinv in supplier_invoices:
                 per = sinv.featured_percent
-                featured_amount += inv.amount_total * (per / 100.0)
+                featured_amount += inv.amount_untaxed * (per / 100.0)
 
             if featured_amount:
                 # Get account
@@ -179,6 +179,7 @@ class AccountInvoice(models.Model):
 
                 # Create a line for each diferent tax
                 product = self.env.ref('virtual_fair.featured_product')
+                taxes = inv.fiscal_position_id.map_tax(product.taxes_id)
                 line_vals = {
                     'name': _('Featured amount'),
                     'product_id': product.id,
@@ -186,7 +187,7 @@ class AccountInvoice(models.Model):
                     'price_unit': featured_amount,
                     'account_id': account_id,
                     'invoice_id': inv.id,
-                    'invoice_line_tax_ids': [(6, 0, product.taxes_id.ids)]
+                    'invoice_line_tax_ids': [(6, 0, taxes.ids)]
                 }
                 self.env['account.invoice.line'].create(line_vals)
 
@@ -247,3 +248,14 @@ class AccountInvoice(models.Model):
         duplicate = self.check_duplicate_supplier()
         duplicate_2 = self.check_duplicate_history()
         return duplicate or duplicate_2 or False
+
+    def action_invoice_open(self):
+        res = super(AccountInvoice, self).action_invoice_open()
+        from_supplier_invoices = self.filtered(lambda inv: inv.from_supplier)
+        if from_supplier_invoices:
+            domain = [('customer_invoice_id', 'in', from_supplier_invoices.ids),
+                      ('type', 'in', ('in_invoice', 'in_refund')),
+                      ('state', '=', 'draft')]
+            supplier_invoices = self.search(domain)
+            supplier_invoices.action_invoice_open()
+        return res

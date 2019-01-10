@@ -10,6 +10,13 @@ from odoo import models, fields, api, _
 from odoo.exceptions import UserError
 from datetime import datetime, date, timedelta
 
+TAX_MAPPING = {
+    'P_IVA21_BC': 'S_IVA21B',
+    'P_IVA4_BC': 'S_IVA4B',
+    'P_IVA10_BC': 'S_IVA10B',
+    'P_IVA23_PT': 'S_IVA0_IC',
+    'P_IVA23_PT': 'S_IVA0_IC',
+}
 
 class DirectInvoiceWzd(models.TransientModel):
 
@@ -35,6 +42,12 @@ class DirectInvoiceWzd(models.TransientModel):
     @api.model
     def _get_invoice_vals(self, invoices):
         inv = invoices[0]
+        if inv.fiscal_position_id and inv.fiscal_position_id == 'IVA Portugal':
+            fiscal_position_id = self.env['account.fiscal.position'].search([
+                ('name', '=', 'Intracomunitario')])[0].id
+        else:
+            fiscal_position_id = \
+                inv.associate_id.property_account_position_id.id
         invoice_address = inv.associate_id.address_get(['invoice'])
         vals = {
             'partner_id': invoice_address['invoice'],
@@ -48,15 +61,17 @@ class DirectInvoiceWzd(models.TransientModel):
             'user_id': self._uid,
             'from_supplier': True,
             'journal_id': self.journal_id.id,
+            'fiscal_position_id': fiscal_position_id,
         }
         return vals
 
     @api.model
     def _get_purchase_tax(self, tax):
         tax_ids = []
+        sale_tax = TAX_MAPPING.get(tax.description,False)
         domain = [
             ('type_tax_use', '=', 'sale'),
-            ('amount', '=', tax.amount)
+            ('description', '=', sale_tax)
         ]
         taxes = self.env['account.tax'].search(domain, limit=1)
         if taxes:
