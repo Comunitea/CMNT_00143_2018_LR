@@ -5,6 +5,24 @@
         <div class="article o_report_layout_standard">
             <t t-raw="0" />
         </div>
+        <div class="footer" style="font-weight: bold; color: rgb(0,51,102); font-family: Arial; font-size:8px">
+            <div class="text-center" style="border-top: 1px solid black;">
+                <ul class="list-inline mb4">
+                    <li t-if="company.phone">Phone: <span t-field="company.phone"/></li>
+                    <li t-if="company.email">Email: <span t-field="company.email"/></li>
+                    <li t-if="company.website">Web: <span t-field="company.website"/></li>
+                    <li t-if="company.vat"><t t-esc="company.country_id.vat_label or 'TIN'"/>: <span t-field="company.vat"/></li>
+                </ul>
+
+                <div name="financial_infos">
+                    <span t-field="company.report_footer"/>
+                </div>
+
+                <div class="text-muted">
+                    Page: <span class="page"/> / <span class="topage"/>
+                </div>
+            </div>
+        </div>
     </template>
 
     <template id="report_invoice_document" inherit_id="sale.report_invoice_document_inherit_sale">
@@ -14,8 +32,8 @@
         <xpath expr="//p[@t-if='o.payment_term_id']" position="after">
             <t t-set="expiration_dates" t-value="o.get_expiration_dates_tuples()"/>
             <t t-if="expiration_dates">
-                <center><h3>Expiration dates</h3></center>
-                <table class="table">
+                <center><h3 style="font-weight: bold; font-family: Courier New">Expiration dates</h3></center>
+                <table class="table" style="font-weight: bold; font-family: Courier New">
                     <t t-foreach="expiration_dates" t-as="expiration_line">
                         <tr>
                             <td> <span t-esc="expiration_line[0]"/> </td>
@@ -50,7 +68,7 @@
                     <div style="border-bottom: 1px solid black;"/>
                 </div>
             </div>
-            <div class="row">
+            <div class="row" style="font-weight: bold; color: rgb(0,51,102); font-family: Arial">
                 <div class="col-xs-6" name="company_address">
                     <span t-field="company.partner_id"
                         t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'
@@ -139,6 +157,30 @@
         </xpath>
         <xpath expr="//span[@t-field='o.partner_id.vat']" position="attributes">
             <attribute name="t-field">o.partner_id.commercial_partner_id.vat</attribute>
+        </xpath>
+
+        <xpath expr="//table[@name='invoice_line_table']/thead" position="attributes">
+            <attribute name="style">font-weight: bold; color: rgb(0,51,102); font-family: Arial</attribute>
+        </xpath>
+
+        <xpath expr="//table[@name='invoice_line_table']/tbody" position="attributes">
+            <attribute name="style">font-weight: bold; font-family: Courier New</attribute>
+        </xpath>
+
+        <xpath expr="//div[hasclass('page')]" position="attributes">
+            <attribute name="style">font-weight: bold; font-family: Courier New</attribute>
+        </xpath>
+        <xpath expr="//span[@t-field='o.amount_untaxed']" position="attributes">
+            <attribute name="style">font-weight: bold; font-family: Courier New</attribute>
+        </xpath>
+        <xpath expr="//span[@t-field='o.amount_total']" position="attributes">
+            <attribute name="style">font-weight: bold; font-family: Courier New</attribute>
+        </xpath>
+        <xpath expr="//div[@id='total']//tr[1]" position="attributes">
+            <attribute name="style">font-weight: bold; font-family: Courier New</attribute>
+        </xpath>
+        <xpath expr="//div[@id='total']//table/t/tr" position="attributes">
+            <attribute name="style">font-weight: bold; font-family: Courier New</attribute>
         </xpath>
     </template>
 </odoo>
