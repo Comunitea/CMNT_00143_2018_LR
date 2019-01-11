@@ -9,6 +9,9 @@ import subprocess
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
 from datetime import datetime, date, timedelta
+import logging
+
+_logger = logging.getLogger(__name__)
 
 TAX_MAPPING = {
     'P_IVA21_BC': 'S_IVA21B',
@@ -42,9 +45,10 @@ class DirectInvoiceWzd(models.TransientModel):
     @api.model
     def _get_invoice_vals(self, invoices):
         inv = invoices[0]
-        if inv.fiscal_position_id and inv.fiscal_position_id == 'IVA Portugal':
+        if inv.fiscal_position_id and inv.fiscal_position_id.name == 'IVA ' \
+                                                                 'Portugal':
             fiscal_position_id = self.env['account.fiscal.position'].search([
-                ('name', '=', 'Intracomunitario')])[0].id
+                ('name', 'like', 'Intracomunitario')])[0].id
         else:
             fiscal_position_id = \
                 inv.associate_id.property_account_position_id.id
@@ -66,7 +70,7 @@ class DirectInvoiceWzd(models.TransientModel):
         return vals
 
     @api.model
-    def _get_purchase_tax(self, tax):
+    def _get_purchase_tax(self, tax, inv ):
         tax_ids = []
         sale_tax = TAX_MAPPING.get(tax.description,False)
         domain = [
@@ -74,8 +78,10 @@ class DirectInvoiceWzd(models.TransientModel):
             ('description', '=', sale_tax)
         ]
         taxes = self.env['account.tax'].search(domain, limit=1)
+
         if taxes:
-            tax_ids = taxes.ids
+            pos_taxes = inv.fiscal_position_id.map_tax(taxes)
+            tax_ids = pos_taxes.ids
         return tax_ids
 
     @api.model
@@ -92,13 +98,15 @@ class DirectInvoiceWzd(models.TransientModel):
             group_line_tax[tax] += line.price_unit
         # Get account
         cat = self.env['product.category'].search([], limit=1)
-        account_id = cat.property_account_income_categ_id.id
+        account = inv.fiscal_position_id.map_account(
+            cat.property_account_income_categ_id)
+        account_id = account.id
 
         # Create a line for each diferent tax
         for tax in group_line_tax:
             tax_ids = False
             if tax:
-                tax_ids = self._get_purchase_tax(tax)
+                tax_ids = self._get_purchase_tax(tax, inv)
             price_unit = group_line_tax[tax]
             line_vals = {
                 'name': _('From Supplier Import'),
@@ -176,6 +184,11 @@ class DirectInvoiceWzd(models.TransientModel):
         self.ensure_one()
         invoices = self.env['account.invoice'].\
             browse(self._context.get('active_ids', []))
+        invoices_ic = invoices.filtered(lambda inv: inv.customer_invoice_id)
+        if invoices_ic:
+            raise UserError(
+                _("Invoices whith associated customer invoices can not be "
+                  "processed."))
         inv_grouped = {}
         not_grouped_invoices = self.env['account.invoice']
         fair_invoices = self.env['account.invoice']
@@ -200,7 +213,7 @@ class DirectInvoiceWzd(models.TransientModel):
                         inv_grouped[group_key] += inv
 
         created_invoices = self.env['account.invoice']
-
+        _logger.info("Finalizada agrupacion de facturas proveedor ")
         for group_key in inv_grouped: #QUINCENAL
             # Create Invoice for each associate
             invoice_objs = inv_grouped[group_key]
@@ -209,6 +222,7 @@ class DirectInvoiceWzd(models.TransientModel):
                 [('name', 'like', '1v45d')])[0]
             inv.write({'payment_term_id': pay_term.id})
             created_invoices += inv
+            _logger.info("Creando quincenales")
 
         for prov_inv in not_grouped_invoices:  #socios sin agrupacion
             inv = self._create_invoice(prov_inv)
@@ -216,6 +230,7 @@ class DirectInvoiceWzd(models.TransientModel):
                 [('name', 'like', '1v15d')])[0]
             inv.write({'payment_term_id': pay_term.id})
             created_invoices += inv
+            _logger.info("Creando socios sin agrupacion")
 
         for prov_inv in fair_invoices:  #Facturacion feria
             inv = self._create_invoice(prov_inv)
@@ -223,6 +238,7 @@ class DirectInvoiceWzd(models.TransientModel):
                 [('name', 'like', '3v60d')])[0]
             inv.write({'payment_term_id': pay_term.id})
             created_invoices += inv
+            _logger.info("Creando facturas feria")
 
         for prov_inv in normal_invoices:  #Facturacion normal
             inv = self._create_invoice(prov_inv)
@@ -232,9 +248,13 @@ class DirectInvoiceWzd(models.TransientModel):
             inv.write({'payment_term_id': False,
                        'date_due': fields.Datetime.to_string(date_due)})
             created_invoices += inv
+            _logger.info("Creando facturación normal")
 
         if created_invoices:
+            _logger.info("Comprobando condiciones feria")
             created_invoices.set_fair_supplier_conditions()
+            _logger.info("Estableciendo colaboración")
             created_invoices.set_featured_line()
+            _logger.info("Recalculando impuestos")
             created_invoices.compute_taxes()
             return self.action_view_invoice(created_invoices)

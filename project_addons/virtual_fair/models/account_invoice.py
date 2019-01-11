@@ -175,10 +175,10 @@ class AccountInvoice(models.Model):
             if featured_amount:
                 # Get account
                 cat = self.env['product.category'].search([], limit=1)
-                account_id = cat.property_account_income_categ_id.id
-
-                # Create a line for each diferent tax
                 product = self.env.ref('virtual_fair.featured_product')
+                account = product.property_account_income_id or \
+                             cat.property_account_income_categ_id
+                account_id = inv.fiscal_position_id.map_account(account).id
                 taxes = inv.fiscal_position_id.map_tax(product.taxes_id)
                 line_vals = {
                     'name': _('Featured amount'),
