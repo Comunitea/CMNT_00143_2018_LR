@@ -101,6 +101,11 @@ class AccountAnalyticAccount(models.Model):
             self.total_voucher_qty = self.voucher_qty * \
                                      self.number_vouchers
 
+    @api.multi
+    def _prepare_invoice(self, journal=None):
+        res = super(AccountAnalyticAccount, self)._prepare_invoice()
+        res['partner_id'] = self.partner_id.id
+        return res
 
     @api.model
     def create_recurring_payments(self):
