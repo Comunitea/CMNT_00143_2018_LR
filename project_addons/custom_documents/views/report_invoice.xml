@@ -28,7 +28,7 @@
         <xpath expr="//p[@t-field='o.date_due']/../.." position="replace"></xpath>
         <xpath expr="//span[@t-field='o.number']/.." position="replace"></xpath>
 
-        <xpath expr="//div[@name='invoice_address' and @groups='!sale.group_delivery_invoice_address']" position="before">
+        <xpath expr="//div[@t-field='o.partner_shipping_id']/../.." position="before">
             <t t-if="not o and doc">
                 <t t-set="o" t-value="doc"/>
             </t>
@@ -67,7 +67,7 @@
         </xpath>
         <xpath expr="//div[@groups='sale.group_delivery_invoice_address'][1]" position="attributes">
             <attribute name="class">col-xs-5</attribute>
-            <attribute name="style">border: 1px solid black; border-radius: 25px;</attribute>
+            <attribute name="t-att-style">o.partner_shipping_id and (o.partner_shipping_id != o.partner_id) and 'border: 1px solid black; border-radius: 25px;' or ''</attribute>
         </xpath>
         <xpath expr="//div[@groups='sale.group_delivery_invoice_address'][2]" position="attributes">
             <attribute name="class">col-xs-4 col-xs-offset-3</attribute>
