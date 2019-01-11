@@ -197,13 +197,14 @@ class DirectInvoiceWzd(models.TransientModel):
             if not inv.associate_id:
                 continue
 
-            if inv.associate_id.no_group_direct_invoice:
+            if inv.associate_id.no_group_direct_invoice or inv.type == \
+                    'in_refund':
                 not_grouped_invoices += inv
             else:
                 if inv.fair_id:  # FACTURACIÓN FERIA
                     fair_invoices += inv
                 else:
-                    if inv.amount_untaxed >= 500:  # FACTURACIÓN NORMAL
+                    if inv.amount_untaxed >= 250:  # FACTURACIÓN NORMAL
                         normal_invoices += inv
                     else:   #FACTURACIÓN QUINCENAL  Agrupada por socio
                         group_key = (inv.associate_id.id,
