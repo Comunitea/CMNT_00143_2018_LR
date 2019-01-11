@@ -170,7 +170,7 @@ class AccountInvoice(models.Model):
             featured_amount = 0.0
             for sinv in supplier_invoices:
                 per = sinv.featured_percent
-                featured_amount += inv.amount_untaxed * (per / 100.0)
+                featured_amount += sinv.amount_untaxed * (per / 100.0)
 
             if featured_amount:
                 # Get account
