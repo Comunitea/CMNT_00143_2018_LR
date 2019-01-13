@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 11.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-12-17 10:59+0000\n"
-"PO-Revision-Date: 2018-12-17 10:59+0000\n"
+"POT-Creation-Date: 2019-01-13 16:43+0000\n"
+"PO-Revision-Date: 2019-01-13 16:43+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -17,33 +17,28 @@ msgstr ""
 
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.report_invoice_document
-msgid "<strong>Customer Code:</strong>"
-msgstr "<strong>Código de cliente:</strong>"
+msgid "<strong style=\"font-weight: bold; color: rgb(0,51,102); font-family: Arial\">Customer Code:</strong>"
+msgstr "<strong style=\"font-weight: bold; color: rgb(0,51,102); font-family: Arial\">Cliente:</strong>"
 
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.report_invoice_document
-msgid "<strong>Description:</strong>"
-msgstr "<strong>Descripción:</strong>"
+msgid "<strong style=\"font-weight: bold; color: rgb(0,51,102); font-family: Arial\">Invoice Date:</strong>"
+msgstr "<strong style=\"font-weight: bold; color: rgb(0,51,102); font-family: Arial\">Fecha:</strong>"
 
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.report_invoice_document
-msgid "<strong>Invoice Date:</strong>"
-msgstr "<strong>Fecha Factura:</strong>"
+msgid "<strong style=\"font-weight: bold; color: rgb(0,51,102); font-family: Arial\">Número</strong>"
+msgstr "<strong style=\"font-weight: bold; color: rgb(0,51,102); font-family: Arial\">Número</strong>"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_invoice_layout
+msgid "Email:"
+msgstr "Correo electrónico:"
 
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.report_invoice_document
-msgid "<strong>Invoice:</strong>"
-msgstr "<strong>Invoice:</strong>"
-
-#. module: custom_documents
-#: model:ir.ui.view,arch_db:custom_documents.report_invoice_document
-msgid "<strong>Reference:</strong>"
-msgstr "<strong>Referencia:</strong>"
-
-#. module: custom_documents
-#: model:ir.ui.view,arch_db:custom_documents.report_invoice_document
-msgid "<strong>Source:</strong>"
-msgstr "<strong>Fuente:</strong>"
+msgid "Expiration dates"
+msgstr "Vencimientos"
 
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.invoice_form
@@ -56,6 +51,17 @@ msgid "Invoice"
 msgstr "Factura"
 
 #. module: custom_documents
-#: model:ir.ui.view,arch_db:custom_documents.report_invoice_document
-msgid "Expiration dates"
-msgstr "Vencimientos"
+#: model:ir.ui.view,arch_db:custom_documents.custom_invoice_layout
+msgid "Page: <span class=\"page\"/> / <span class=\"topage\"/>"
+msgstr "Página: <span class=\"page\"/>/<span class=\"topage\"/>"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_invoice_layout
+msgid "Phone:"
+msgstr "Teléfono:"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_invoice_layout
+msgid "Web:"
+msgstr "Web:"
+
