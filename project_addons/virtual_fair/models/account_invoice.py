@@ -166,11 +166,11 @@ class AccountInvoice(models.Model):
             supplier_invoices = self.search(domain)
             if not supplier_invoices:
                 continue
-
+            featured_percent = supplier_invoices[0].featured_percent
             featured_amount = 0.0
             for sinv in supplier_invoices:
                 per = sinv.featured_percent
-                featured_amount += sinv.amount_untaxed * (per / 100.0)
+                featured_amount += (sinv.amount_untaxed * (per / 100.0))
 
             if featured_amount:
                 # Get account
@@ -181,7 +181,7 @@ class AccountInvoice(models.Model):
                 account_id = inv.fiscal_position_id.map_account(account).id
                 taxes = inv.fiscal_position_id.map_tax(product.taxes_id)
                 line_vals = {
-                    'name': _('Featured amount'),
+                    'name': "%s%% Colaboración" % featured_percent,
                     'product_id': product.id,
                     'quantity': 1.0,
                     'price_unit': featured_amount,

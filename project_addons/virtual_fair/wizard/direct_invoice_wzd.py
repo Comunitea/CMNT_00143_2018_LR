@@ -87,38 +87,43 @@ class DirectInvoiceWzd(models.TransientModel):
     @api.model
     def _get_line_vals(self, inv, invoices):
         res = []
-        group_line_tax = {}
-        # Group by tax
-        for line in invoices.mapped('invoice_line_ids'):
-            tax = line.invoice_line_tax_ids and \
-                line.invoice_line_tax_ids[0] or False
 
-            if tax not in group_line_tax:
-                group_line_tax[tax] = 0.0
-            group_line_tax[tax] += line.price_unit
+        # Group by tax
+
         # Get account
         cat = self.env['product.category'].search([], limit=1)
         account = inv.fiscal_position_id.map_account(
             cat.property_account_income_categ_id)
         account_id = account.id
+        for prov_inv in invoices:
+            group_line_tax = {}
+            for line in prov_inv.invoice_line_ids:
+                tax = line.invoice_line_tax_ids and \
+                    line.invoice_line_tax_ids[0] or False
 
-        # Create a line for each diferent tax
-        for tax in group_line_tax:
-            tax_ids = False
-            if tax:
-                tax_ids = self._get_purchase_tax(tax, inv)
-            price_unit = group_line_tax[tax]
-            line_vals = {
-                'name': _('From Supplier Import'),
-                'quantity': 1.0,
-                'price_unit': price_unit,
-                'account_id': account_id,
-                'invoice_id': inv.id,
-                'account_analytic_id': invoices[0].analytic_account_id.id,
-            }
-            if tax_ids:
-                line_vals['invoice_line_tax_ids'] = [(6, 0, tax_ids)]
-            res.append((0, 0, line_vals))
+                if tax not in group_line_tax:
+                    group_line_tax[tax] = 0.0
+                group_line_tax[tax] += line.price_unit
+
+            name = "Fra. %s %s" % (prov_inv.reference,
+                    prov_inv.partner_id.name)
+            # Create a line for each diferent tax
+            for tax in group_line_tax:
+                tax_ids = False
+                if tax:
+                    tax_ids = self._get_purchase_tax(tax, inv)
+                price_unit = group_line_tax[tax]
+                line_vals = {
+                    'name': name,
+                    'quantity': 1.0,
+                    'price_unit': price_unit,
+                    'account_id': account_id,
+                    'invoice_id': inv.id,
+                    'account_analytic_id': invoices[0].analytic_account_id.id,
+                }
+                if tax_ids:
+                    line_vals['invoice_line_tax_ids'] = [(6, 0, tax_ids)]
+                res.append((0, 0, line_vals))
         return res
 
     def _copy_images(self, from_invoices, to_invoice):
@@ -130,8 +135,9 @@ class DirectInvoiceWzd(models.TransientModel):
                  ('res_model', '=', 'account.invoice')])
             for attachment in attachments:
                 new_attachments = self.env['ir.attachment']
-                if attachment.name.endswith('.tiff'):
-                    tempdir = tempfile.mkdtemp(invoice.number.replace('/', ''))
+                if attachment.name.endswith('.tiff') or \
+                        attachment.name.endswith('.TIF'):
+                    tempdir = tempfile.mkdtemp(invoice.tag.replace('/', ''))
                     with open(tempdir + '/attachment.tiff', 'wb') as f:
                         f.write(base64.b64decode(attachment.datas))
                     try:
