@@ -65,3 +65,7 @@ msgstr "Teléfono:"
 msgid "Web:"
 msgstr "Web:"
 
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.report_invoice_document
+msgid "<strong>Tax base</strong>"
+msgstr "<strong>Base imponible</strong>"
