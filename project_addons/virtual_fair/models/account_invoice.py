@@ -106,8 +106,8 @@ class AccountInvoice(models.Model):
             amount = inv.amount_total
             domain = [
                 ('supplier_id', '=', inv.partner_id.id),
-                ('fair_id.date_start', '<=', fields.date.today()),
-                ('fair_id.date_end', '>=', fields.date.today()),
+                ('fair_id.date_start', '<=', inv.date_invoice),
+                ('fair_id.date_end', '>=', inv.date_invoice),
             ]
             line = self.env['fair.supplier.line'].search(domain, limit=1)
             if not line:
@@ -135,9 +135,8 @@ class AccountInvoice(models.Model):
         """
         for inv in self:
             domain = [
-                ('supplier_id', '=', inv.partner_id.id),
-                ('fair_id.date_start', '<=', fields.date.today()),
-                ('fair_id.date_end', '>=', fields.date.today()),
+                ('customer_id', '=', inv.partner_id.id),
+                ('id', '<=', inv.fair_id.id),
             ]
             line = self.env['fair.customer.line'].search(domain, limit=1)
             if not line:
@@ -148,10 +147,10 @@ class AccountInvoice(models.Model):
                 term_id = line.term_id.id
                 break
 
-            vals = {'fair_id': line.fair_id.id}
+            vals = {}
             if term_id:
                 vals.update({'payment_term_id': term_id})
-            inv.write(vals)
+                inv.write(vals)
         return
 
     @api.multi

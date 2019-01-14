@@ -66,6 +66,7 @@ class DirectInvoiceWzd(models.TransientModel):
             'from_supplier': True,
             'journal_id': self.journal_id.id,
             'fiscal_position_id': fiscal_position_id,
+            'fair_id': inv.fair_id.id
         }
         return vals
 
@@ -259,7 +260,7 @@ class DirectInvoiceWzd(models.TransientModel):
 
         if created_invoices:
             _logger.info("Comprobando condiciones feria")
-            created_invoices.set_fair_supplier_conditions()
+            created_invoices.set_customer_fair_conditions()
             _logger.info("Estableciendo colaboración")
             created_invoices.set_featured_line()
             _logger.info("Recalculando impuestos")

@@ -376,8 +376,7 @@ class InvoiceSupplierImportWzd(models.TransientModel):
 
         self.create_invoice_lines(base_vals)
         if created_invoices:
-            created_invoices.filtered(
-                lambda i: i.fair_id).set_fair_supplier_conditions()
+            created_invoices.set_fair_supplier_conditions()
             created_invoices.filtered(
                 lambda i: i.early_payment_discount > 0).\
                 button_compute_early_payment_disc()
