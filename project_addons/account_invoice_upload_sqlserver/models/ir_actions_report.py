@@ -63,10 +63,11 @@ class UploadInvoice(object):
                         fecha_factura=?,
                         fecha_alta=?,
                         fichero=?
-                    WHERE num_factura=?;""".format(self._table_name)
+                    WHERE num_factura=? and cliente_id=?;""".format(
+                        self._table_name)
         self.cr.execute(
             query,
-            (2127,
+            (record.partner_id.cliente_id,
              record.partner_id.ref,
              # Esto va a romper en cuanto un diario no tenga como
              # codigo corto S#
@@ -75,7 +76,8 @@ class UploadInvoice(object):
              record.date_invoice,
              fields.Date.from_string(fields.Date.today()),
              pdf_file,
-             record.number
+             record.number,
+             record.partner_id.cliente_id,
              ))
 
     def create_invoice(self, record, pdf_file):
@@ -89,7 +91,7 @@ class UploadInvoice(object):
                    VALUES(?,?,?,?,?,?,?);""".format(self._table_name)
         self.cr.execute(
             query,
-            (2127,
+            (record.partner_id.cliente_id,
              record.partner_id.ref,
              # Esto va a romper en cuanto un diario no tenga como codigo
              # corto S#
