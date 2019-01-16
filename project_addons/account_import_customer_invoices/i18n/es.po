@@ -1,0 +1,96 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* account_import_customer_invoices
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 11.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-01-16 10:06+0000\n"
+"PO-Revision-Date: 2019-01-16 10:06+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: account_import_customer_invoices
+#: model:ir.ui.view,arch_db:account_import_customer_invoices.account_invoice_import_wizard_form
+msgid "Cancel"
+msgstr "Cancelar"
+
+#. module: account_import_customer_invoices
+#: model:ir.model.fields,field_description:account_import_customer_invoices.field_account_invoice_import_wizard_create_uid
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: account_import_customer_invoices
+#: model:ir.model.fields,field_description:account_import_customer_invoices.field_account_invoice_import_wizard_create_date
+msgid "Created on"
+msgstr "Creado en"
+
+#. module: account_import_customer_invoices
+#: code:addons/account_import_customer_invoices/wizard/account_import_invoice.py:40
+#, python-format
+msgid "Customer with reference {} not exists"
+msgstr "Cliente con referencia {} no existe"
+
+#. module: account_import_customer_invoices
+#: code:addons/account_import_customer_invoices/wizard/account_import_invoice.py:78
+#, python-format
+msgid "Delivery"
+msgstr "Portes"
+
+#. module: account_import_customer_invoices
+#: model:ir.model.fields,field_description:account_import_customer_invoices.field_account_invoice_import_wizard_display_name
+msgid "Display Name"
+msgstr "Nombre mostrado"
+
+#. module: account_import_customer_invoices
+#: model:ir.model.fields,field_description:account_import_customer_invoices.field_account_invoice_import_wizard_id
+msgid "ID"
+msgstr "ID (identificación)"
+
+#. module: account_import_customer_invoices
+#: model:ir.actions.act_window,name:account_import_customer_invoices.action_account_invoice_import_wizard
+#: model:ir.ui.menu,name:account_import_customer_invoices.menu_account_invoice_import_wizard
+msgid "Import invoices from XML"
+msgstr "Importar facturas desde XML"
+
+#. module: account_import_customer_invoices
+#: model:ir.model.fields,field_description:account_import_customer_invoices.field_account_invoice_import_wizard_input_file
+msgid "Input File"
+msgstr "Fichero"
+
+#. module: account_import_customer_invoices
+#: model:ir.model.fields,field_description:account_import_customer_invoices.field_account_invoice_import_wizard___last_update
+msgid "Last Modified on"
+msgstr "Última modificación en"
+
+#. module: account_import_customer_invoices
+#: model:ir.model.fields,field_description:account_import_customer_invoices.field_account_invoice_import_wizard_write_uid
+msgid "Last Updated by"
+msgstr "Última actualización de"
+
+#. module: account_import_customer_invoices
+#: model:ir.model.fields,field_description:account_import_customer_invoices.field_account_invoice_import_wizard_write_date
+msgid "Last Updated on"
+msgstr "Última actualización en"
+
+#. module: account_import_customer_invoices
+#: code:addons/account_import_customer_invoices/wizard/account_import_invoice.py:94
+#, python-format
+msgid "No invoice was created"
+msgstr "No se han creado facturas"
+
+#. module: account_import_customer_invoices
+#: model:ir.ui.view,arch_db:account_import_customer_invoices.account_invoice_import_wizard_form
+msgid "Process"
+msgstr "Procesar"
+
+#. module: account_import_customer_invoices
+#: model:ir.model,name:account_import_customer_invoices.model_account_invoice_import_wizard
+msgid "account.invoice.import.wizard"
+msgstr "account.invoice.import.wizard"
+
