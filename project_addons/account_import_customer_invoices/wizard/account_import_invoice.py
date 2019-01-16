@@ -83,11 +83,12 @@ class AccountInvoiceImportWizard(models.TransientModel):
                 (delivery_percentage / 100),
                 'invoice_id': invoice.id
             }
-            delivery_vals = self.process_updates(delivery_vals,
-                                                 'account.invoice.line')
-            self.env['account.invoice.line'].with_context(
-                journal_id=journal.id, type='out_invoice').create(
-                    delivery_vals)
+            if delivery_vals['price_unit']:
+                delivery_vals = self.process_updates(delivery_vals,
+                                                    'account.invoice.line')
+                self.env['account.invoice.line'].with_context(
+                    journal_id=journal.id, type='out_invoice').create(
+                        delivery_vals)
             invoice.compute_taxes()
         action = self.env.ref('account.action_invoice_tree1').read()[0]
         if len(invoice_ids) == 0:
