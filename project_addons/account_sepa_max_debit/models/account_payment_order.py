@@ -35,6 +35,7 @@ class AccountPaymentOrder(models.Model):
                 total += pline.amount_currency
                 if total > limit:
                     pline2split += pline
+                    total -= pline.amount_currency
 
         # When no pline2split we are in base case of recursive funcion
         if pline2split:
