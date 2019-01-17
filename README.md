@@ -42,7 +42,7 @@ $ virtualenv -p python3.5 sandbox
 $ sandbox/bin/python3.5 bootstrap.py -c [archivo_buildout]
 ```
 
--Instalar dependencia parta librería pyodbc
+- Instalar dependencia parta librería pyodbc
 ```
 $ sudo apt install unixodbc-dev
 ```
