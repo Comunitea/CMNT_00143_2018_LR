@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- sql.server.configuration form view -->
+    <record id="sql_server_configuration_view_form" model="ir.ui.view">
+        <field name="name">sql.server.configuration.view.form</field>
+        <field name="model">sql.server.configuration</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="model_type"/>
+                        <field name="driver"/>
+                        <field name="server"/>
+                        <field name="database"/>
+                        <field name="user"/>
+                        <field name="password"/>
+                        <field name="table_name"/>
+                        <field name="trusted"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="sql_server_configuration_view_tree" model="ir.ui.view">
+        <field name="name">sql.server.configuration.view.tree</field>
+        <field name="model">sql.server.configuration</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="model_type"/>
+                <field name="server"/>
+                <field name="database"/>
+                <field name="table_name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="sql_server_configuration_action" model="ir.actions.act_window">
+        <field name="name">SQL Server configuration</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">sql.server.configuration</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_type">form</field>
+    </record>
+
+    <menuitem id="sql_server_configuration_menu_act" name="SQL Server configuration" parent="base.menu_ir_property" action="sql_server_configuration_action" />
+</odoo>
