@@ -19,6 +19,5 @@
     'data': [
         'views/res_partner.xml',
         'views/mandate.xml',
-        'views/account_payment_order_view.xml',
     ],
 }
