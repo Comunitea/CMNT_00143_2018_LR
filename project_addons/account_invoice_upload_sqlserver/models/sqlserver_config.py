@@ -105,7 +105,7 @@ class SqlServerConnector(object):
 
             query = """INSERT INTO {}(cliente_id,
                                       remesa_id,
-                                      numero_recibo_ag,
+                                      codigo_recibo_ag,
                                       factura,
                                       fecha_vto_ag,
                                       fecha_recibo,
@@ -117,7 +117,7 @@ class SqlServerConnector(object):
                 query,
                 (record['cliente_id'],
                  record['remesa_id'],
-                 record['numero_recibo_ag'],
+                 record['codigo_recibo_ag'],
                  record['factura'],
                  record['fecha_vto_ag'],
                  record['fecha_recibo'],
@@ -128,7 +128,7 @@ class SqlServerConnector(object):
         else:
             query = """INSERT INTO {}(cliente_id,
                                       remesa_id,
-                                      numero_recibo_ag,
+                                      codigo_recibo_ag,
                                       factura,
                                       fecha_vto_ag,
                                       fecha_vto,
@@ -140,7 +140,7 @@ class SqlServerConnector(object):
                 query,
                 (record['cliente_id'],
                  record['remesa_id'],
-                 record['numero_recibo_ag'],
+                 record['codigo_recibo_ag'],
                  record['factura'],
                  record['fecha_vto_ag'],
                  record['fecha_vto'],
@@ -214,7 +214,7 @@ class SqlserverConfiguration(models.Model):
                         'cliente_id': line.partner_id.cliente_id,
                         'remesa_id':
                         ''.join([x for x in line.order_id.name if x.isdigit()]),
-                        'numero_recibo_ag': ''.join([x for x in line.name if x.isdigit()]),
+                        'codigo_recibo_ag': line.name ,
                         'factura': payment_line.communication,
                         'fecha_vto_ag': fields.Date.from_string(line.date),
                         'fecha_vto':
