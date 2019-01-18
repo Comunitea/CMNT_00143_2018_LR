@@ -101,28 +101,52 @@ class SqlServerConnector(object):
             self.create_invoice(record, pdf_file)
 
     def insert_payment(self, record):
-        query = """INSERT INTO {}(cliente_id,
-                                  remesa_id,
-                                  numero_recibo_ag,
-                                  factura,
-                                  fecha_vto_ag,
-                                  fecha_recibo,
-                                  fecha_vto,
-                                  importe,
-                                  importe_ag)
-                   VALUES(?,?,?,?,?,?,?,?,?);""".format(self._table_name)
-        self.cr.execute(
-            query,
-            (record['cliente_id'],
-             record['remesa_id'],
-             record['numero_recibo_ag'],
-             record['factura'],
-             record['fecha_vto_ag'],
-             record['fecha_recibo'],
-             record['fecha_vto'],
-             record['importe'],
-             record['importe_ag'],
-             ))
+        if record.get('fecha_recibo', False):
+
+            query = """INSERT INTO {}(cliente_id,
+                                      remesa_id,
+                                      numero_recibo_ag,
+                                      factura,
+                                      fecha_vto_ag,
+                                      fecha_recibo,
+                                      fecha_vto,
+                                      importe,
+                                      importe_ag)
+                       VALUES(?,?,?,?,?,?,?,?,?);""".format(self._table_name)
+            self.cr.execute(
+                query,
+                (record['cliente_id'],
+                 record['remesa_id'],
+                 record['numero_recibo_ag'],
+                 record['factura'],
+                 record['fecha_vto_ag'],
+                 record['fecha_recibo'],
+                 record['fecha_vto'],
+                 record['importe'],
+                 record['importe_ag'],
+                 ))
+        else:
+            query = """INSERT INTO {}(cliente_id,
+                                      remesa_id,
+                                      numero_recibo_ag,
+                                      factura,
+                                      fecha_vto_ag,
+                                      fecha_vto,
+                                      importe,
+                                      importe_ag)
+                                   VALUES(?,?,?,?,?,?,?,?,?);""".format(
+                self._table_name)
+            self.cr.execute(
+                query,
+                (record['cliente_id'],
+                 record['remesa_id'],
+                 record['numero_recibo_ag'],
+                 record['factura'],
+                 record['fecha_vto_ag'],
+                 record['fecha_vto'],
+                 record['importe'],
+                 record['importe_ag'],
+                 ))
 
 
 class SqlserverConfiguration(models.Model):
