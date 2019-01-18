@@ -134,7 +134,7 @@ class SqlServerConnector(object):
                                       fecha_vto,
                                       importe,
                                       importe_ag)
-                                   VALUES(?,?,?,?,?,?,?,?,?);""".format(
+                                   VALUES(?,?,?,?,?,?,?,?);""".format(
                 self._table_name)
             self.cr.execute(
                 query,
