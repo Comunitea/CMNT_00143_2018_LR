@@ -184,21 +184,26 @@ class SqlserverConfiguration(models.Model):
             self.table_name,
             self.trusted_value)
         for line in payment_order.bank_line_ids:
-            for payment_line in line.payment_line_ids:
-                payment_order_values = {
-                    'cliente_id': line.partner_id.cliente_id,
-                    'remesa_id':
-                    ''.join([x for x in line.order_id.name if x.isdigit()]),
-                    'numero_recibo_ag': ''.join([x for x in line.name if x.isdigit()]),
-                    'factura': payment_line.communication,
-                    'fecha_vto_ag': fields.Date.from_string(line.date),
-                    'fecha_recibo': fields.Date.from_string(line.date),
-                    'fecha_vto':
-                    fields.Date.from_string(payment_line.ml_maturity_date),
-                    'importe': payment_line.amount_company_currency,
-                    'importe_ag': line.amount_currency,
-                }
-            sql_connection.insert_payment(payment_order_values)
+            if line.partner_id.cliente_id:
+                for payment_line in line.payment_line_ids:
+                    payment_order_values = {
+                        'cliente_id': line.partner_id.cliente_id,
+                        'remesa_id':
+                        ''.join([x for x in line.order_id.name if x.isdigit()]),
+                        'numero_recibo_ag': ''.join([x for x in line.name if x.isdigit()]),
+                        'factura': payment_line.communication,
+                        'fecha_vto_ag': fields.Date.from_string(line.date),
+                        'fecha_vto':
+                        fields.Date.from_string(payment_line.date),
+                        'importe': payment_line.amount_company_currency,
+                        'importe_ag': line.amount_currency,
+                    }
+                    if payment_line.move_line_id and \
+                            payment_line.move_line_id.invoice_id:
+                        payment_order_values.update(
+                            {'fecha_recibo':
+                                 payment_line.move_line_id.invoice_id.date_invoice})
+                    sql_connection.insert_payment(payment_order_values)
         sql_connection.close_cursor()
 
     def delete_payment(self):
@@ -214,5 +219,5 @@ class SqlserverConfiguration(models.Model):
         # Se puede hacer un delete con where remesa_id = ''.join([x for x in line.order_id.name if x.isdigit()])
         # valdría así, si no, solo se me ocurre, o pasar los datos de las lineas a la función antes de hacer el el super() de la funcion cancel
         # o hacerlo sin el @job.
-        sql_connection.delete_payment(datos_necesarios_para_borrar)
+        #sql_connection.delete_payment(datos_necesarios_para_borrar)
         sql_connection.close_cursor()

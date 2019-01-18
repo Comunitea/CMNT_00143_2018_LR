@@ -10,6 +10,10 @@ class AccountPaymentOrder(models.Model):
 
     name = fields.Char(string='Name')
 
+    def action_send_web(self):
+        if self.payment_type == 'inbound':
+            self.with_delay().upload_payment()
+
     @job
     def upload_payment(self):
         sql_server_config = self.env['sql.server.configuration'].search([
