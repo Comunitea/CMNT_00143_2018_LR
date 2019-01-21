@@ -9,7 +9,8 @@
     'depends': [
         'account',
         'account_payment_order',
-        'queue_job'
+        'queue_job',
+        'report_qweb_signer'
     ],
     'external_dependencies': {
         'python': [
