@@ -1,7 +1,7 @@
 # © 2018 Comunitea
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from odoo import models, api, fields
+from odoo import models, api
 
 
 class InvoiceMailingWzd(models.TransientModel):
@@ -13,9 +13,9 @@ class InvoiceMailingWzd(models.TransientModel):
         self.ensure_one()
         active_ids = self._context.get('active_ids')
         grouped_invoices = self.env['account.invoice'].read_group(
-            [('id', 'in', active_ids)], ['partner_id', 'date_invoice'], 
+            [('id', 'in', active_ids)], ['partner_id', 'date_invoice'],
             ['partner_id', 'date_invoice:day'], lazy=False)
-        
+
         mail_tmp = self.env.ref('account_custom.invoices_mailing_template')
         for group in grouped_invoices:
             partner = self.env['res.partner'].browse(group['partner_id'][0])

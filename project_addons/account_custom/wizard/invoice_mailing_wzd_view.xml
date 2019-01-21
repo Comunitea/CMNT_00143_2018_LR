@@ -4,7 +4,7 @@
             <field name="name">Notify Invoices</field>
             <field name="model">invoice.mailing.wzd</field>
             <field name="arch" type="xml">
-                <form string="Make invoices">
+                <form string="Notify invoices">
                     <div name="help">
                         <p>It will send an email notification to the partner of the selected invoices for each invoice date</p>
                     </div>

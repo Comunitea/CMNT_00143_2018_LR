@@ -81,8 +81,8 @@ msgstr "Última actualización en"
 
 #. module: account_custom
 #: model:ir.ui.view,arch_db:account_custom.view_mailing_invoices_wzd_form
-msgid "Make invoices"
-msgstr "Make invoices"
+msgid "Notify invoices"
+msgstr "Notificar facturas"
 
 #. module: account_custom
 #: model:mail.template,subject:account_custom.invoices_mailing_template
