@@ -8,6 +8,7 @@
     'license': 'AGPL-3',
     'depends': [
         'account',
+        'account_payment_order',
         'queue_job'
     ],
     'external_dependencies': {
@@ -16,7 +17,10 @@
         ],
     },
     'data': [
-        'data/parameters.xml'
+        'data/parameters.xml',
+        'views/sqlserver_config.xml',
+        'views/account_journal.xml',
+        'security/ir.model.access.csv'
     ],
     'installable': True,
 }
