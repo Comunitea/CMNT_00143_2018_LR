@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!--Email template -->
+        <record id="invoices_mailing_template" model="mail.template">
+            <field name="name">Notify Invoices Rias</field>
+            <field name="email_from">facturacion.las-rias.com  &lt;Facturación Las Rias&gt;	</field>
+            <field name="subject">Notify Invoices Rias</field>
+            <field name="partner_to">${object.id}</field>
+            <field name="model_id" ref="base.model_res_partner"/>
+            <field name="auto_delete" eval="False"/>
+            <field name="lang">${object.lang}</field>
+            <field name="body_html"><![CDATA[
+
+<div>
+<p style="font-family: Arial, Helvetica, sans-serif; font-size: small; margin: 0px; padding: 0px; color: rgb(34, 34, 34);"><span class="m_7660216557214282646rvts7" style="font-family: &quot;segoe ui&quot;; font-weight: bold;">Estimado ${object.name}:</span></p><div style="font-family: &quot;Lucida Grande&quot;, Helvetica, Verdana, Arial, sans-serif; font-size: 13px;"><br><span class="m_7660216557214282646rvts7" style="font-family: &quot;segoe ui&quot;; font-weight: bold;"><span style="color: rgb(34, 34, 34); font-size: small; font-weight: 400;">Con fecha: ${ctx.inv_date} hemos emitido nuevas facturas a su nombre, puede acceder a la página web (</span><a href="http://www.las-rias.com/" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://www.las-rias.com&amp;source=gmail&amp;ust=1547574219383000&amp;usg=AFQjCNHT2drtCvPTbx54JhHXqwhuS5ZNZw" style="color: rgb(17, 85, 204); font-size: small; font-weight: 400; background-color: rgb(255, 255, 255);">www.las-rias.com</a><span style="color: rgb(34, 34, 34); font-size: small; font-weight: 400;">) para su visualización y/o descarga, identificandose con sus credenciales, y utilizando la opción de menú eAdmin\Descargar facturas&nbsp;</span></span><br><span class="m_7660216557214282646rvts7" style="font-family: &quot;segoe ui&quot;; font-weight: bold;"><br><p></p><p></p></span></div><p style="font-family: Arial, Helvetica, sans-serif; font-size: small; margin: 0px; padding: 0px; color: rgb(34, 34, 34);"><span class="m_7660216557214282646rvts8" style="font-family: &quot;segoe ui&quot;;"><img src="/logo.png?company=${object.company_id.id}" style="border-style:none;border-image-width:1;border-image-source:none;border-image-slice:100%;border-image-repeat:stretch;border-image-outset:0;border-left-color:currentcolor;border-bottom-color:currentcolor;border-right-color:currentcolor;border-top-color:currentcolor;padding: 0px; margin: 0px; height: auto; width: 80px;" alt="${object.company_id.name}" data-original-title="" title=""><br class="Apple-interchange-newline">Las Rías Sociedade Cooperativa Galega</span></p><p style="font-family: Arial, Helvetica, sans-serif; font-size: small; margin: 0px; padding: 0px; color: rgb(34, 34, 34);"><span class="m_7660216557214282646rvts8" style="font-family: &quot;segoe ui&quot;;">Pol.Ind. Espiritu Santo</span></p><p style="font-family: Arial, Helvetica, sans-serif; font-size: small; margin: 0px; padding: 0px; color: rgb(34, 34, 34);"><span class="m_7660216557214282646rvts8" style="font-family: &quot;segoe ui&quot;;">C/Zeppelin 3-5-7-9</span></p><p style="font-family: Arial, Helvetica, sans-serif; font-size: small; margin: 0px; padding: 0px; color: rgb(34, 34, 34);"><span class="m_7660216557214282646rvts8" style="font-family: &quot;segoe ui&quot;;">15650 Cambre - (A Coruña)</span></p><p style="font-family: Arial, Helvetica, sans-serif; font-size: small; margin: 0px; padding: 0px; color: rgb(34, 34, 34);"><span class="m_7660216557214282646rvts8" style="font-family: &quot;segoe ui&quot;;">Tfno: 981 64 93 12</span></p><p style="font-family: Arial, Helvetica, sans-serif; font-size: small; margin: 0px; padding: 0px; color: rgb(34, 34, 34);"><span class="m_7660216557214282646rvts8" style="font-family: &quot;segoe ui&quot;;">Fax: 981 79 56 77</span></p>
+</div><p></p>
+
+
+]]></field>
+        </record>
+
+
+    </data>
+</odoo>

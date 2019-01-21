@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 11.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-01-03 18:48+0000\n"
-"PO-Revision-Date: 2019-01-03 18:48+0000\n"
+"POT-Creation-Date: 2019-01-21 17:26+0000\n"
+"PO-Revision-Date: 2019-01-21 17:26+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,9 +16,83 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: account_custom
+#: model:mail.template,body_html:account_custom.invoices_mailing_template
+msgid "\n"
+"\n"
+"<div>\n"
+"<p style=\"font-family: Arial, Helvetica, sans-serif; font-size: small; margin: 0px; padding: 0px; color: rgb(34, 34, 34);\"><span class=\"m_7660216557214282646rvts7\" style=\"font-family: &quot;segoe ui&quot;; font-weight: bold;\">Estimado ${object.name}:</span></p><div style=\"font-family: &quot;Lucida Grande&quot;, Helvetica, Verdana, Arial, sans-serif; font-size: 13px;\"><br><span class=\"m_7660216557214282646rvts7\" style=\"font-family: &quot;segoe ui&quot;; font-weight: bold;\"><span style=\"color: rgb(34, 34, 34); font-size: small; font-weight: 400;\">Con fecha: ${ctx.inv_date} hemos emitido nuevas facturas a su nombre, puede acceder a la página web (</span><a href=\"http://www.las-rias.com/\" target=\"_blank\" data-saferedirecturl=\"https://www.google.com/url?q=http://www.las-rias.com&amp;source=gmail&amp;ust=1547574219383000&amp;usg=AFQjCNHT2drtCvPTbx54JhHXqwhuS5ZNZw\" style=\"color: rgb(17, 85, 204); font-size: small; font-weight: 400; background-color: rgb(255, 255, 255);\">www.las-rias.com</a><span style=\"color: rgb(34, 34, 34); font-size: small; font-weight: 400;\">) para su visualización y/o descarga, identificandose con sus credenciales, y utilizando la opción de menú eAdmin\\Descargar facturas&nbsp;</span></span><br><span class=\"m_7660216557214282646rvts7\" style=\"font-family: &quot;segoe ui&quot;; font-weight: bold;\"><br><p></p><p></p></span></div><p style=\"font-family: Arial, Helvetica, sans-serif; font-size: small; margin: 0px; padding: 0px; color: rgb(34, 34, 34);\"><span class=\"m_7660216557214282646rvts8\" style=\"font-family: &quot;segoe ui&quot;;\"><img src=\"/logo.png?company=${object.company_id.id}\" style=\"border-style:none;border-image-width:1;border-image-source:none;border-image-slice:100%;border-image-repeat:stretch;border-image-outset:0;border-left-color:currentcolor;border-bottom-color:currentcolor;border-right-color:currentcolor;border-top-color:currentcolor;padding: 0px; margin: 0px; height: auto; width: 80px;\" alt=\"${object.company_id.name}\" data-original-title=\"\" title=\"\"><br class=\"Apple-interchange-newline\">Las Rías Sociedade Cooperativa Galega</span></p><p style=\"font-family: Arial, Helvetica, sans-serif; font-size: small; margin: 0px; padding: 0px; color: rgb(34, 34, 34);\"><span class=\"m_7660216557214282646rvts8\" style=\"font-family: &quot;segoe ui&quot;;\">Pol.Ind. Espiritu Santo</span></p><p style=\"font-family: Arial, Helvetica, sans-serif; font-size: small; margin: 0px; padding: 0px; color: rgb(34, 34, 34);\"><span class=\"m_7660216557214282646rvts8\" style=\"font-family: &quot;segoe ui&quot;;\">C/Zeppelin 3-5-7-9</span></p><p style=\"font-family: Arial, Helvetica, sans-serif; font-size: small; margin: 0px; padding: 0px; color: rgb(34, 34, 34);\"><span class=\"m_7660216557214282646rvts8\" style=\"font-family: &quot;segoe ui&quot;;\">15650 Cambre - (A Coruña)</span></p><p style=\"font-family: Arial, Helvetica, sans-serif; font-size: small; margin: 0px; padding: 0px; color: rgb(34, 34, 34);\"><span class=\"m_7660216557214282646rvts8\" style=\"font-family: &quot;segoe ui&quot;;\">Tfno: 981 64 93 12</span></p><p style=\"font-family: Arial, Helvetica, sans-serif; font-size: small; margin: 0px; padding: 0px; color: rgb(34, 34, 34);\"><span class=\"m_7660216557214282646rvts8\" style=\"font-family: &quot;segoe ui&quot;;\">Fax: 981 79 56 77</span></p>\n"
+"</div><p></p>\n"
+"\n"
+"\n"
+""
+msgstr "\n"
+"\n"
+"<div>\n"
+"<p style=\"font-family: Arial, Helvetica, sans-serif; font-size: small; margin: 0px; padding: 0px; color: rgb(34, 34, 34);\"><span class=\"m_7660216557214282646rvts7\" style=\"font-family: &quot;segoe ui&quot;; font-weight: bold;\">Estimado ${object.name}:</span></p><div style=\"font-family: &quot;Lucida Grande&quot;, Helvetica, Verdana, Arial, sans-serif; font-size: 13px;\"><br><span class=\"m_7660216557214282646rvts7\" style=\"font-family: &quot;segoe ui&quot;; font-weight: bold;\"><span style=\"color: rgb(34, 34, 34); font-size: small; font-weight: 400;\">Con fecha: ${ctx.inv_date} hemos emitido nuevas facturas a su nombre, puede acceder a la página web (</span><a href=\"http://www.las-rias.com/\" target=\"_blank\" data-saferedirecturl=\"https://www.google.com/url?q=http://www.las-rias.com&amp;source=gmail&amp;ust=1547574219383000&amp;usg=AFQjCNHT2drtCvPTbx54JhHXqwhuS5ZNZw\" style=\"color: rgb(17, 85, 204); font-size: small; font-weight: 400; background-color: rgb(255, 255, 255);\">www.las-rias.com</a><span style=\"color: rgb(34, 34, 34); font-size: small; font-weight: 400;\">) para su visualización y/o descarga, identificandose con sus credenciales, y utilizando la opción de menú eAdmin\\Descargar facturas&nbsp;</span></span><br><span class=\"m_7660216557214282646rvts7\" style=\"font-family: &quot;segoe ui&quot;; font-weight: bold;\"><br><p></p><p></p></span></div><p style=\"font-family: Arial, Helvetica, sans-serif; font-size: small; margin: 0px; padding: 0px; color: rgb(34, 34, 34);\"><span class=\"m_7660216557214282646rvts8\" style=\"font-family: &quot;segoe ui&quot;;\"><img src=\"/logo.png?company=${object.company_id.id}\" style=\"border-style:none;border-image-width:1;border-image-source:none;border-image-slice:100%;border-image-repeat:stretch;border-image-outset:0;border-left-color:currentcolor;border-bottom-color:currentcolor;border-right-color:currentcolor;border-top-color:currentcolor;padding: 0px; margin: 0px; height: auto; width: 80px;\" alt=\"${object.company_id.name}\" data-original-title=\"\" title=\"\"><br class=\"Apple-interchange-newline\">Las Rías Sociedade Cooperativa Galega</span></p><p style=\"font-family: Arial, Helvetica, sans-serif; font-size: small; margin: 0px; padding: 0px; color: rgb(34, 34, 34);\"><span class=\"m_7660216557214282646rvts8\" style=\"font-family: &quot;segoe ui&quot;;\">Pol.Ind. Espiritu Santo</span></p><p style=\"font-family: Arial, Helvetica, sans-serif; font-size: small; margin: 0px; padding: 0px; color: rgb(34, 34, 34);\"><span class=\"m_7660216557214282646rvts8\" style=\"font-family: &quot;segoe ui&quot;;\">C/Zeppelin 3-5-7-9</span></p><p style=\"font-family: Arial, Helvetica, sans-serif; font-size: small; margin: 0px; padding: 0px; color: rgb(34, 34, 34);\"><span class=\"m_7660216557214282646rvts8\" style=\"font-family: &quot;segoe ui&quot;;\">15650 Cambre - (A Coruña)</span></p><p style=\"font-family: Arial, Helvetica, sans-serif; font-size: small; margin: 0px; padding: 0px; color: rgb(34, 34, 34);\"><span class=\"m_7660216557214282646rvts8\" style=\"font-family: &quot;segoe ui&quot;;\">Tfno: 981 64 93 12</span></p><p style=\"font-family: Arial, Helvetica, sans-serif; font-size: small; margin: 0px; padding: 0px; color: rgb(34, 34, 34);\"><span class=\"m_7660216557214282646rvts8\" style=\"font-family: &quot;segoe ui&quot;;\">Fax: 981 79 56 77</span></p>\n"
+"</div><p></p>\n"
+"\n"
+"\n"
+""
+
+#. module: account_custom
+#: model:ir.model.fields,field_description:account_custom.field_invoice_mailing_wzd_create_uid
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: account_custom
+#: model:ir.model.fields,field_description:account_custom.field_invoice_mailing_wzd_create_date
+msgid "Created on"
+msgstr "Creado en"
+
+#. module: account_custom
+#: model:ir.model.fields,field_description:account_custom.field_invoice_mailing_wzd_display_name
+msgid "Display Name"
+msgstr "Nombre mostrado"
+
+#. module: account_custom
+#: model:ir.model.fields,field_description:account_custom.field_invoice_mailing_wzd_id
+msgid "ID"
+msgstr "ID (identificación)"
+
+#. module: account_custom
+#: model:ir.ui.view,arch_db:account_custom.view_mailing_invoices_wzd_form
+msgid "It will send an email notification to the partner of the selected invoices for each invoice date"
+msgstr "Este asistente notificará por correo electrónico a cada cliente de las facturas seleccionadas, una vez por cada fecha de factura"
+
+#. module: account_custom
 #: model:ir.model,name:account_custom.model_account_move_line
 msgid "Journal Item"
 msgstr "Apunte contable"
+
+#. module: account_custom
+#: model:ir.model.fields,field_description:account_custom.field_invoice_mailing_wzd___last_update
+msgid "Last Modified on"
+msgstr "Última modificación en"
+
+#. module: account_custom
+#: model:ir.model.fields,field_description:account_custom.field_invoice_mailing_wzd_write_uid
+msgid "Last Updated by"
+msgstr "Última actualización de"
+
+#. module: account_custom
+#: model:ir.model.fields,field_description:account_custom.field_invoice_mailing_wzd_write_date
+msgid "Last Updated on"
+msgstr "Última actualización en"
+
+#. module: account_custom
+#: model:ir.ui.view,arch_db:account_custom.view_mailing_invoices_wzd_form
+msgid "Make invoices"
+msgstr "Make invoices"
+
+#. module: account_custom
+#: model:mail.template,subject:account_custom.invoices_mailing_template
+msgid "Notify Invoices Rias"
+msgstr "Notificación Facturas (Las Rías)"
+
+#. module: account_custom
+#: model:ir.actions.act_window,name:account_custom.action_mailing_invoices_wzd
+msgid "Notify Selected Invoices"
+msgstr "Notificar facturas seleccionadas"
 
 #. module: account_custom
 #: model:ir.model.fields,field_description:account_custom.field_account_move_line_country_id
@@ -31,7 +105,27 @@ msgid "Partner Position"
 msgstr "Posición de la empresa"
 
 #. module: account_custom
+#: model:ir.ui.view,arch_db:account_custom.view_mailing_invoices_wzd_form
+msgid "Send invoices"
+msgstr "Envíar"
+
+#. module: account_custom
 #: model:ir.model.fields,help:account_custom.field_account_move_line_account_position_id
 msgid "The fiscal position will determine taxes and accounts used for the partner."
 msgstr "La posición fiscal determinará los impuestos y cuentas utilizadas por el asociado."
+
+#. module: account_custom
+#: model:ir.ui.view,arch_db:account_custom.view_mailing_invoices_wzd_form
+msgid "Cancel"
+msgstr "Cancelar"
+
+#. module: account_custom
+#: model:ir.model,name:account_custom.model_invoice_mailing_wzd
+msgid "invoice.mailing.wzd"
+msgstr "invoice.mailing.wzd"
+
+#. module: account_custom
+#: model:ir.ui.view,arch_db:account_custom.view_mailing_invoices_wzd_form
+msgid "or"
+msgstr "o"
 

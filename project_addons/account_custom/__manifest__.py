@@ -15,6 +15,7 @@
         'account'
     ],
     'data': [
-
+        'data/invoice_mailing_template.xml',
+        'wizard/invoice_mailing_wzd_view.xml'
     ]
 }
