@@ -34,7 +34,7 @@ class AccountInvoiceImportWizard(models.TransientModel):
             customer_tag = partners.find('cliente')
             customer_ref = customer_tag.attrib['refInt']
             customer = self.env['res.partner'].search(
-                [('ref', '=', customer_ref)])
+                [('ref', '=', customer_ref), ('customer', '=', True)])
             if not customer:
                 raise ValidationError(
                     _('Customer with reference {} not exists').format(
