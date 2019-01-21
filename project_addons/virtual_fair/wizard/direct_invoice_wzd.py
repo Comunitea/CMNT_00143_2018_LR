@@ -52,7 +52,8 @@ class DirectInvoiceWzd(models.TransientModel):
         else:
             fiscal_position_id = \
                 inv.associate_id.property_account_position_id.id
-        invoice_address = inv.associate_id.address_get(['invoice'])
+        #invoice_address = inv.associate_id.address_get(['invoice'])
+        invoice_address = inv.associate_id.id
         vals = {
             'partner_id': invoice_address['invoice'],
             'name': '/',
