@@ -209,11 +209,12 @@ class SqlserverConfiguration(models.Model):
             self.trusted_value)
         for line in payment_order.bank_line_ids:
             if line.partner_id.cliente_id:
+                remesa_id = 100000 + int(''.join(
+                    [x for x in line.order_id.name if x.isdigit()]))
                 for payment_line in line.payment_line_ids:
                     payment_order_values = {
                         'cliente_id': line.partner_id.cliente_id,
-                        'remesa_id':
-                        ''.join([x for x in line.order_id.name if x.isdigit()]),
+                        'remesa_id': remesa_id,
                         'codigo_recibo_ag': line.name ,
                         'factura': payment_line.communication,
                         'fecha_vto_ag': fields.Date.from_string(line.date),
@@ -226,7 +227,8 @@ class SqlserverConfiguration(models.Model):
                             payment_line.move_line_id.invoice_id:
                         payment_order_values.update(
                             {'fecha_recibo':
-                                 payment_line.move_line_id.invoice_id.date_invoice})
+                                 payment_line.move_line_id.invoice_id.
+                                     date_invoice})
                     sql_connection.insert_payment(payment_order_values)
         sql_connection.close_cursor()
 
