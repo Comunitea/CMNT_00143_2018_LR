@@ -23,6 +23,12 @@ class AccountInvoiceImportWizard(models.TransientModel):
                 vals[name] = value[name]
         return vals
 
+    def _get_taxes(self, tax_eids):
+        taxes = self.env['account.tax']
+        for tax_eid in tax_eids.split(','):
+            taxes += self.env.ref(tax_eid)
+        return taxes
+
     def process_file(self):
         tree = etree.parse(BytesIO(base64.b64decode(self.input_file)))
         root_element = tree.getroot()
@@ -56,13 +62,13 @@ class AccountInvoiceImportWizard(models.TransientModel):
 
             for line in invoice_data.find('articulos').iter('articulo'):
                 line_data = line.find('datosVenta')
-                tax = self.env.ref(line_data.find('tipoIVA').attrib['id'])
+                taxes = self._get_taxes(line_data.find('tipoIVA').attrib['id'])
                 line_vals = {
                     'name': line.find('referencia').text + ' - ' +
                     line.find('nombre').text,
                     'quantity': float(line_data.find('unidades').text),
                     'price_unit': float(line_data.find('precioUnitario').text),
-                    'invoice_line_tax_ids': [(4, tax.id)],
+                    'invoice_line_tax_ids': [(4, x.id) for x in taxes],
                     'num_purchase': purchase_number,
                     'invoice_id': invoice.id
                 }
@@ -72,12 +78,12 @@ class AccountInvoiceImportWizard(models.TransientModel):
                     journal_id=journal.id, type='out_invoice').create(
                         line_vals)
             delivery_data = customer_tag.find('porteVenta')
-            tax = self.env.ref(delivery_data.find('tipoIVAPorte').attrib['id'])
+            taxes = self._get_taxes(delivery_data.find('tipoIVAPorte').attrib['id'])
             delivery_percentage = float(delivery_data.find('pct').text)
             delivery_vals = {
                 'name': _('Delivery'),
                 'quantity': 1,
-                'invoice_line_tax_ids': [(4, tax.id)],
+                'invoice_line_tax_ids': [(4, x.id) for x in taxes],
                 'num_purchase': purchase_number,
                 'price_unit': invoice.amount_untaxed *
                 (delivery_percentage / 100),
