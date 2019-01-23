@@ -148,7 +148,7 @@ class InvoiceSupplierImportWzd(models.TransientModel):
         if fields.Date.from_string(date_invoice) > date.today():
             msg = _('Invoice date is after today')
             self.log_id.create_log_line(msg, hvals)
-            return {}
+            #return {}
         # Get date
         date_ = self._format_date(hvals.get('fec_contable', False))
         # Get digit_date
