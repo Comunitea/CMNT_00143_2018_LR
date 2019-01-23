@@ -10,7 +10,8 @@
     'depends': [
         'account',
         'account_due_dates_str',
-        'base_multi_image'
+        'base_multi_image',
+        'account_invoice_custom'
     ],
     'data': [
         'data/report_paperformat.xml',
