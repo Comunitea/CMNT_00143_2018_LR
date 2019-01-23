@@ -296,15 +296,14 @@ class InvoiceSupplierImportWzd(models.TransientModel):
             tax_description = TAX_MAPPING.get(amount + 1, False)
         if not tax_description:
             tax_description = TAX_MAPPING.get(amount - 1, False)
-        if not tax_description:
-            raise UserError(_('Impuestos no encontrados'))
-        domain = [
-            ('type_tax_use', '=', 'purchase'),
-            ('description', '=', tax_description)
-        ]
-        taxes = self.env['account.tax'].search(domain, limit=1)
-        if taxes:
-            tax_ids = taxes.ids
+        if  tax_description:
+            domain = [
+                ('type_tax_use', '=', 'purchase'),
+                ('description', '=', tax_description)
+            ]
+            taxes = self.env['account.tax'].search(domain, limit=1)
+            if taxes:
+                tax_ids = taxes.ids
         return tax_ids
 
     @api.model
