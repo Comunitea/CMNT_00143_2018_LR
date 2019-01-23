@@ -12,6 +12,7 @@ TAX_MAPPING = {
     10: 'P_IVA10_BC',
     13: 'P_IVA13_PT',
     23: 'P_IVA23_PT',
+    0: 'P_IVA21_IC_BC'
 }
 
 class InvoiceSupplierImportWzd(models.TransientModel):
@@ -287,6 +288,9 @@ class InvoiceSupplierImportWzd(models.TransientModel):
         base = float(bvals.get('base', '0.0'))
         tax = float(bvals.get('cuota', '0.0'))
         amount = int(round((tax / (base or 1.0)) * 100.0, 0))
+        print(amount)
+        print(base)
+        print(tax)
         tax_description = TAX_MAPPING.get(amount, False)
         if not tax_description:
             tax_description = TAX_MAPPING.get(amount + 1, False)
