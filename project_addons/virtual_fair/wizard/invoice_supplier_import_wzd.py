@@ -287,7 +287,13 @@ class InvoiceSupplierImportWzd(models.TransientModel):
         base = float(bvals.get('base', '0.0'))
         tax = float(bvals.get('cuota', '0.0'))
         amount = int(round((tax / (base or 1.0)) * 100.0, 0))
-        tax_description = TAX_MAPPING[amount]
+        tax_description = TAX_MAPPING.get[amount, False]
+        if not tax_description:
+            tax_description = TAX_MAPPING.get[amount + 1, False]
+        if not tax_description:
+            tax_description = TAX_MAPPING.get[amount + 1, False]
+        if not tax_description:
+            raise UserError(_('Impuestos no encontrados'))
         domain = [
             ('type_tax_use', '=', 'purchase'),
             ('description', '=', tax_description)
