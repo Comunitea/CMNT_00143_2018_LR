@@ -55,7 +55,7 @@ class DirectInvoiceWzd(models.TransientModel):
         #invoice_address = inv.associate_id.address_get(['invoice'])
         invoice_address = inv.associate_id.id
         vals = {
-            'partner_id': invoice_address['invoice'],
+            'partner_id': invoice_address,
             'name': '/',
             'origin': ','.join([x.name or '' for x in invoices]),
             'type':
@@ -254,6 +254,7 @@ class DirectInvoiceWzd(models.TransientModel):
             prov_inv._onchange_payment_term_date_invoice()
             prov_date_due = fields.Date.from_string(prov_inv.date_due)
             date_due = prov_date_due - timedelta(days=15)
+            date_due = self.calculate_payday(prov_inv.associate_id, date_due)
             inv.write({'payment_term_id': False,
                        'date_due': fields.Datetime.to_string(date_due)})
             created_invoices += inv
@@ -267,3 +268,19 @@ class DirectInvoiceWzd(models.TransientModel):
             _logger.info("Recalculando impuestos")
             created_invoices.compute_taxes()
             return self.action_view_invoice(created_invoices)
+
+    def calculate_payday(self, partner, due_date):
+        payment_term = self.env['account.payment.term']
+        days = payment_term._decode_payment_days(partner.payment_days)
+        new_date = False
+        for day in days:
+            if due_date.day <= day:
+                new_date = payment_term.next_day(due_date, day)
+                break
+        if days:
+            if not new_date:
+                day = days[0]
+                date = payment_term.next_day(due_date, day)
+            else:
+                date = new_date
+        return date
