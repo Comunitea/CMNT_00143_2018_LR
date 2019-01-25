@@ -11,10 +11,12 @@ class IrActionsReport(models.Model):
 
     @job
     def upload_invoice(self, record, attachment):
-        if record.partner_id.cliente_id:  # Solo se envia si tenemos
+        cliente_id = record.partner_id.cliente_id or \
+                     record.partner_id.commercial_partner_id.cliente_id
+        if cliente_id:  # Solo se
+            # envia si tenemos
             # establecido el campo de identiifcaiónd e cliente en web
-            if not record.partner_id.ref.isdigit():
-                raise ValidationError(_('Partner reference not numeric'))
+
             if not record.journal_id.sqlserver_id:
                 raise ValidationError(
                     _('Journal {} without sqlserver id').format(
