@@ -52,6 +52,12 @@ class SqlServerConnector(object):
         return False
 
     def refresh_invoice(self, record, pdf_file):
+        if record.partner_id.cliente_id:
+            cliente_id = record.partner_id.cliente_id
+            cliente_codigo = record.partner_id.ref
+        else:
+            cliente_id = record.partner_id.commercial_partner_id.cliente_id
+            cliente_codigo = record.commercial_partner_id.partner_id.ref
         query = """UPDATE {}
                     SET cliente_id=?,
                         cliente_codigo=?,
@@ -64,8 +70,8 @@ class SqlServerConnector(object):
                         self._table_name)
         self.cr.execute(
             query,
-            (record.partner_id.cliente_id,
-             record.partner_id.ref,
+            (cliente_id,
+             cliente_codigo,
              record.journal_id.sqlserver_id,
              record.number,
              record.date_invoice,
@@ -76,6 +82,12 @@ class SqlServerConnector(object):
              ))
 
     def create_invoice(self, record, pdf_file):
+        if record.partner_id.cliente_id:
+            cliente_id = record.partner_id.cliente_id
+            cliente_codigo = record.partner_id.ref
+        else:
+            cliente_id = record.partner_id.commercial_partner_id.cliente_id
+            cliente_codigo = record.commercial_partner_id.partner_id.ref
         query = """INSERT INTO {}(cliente_id,
                                   cliente_codigo,
                                   serie_id,
@@ -86,8 +98,8 @@ class SqlServerConnector(object):
                    VALUES(?,?,?,?,?,?,?);""".format(self._table_name)
         self.cr.execute(
             query,
-            (record.partner_id.cliente_id,
-             record.partner_id.ref,
+            (cliente_id,
+             cliente_codigo,
              record.journal_id.sqlserver_id,
              record.number,
              fields.Date.from_string(record.date_invoice),
