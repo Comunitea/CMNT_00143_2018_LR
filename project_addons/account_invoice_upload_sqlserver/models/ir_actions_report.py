@@ -15,7 +15,7 @@ class IrActionsReport(models.Model):
                      record.partner_id.commercial_partner_id.cliente_id
         if cliente_id:  # Solo se
             # envia si tenemos
-            # establecido el campo de identiifcaiónd e cliente en web
+            # establecido el campo de identifcaión de cliente en web
 
             if not record.journal_id.sqlserver_id:
                 raise ValidationError(

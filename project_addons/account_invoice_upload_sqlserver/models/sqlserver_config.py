@@ -57,7 +57,7 @@ class SqlServerConnector(object):
             cliente_codigo = record.partner_id.ref
         else:
             cliente_id = record.partner_id.commercial_partner_id.cliente_id
-            cliente_codigo = record.commercial_partner_id.partner_id.ref
+            cliente_codigo = record.partner_id.commercial_partner_id.ref
         query = """UPDATE {}
                     SET cliente_id=?,
                         cliente_codigo=?,
@@ -87,7 +87,7 @@ class SqlServerConnector(object):
             cliente_codigo = record.partner_id.ref
         else:
             cliente_id = record.partner_id.commercial_partner_id.cliente_id
-            cliente_codigo = record.commercial_partner_id.partner_id.ref
+            cliente_codigo = record.partner_id.commercial_partner_id.ref
         query = """INSERT INTO {}(cliente_id,
                                   cliente_codigo,
                                   serie_id,
