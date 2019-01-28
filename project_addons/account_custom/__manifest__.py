@@ -12,10 +12,12 @@
     'installable': True,
     'depends': [
         'base',
-        'account'
+        'account',
+        'account_due_list'
     ],
     'data': [
         'data/invoice_mailing_template.xml',
-        'wizard/invoice_mailing_wzd_view.xml'
+        'wizard/invoice_mailing_wzd_view.xml',
+        'views/account_move_line.xml'
     ]
 }
