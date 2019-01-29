@@ -270,17 +270,19 @@ class DirectInvoiceWzd(models.TransientModel):
             return self.action_view_invoice(created_invoices)
 
     def calculate_payday(self, partner, due_date):
+        date = due_date
         payment_term = self.env['account.payment.term']
-        days = payment_term._decode_payment_days(partner.payment_days)
-        new_date = False
-        for day in days:
-            if due_date.day <= day:
-                new_date = payment_term.next_day(due_date, day)
-                break
-        if days:
-            if not new_date:
-                day = days[0]
-                date = payment_term.next_day(due_date, day)
-            else:
-                date = new_date
+        if partner.payment_days:
+            days = payment_term._decode_payment_days(partner.payment_days)
+            new_date = False
+            for day in days:
+                if due_date.day <= day:
+                    new_date = payment_term.next_day(due_date, day)
+                    break
+            if days:
+                if not new_date:
+                    day = days[0]
+                    date = payment_term.next_day(due_date, day)
+                else:
+                    date = new_date
         return date
