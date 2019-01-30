@@ -26,6 +26,7 @@
         'views/importation_log.xml',
         'views/res_company.xml',
         'views/account_invoice.xml',
+        'views/res_partner.xml',
         'wizard/virtual_fair_import_wzd.xml',
         'wizard/invoice_supplier_import_wzd.xml',
         'wizard/direct_invoice_wzd.xml',

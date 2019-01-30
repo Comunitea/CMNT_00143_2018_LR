@@ -252,11 +252,18 @@ class DirectInvoiceWzd(models.TransientModel):
         for prov_inv in normal_invoices:  #Facturacion normal
             inv = self._create_invoice(prov_inv)
             prov_inv._onchange_payment_term_date_invoice()
-            prov_date_due = fields.Date.from_string(prov_inv.date_due)
-            date_due = prov_date_due - timedelta(days=15)
-            date_due = self.calculate_payday(prov_inv.associate_id, date_due)
-            inv.write({'payment_term_id': False,
-                       'date_due': fields.Datetime.to_string(date_due)})
+            alternative_pt = \
+                prov_inv.partner_id.property_direct_payment_term_id or \
+                prov_inv.partner_id\
+                .commercial_partner_id.property_direct_payment_term_id
+            if not alternative_pt:
+                prov_date_due = fields.Date.from_string(prov_inv.date_due)
+                date_due = prov_date_due - timedelta(days=15)
+                date_due = self.calculate_payday(prov_inv.associate_id, date_due)
+                inv.write({'payment_term_id': False,
+                           'date_due': fields.Datetime.to_string(date_due)})
+            else:
+                inv.write({'payment_term_id': alternative_pt.id})
             created_invoices += inv
             _logger.info("Creando facturación normal")
 

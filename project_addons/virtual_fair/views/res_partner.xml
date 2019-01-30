@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- model.name inherit form view -->
+    <record id="view_partner_alternative_payment_term" model="ir.ui.view">
+        <field name="name">res.partner.form.alternative.payment.term</field>
+        <field name="model">res.partner</field>
+       <field name="inherit_id" ref="account.view_partner_property_form" />
+        <field name="arch" type="xml">
+            <field name="property_supplier_payment_term_id" position="after">
+                <field name="property_direct_payment_term_id" widget="selection"/>
+            </field>
+        </field>
+    </record>
+    
+</odoo>
