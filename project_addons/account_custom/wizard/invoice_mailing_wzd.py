@@ -20,4 +20,5 @@ class InvoiceMailingWzd(models.TransientModel):
         for group in grouped_invoices:
             partner = self.env['res.partner'].browse(group['partner_id'][0])
             inv_date = group['date_invoice:day']
-            mail_tmp.with_context(inv_date=inv_date).send_mail(partner.id)
+            mail_tmp.with_context(inv_date=inv_date).send_mail(partner.id,
+                                                               True)
