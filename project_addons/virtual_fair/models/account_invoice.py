@@ -205,7 +205,7 @@ class AccountInvoice(models.Model):
             for line in inv.company_id.featured_line_ids:
                 linf = line.linf
                 lsup = line.lsup
-                if (not linf or linf <= total) and (not lsup or lsup >= total):
+                if (not linf or linf <= total) and (not lsup or lsup > total):
                     inv.write({'featured_percent': line.percent})
 
     @api.multi
