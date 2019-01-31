@@ -127,6 +127,9 @@
                 <div class="row">
                     <div class="col-xs-7">
                         <span t-field="o.journal_id.name" style="font-weight: bold; color: rgb(0,51,102); font-family: Arial"/>
+                        <span t-if="o.type == 'out_refund'" style="font-weight: bold; color: #F80D0D; font-family: Arial; font-size:16px">
+                            Factura rectificativa
+                        </span>
                     </div>
                 </div>
                 <div class="row">
