@@ -26,12 +26,59 @@
     </template>
 
     <template id="report_invoice_document" inherit_id="sale.report_invoice_document_inherit_sale">
+        <xpath expr="//div[@id='total']" position="replace">
+            <div id="total" class="row">
+                <div class="col-xs-5 pull-right">
+                    <table class="table table-condensed" style="min-width: 250px;max-width: 400px;">
+                        <tr class="border-black" style="border-bottom:1px solid #dddddd; font-weight: bold; font-family: Courier New">
+                            <td><strong>Tax base</strong></td>
+                            <td class="text-right">
+                                <span t-field="o.amount_untaxed_signed" t-options='{"widget": "monetary", "display_currency": o.currency_id}' style="font-weight: bold; font-family: Courier New"/>
+                            </td>
+                        </tr>
+                        <t t-foreach="o._get_tax_amount_by_group_signed()" t-as="amount_by_group">
+                            <tr style="border-bottom:1px solid #dddddd; font-weight: bold; font-family: Courier New">
+                                <t t-if="len(o.tax_line_ids) == 1 and o.amount_untaxed == amount_by_group[2]">
+                                    <td><span t-esc="amount_by_group[0]"/></td>
+                                    <td class="text-right">
+                                        <span t-esc="amount_by_group[3]" />
+                                    </td>
+                                </t>
+                                <t t-else="">
+                                    <td>
+                                        <span t-esc="amount_by_group[0]"/>
+                                        <span>&amp;nbsp;<span>on</span>
+                                            <t t-esc="amount_by_group[4]"/>
+                                        </span>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-esc="amount_by_group[3]"/>
+                                    </td>
+                                </t>
+                            </tr>
+                        </t>
+                        <tr class="border-black">
+                            <td><strong>Total</strong></td>
+                            <td class="text-right">
+                                <span t-field="o.amount_total_signed" t-options='{"widget": "monetary", "display_currency": o.currency_id}' style="font-weight: bold; font-family: Courier New"/>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </xpath>
         <xpath expr="//t[@t-call='web.external_layout']" position="attributes">
             <attribute name="t-call">custom_documents.custom_invoice_layout</attribute>
         </xpath>
 
         <xpath expr="//table[@name='invoice_line_table']" position="attributes">
             <attribute name="id">invoice_line_table</attribute>
+        </xpath>
+        <xpath expr="//table[@name='invoice_line_table']//span[@t-field='l.price_subtotal']" position="attributes">
+            <attribute name="t-field">l.price_subtotal_signed</attribute>
+        </xpath>
+        <xpath expr="//table[@name='invoice_line_table']//span[@t-field='l.price_unit']" position="attributes">
+            <attribute name="t-field">l.price_unit_signed</attribute>
         </xpath>
         <xpath expr="//table[@name='invoice_line_table']" position="before">
             <style>
@@ -40,27 +87,12 @@
         </xpath>
         <xpath expr="//p[@t-if='o.payment_term_id']" position="replace">
         </xpath>
-        <xpath expr="//div[@id='total']//tr[1]/td[1]" position="replace">
-            <td><strong>Tax base</strong></td>
-        </xpath>
-        <xpath expr="//div[@id='total']//tr[1]" position="attributes">
-            <attribute name="style">font-weight: bold; font-family: Courier New</attribute>
-        </xpath>
-        <xpath expr="//div[@id='total']//table/t/tr" position="attributes">
-            <attribute name="style">font-weight: bold; font-family: Courier New</attribute>
-        </xpath>
-        <xpath expr="//div[@id='total']/div" position="attributes">
-
-        </xpath>
-        <xpath expr="//div[@id='total']/div" position="attributes">
-            <attribute name="class">col-xs-5 pull-right</attribute>
-        </xpath>
         <xpath expr="//div[@id='total']/div" position="before">
             <div class="col-xs-7">
                 <p t-if="o.payment_term_id">
                     <span t-field="o.payment_term_id.note"/>
                 </p>
-                <t t-set="expiration_dates" t-value="o.get_expiration_dates_tuples(1)"/>
+                <t t-set="expiration_dates" t-value="o.get_expiration_dates_tuples(1, True)"/>
                 <t t-if="expiration_dates">
                     <center><h5 style="font-weight: bold; font-family: Courier New">Expiration dates</h5></center>
                     <table class="table" style="font-weight: bold; font-family: Courier New">
@@ -137,26 +169,14 @@
                         <strong style="font-weight: bold; color: rgb(0,51,102); font-family: Arial">Número</strong>
                         <p t-field="o.number"/>
                     </div>
-                    <!--div class="col-xs-3" t-if="o.name">
-                        <strong>Description:</strong>
-                        <p t-field="o.name"/>
-                    </div-->
                     <div class="col-xs-1" style="width: 24%" t-if="o.date_invoice">
                         <strong style="font-weight: bold; color: rgb(0,51,102); font-family: Arial">Invoice Date:</strong>
                         <p t-field="o.date_invoice"/>
                     </div>
-                    <!--div class="col-xs-3" t-if="o.origin">
-                        <strong>Source:</strong>
-                        <p t-field="o.origin"/>
-                    </div-->
                     <div class="col-xs-1" style="width: 24%" t-if="o.partner_id.commercial_partner_id.ref">
                         <strong style="font-weight: bold; color: rgb(0,51,102); font-family: Arial">Customer Code:</strong>
                         <p t-field="o.partner_id.commercial_partner_id.ref"/>
                     </div>
-                    <!--div name="reference" class="col-xs-3" t-if="o.reference">
-                        <strong>Reference:</strong>
-                        <p t-field="o.reference"/>
-                    </div-->
                     <div name="vat" class="col-xs-1" style="width: 27%" t-if="o.partner_id.commercial_partner_id.vat">
                         <strong style="font-weight: bold; color: rgb(0,51,102); font-family: Arial"><t t-esc="o.company_id.country_id.vat_label or 'TIN'"/>:</strong>
                         <span t-field="o.partner_id.commercial_partner_id.vat"/>
@@ -174,28 +194,6 @@
         </xpath>
         <xpath expr="//div[@groups='sale.group_delivery_invoice_address'][1]" position="replace">
         </xpath>
-<!--
-        <xpath expr="//div[@name='invoice_address' and @groups='!sale.group_delivery_invoice_address']" position="attributes">
-            <attribute name="class">col-xs-5 col-xs-offset-7</attribute>
-            <attribute name="style">border: 1px solid black; border-radius: 25px;</attribute>
-        </xpath>
-        <xpath expr="//div[@groups='sale.group_delivery_invoice_address'][1]" position="attributes">
-            <attribute name="class">col-xs-5</attribute>
-            <attribute name="t-att-style">o.partner_shipping_id and (o.partner_shipping_id != o.partner_id) and 'border: 1px solid black; border-radius: 25px;' or ''</attribute>
-        </xpath>
-        <xpath expr="//div[@groups='sale.group_delivery_invoice_address'][2]" position="attributes">
-            <attribute name="class">col-xs-4 col-xs-offset-3</attribute>
-            <attribute name="style">border: 1px solid black; border-radius: 25px;</attribute>
-        </xpath>
-        <xpath expr="//div[@groups='sale.group_delivery_invoice_address'][2]/div[@t-field='o.partner_id']" position="attributes">
-            <attribute name="t-field">o.partner_id.commercial_partner_id</attribute>
-        </xpath>
-        <xpath expr="//div[@groups='sale.group_delivery_invoice_address'][2]/div[@t-if='o.partner_id.vat']/span" position="attributes">
-            <attribute name="t-esc">o.partner_id.commercial_partner_id.vat</attribute>
-        </xpath>
-        <xpath expr="//div[@groups='sale.group_delivery_invoice_address'][2]/div[@t-if='o.partner_id.vat']" position="attributes">
-            <attribute name="t-if">o.partner_id.commercial_partner_id.vat</attribute>
-        </xpath> -->
 
         <xpath expr="//table[@name='invoice_line_table']/tbody//td[6]/span" position="replace">
             <span t-esc="', '.join(map(lambda x: x.amount.is_integer() and str(int(x.amount)) + '%' or str(x.amount) + '%', l.invoice_line_tax_ids))"/>
@@ -208,16 +206,6 @@
                 </div>
             </t>
         </xpath>
-<!--
-        <xpath expr="//address[@t-field='o.partner_id']" position="attributes">
-            <attribute name="t-field">o.partner_id.commercial_partner_id</attribute>
-        </xpath>
-        <xpath expr="//div[@t-if='o.partner_id.vat']" position="attributes">
-            <attribute name="t-if">o.partner_id.commercial_partner_id.vat</attribute>
-        </xpath>
-        <xpath expr="//span[@t-field='o.partner_id.vat']" position="attributes">
-            <attribute name="t-field">o.partner_id.commercial_partner_id.vat</attribute>
-        </xpath> -->
 
         <xpath expr="//table[@name='invoice_line_table']/thead" position="attributes">
             <attribute name="style">font-weight: bold; color: rgb(0,51,102); font-family: Arial;</attribute>
@@ -230,11 +218,7 @@
         <xpath expr="//div[hasclass('page')]" position="attributes">
             <attribute name="style">font-weight: bold; font-family: Courier New</attribute>
         </xpath>
-        <xpath expr="//span[@t-field='o.amount_untaxed']" position="attributes">
-            <attribute name="style">font-weight: bold; font-family: Courier New</attribute>
-        </xpath>
-        <xpath expr="//span[@t-field='o.amount_total']" position="attributes">
-            <attribute name="style">font-weight: bold; font-family: Courier New</attribute>
-        </xpath>
+
+
     </template>
 </odoo>

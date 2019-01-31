@@ -51,6 +51,11 @@ msgid "Invoice"
 msgstr "Factura"
 
 #. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.report_invoice_document
+msgid "&amp;nbsp;<span>on</span>"
+msgstr "&amp;nbsp;<span>en</span>"
+
+#. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_invoice_layout
 msgid "Page: <span class=\"page\"/> / <span class=\"topage\"/>"
 msgstr "Página: <span class=\"page\"/>/<span class=\"topage\"/>"
