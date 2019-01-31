@@ -10,8 +10,10 @@ class AccountInvoice(models.Model):
 
     @api.multi
     def action_move_create(self):
-
-
+        invoices_no_date = self.filtered(lambda inv: not inv.date and
+                                        inv.type in ('in_invoice', 'in_refund'))
+        if invoices_no_date:
+            invoices_no_date.write({'date': fields.Date.today()})
         return super(AccountInvoice, self).action_move_create()
 
 
