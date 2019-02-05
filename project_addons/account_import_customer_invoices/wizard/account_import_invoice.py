@@ -80,6 +80,8 @@ class AccountInvoiceImportWizard(models.TransientModel):
             delivery_data = customer_tag.find('porteVenta')
             taxes = self._get_taxes(delivery_data.find('tipoIVAPorte').attrib['id'])
             delivery_percentage = float(delivery_data.find('pct').text)
+            delivery_product = self.env['product.product'].search([(
+                'default_code', '=', 'PORTE')])
             delivery_vals = {
                 'name': _('Delivery'),
                 'quantity': 1,
@@ -87,7 +89,8 @@ class AccountInvoiceImportWizard(models.TransientModel):
                 'num_purchase': purchase_number,
                 'price_unit': invoice.amount_untaxed *
                 (delivery_percentage / 100),
-                'invoice_id': invoice.id
+                'invoice_id': invoice.id,
+                'product_id': delivery_product and delivery_product.id or False
             }
             if delivery_vals['price_unit']:
                 delivery_vals = self.process_updates(delivery_vals,
