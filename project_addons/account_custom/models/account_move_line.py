@@ -10,6 +10,6 @@ class AccountMoveLine(models.Model):
 
     country_id = fields.Many2one(related='partner_id.country_id', store=True,
                                  string='Partner Country')
-    account_position_id = fields.Many2one(
-        related='partner_id.property_account_position_id',
-                                    store=True, string='Partner Position')
+    #account_position_id = fields.Many2one(
+    #    related='partner_id.property_account_position_id',
+    #                                store=True, string='Partner Position')
