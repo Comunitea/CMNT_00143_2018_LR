@@ -235,9 +235,20 @@ class DirectInvoiceWzd(models.TransientModel):
 
         for prov_inv in not_grouped_invoices:  #socios sin agrupacion
             inv = self._create_invoice(prov_inv)
-            pay_term = self.env['account.payment.term'].search(
-                [('name', 'like', '1v15d')])[0]
-            inv.write({'payment_term_id': pay_term.id})
+            alternative_pt = \
+                prov_inv.partner_id.property_direct_payment_term_id or \
+                prov_inv.partner_id \
+                    .commercial_partner_id.property_direct_payment_term_id
+            if not alternative_pt:
+                pay_term = self.env['account.payment.term'].search(
+                    [('name', 'like', '1v15d')])[0]
+                inv.write({'payment_term_id': pay_term.id})
+            else:
+                date_due = alternative_pt.compute(inv.amount_total,
+                                                  prov_inv.date_invoice)[0][0]
+                date_due = self.calculate_payday(prov_inv.associate_id, date_due)
+                inv.write({'payment_term_id': False,
+                            'date_due': fields.Datetime.to_string(date_due)})
             created_invoices += inv
             _logger.info("Creando socios sin agrupacion")
 
@@ -259,11 +270,12 @@ class DirectInvoiceWzd(models.TransientModel):
             if not alternative_pt:
                 prov_date_due = fields.Date.from_string(prov_inv.date_due)
                 date_due = prov_date_due - timedelta(days=15)
-                date_due = self.calculate_payday(prov_inv.associate_id, date_due)
-                inv.write({'payment_term_id': False,
-                           'date_due': fields.Datetime.to_string(date_due)})
             else:
-                inv.write({'payment_term_id': alternative_pt.id})
+                date_due = alternative_pt.compute(inv.amount_total,
+                                                  prov_inv.date_invoice)[0][0]
+            date_due = self.calculate_payday(prov_inv.associate_id, date_due)
+            inv.write({'payment_term_id': False,
+                        'date_due': fields.Datetime.to_string(date_due)})
             created_invoices += inv
             _logger.info("Creando facturación normal")
 
