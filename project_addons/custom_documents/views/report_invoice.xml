@@ -151,7 +151,7 @@
             <t t-if="o.partner_id == o.partner_id.commercial_partner_id">
                 <div class="col-xs-5"></div>
             </t>
-            <div name="invoice_address" class="col-xs-5 col-xs-offset-1" style="border: 1px solid black; border-radius: 25px;">
+            <div name="invoice_address" class="col-xs-6 pull-right" style="border: 1px solid black; border-radius: 25px;">
                 <address t-field="o.partner_id"
                     t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}' />
             </div>
@@ -184,9 +184,21 @@
                 </div>
             </div>
 
-            <div name="num_purchase" style="border: 1px solid black; border-radius: 25px; margin-top:10px;" class="col-xs-7 " t-if="o.invoice_line_ids[0].num_purchase">
-                 <strong style="font-weight: bold; color: rgb(0,51,102); font-family: Arial">Nuestra Referencia: </strong>
-                <span t-esc="'PA-%s-%s'  % (o.invoice_line_ids[0].num_purchase, o.partner_id.commercial_partner_id.ref)"/>
+            <div name="num_purchase" style="border: 1px solid black; border-radius: 25px; margin-top:10px;" class="col-xs-7 " t-if="o.invoice_line_ids[0].num_purchase or ('refund' in o.type and o.refund_invoice_id)">
+                <t t-if="o.invoice_line_ids[0].num_purchase">
+                    <strong style="font-weight: bold; color: rgb(0,51,102); font-family: Arial">Nuestra Referencia: </strong>
+                    <span t-esc="'PA-%s-%s'  % (o.invoice_line_ids[0].num_purchase, o.partner_id.commercial_partner_id.ref)"/>
+                </t>
+                <t t-if="'refund' in o.type and o.refund_invoice_id">
+                    <p style="margin: 0;">
+                        <strong style="font-weight: bold; color: rgb(0,51,102); font-family: Arial">Refunded invoice: </strong>
+                        <span t-field="o.refund_invoice_id.number"/>
+                    </p>
+                    <p style="margin: 0;">
+                        <strong style="font-weight: bold; color: rgb(0,51,102); font-family: Arial">Reason: </strong>
+                        <span t-field="o.refund_reason"/>
+                    </p>
+                </t>
             </div>
 
         </xpath>
@@ -208,11 +220,24 @@
         </xpath>
 
         <xpath expr="//table[@name='invoice_line_table']/thead" position="attributes">
-            <attribute name="style">font-weight: bold; color: rgb(0,51,102); font-family: Arial;</attribute>
+            <attribute name="style">font-weight: bold; color: rgb(0,51,102); font-family: Arial; font-size: 12px;</attribute>
         </xpath>
 
         <xpath expr="//table[@name='invoice_line_table']/tbody" position="attributes">
-            <attribute name="style">font-weight: bold; font-family: Courier New</attribute>
+            <attribute name="style">font-weight: bold; font-family: Courier New; font-size: 12px;</attribute>
+        </xpath>
+        <xpath expr="//td[@id='subtotal']" position="replace">
+        </xpath>
+        <xpath expr="//table[@name='invoice_line_table']//th[7]" position="replace">
+        </xpath>
+        <xpath expr="//table[@name='invoice_line_table']//th[6]" position="before">
+            <th class="text-right" style="font-size: 14px;">Amount</th>
+        </xpath>
+        <xpath expr="//table[@name='invoice_line_table']//td[6]" position="before">
+            <td class="text-right" id="subtotal" style="font-size: 14px;">
+                <span t-field="l.price_subtotal"
+                    t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+            </td>
         </xpath>
 
         <xpath expr="//div[hasclass('page')]" position="attributes">
