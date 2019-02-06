@@ -190,15 +190,13 @@
                     <span t-esc="'PA-%s-%s'  % (o.invoice_line_ids[0].num_purchase, o.partner_id.commercial_partner_id.ref)"/>
                 </t>
                 <t t-if="'refund' in o.type">
-                    <p>
-                        <span>
-                            <strong style="font-weight: bold; color: rgb(0,51,102); font-family: Arial">Refunded invoice: </strong>
-                            <span t-field="o.refund_invoice_id.number"/>
-                        </span>
-                        <span class="pull-right">
-                            <strong style="font-weight: bold; color: rgb(0,51,102); font-family: Arial">Reason: </strong>
-                            <span t-field="o.refund_reason"/>
-                        </span>
+                    <p style="margin: 0;">
+                        <strong style="font-weight: bold; color: rgb(0,51,102); font-family: Arial">Refunded invoice: </strong>
+                        <span t-field="o.refund_invoice_id.number"/>
+                    </p>
+                    <p style="margin: 0;">
+                        <strong style="font-weight: bold; color: rgb(0,51,102); font-family: Arial">Reason: </strong>
+                        <span t-field="o.refund_reason"/>
                     </p>
                 </t>
             </div>
