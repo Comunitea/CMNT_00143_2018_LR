@@ -184,12 +184,12 @@
                 </div>
             </div>
 
-            <div name="num_purchase" style="border: 1px solid black; border-radius: 25px; margin-top:10px;" class="col-xs-7 " t-if="o.invoice_line_ids[0].num_purchase or 'refund' in o.type">
+            <div name="num_purchase" style="border: 1px solid black; border-radius: 25px; margin-top:10px;" class="col-xs-7 " t-if="o.invoice_line_ids[0].num_purchase or ('refund' in o.type and o.refund_invoice_id)">
                 <t t-if="o.invoice_line_ids[0].num_purchase">
                     <strong style="font-weight: bold; color: rgb(0,51,102); font-family: Arial">Nuestra Referencia: </strong>
                     <span t-esc="'PA-%s-%s'  % (o.invoice_line_ids[0].num_purchase, o.partner_id.commercial_partner_id.ref)"/>
                 </t>
-                <t t-if="'refund' in o.type">
+                <t t-if="'refund' in o.type and o.refund_invoice_id">
                     <p style="margin: 0;">
                         <strong style="font-weight: bold; color: rgb(0,51,102); font-family: Arial">Refunded invoice: </strong>
                         <span t-field="o.refund_invoice_id.number"/>
