@@ -15,7 +15,8 @@
         'account',
         'partner_custom',
         'base_multi_image',
-        'invoice_early_payment_discount'
+        'invoice_early_payment_discount',
+        'partner_paydays'
     ],
     'data': [
         'security/ir.model.access.csv',

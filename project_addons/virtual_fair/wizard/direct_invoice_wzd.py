@@ -205,20 +205,21 @@ class DirectInvoiceWzd(models.TransientModel):
             if not inv.associate_id:
                 continue
 
-            if inv.associate_id.no_group_direct_invoice or inv.type == \
-                    'in_refund':
-                not_grouped_invoices += inv
+            if inv.fair_id:  # FACTURACIÓN FERIA
+                fair_invoices += inv
             else:
-                if inv.fair_id:  # FACTURACIÓN FERIA
-                    fair_invoices += inv
+                if inv.amount_untaxed >= 250:  # FACTURACIÓN NORMAL
+                    normal_invoices += inv
                 else:
-                    if inv.amount_untaxed >= 250:  # FACTURACIÓN NORMAL
-                        normal_invoices += inv
+                    if inv.associate_id.no_group_direct_invoice or inv.type \
+                            == 'in_refund':
+                        not_grouped_invoices += inv
                     else:   #FACTURACIÓN QUINCENAL  Agrupada por socio
                         group_key = (inv.associate_id.id,
                              inv.analytic_account_id.id)
                         if group_key not in inv_grouped:
-                            inv_grouped[group_key] = self.env['account.invoice']
+                            inv_grouped[group_key] = self.env[
+                                'account.invoice']
                         inv_grouped[group_key] += inv
 
         created_invoices = self.env['account.invoice']
@@ -240,15 +241,15 @@ class DirectInvoiceWzd(models.TransientModel):
                 prov_inv.partner_id \
                     .commercial_partner_id.property_direct_payment_term_id
             if not alternative_pt:
-                pay_term = self.env['account.payment.term'].search(
+                pay_term_15 = self.env['account.payment.term'].search(
                     [('name', 'like', '1v15d')])[0]
-                inv.write({'payment_term_id': pay_term.id})
+                inv.write({'payment_term_id': pay_term_15.id})
             else:
-                date_due = alternative_pt.compute(inv.amount_total,
-                                                  prov_inv.date_invoice)[0][0]
-                date_due = self.calculate_payday(prov_inv.associate_id, date_due)
-                inv.write({'payment_term_id': False,
-                            'date_due': fields.Datetime.to_string(date_due)})
+                date_ref = fields.Date.from_string(prov_inv.date_invoice)
+                date_ref = fields.Datetime.to_string(date_ref - timedelta(
+                    days=15))
+                inv.write({'payment_term_id': alternative_pt.id,
+                           'payment_ref_date': date_ref})
             created_invoices += inv
             _logger.info("Creando socios sin agrupacion")
 
@@ -267,15 +268,12 @@ class DirectInvoiceWzd(models.TransientModel):
                 prov_inv.partner_id.property_direct_payment_term_id or \
                 prov_inv.partner_id\
                 .commercial_partner_id.property_direct_payment_term_id
-            if not alternative_pt:
-                prov_date_due = fields.Date.from_string(prov_inv.date_due)
-                date_due = prov_date_due - timedelta(days=15)
-            else:
-                date_due = alternative_pt.compute(inv.amount_total,
-                                                  prov_inv.date_invoice)[0][0]
-            date_due = self.calculate_payday(prov_inv.associate_id, date_due)
-            inv.write({'payment_term_id': False,
-                        'date_due': fields.Datetime.to_string(date_due)})
+            date_ref = fields.Date.from_string(prov_inv.date_invoice)
+            date_ref = fields.Datetime.to_string(date_ref - timedelta(
+                days=15))
+            payment_term_id = alternative_pt or prov_inv.payment_term_id
+            inv.write({'payment_term_id': payment_term_id.id,
+                       'payment_ref_date': date_ref})
             created_invoices += inv
             _logger.info("Creando facturación normal")
 
