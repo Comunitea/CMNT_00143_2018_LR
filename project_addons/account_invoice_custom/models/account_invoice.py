@@ -16,6 +16,14 @@ class AccountInvoice(models.Model):
             invoices_no_date.write({'date': fields.Date.today()})
         return super(AccountInvoice, self).action_move_create()
 
+    @api.onchange('partner_id', 'company_id')
+    def _onchange_partner_id(self):
+        res = super(AccountInvoice, self)._onchange_partner_id()
+        if self.partner_id and self.type == 'out_refund':
+            self.payment_mode_id = self.with_context(
+                force_company=self.company_id.id,
+            ).partner_id.customer_payment_mode_id
+        return res
 
 class AccountInvoiceLine(models.Model):
 
