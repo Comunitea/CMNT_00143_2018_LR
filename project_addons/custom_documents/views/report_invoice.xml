@@ -74,9 +74,6 @@
         <xpath expr="//table[@name='invoice_line_table']" position="attributes">
             <attribute name="id">invoice_line_table</attribute>
         </xpath>
-        <xpath expr="//table[@name='invoice_line_table']//span[@t-field='l.price_subtotal']" position="attributes">
-            <attribute name="t-field">l.price_subtotal_signed</attribute>
-        </xpath>
         <xpath expr="//table[@name='invoice_line_table']//span[@t-field='l.price_unit']" position="attributes">
             <attribute name="t-field">l.price_unit_signed</attribute>
         </xpath>
@@ -235,7 +232,7 @@
         </xpath>
         <xpath expr="//table[@name='invoice_line_table']//td[6]" position="before">
             <td class="text-right" id="subtotal" style="font-size: 14px;">
-                <span t-field="l.price_subtotal"
+                <span t-field="l.price_subtotal_signed"
                     t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
             </td>
         </xpath>
