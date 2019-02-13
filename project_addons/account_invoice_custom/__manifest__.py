@@ -12,7 +12,8 @@
     'installable': True,
     'depends': [
         'base',
-        'account'
+        'account',
+        'account_payment_partner'
     ],
     'data': [
         'views/account_invoice.xml'
