@@ -252,9 +252,15 @@ class AccountInvoice(models.Model):
         res = super(AccountInvoice, self).action_invoice_open()
         from_supplier_invoices = self.filtered(lambda inv: inv.from_supplier)
         if from_supplier_invoices:
-            domain = [('customer_invoice_id', 'in', from_supplier_invoices.ids),
-                      ('type', 'in', ('in_invoice', 'in_refund')),
-                      ('state', '=', 'draft')]
-            supplier_invoices = self.search(domain)
-            supplier_invoices.action_invoice_open()
+            invs = {}
+            for inv in from_supplier_invoices:
+                invs.setdefault(inv.date_invoice, self.env['account.invoice'])
+                invs[inv.date_invoice] += inv
+            for date, invoices in invs.items():
+                domain = [('customer_invoice_id', 'in', invoices.ids),
+                        ('type', 'in', ('in_invoice', 'in_refund')),
+                        ('state', '=', 'draft')]
+                supplier_invoices = self.search(domain)
+                supplier_invoices.write({'date': date})
+                supplier_invoices.action_invoice_open()
         return res
