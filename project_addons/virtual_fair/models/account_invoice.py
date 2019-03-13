@@ -24,7 +24,7 @@ class AccountInvoice(models.Model):
     log_line_ids = fields.One2many('log.line', 'invoice_id', string='Log')
     error_exist = fields.Boolean('Base error', compute='_error_exist')
     customer_invoice_id = fields.Many2one('account.invoice',
-                                          'Customer Invoice', readonly=True)
+                                          'Customer Invoice')
     supplier_invoices_count = fields.Integer('# Suipplier Invoices',
                                              compute='_count_supplier_invoice')
     from_import = fields.Boolean('From supplier import', readonly=True)
