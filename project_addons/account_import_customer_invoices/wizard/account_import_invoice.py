@@ -34,8 +34,10 @@ class AccountInvoiceImportWizard(models.TransientModel):
         root_element = tree.getroot()
         journal = self.env.ref(root_element.attrib['idSr'])
         invoice_ids = []
+        sii_description = root_element.attrib.get('sii',False)
         for invoice_data in root_element.iter('PA'):
-            purchase_number = invoice_data.attrib['num']
+            purchase_number = invoice_data.attrib.get('num', False)
+
             partners = invoice_data.find('partes')
             customer_tag = partners.find('cliente')
             customer_ref = customer_tag.attrib['refInt']
@@ -45,15 +47,24 @@ class AccountInvoiceImportWizard(models.TransientModel):
                 raise ValidationError(
                     _('Customer with reference {} not exists').format(
                         customer_ref))
-            payment_term_eid = customer_tag.find('plazo').attrib['id']
-            fiscal_position_eid = customer_tag.find('RegIVA').text
+            payment_term_eid = customer_tag.find('plazo') and \
+                               customer_tag.find('plazo').get('attrib', False)\
+                               and customer_tag.find('plazo').attrib['id']
+            fiscal_position_eid = customer_tag.find('RegIVA') and \
+                                customer_tag.find('RegIVA').text
             invoice_vals = {
                 'partner_id': customer.id,
                 'journal_id': journal.id,
-                'payment_term_id': self.env.ref(payment_term_eid).id,
-                'fiscal_position_id': self.env.ref(fiscal_position_eid).id,
                 'type': 'out_invoice',
             }
+            if payment_term_eid:
+                invoice_vals['payment_term_id'] = self.env.ref(
+                payment_term_eid).id
+            if fiscal_position_eid:
+                invoice_vals['fiscal_position_id'] = self.env.ref(
+                fiscal_position_eid).id
+            if sii_description:
+                invoice_vals['sii_description'] = sii_description
 
             invoice_vals = self.process_updates(invoice_vals,
                                                 'account.invoice')
@@ -62,42 +73,56 @@ class AccountInvoiceImportWizard(models.TransientModel):
 
             for line in invoice_data.find('articulos').iter('articulo'):
                 line_data = line.find('datosVenta')
-                taxes = self._get_taxes(line_data.find('tipoIVA').attrib['id'])
-                line_vals = {
-                    'name': line.find('referencia').text + ' - ' +
-                    line.find('nombre').text,
-                    'quantity': float(line_data.find('unidades').text),
-                    'price_unit': float(line_data.find('precioUnitario').text),
-                    'invoice_line_tax_ids': [(4, x.id) for x in taxes],
-                    'num_purchase': purchase_number,
-                    'invoice_id': invoice.id
-                }
+
+                if line.get('id',False):
+                    product_id = self.env.ref(line.attrib['id']).id
+                    line_vals = {
+                        'product_id': product_id,
+                        'name': line.find('nombre').text,
+                        'quantity': float(line_data.find('unidades').text),
+                        'price_unit': float(
+                            line_data.find('precioUnitario').text),
+                        'invoice_id': invoice.id
+                    }
+                else:
+                    taxes = self._get_taxes(
+                        line_data.find('tipoIVA').attrib['id'])
+                    line_vals = {
+                        'name': line.find('referencia').text + ' - ' +
+                        line.find('nombre').text,
+                        'quantity': float(line_data.find('unidades').text),
+                        'price_unit': float(line_data.find('precioUnitario').text),
+                        'invoice_line_tax_ids': [(4, x.id) for x in taxes],
+                        'num_purchase': purchase_number,
+                        'invoice_id': invoice.id
+                    }
                 line_vals = self.process_updates(line_vals,
                                                  'account.invoice.line')
                 self.env['account.invoice.line'].with_context(
                     journal_id=journal.id, type='out_invoice').create(
                         line_vals)
             delivery_data = customer_tag.find('porteVenta')
-            taxes = self._get_taxes(delivery_data.find('tipoIVAPorte').attrib['id'])
-            delivery_percentage = float(delivery_data.find('pct').text)
-            delivery_product = self.env['product.product'].search([(
-                'default_code', '=', 'PORTE')])
-            delivery_vals = {
-                'name': _('Delivery'),
-                'quantity': 1,
-                'invoice_line_tax_ids': [(4, x.id) for x in taxes],
-                'num_purchase': purchase_number,
-                'price_unit': invoice.amount_untaxed *
-                (delivery_percentage / 100),
-                'invoice_id': invoice.id,
-                'product_id': delivery_product and delivery_product.id or False
-            }
-            if delivery_vals['price_unit']:
-                delivery_vals = self.process_updates(delivery_vals,
-                                                    'account.invoice.line')
-                self.env['account.invoice.line'].with_context(
-                    journal_id=journal.id, type='out_invoice').create(
-                        delivery_vals)
+            if delivery_data:
+                taxes = self._get_taxes(delivery_data.find('tipoIVAPorte').attrib['id'])
+                delivery_percentage = float(delivery_data.find('pct').text)
+                delivery_product = self.env['product.product'].search([(
+                    'default_code', '=', 'PORTE')])
+                delivery_vals = {
+                    'name': _('Delivery'),
+                    'quantity': 1,
+                    'invoice_line_tax_ids': [(4, x.id) for x in taxes],
+                    'num_purchase': purchase_number,
+                    'price_unit': invoice.amount_untaxed *
+                    (delivery_percentage / 100),
+                    'invoice_id': invoice.id,
+                    'product_id': delivery_product and delivery_product.id or False
+                }
+                if delivery_vals['price_unit']:
+                    delivery_vals = self.process_updates(delivery_vals,
+                                                        'account.invoice.line')
+                    self.env['account.invoice.line'].with_context(
+                        journal_id=journal.id, type='out_invoice').create(
+                            delivery_vals)
             invoice.compute_taxes()
         action = self.env.ref('account.action_invoice_tree1').read()[0]
         if len(invoice_ids) == 0:
