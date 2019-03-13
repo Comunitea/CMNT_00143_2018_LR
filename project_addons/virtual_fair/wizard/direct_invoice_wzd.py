@@ -19,6 +19,9 @@ TAX_MAPPING = {
     'P_IVA10_BC': 'S_IVA10B',
     'P_IVA23_PT': 'S_IVA0_IC',
     'P_IVA23_PT': 'S_IVA0_IC',
+    'P_IVA21_IC_BC': 'S_IVA21B',
+    'P_IVA4_IC_BC': 'S_IVA4B',
+    'P_IVA10_IC_BC': 'S_IVA10B',
 }
 
 class DirectInvoiceWzd(models.TransientModel):
