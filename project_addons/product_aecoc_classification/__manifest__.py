@@ -2,7 +2,7 @@
 # © 2018 Comunitea - Javier Colmenero <javier@comunitea.com>
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 {
-    'name': 'Product AEOC Classification',
+    'name': 'Product AECOC Classification',
     'version': '11.0.0.0.0',
     'category': 'Custom',
     'license': 'AGPL-3',
@@ -14,7 +14,7 @@
     ],
     'data': [
         'security/ir.model.access.csv',
-        'views/aeoc_classification_view.xml',
+        'views/aecoc_classification_view.xml',
         'views/product_template_view.xml'
     ],
     'installable': True,

@@ -8,4 +8,4 @@ class ProductTemplate(models.Model):
 
     _inherit = 'product.template'
 
-    aeoc_id = fields.Many2one('aeoc.classification', 'AEOC Classification')
+    aecoc_id = fields.Many2one('aecoc.classification', 'AECOC Classification')
