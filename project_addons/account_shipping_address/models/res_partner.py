@@ -12,7 +12,8 @@ class ResPartner(models.Model):
         mandates = self.bank_ids.mapped(
                 'mandate_ids').filtered(
                 lambda x: x.state == 'valid' and x.company_id == company)
-        first_valid_mandate_id = mandates[:1].id
+        first_valid_mandate_id = mandates.sorted('by_default', reverse=True)[
+                                 :1].id
         return first_valid_mandate_id
 
 
