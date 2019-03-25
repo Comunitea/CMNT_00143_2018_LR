@@ -11,6 +11,7 @@
     'depends': [
         'account',
         'contract',
+        'contract_payment_mode',
         'account_banking_mandate'
     ],
     'data': [
