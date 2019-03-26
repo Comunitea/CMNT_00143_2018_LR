@@ -250,7 +250,8 @@ class AccountAnalyticAccount(models.Model):
                          'journal_id': contract.voucher_journal_id.id,
                          'account_date': fields.Date.to_string(date),
                          'date_due': fields.Date.to_string(date),
-                         'res_partner_bank_id': res_partner_bank_id,
+                         'res_partner_bank_id': res_partner_bank_id and
+                                                res_partner_bank_id.id,
                          'payment_mode_id': contract.payment_mode_id.id,
                          'contract_id': contract.id,
                          'voucher_type': 'purchase',
