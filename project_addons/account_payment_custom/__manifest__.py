@@ -20,6 +20,8 @@
         'wizard/account_paymnet_line_create_view.xml',
         'wizard/bank_payment_line_set_journal.xml',
         'views/account_payment_order.xml',
-        'views/bank_payment_line.xml'
+        'views/bank_payment_line.xml',
+        'views/account_report.xml',
+        'views/confirming_iber.xml'
     ]
 }
