@@ -76,13 +76,22 @@ class AccountInvoiceImportWizard(models.TransientModel):
 
                 if line.get('id',False):
                     product_id = self.env.ref(line.attrib['id']).id
+                    if line.get('analytic_tag',False):
+                        analytic_tags = self.env['account.analytic.tag']\
+                            .search([('name', "=", line.attrib[
+                            'analytic_tag'])])
+                    else:
+                        analytic_tags = False
                     line_vals = {
                         'product_id': product_id,
                         'name': line.find('nombre').text,
                         'quantity': float(line_data.find('unidades').text),
                         'price_unit': float(
                             line_data.find('precioUnitario').text),
-                        'invoice_id': invoice.id
+                        'invoice_id': invoice.id,
+                        'analytic_tag_ids': analytic_tags and
+                                            [(4, x.id) for x in analytic_tags]
+                                            or False
                     }
                 else:
                     taxes = self._get_taxes(

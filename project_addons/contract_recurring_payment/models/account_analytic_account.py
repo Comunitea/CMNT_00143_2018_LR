@@ -50,18 +50,26 @@ class AccountAnalyticAccount(models.Model):
     mandate_id = fields.Many2one(
         comodel_name='account.banking.mandate',
         string='Mandate',)
+    res_partner_bank_id = fields.Many2one(
+        comodel_name='res.partner.bank',
+        string='Bank', )
     day_due = fields.Integer(string='Due day', default=25)
-    supplier_id = fields.Many2one(comodel_name='res.partner',
-        string='Supplier', domain=[('supplier', '=', True),
-                                   ('company_type', '=', 'company')])
-    payment_mode_invoice_id = fields.Many2one(
-        comodel_name='account.payment.mode',
-        string='Payment mode for Invoices',
-        domain=[('payment_type', '=', 'inbound')])
+    #supplier_id = fields.Many2one(comodel_name='res.partner',
+    #    string='Supplier', domain=[('supplier', '=', True),
+    #                               ('company_type', '=', 'company')])
+    #payment_mode_invoice_id = fields.Many2one(
+    #    comodel_name='account.payment.mode',
+    #    string='Payment mode for Invoices',
+    #    domain=[('payment_type', '=', 'inbound')])
     account_id = fields.Many2one(comodel_name='account.account',
                                   string='Voucher Account')
     next_voucher_number = fields.Integer(string='Next Voucher Number',
                                          default=1)
+    payment_mode_id = fields.Many2one(
+        comodel_name='account.payment.mode',
+        string='Payment Mode',
+        domain=[]
+    )
 
     def get_first_due_date(self):
         start_date = fields.Datetime.from_string(
@@ -196,35 +204,59 @@ class AccountAnalyticAccount(models.Model):
             })
             self = self.with_context(ctx)
             # Re-read contract with correct company
-            mandate = self.env['account.banking.mandate'].search(
-                [('partner_id', '=', contract.partner_id.id),
-                 ('state', '=', 'valid')], limit=1)
-            if not mandate:
-                self.message_post(_('can not find a customer mandate'))
-                continue
-
+            if contract.contract_type == 'sale':
+                mandate = self.env['account.banking.mandate'].search(
+                    [('partner_id', '=', contract.partner_id.id),
+                     ('state', '=', 'valid')], limit=1)
+                if not mandate:
+                    self.message_post(_('can not find a customer mandate'))
+                    continue
+            else:
+                res_partner_bank_id = self.env[
+                    'res.partner.bank'].search(
+                    [('partner_id', '=', contract.partner_id.id)], limit=1) \
+                                      or False
             iter_num = 1
             date = first_due
             total_amount =0
             while iter_num <= contract.number_vouchers:
                 voucher_number = contract.next_voucher_number +iter_num -1
                 name = "%s.%d" % (contract.name, voucher_number)
-                account_voucher = self.env['account.voucher'].create(
-                    {'partner_id': contract.partner_id.id,
-                     'pay_now': 'pay_later',
-                     'company_id': contract.company_id.id,
-                     'account_id':
-                         contract.partner_id.property_account_receivable_id
-                             .id,
-                     'journal_id': contract.voucher_journal_id.id,
-                     'account_date': fields.Date.to_string(date),
-                     'date_due': fields.Date.to_string(date),
-                     'mandate_id': contract.mandate_id.id,
-                     'payment_mode_id': contract.payment_mode_id.id,
-                     'contract_id': contract.id,
-                     'voucher_type': 'sale',
-                     'number': name
-                     })
+                if contract.contract_type == 'sale':
+                    account_voucher = self.env['account.voucher'].create(
+                        {'partner_id': contract.partner_id.id,
+                         'pay_now': 'pay_later',
+                         'company_id': contract.company_id.id,
+                         'account_id':
+                             contract.partner_id.property_account_receivable_id
+                                 .id,
+                         'journal_id': contract.voucher_journal_id.id,
+                         'account_date': fields.Date.to_string(date),
+                         'date_due': fields.Date.to_string(date),
+                         'mandate_id': contract.mandate_id.id,
+                         'payment_mode_id': contract.payment_mode_id.id,
+                         'contract_id': contract.id,
+                         'voucher_type': 'sale',
+                         'number': name
+                         })
+                else:
+                    account_voucher = self.env['account.voucher'].create(
+                        {'partner_id': contract.partner_id.id,
+                         'pay_now': 'pay_later',
+                         'company_id': contract.company_id.id,
+                         'account_id':
+                             contract.partner_id.property_account_payable_id
+                                 .id,
+                         'journal_id': contract.voucher_journal_id.id,
+                         'account_date': fields.Date.to_string(date),
+                         'date_due': fields.Date.to_string(date),
+                         'res_partner_bank_id': res_partner_bank_id and
+                                                res_partner_bank_id.id,
+                         'payment_mode_id': contract.payment_mode_id.id,
+                         'contract_id': contract.id,
+                         'voucher_type': 'purchase',
+                         'number': name
+                         })
 
                 if iter_num == contract.number_vouchers:
                     amount = contract.total_voucher_qty - total_amount

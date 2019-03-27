@@ -3,20 +3,20 @@
    :alt: License: AGPL-3
 
 =================================
-Product aeoc classification
+Product aecoc classification
 =================================
 
-Adds a X level AEOC classification to product templates
+Adds a X level AECOC classification to product templates
 
 Configuration
 =============
 
-Intall the module and set the AEOC classification field on the product
+Intall the module and set the AECOC classification field on the product
 
 Usage
 =====
 To use this module, you need to:
-Set AEOC configuration on product
+Set AECOC configuration on product
 ----------
 
 

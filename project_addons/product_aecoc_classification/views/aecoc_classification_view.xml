@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="aeoc_classification_list_view" model="ir.ui.view">
-        <field name="name">aeoc.classification.list</field>
-        <field name="model">aeoc.classification</field>
+    <record id="aecoc_classification_list_view" model="ir.ui.view">
+        <field name="name">aecoc.classification.list</field>
+        <field name="model">aecoc.classification</field>
         <field name="priority">1</field>
         <field name="arch" type="xml">
-            <tree string="AEOC Classification">
+            <tree string="AECOC Classification">
                 <field name="display_name"/>
             </tree>
         </field>
     </record>
 
-    <record id="aeoc_classification_form_view" model="ir.ui.view">
-        <field name="name">aeoc.classification.form</field>
-        <field name="model">aeoc.classification</field>
+    <record id="aecoc_classification_form_view" model="ir.ui.view">
+        <field name="name">aecoc.classification.form</field>
+        <field name="model">aecoc.classification</field>
         <field name="arch" type="xml">
             <form class="oe_form_configuration">
                 <sheet>
@@ -22,7 +22,7 @@
                             name="%(product.product_template_action_all)d"
                             icon="fa-th-list"
                             type="action"
-                            context="{'search_default_aeoc_id': active_id}">
+                            context="{'search_default_aecoc_id': active_id}">
                             <div class="o_field_widget o_stat_info">
                                 <span class="o_stat_value"><field name="product_count"/></span>
                                 <span class="o_stat_text"> Products</span>
@@ -30,7 +30,7 @@
                         </button>
                     </div>
                     <div class="oe_title">
-                        <label for="name" string="AEOC Classification" class="oe_edit_only"/>
+                        <label for="name" string="AECOC Classification" class="oe_edit_only"/>
                         <h1><field name="name" placeholder="e.g. Lamps"/></h1>
                     </div>
                     <group name="first" col="2">
@@ -41,28 +41,28 @@
         </field>
     </record>
 
-    <record id="aeoc_classification_search_view" model="ir.ui.view">
-        <field name="name">aeoc.classification.search</field>
-        <field name="model">aeoc.classification</field>
+    <record id="aecoc_classification_search_view" model="ir.ui.view">
+        <field name="name">aecoc.classification.search</field>
+        <field name="model">aecoc.classification</field>
         <field name="arch" type="xml">
-            <search string="AEOC Classification">
-                <field name="name" string="AEOC Classification"/>
+            <search string="AECOC Classification">
+                <field name="name" string="AECOC Classification"/>
                 <field name="parent_id"/>
             </search>
         </field>
     </record>
 
-    <record id="action_aeoc_classification" model="ir.actions.act_window">
-        <field name="name">AEOC Classification</field>
+    <record id="action_aecoc_classification" model="ir.actions.act_window">
+        <field name="name">AECOC Classification</field>
         <field name="type">ir.actions.act_window</field>
-        <field name="res_model">aeoc.classification</field>
+        <field name="res_model">aecoc.classification</field>
         <field name="view_type">form</field>
-        <field name="search_view_id" ref="aeoc_classification_search_view"/>
-        <field name="view_id" ref="aeoc_classification_list_view"/>
+        <field name="search_view_id" ref="aecoc_classification_search_view"/>
+        <field name="view_id" ref="aecoc_classification_list_view"/>
     </record>
 
-    <menuitem id="menu_aeoc_classification"
-              action="action_aeoc_classification"
+    <menuitem id="menu_aecoc_classification"
+              action="action_aecoc_classification"
               parent="sale.prod_config_main"
               sequence="2"/>
 </odoo>

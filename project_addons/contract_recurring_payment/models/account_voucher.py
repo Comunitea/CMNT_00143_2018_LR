@@ -10,20 +10,31 @@ class AccountVoucher(models.Model):
     mandate_id = fields.Many2one(
         comodel_name='account.banking.mandate',
         string='Mandato')
+    res_partner_bank_id = fields.Many2one(
+        comodel_name='res.partner.bank',
+        string='Mandato')
     payment_mode_id = fields.Many2one(
         comodel_name='account.payment.mode',
-        string='Mode de pago')
+        string='Mode de pago',
+        domain='[()]')
 
     @api.multi
     def first_move_line_get(self, move_id, company_currency, current_currency):
         res = super(AccountVoucher, self).\
             first_move_line_get(move_id, company_currency, current_currency)
-        res.update({
-            'payment_mode_id': self.payment_mode_id.id,
-            'mandate_id': self.mandate_id.id,
-            'partner_bank_id': self.mandate_id.partner_bank_id.id,
-            'name': self.number
-        })
+        if self.voucher_type == 'sale':
+            res.update({
+                'payment_mode_id': self.payment_mode_id.id,
+                'mandate_id': self.mandate_id.id,
+                'partner_bank_id': self.mandate_id.partner_bank_id.id,
+                'name': self.number
+            })
+        else:
+            res.update({
+                'payment_mode_id': self.payment_mode_id.id,
+                'partner_bank_id': self.res_partner_bank_id.id,
+                'name': self.number
+            })
         return res
 
     @api.multi
