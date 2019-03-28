@@ -39,7 +39,7 @@
                        <tbody>
                             <tr style="font-weight:bold; font-size:16px;">
                                 <td><span t-field="b_line.partner_id"/></td>
-                                <td><span t-field="b_line.partner_bank_id"/></td>
+                                <td><span t-field="b_line.partner_bank_id.acc_number"/></td>
                                 <td><span t-field="b_line.amount_currency"/></td>
                             </tr>
                             <tr style="font-weight:bold">
@@ -50,7 +50,7 @@
                            <t t-foreach="b_line.payment_line_ids" t-as="p_line">
 
                                 <tr>
-                                    <td><span t-field="p_line.move_line_id.invoice_id"/></td>
+                                    <td><span t-field="p_line.move_line_id.invoice_id.reference"/></td>
                                     <td><span t-field="p_line.date"/></td>
                                     <td><span t-field="p_line.amount_currency"/></td>
                                 </tr>
