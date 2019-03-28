@@ -35,6 +35,7 @@ class AccountInvoiceImportWizard(models.TransientModel):
         journal = self.env.ref(root_element.attrib['idSr'])
         invoice_ids = []
         sii_description = root_element.attrib.get('sii',False)
+        type = root_element.attrib.get('type', 'out_invoice')
         for invoice_data in root_element.iter('PA'):
             purchase_number = invoice_data.attrib.get('num', False)
 
@@ -55,7 +56,7 @@ class AccountInvoiceImportWizard(models.TransientModel):
             invoice_vals = {
                 'partner_id': customer.id,
                 'journal_id': journal.id,
-                'type': 'out_invoice',
+                'type': type,
             }
             if payment_term_eid:
                 invoice_vals['payment_term_id'] = self.env.ref(
