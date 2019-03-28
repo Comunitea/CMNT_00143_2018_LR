@@ -23,9 +23,9 @@
                     </div>
                     <br/>
                     <div class="row">
-                        Les solicitamos que con cargo a la línea multiproducto <strong><span t-field="o.name"/></strong> que
+                        Les solicitamos que con cargo a la línea multiproducto <strong>49940431-78-000</strong> que
                         tenemos suscrita con su entidad financien a 120 días (Vencimiento <span t-field="o.post_financing_date"/>)
-                         el importe de <span t-field="o.total_company_currency"/>, correspondiente al importe de  xx transferencias para
+                         el importe de <span t-field="o.total_company_currency"/>, correspondiente al importe de <span t-esc="len(o.bank_line_ids)"/> transferencias para
                         el pago de las facturas de los proveedores que se detallan a continuación:
                     </div>
                     <br/><br/>
@@ -59,6 +59,16 @@
                        </tbody>
                        </t>
                     </table>
+                    <div class="row" name="total">
+                        <table class="table table-condensed" style="min-width: 200px;max-width: 350px;">
+                             <tr class="border-black" style="border-bottom:1px solid #dddddd;">
+                                        <td><strong>TOTAL GENERAL</strong></td>
+                                        <td class="text-right">
+                                            <span t-field="o.total_company_currency"/>
+                                        </td>
+                                    </tr>
+                        </table>
+                    </div>
 
 
 
