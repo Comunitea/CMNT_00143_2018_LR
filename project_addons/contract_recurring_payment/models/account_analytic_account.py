@@ -54,9 +54,9 @@ class AccountAnalyticAccount(models.Model):
         comodel_name='res.partner.bank',
         string='Bank', )
     day_due = fields.Integer(string='Due day', default=25)
-    #supplier_id = fields.Many2one(comodel_name='res.partner',
-    #    string='Supplier', domain=[('supplier', '=', True),
-    #                               ('company_type', '=', 'company')])
+    supplier_id = fields.Many2one(comodel_name='res.partner',
+        string='Supplier', domain=[('supplier', '=', True),
+                                   ('company_type', '=', 'company')])
     #payment_mode_invoice_id = fields.Many2one(
     #    comodel_name='account.payment.mode',
     #    string='Payment mode for Invoices',

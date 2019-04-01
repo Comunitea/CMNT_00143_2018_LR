@@ -62,8 +62,8 @@
                         <field name="total_voucher_qty"/>
                         <field name="number_vouchers"/>
                         <field name="voucher_qty"/>
-                        <!--field name="supplier_id"/>
-                        <field name="payment_mode_invoice_id"/-->
+                        <field name="supplier_id"/>
+                        <!--field name="payment_mode_invoice_id"/-->
                         <field name="account_id"/>
                     </group>
                     <group>
