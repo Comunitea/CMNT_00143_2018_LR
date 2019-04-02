@@ -149,7 +149,6 @@ class AccountInvoice(models.Model):
             term_id = False
             if line.condition_type in ['PLAZO',]:
                 term_id = line.term_id.id
-                #break
 
             vals = {}
             if term_id:
