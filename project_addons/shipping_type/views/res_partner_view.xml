@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- © 2018 Comunitea
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+<odoo>
+     <record id="shipping_type_view_partner_form" model="ir.ui.view">
+        <field name="name">shipping.type.partner.view</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <field name="property_delivery_carrier_id" position="before">
+                <field name="default_shipping_type"  attrs="{'invisible': [('customer', '=', False)]}"/>
+            </field>
+        </field>
+     </record>
+</odoo>
