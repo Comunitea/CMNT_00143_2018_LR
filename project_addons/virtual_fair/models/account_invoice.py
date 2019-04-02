@@ -2,6 +2,7 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 import re
 from odoo import api, fields, models, _
+from datetime import datetime, date, timedelta
 
 
 class AccountInvoice(models.Model):
@@ -104,10 +105,13 @@ class AccountInvoice(models.Model):
         """
         for inv in self:
             amount = inv.amount_total
+            date_ref = fields.Date.from_string(inv.date_invoice)
+            date_ref = fields.Datetime.to_string(date_ref - timedelta(
+                days=90))
             domain = [
                 ('supplier_id', '=', inv.partner_id.id),
                 ('fair_id.date_start', '<=', inv.date_invoice),
-                ('fair_id.date_end', '>=', inv.date_invoice),
+                ('fair_id.date_end', '>=', date_ref),
             ]
             line = self.env['fair.supplier.line'].search(domain, limit=1)
             if not line:
@@ -135,17 +139,17 @@ class AccountInvoice(models.Model):
         """
         for inv in self:
             domain = [
-                ('customer_id', '=', inv.partner_id.id),
-                ('id', '<=', inv.fair_id.id),
+                ('customer_id', '=', inv.commercial_partner_id.id),
+                ('fair_id', '=', inv.fair_id.id),
             ]
             line = self.env['fair.customer.line'].search(domain, limit=1)
             if not line:
                 continue
 
             term_id = False
-            if line.condition_type in ['PLAZO']:
+            if line.condition_type in ['PLAZO',]:
                 term_id = line.term_id.id
-                break
+                #break
 
             vals = {}
             if term_id:

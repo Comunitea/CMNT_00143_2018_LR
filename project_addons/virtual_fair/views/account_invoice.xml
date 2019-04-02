@@ -65,6 +65,7 @@
 
             <xpath expr="//page[@name='other_info']//field[@name='origin']" position="after">
                 <field name="from_supplier"/>
+                <field name="fair_id"/>
             </xpath>
         </field>
     </record>
