@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="delivery_carrier_address_form" model="ir.ui.view">
+            <field name="name">delivery.carrier.address.form
+            </field>
+            <field name="inherit_id" ref="delivery.view_delivery_carrier_form"/>
+            <field name="model">delivery.carrier</field>
+            <field name="arch" type="xml">
+                <field name="delivery_type" position="after">
+                    <group>
+                        <label for="vat"/>
+                        <div>
+                            <field name="vat"/>
+                        </div>
+                        <label for="street" string="Address"/>
+                        <div class="o_address_format">
+                            <field name="street" placeholder="Street..." class="o_address_street"/>
+                            <field name="street2" placeholder="Street 2..." class="o_address_street"/>
+                            <field name="city" placeholder="City" class="o_address_city"/>
+                            <field name="state_id" class="o_address_state" placeholder="State" options='{"no_open": True}'/>
+                            <field name="zip" placeholder="ZIP" class="o_address_zip"/>
+                            <field name="country_id" placeholder="Country" class="o_address_country" options='{"no_open": True}'/>
+                        </div>
+                    </group>
+                </field>
+            </field>
+        </record>
+</odoo>

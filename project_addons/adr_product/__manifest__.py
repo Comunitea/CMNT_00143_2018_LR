@@ -5,16 +5,20 @@
     'name': 'ADR Product',
     'summary': 'ADR product reports',
     'version': '11.0.1.0.0',
-    'category': 'partner',
+    'category': 'custom',
     'website': 'comunitea.com',
     'author': 'Comunitea',
     'license': 'AGPL-3',
     'application': False,
     'installable': True,
     'depends': [
+        'sale',
         'stock',  # Mete el campo de productos alternativos
     ],
     'data': [
-
+        'views/product.xml',
+        'views/sale_order.xml',
+        'security/ir.model.access.csv',
+        'data/adr_code.xml'
     ],
 }

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- add picking to delivery  -->
+    <record id="stock_picking_to_delivery_form" model="ir.ui.view">
+        <field name="name">stock.picking.to.delivery.form</field>
+        <field name="model">stock.picking.to.delivery</field>
+        <field name="arch" type="xml">
+            <form string="Add pickings to delivery">
+                <separator string="Select a Delivery"/>
+                <field name="delivery_batch_id" class="oe_inline" required="1" options="{'no_create_edit': True, 'no_open': True}"/>
+                <footer>
+                    <button name="attach_pickings" type="object" string="Add to Delivery" class="btn-primary"/>
+                    <button string="Cancel" class="btn-default" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!--  add picking to delivery action -->
+    <record id="stock_picking_to_delivery_action" model="ir.actions.act_window">
+        <field name="name">Add to Delivery</field>
+        <field name="res_model">stock.picking.to.delivery</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="stock_picking_to_delivery_form"/>
+        <field name="target">new</field>
+    </record>
+
+    <act_window id="stock_picking_to_delivery_action_stock_picking"
+        multi="True"
+        key2="client_action_multi" name="Add to Delivery"
+        res_model="stock.picking.to.delivery" src_model="stock.picking"
+        view_mode="form" target="new" view_type="form"
+    />
+
+</odoo>

@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_adr_config_code,access_product_adr_code,model_product_adr_code,base.group_user,1,1,1,1
+access_adr_config_category,access_adr_code_category,model_adr_code_category,base.group_user,1,1,1,1
+access_adr_config_ranking,access_adr_code_ranking,model_adr_code_ranking,base.group_user,1,1,1,1
+access_adr_config_list,access_adr_packing_list,model_adr_packing_list,base.group_user,1,1,1,1

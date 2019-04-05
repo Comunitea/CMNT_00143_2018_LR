@@ -1,0 +1,410 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* adr_product
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 11.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-05 07:56+0000\n"
+"PO-Revision-Date: 2019-04-05 07:56+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_product_adr_code_exe22315
+msgid "22315 Exention"
+msgstr "Exención 22315"
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_product_product_adr_idnumonu
+#: model:ir.model.fields,field_description:adr_product.field_product_template_adr_idnumonu
+msgid "ADR Code"
+msgstr "Código ADR"
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_product_adr_code_denomtecnica
+msgid "ADR Descripction"
+msgstr "Descripción ADR"
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_product_adr_code_acc_signals
+msgid "Access. signals"
+msgstr "Señales accesorias"
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_stock_picking_adr
+msgid "Adr"
+msgstr "Adr"
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_product_product_adr_weight_x_kgrs_11363
+#: model:ir.model.fields,field_description:adr_product.field_product_template_adr_weight_x_kgrs_11363
+msgid "Adr Weight X Kgrs 11363"
+msgstr "Peso x Kg. 11363"
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_product_product_adr_weight_x_kgrs_11364
+#: model:ir.model.fields,field_description:adr_product.field_product_template_adr_weight_x_kgrs_11364
+msgid "Adr Weight X Kgrs 11364"
+msgstr "Peso x Kg. 11364"
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_stock_picking_adr_packing_list
+msgid "Adr packing list"
+msgstr "Listado adr"
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_product_alternative_wzd_alternative_product_ids
+msgid "Alternative product"
+msgstr "Producto alternativo"
+
+#. module: adr_product
+#: code:addons/adr_product/models/sale_order.py:18
+#: model:ir.ui.view,arch_db:adr_product.sale_order_alternative_product_ids
+#, python-format
+msgid "Alternative products"
+msgstr "Productos alternativos"
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_product_adr_code_adr_category_id
+msgid "Category"
+msgstr "Categoría"
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_product_adr_code_multiplier
+msgid "Category 1 multiplier"
+msgstr "Multiplicador categoría 1"
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_adr_code_category_code
+#: model:ir.model.fields,field_description:adr_product.field_adr_code_ranking_code
+msgid "Code"
+msgstr "Código"
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_adr_code_category_create_uid
+#: model:ir.model.fields,field_description:adr_product.field_adr_code_ranking_create_uid
+#: model:ir.model.fields,field_description:adr_product.field_adr_packing_list_create_uid
+#: model:ir.model.fields,field_description:adr_product.field_product_adr_code_create_uid
+#: model:ir.model.fields,field_description:adr_product.field_product_alternative_variant_wzd_create_uid
+#: model:ir.model.fields,field_description:adr_product.field_product_alternative_wzd_create_uid
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_adr_code_category_create_date
+#: model:ir.model.fields,field_description:adr_product.field_adr_code_ranking_create_date
+#: model:ir.model.fields,field_description:adr_product.field_adr_packing_list_create_date
+#: model:ir.model.fields,field_description:adr_product.field_product_adr_code_create_date
+#: model:ir.model.fields,field_description:adr_product.field_product_alternative_variant_wzd_create_date
+#: model:ir.model.fields,field_description:adr_product.field_product_alternative_wzd_create_date
+msgid "Created on"
+msgstr "Creado en"
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_product_alternative_variant_wzd_currency_id
+#: model:ir.model.fields,field_description:adr_product.field_product_alternative_wzd_currency_id
+msgid "Currency"
+msgstr "Moneda"
+
+#. module: adr_product
+#: model:ir.model.fields,help:adr_product.field_product_alternative_wzd_qty_available
+msgid "Current quantity of products.\n"
+"In a context with a single Stock Location, this includes goods stored at this Location, or any of its children.\n"
+"In a context with a single Warehouse, this includes goods stored in the Stock Location of this Warehouse, or any of its children.\n"
+"stored in the Stock Location of the Warehouse of this Shop, or any of its children.\n"
+"Otherwise, this includes goods stored in any Stock Location with 'internal' type."
+msgstr "Cantidad actual de los productos.\n"
+"En un contexto de una sola ubicación de Stock, esto incluye los bienes almacenados en esta ubicación, o cualquiera de sus hijas.\n"
+"En un contexto de un solo almacén, esto incluye los bienes almacenados en la ubicación de Stock de ese almacén, o cualquiera de sus hijas.\n"
+"En cualquier otro caso, esto incluye los bienes almacenados en cualquier ubicación de Stock de tipo 'Interna'."
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_product_adr_code_peligroma
+msgid "Dangerous"
+msgstr "Peligroso"
+
+#. module: adr_product
+#: model:ir.model.fields,help:adr_product.field_product_alternative_wzd_uom_id
+msgid "Default Unit of Measure used for all stock operation."
+msgstr "Unidad de medida por defecto utilizada para todas las operaciones de stock."
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_product_alternative_variant_wzd_default_code
+msgid "Default code"
+msgstr "Referencia"
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_adr_packing_list_delivered_date
+msgid "Delivered Date"
+msgstr "Fecha de entrega"
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_adr_code_category_display_name
+#: model:ir.model.fields,field_description:adr_product.field_adr_code_ranking_display_name
+#: model:ir.model.fields,field_description:adr_product.field_adr_packing_list_display_name
+#: model:ir.model.fields,field_description:adr_product.field_product_adr_code_display_name
+#: model:ir.model.fields,field_description:adr_product.field_product_alternative_variant_wzd_display_name
+#: model:ir.model.fields,field_description:adr_product.field_product_alternative_wzd_display_name
+msgid "Display Name"
+msgstr "Nombre"
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_product_alternative_variant_wzd_name
+msgid "Display name"
+msgstr "Nombre"
+
+#. module: adr_product
+#: model:ir.model.fields,help:adr_product.field_adr_code_category_x_kgrs_11363
+msgid "For exception 1.1.3.6.3"
+msgstr "Exención 1.1.3.6.3"
+
+#. module: adr_product
+#: model:ir.model.fields,help:adr_product.field_adr_code_category_x_kgrs_11364
+msgid "For exception 1.1.3.6.4"
+msgstr "Exención 1.1.3.6.4"
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_product_alternative_wzd_virtual_available
+msgid "Forecast Quantity"
+msgstr "Cantidad prevista"
+
+#. module: adr_product
+#: model:ir.model.fields,help:adr_product.field_product_alternative_wzd_virtual_available
+msgid "Forecast quantity (computed as Quantity On Hand - Outgoing + Incoming)\n"
+"In a context with a single Stock Location, this includes goods stored in this location, or any of its children.\n"
+"In a context with a single Warehouse, this includes goods stored in the Stock Location of this Warehouse, or any of its children.\n"
+"Otherwise, this includes goods stored in any Stock Location with 'internal' type."
+msgstr "Cantidad prevista (calculada como cantidad a mano - saliente + entrante)\n"
+"En un contexto de una sola ubicación de stock, esto incluye los bienes almacenados en esta ubicación, o cualquiera de sus hijas.\n"
+"En un contexto de un solo almacén, esto incluye los bienes almacenados en la ubicación de stock de ese almacén, o cualquiera de sus hijas.\n"
+"En cualquier otro caso, esto incluye los bienes almacenados en cualquier ubicación de stock de tipo 'Interna'."
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_adr_code_category_id
+#: model:ir.model.fields,field_description:adr_product.field_adr_code_ranking_id
+#: model:ir.model.fields,field_description:adr_product.field_adr_packing_list_id
+#: model:ir.model.fields,field_description:adr_product.field_product_adr_code_id
+#: model:ir.model.fields,field_description:adr_product.field_product_alternative_variant_wzd_id
+#: model:ir.model.fields,field_description:adr_product.field_product_alternative_variant_wzd_p_id
+#: model:ir.model.fields,field_description:adr_product.field_product_alternative_wzd_id
+msgid "ID"
+msgstr "ID"
+
+#. module: adr_product
+#: model:ir.model.fields,help:adr_product.field_product_alternative_wzd_image_medium
+msgid "Image of the product variant (Medium-sized image of product template if false)."
+msgstr "Imagen de la variante del producto (Imagen mediana de la plantilla del producto en caso de ser falso)."
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_product_alternative_wzd_default_code
+msgid "Internal Reference"
+msgstr "Referencia interna"
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_adr_code_category___last_update
+#: model:ir.model.fields,field_description:adr_product.field_adr_code_ranking___last_update
+#: model:ir.model.fields,field_description:adr_product.field_adr_packing_list___last_update
+#: model:ir.model.fields,field_description:adr_product.field_product_adr_code___last_update
+#: model:ir.model.fields,field_description:adr_product.field_product_alternative_variant_wzd___last_update
+#: model:ir.model.fields,field_description:adr_product.field_product_alternative_wzd___last_update
+msgid "Last Modified on"
+msgstr "Última modificación en"
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_adr_code_category_write_uid
+#: model:ir.model.fields,field_description:adr_product.field_adr_code_ranking_write_uid
+#: model:ir.model.fields,field_description:adr_product.field_adr_packing_list_write_uid
+#: model:ir.model.fields,field_description:adr_product.field_product_adr_code_write_uid
+#: model:ir.model.fields,field_description:adr_product.field_product_alternative_variant_wzd_write_uid
+#: model:ir.model.fields,field_description:adr_product.field_product_alternative_wzd_write_uid
+msgid "Last Updated by"
+msgstr "Última actualización de"
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_adr_code_category_write_date
+#: model:ir.model.fields,field_description:adr_product.field_adr_code_ranking_write_date
+#: model:ir.model.fields,field_description:adr_product.field_adr_packing_list_write_date
+#: model:ir.model.fields,field_description:adr_product.field_product_adr_code_write_date
+#: model:ir.model.fields,field_description:adr_product.field_product_alternative_variant_wzd_write_date
+#: model:ir.model.fields,field_description:adr_product.field_product_alternative_wzd_write_date
+msgid "Last Updated on"
+msgstr "Última actualización en"
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_adr_code_category_max_weight_11363
+#: model:ir.model.fields,field_description:adr_product.field_adr_code_category_max_weight_11364
+msgid "Max. Kg"
+msgstr "Max. Kg"
+
+#. module: adr_product
+#: model:ir.model.fields,help:adr_product.field_adr_code_category_max_weight_11363
+msgid "Maximum amount allowed in one shipping for exception 1.1.3.6.3"
+msgstr "Cantidad máxima permitida en un envío para la exención 1.1.3.6.3"
+
+#. module: adr_product
+#: model:ir.model.fields,help:adr_product.field_adr_code_category_max_weight_11364
+msgid "Maximum amount allowed in one shipping for exception 1.1.3.6.4"
+msgstr "Cantidad máxima permitida en un envío para la exención  1.1.3.6.4"
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_product_alternative_wzd_image_medium
+msgid "Medium-sized image"
+msgstr "Imagen de tamaño mediano"
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_adr_code_ranking_name
+#: model:ir.model.fields,field_description:adr_product.field_adr_packing_list_name
+#: model:ir.model.fields,field_description:adr_product.field_product_adr_code_numero_onu
+msgid "Name"
+msgstr "Nombre"
+
+#. module: adr_product
+#: model:ir.ui.view,arch_db:adr_product.product_template_adr_view_form
+msgid "Número ONU"
+msgstr "Número ONU"
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_product_adr_code_official_name
+msgid "Offical desc."
+msgstr "Descripción oficial"
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_product_adr_code_bultodesc
+msgid "Package description"
+msgstr "Descripción del bulto"
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_product_adr_code_packing_group
+msgid "Packing group"
+msgstr "Grupo embalaje"
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_adr_packing_list_picking_ids
+msgid "Picking"
+msgstr "Albarán"
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_product_alternative_variant_wzd_product_id
+#: model:ir.model.fields,field_description:adr_product.field_product_alternative_wzd_product_id
+msgid "Product"
+msgstr "Producto"
+
+#. module: adr_product
+#: model:ir.model,name:adr_product.model_product_template
+msgid "Product Template"
+msgstr "Plantilla de producto"
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_product_alternative_variant_wzd_lst_price
+#: model:ir.model.fields,field_description:adr_product.field_product_alternative_wzd_lst_price
+msgid "Public Price"
+msgstr "Precio al público"
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_product_adr_code_qty_limit
+msgid "Qty limit"
+msgstr "Cantidad limitada"
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_product_alternative_variant_wzd_qty_available
+#: model:ir.model.fields,field_description:adr_product.field_product_alternative_wzd_qty_available
+msgid "Quantity On Hand"
+msgstr "Cantidad a mano"
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_product_adr_code_ranking_id
+msgid "Ranking"
+msgstr "Clasificación"
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_product_alternative_wzd_sale_order_line_id
+msgid "Sale order line"
+msgstr "Línea de venta"
+
+#. module: adr_product
+#: model:ir.model,name:adr_product.model_sale_order_line
+msgid "Sales Order Line"
+msgstr "Línea de pedido de ventas"
+
+#. module: adr_product
+#: model:ir.model,name:adr_product.model_stock_picking
+msgid "Transfer"
+msgstr "Transferir"
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_product_adr_code_t_code
+msgid "Tunnel code"
+msgstr "Código tunel"
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_product_alternative_wzd_uom_id
+msgid "Unit of Measure"
+msgstr "Unidad de medida"
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_product_alternative_variant_wzd_wzd_id
+msgid "Wzd"
+msgstr "Wzd"
+
+#. module: adr_product
+#: model:ir.model,name:adr_product.model_adr_code_category
+msgid "adr.code.category"
+msgstr "adr.code.category"
+
+#. module: adr_product
+#: model:ir.model,name:adr_product.model_adr_code_ranking
+msgid "adr.code.ranking"
+msgstr "adr.code.ranking"
+
+#. module: adr_product
+#: model:ir.model,name:adr_product.model_adr_packing_list
+msgid "adr.packing.list"
+msgstr "adr.packing.list"
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_product_alternative_variant_wzd_image_small
+msgid "image_small"
+msgstr "image_small"
+
+#. module: adr_product
+#: model:ir.model,name:adr_product.model_product_adr_code
+msgid "product.adr.code"
+msgstr "product.adr.code"
+
+#. module: adr_product
+#: model:ir.model,name:adr_product.model_product_alternative_variant_wzd
+msgid "product.alternative.variant.wzd"
+msgstr "product.alternative.variant.wzd"
+
+#. module: adr_product
+#: model:ir.model,name:adr_product.model_product_alternative_wzd
+msgid "product.alternative.wzd"
+msgstr "product.alternative.wzd"
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_product_alternative_wzd_p_id
+msgid "product_id"
+msgstr "product_id"
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_product_alternative_variant_wzd_selected
+msgid "selected"
+msgstr "Seleccionado"
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_product_alternative_variant_wzd_uom_id
+msgid "uom_id"
+msgstr "uom_id"
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_adr_code_category_x_kgrs_11363
+#: model:ir.model.fields,field_description:adr_product.field_adr_code_category_x_kgrs_11364
+msgid "x Kgrs"
+msgstr "x Kgrs"
+

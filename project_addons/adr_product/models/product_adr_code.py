@@ -10,6 +10,8 @@ class AdrCodeCategory(models.Model):
     code = fields.Char('Code')
     x_kgrs_11363 = fields.Integer('x Kgrs', help ="For exception 1.1.3.6.3")
     x_kgrs_11364 = fields.Integer('x Kgrs', help ="For exception 1.1.3.6.4")
+    max_weight_11363 = fields.Integer('Max. Kg', help='Maximum amount allowed in one shipping for exception 1.1.3.6.3')
+    max_weight_11364 = fields.Integer('Max. Kg', help='Maximum amount allowed in one shipping for exception 1.1.3.6.4')
 
 
 class AdrCodeRanking(models.Model):
@@ -32,11 +34,12 @@ class ProductAdrCode(models.Model):
     numero_onu = fields.Char('Name')
     official_name = fields.Char('Offical desc.')
     acc_signals = fields.Char('Access. signals')
-    ranking_id = fields.Many2one('product.adr.code', 'Ranking')
+    ranking_id = fields.Many2one('adr.code.ranking', 'Ranking')
     packing_group = fields.Char('Packing group')
     t_code = fields.Char("Tunnel code")
     qty_limit = fields.Integer('Qty limit')
     adr_category_id = fields.Many2one('adr.code.category', 'Category')
+    multiplier = fields.Integer('Category 1 multiplier')
 
 
 class AdrPackingList(models.Model):
@@ -45,5 +48,5 @@ class AdrPackingList(models.Model):
 
     name = fields.Char('Name')
     delivered_date = fields.Datetime()
-    picking_ids = fields.One2many('stock.picking')
+    picking_ids = fields.One2many('stock.picking', 'adr_packing_list')
 
