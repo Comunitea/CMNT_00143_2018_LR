@@ -19,10 +19,12 @@
                         <field name="digit_date"/>
                         <field name="num_ass"/>
                         <field name="associate_id"/>
+                        <field name="customer_analytic_account_id"/>
                         <field name="num_conf"/>
                         <field name="featured"/>
                         <field name="featured_percent"/>
                         <field name="log_id"/>
+                        <field name="force_no_group"/>
                         <field name="customer_invoice_id"/>
                         <field name="error_exist" invisible="1"/>
                     </group>

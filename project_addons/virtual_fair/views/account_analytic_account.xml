@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- account.analytic.account inherit form view -->
+    <record id="account_analytic_account_form_no_group" model="ir.ui.view">
+        <field name="name">account.analytic.account.inherit.view.nogroup.form</field>
+        <field name="model">account.analytic.account</field>
+        <field name="inherit_id" ref="contract_recurring_payment.account_analytic_account_form_inh"/>
+        <field name="arch" type="xml">
+            <field name="payment_mode_invoice_id" position="after">
+                <field name="no_group_invoices" />
+            </field>
+        </field>
+    </record>
+
+</odoo>
