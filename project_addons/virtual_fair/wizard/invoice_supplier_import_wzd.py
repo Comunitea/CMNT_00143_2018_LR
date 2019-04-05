@@ -131,7 +131,7 @@ class InvoiceSupplierImportWzd(models.TransientModel):
         supplier = False
         if supplier_ref:
             domain = [('id_prov', '=', int(supplier_ref))]
-        supplier = self.env['res.partner'].search(domain, limit=1)
+            supplier = self.env['res.partner'].search(domain, limit=1)
         if not supplier:
             msg = _('Supplier identifier %s could not be founded') %\
                 supplier_ref
