@@ -72,6 +72,10 @@ class DirectInvoiceWzd(models.TransientModel):
             'fiscal_position_id': fiscal_position_id,
             'fair_id': inv.fair_id.id
         }
+        payment_mode_id = inv.customer_analytic_account_id and \
+                inv.customer_analytic_account_id.payment_mode_invoice_id.id
+        if payment_mode_id:
+            vals.update(payment_mode_id=payment_mode_id)
         return vals
 
     @api.model
@@ -124,7 +128,8 @@ class DirectInvoiceWzd(models.TransientModel):
                     'price_unit': price_unit,
                     'account_id': account_id,
                     'invoice_id': inv.id,
-                    'account_analytic_id': invoices[0].analytic_account_id.id,
+                    'account_analytic_id': invoices[
+                        0].customer_analytic_account_id.id,
                 }
                 if tax_ids:
                     line_vals['invoice_line_tax_ids'] = [(6, 0, tax_ids)]
