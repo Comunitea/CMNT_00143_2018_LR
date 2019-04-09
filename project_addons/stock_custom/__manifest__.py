@@ -10,10 +10,13 @@
     'depends': [
         'base',
         'product',
-        'stock' 
+        'stock'
     ],
     'data': [
-        'views/product_view.xml'
+        'views/product_view.xml',
+        'views/sale.xml',
+        'wizard/sale_invoice_on_date.xml',
+        'security/ir.model.access.csv'
     ],
     'installable': True,
 }

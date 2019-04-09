@@ -16,6 +16,43 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: stock_custom
+#: model:ir.model.fields,field_description:stock_custom.field_sale_order_invoice_until
+msgid "Invoice Until"
+msgstr "Facturar hasta"
+
+#. module: stock_custom
+#: model:ir.model.fields,field_description:stock_custom.field_sale_invoice_on_date_invoice_until_date
+msgid "Invoice Until Date"
+msgstr "Facturar hasta"
+
+#. module: stock_custom
+#: model:ir.ui.view,arch_db:stock_custom.sale_invoice_on_date_form
+msgid "Cancel"
+msgstr "Cancelar"
+
+#. module: stock_custom
+#: model:ir.actions.act_window,name:stock_custom.action_sale_invoice_on_date
+#: model:ir.ui.menu,name:stock_custom.menu_sale_invoice_on_date
+#: model:ir.ui.view,arch_db:stock_custom.sale_invoice_on_date_form
+msgid "Invoiceable sales by date"
+msgstr "Ventas facturables hasta fecha"
+
+#. module: stock_custom
+#: model:ir.ui.view,arch_db:stock_custom.sale_invoice_on_date_form
+msgid "or"
+msgstr "o"
+
+#. module: stock_custom
+#: model:ir.ui.view,arch_db:stock_custom.sale_invoice_on_date_form
+msgid "View invoiceable sales on date"
+msgstr "Ver ventas facturables a fecha"
+
+#. module: stock_custom
+#: model:ir.ui.view,arch_db:stock_custom.view_sales_order_filter
+msgid "Search invoiceable sales"
+msgstr "Ventas a facturar"
+
+#. module: stock_custom
 #: selection:product.product,abc_classification:0
 msgid "A1"
 msgstr "A1"
