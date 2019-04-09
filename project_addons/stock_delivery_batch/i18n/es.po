@@ -1,0 +1,542 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* stock_delivery_batch
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 11.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-05 07:55+0000\n"
+"PO-Revision-Date: 2019-04-05 07:55+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: stock_delivery_batch
+#: model:ir.ui.view,arch_db:stock_delivery_batch.delivery_batch_view
+msgid "*Peligroso para el medioambiente"
+msgstr "*Peligroso para el medioambiente"
+
+#. module: stock_delivery_batch
+#: model:ir.ui.view,arch_db:stock_delivery_batch.delivery_batch_view
+msgid "<br/>\n"
+"                    Matrícula:"
+msgstr "<br/>\n"
+"                    Matrícula:"
+
+#. module: stock_delivery_batch
+#: model:ir.ui.view,arch_db:stock_delivery_batch.delivery_batch_view
+msgid "<i><small>Nota: Los albaranes indicados contienen productos Adr</small></i>"
+msgstr "<i><small>Nota: Los albaranes indicados contienen productos Adr</small></i>"
+
+#. module: stock_delivery_batch
+#: model:ir.ui.view,arch_db:stock_delivery_batch.delivery_batch_view
+msgid "<strong>CARTA DE PORTE ÚNICA ADR</strong><br/>"
+msgstr "<strong>CARTA DE PORTE ÚNICA ADR</strong><br/>"
+
+#. module: stock_delivery_batch
+#: model:ir.ui.view,arch_db:stock_delivery_batch.delivery_batch_view
+msgid "ADR."
+msgstr "ADR."
+
+#. module: stock_delivery_batch
+#: model:ir.ui.view,arch_db:stock_delivery_batch.delivery_batch_view
+msgid "ALBARÁN"
+msgstr "ALBARÁN"
+
+#. module: stock_delivery_batch
+#: model:ir.model,name:stock_delivery_batch.model_stock_picking_to_delivery
+msgid "Add pickings to a batch picking"
+msgstr "Añadir líneas al envío."
+
+#. module: stock_delivery_batch
+#: model:ir.ui.view,arch_db:stock_delivery_batch.stock_picking_to_delivery_form
+msgid "Add pickings to delivery"
+msgstr "Añadir líneas al envío"
+
+#. module: stock_delivery_batch
+#: model:ir.actions.act_window,name:stock_delivery_batch.stock_picking_to_delivery_action
+#: model:ir.actions.act_window,name:stock_delivery_batch.stock_picking_to_delivery_action_stock_picking
+#: model:ir.ui.view,arch_db:stock_delivery_batch.stock_picking_to_delivery_form
+msgid "Add to Delivery"
+msgstr "Añadir al envío"
+
+#. module: stock_delivery_batch
+#: model:ir.ui.view,arch_db:stock_delivery_batch.delivery_carrier_address_form
+msgid "Address"
+msgstr "Dirección"
+
+#. module: stock_delivery_batch
+#: model:ir.ui.view,arch_db:stock_delivery_batch.view_picking_internal_search_inherit_stock_delivery_batch
+msgid "Batch"
+msgstr "Lote"
+
+#. module: stock_delivery_batch
+#: model:ir.ui.view,arch_db:stock_delivery_batch.stock_delivery_batch_filter
+msgid "Batch Picking"
+msgstr "Lote"
+
+#. module: stock_delivery_batch
+#: model:ir.ui.view,arch_db:stock_delivery_batch.stock_delivery_batch_filter
+msgid "Batch Pickings not finished"
+msgstr "Lote no terminado"
+
+#. module: stock_delivery_batch
+#: model:ir.ui.view,arch_db:stock_delivery_batch.stock_delivery_batch_form
+#: model:ir.ui.view,arch_db:stock_delivery_batch.stock_picking_to_delivery_form
+msgid "Cancel"
+msgstr "Cancelar"
+
+#. module: stock_delivery_batch
+#: model:ir.ui.view,arch_db:stock_delivery_batch.stock_delivery_batch_form
+msgid "Cancel picking"
+msgstr "Cancelar"
+
+#. module: stock_delivery_batch
+#: selection:stock.delivery.batch,state:0
+msgid "Cancelled"
+msgstr "Cancelado"
+
+#. module: stock_delivery_batch
+#: model:ir.ui.view,arch_db:stock_delivery_batch.delivery_batch_view
+msgid "Cantidad:"
+msgstr "Cantidad:"
+
+#. module: stock_delivery_batch
+#: model:ir.model,name:stock_delivery_batch.model_delivery_carrier
+msgid "Carrier"
+msgstr "Forma de envío"
+
+#. module: stock_delivery_batch
+#: model:ir.model.fields,field_description:stock_delivery_batch.field_delivery_carrier_city
+#: model:ir.ui.view,arch_db:stock_delivery_batch.delivery_carrier_address_form
+msgid "City"
+msgstr "Ciudad"
+
+#. module: stock_delivery_batch
+#: model:ir.actions.act_window,help:stock_delivery_batch.stock_delivery_batch_action
+msgid "Click to create a Batch Picking."
+msgstr "Click para crear un lote."
+
+#. module: stock_delivery_batch
+#: model:ir.ui.view,arch_db:stock_delivery_batch.stock_delivery_batch_form
+msgid "Confirm"
+msgstr "Confirmar"
+
+#. module: stock_delivery_batch
+#: model:ir.ui.view,arch_db:stock_delivery_batch.stock_delivery_batch_form
+msgid "Confirm picking"
+msgstr "Confirmar"
+
+#. module: stock_delivery_batch
+#: model:ir.model.fields,field_description:stock_delivery_batch.field_delivery_carrier_country_id
+#: model:ir.ui.view,arch_db:stock_delivery_batch.delivery_carrier_address_form
+msgid "Country"
+msgstr "País"
+
+#. module: stock_delivery_batch
+#: model:ir.model.fields,field_description:stock_delivery_batch.field_stock_delivery_batch_create_uid
+#: model:ir.model.fields,field_description:stock_delivery_batch.field_stock_delivery_transfer_create_uid
+#: model:ir.model.fields,field_description:stock_delivery_batch.field_stock_picking_to_delivery_create_uid
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: stock_delivery_batch
+#: model:ir.model.fields,field_description:stock_delivery_batch.field_stock_delivery_batch_create_date
+#: model:ir.model.fields,field_description:stock_delivery_batch.field_stock_delivery_transfer_create_date
+#: model:ir.model.fields,field_description:stock_delivery_batch.field_stock_picking_to_delivery_create_date
+msgid "Created on"
+msgstr "Creado en"
+
+#. module: stock_delivery_batch
+#: model:ir.ui.view,arch_db:stock_delivery_batch.delivery_batch_view
+msgid "DESCRIPCIÓN"
+msgstr "DESCRIPCIÓN"
+
+#. module: stock_delivery_batch
+#: code:addons/stock_delivery_batch/models/stock_delivery_batch.py:217
+#: model:ir.actions.act_window,name:stock_delivery_batch.stock_delivery_batch_action
+#: model:ir.model,name:stock_delivery_batch.model_stock_delivery_batch
+#: model:ir.model.fields,field_description:stock_delivery_batch.field_stock_picking_delivery_batch_id
+#: model:ir.model.fields,field_description:stock_delivery_batch.field_stock_picking_to_delivery_delivery_batch_id
+#: model:ir.ui.menu,name:stock_delivery_batch.stock_delivery_batch_menu
+#, python-format
+msgid "Delivery Batch"
+msgstr "Lote de envío"
+
+#. module: stock_delivery_batch
+#: model:ir.model.fields,field_description:stock_delivery_batch.field_stock_delivery_batch_name
+msgid "Delivery Batch Name"
+msgstr "Nombre lote"
+
+#. module: stock_delivery_batch
+#: model:ir.actions.report,name:stock_delivery_batch.delivery_batch_report
+msgid "Delivery Batch Report"
+msgstr "Report de lote"
+
+#. module: stock_delivery_batch
+#: model:ir.model,name:stock_delivery_batch.model_stock_delivery_transfer
+msgid "Delivery Transfer"
+msgstr "Envío"
+
+#. module: stock_delivery_batch
+#: model:ir.model.fields,help:stock_delivery_batch.field_stock_picking_delivery_batch_id
+msgid "Delivery batch associated to this picking"
+msgstr "Envío asociado a este albarán"
+
+#. module: stock_delivery_batch
+#: model:ir.model.fields,field_description:stock_delivery_batch.field_stock_delivery_batch_carrier_id
+msgid "Delivery carrier"
+msgstr "Transportista"
+
+#. module: stock_delivery_batch
+#: model:ir.model.fields,help:stock_delivery_batch.field_stock_delivery_batch_carrier_id
+msgid "Delivery carrier for this batch picking."
+msgstr "Transportista para este envío"
+
+#. module: stock_delivery_batch
+#: model:ir.model.fields,field_description:stock_delivery_batch.field_stock_delivery_batch_delivery_date
+msgid "Delivery date"
+msgstr "Fecha de envío"
+
+#. module: stock_delivery_batch
+#: model:ir.ui.view,arch_db:stock_delivery_batch.delivery_batch_view
+msgid "Descripción embalaje:"
+msgstr "Descripción embalaje:"
+
+#. module: stock_delivery_batch
+#: model:ir.ui.view,arch_db:stock_delivery_batch.delivery_batch_view
+msgid "Destinatarios"
+msgstr "Destinatarios"
+
+#. module: stock_delivery_batch
+#: model:ir.ui.view,arch_db:stock_delivery_batch.delivery_batch_view
+msgid "Detalle de mercancía de la carta de porte ADR:"
+msgstr "Detalle de mercancía de la carta de porte ADR:"
+
+#. module: stock_delivery_batch
+#: model:ir.model.fields,field_description:stock_delivery_batch.field_report_stock_delivery_batch_delivery_batch_view_display_name_11963
+#: model:ir.model.fields,field_description:stock_delivery_batch.field_stock_delivery_batch_display_name
+#: model:ir.model.fields,field_description:stock_delivery_batch.field_stock_delivery_transfer_display_name
+#: model:ir.model.fields,field_description:stock_delivery_batch.field_stock_picking_to_delivery_display_name
+msgid "Display Name"
+msgstr "Nombre"
+
+#. module: stock_delivery_batch
+#: model:ir.ui.view,arch_db:stock_delivery_batch.stock_delivery_batch_form
+#: selection:stock.delivery.batch,state:0
+msgid "Done"
+msgstr "Realizada"
+
+#. module: stock_delivery_batch
+#: selection:stock.delivery.batch,state:0
+msgid "Draft"
+msgstr "Borrador"
+
+#. module: stock_delivery_batch
+#: model:ir.ui.view,arch_db:stock_delivery_batch.delivery_batch_view
+msgid "Exención"
+msgstr "Exención"
+
+#. module: stock_delivery_batch
+#: model:ir.ui.view,arch_db:stock_delivery_batch.delivery_batch_view
+msgid "Exención 2.2.3.1.5"
+msgstr "Exención 2.2.3.1.5"
+
+#. module: stock_delivery_batch
+#: model:ir.ui.view,arch_db:stock_delivery_batch.delivery_batch_view
+msgid "Exención por cantidad limitada (LQ)"
+msgstr "Exención por cantidad limitada (LQ)"
+
+#. module: stock_delivery_batch
+#: model:ir.ui.view,arch_db:stock_delivery_batch.delivery_batch_view
+msgid "Fecha:"
+msgstr "Fecha:"
+
+#. module: stock_delivery_batch
+#: model:ir.model.fields,field_description:stock_delivery_batch.field_delivery_carrier_state_id
+msgid "Fed. State"
+msgstr "Provincia"
+
+#. module: stock_delivery_batch
+#: model:ir.ui.view,arch_db:stock_delivery_batch.stock_delivery_batch_filter
+msgid "Group By"
+msgstr "Agrupar por"
+
+#. module: stock_delivery_batch
+#: model:ir.model.fields,field_description:stock_delivery_batch.field_report_stock_delivery_batch_delivery_batch_view_id_11962
+#: model:ir.model.fields,field_description:stock_delivery_batch.field_stock_delivery_batch_id
+#: model:ir.model.fields,field_description:stock_delivery_batch.field_stock_delivery_transfer_id
+#: model:ir.model.fields,field_description:stock_delivery_batch.field_stock_picking_to_delivery_id
+msgid "ID"
+msgstr "ID"
+
+#. module: stock_delivery_batch
+#: code:addons/stock_delivery_batch/models/stock_delivery_batch.py:245
+#, python-format
+msgid "Immediate Transfer?"
+msgstr "Transferencia inmediata?"
+
+#. module: stock_delivery_batch
+#: model:ir.ui.view,arch_db:stock_delivery_batch.stock_delivery_batch_filter
+msgid "In Progress"
+msgstr "En proceso"
+
+#. module: stock_delivery_batch
+#: model:ir.ui.view,arch_db:stock_delivery_batch.delivery_batch_view
+msgid "Kg."
+msgstr "Kg."
+
+#. module: stock_delivery_batch
+#: model:ir.ui.view,arch_db:stock_delivery_batch.delivery_batch_view
+msgid "Kg. Transporte acogido a la exención"
+msgstr "Kg. Transporte acogido a la exención"
+
+#. module: stock_delivery_batch
+#: model:ir.ui.view,arch_db:stock_delivery_batch.delivery_batch_view
+msgid "Kg. Transporte acogido a la exención 2.2.3.1.5 ADR."
+msgstr "Kg. Transporte acogido a la exención 2.2.3.1.5 ADR."
+
+#. module: stock_delivery_batch
+#: model:ir.ui.view,arch_db:stock_delivery_batch.delivery_batch_view
+msgid "Kg. Transporte acogido a la exención por cantidades limitadas."
+msgstr "Kg. Transporte acogido a la exención por cantidades limitadas."
+
+#. module: stock_delivery_batch
+#: model:ir.model.fields,field_description:stock_delivery_batch.field_report_stock_delivery_batch_delivery_batch_view___last_update_11964
+#: model:ir.model.fields,field_description:stock_delivery_batch.field_stock_delivery_batch___last_update
+#: model:ir.model.fields,field_description:stock_delivery_batch.field_stock_delivery_transfer___last_update
+#: model:ir.model.fields,field_description:stock_delivery_batch.field_stock_picking_to_delivery___last_update
+msgid "Last Modified on"
+msgstr "Última modificación en"
+
+#. module: stock_delivery_batch
+#: model:ir.model.fields,field_description:stock_delivery_batch.field_stock_delivery_batch_write_uid
+#: model:ir.model.fields,field_description:stock_delivery_batch.field_stock_delivery_transfer_write_uid
+#: model:ir.model.fields,field_description:stock_delivery_batch.field_stock_picking_to_delivery_write_uid
+msgid "Last Updated by"
+msgstr "Última actualización de"
+
+#. module: stock_delivery_batch
+#: model:ir.model.fields,field_description:stock_delivery_batch.field_stock_delivery_batch_write_date
+#: model:ir.model.fields,field_description:stock_delivery_batch.field_stock_delivery_transfer_write_date
+#: model:ir.model.fields,field_description:stock_delivery_batch.field_stock_picking_to_delivery_write_date
+msgid "Last Updated on"
+msgstr "Última actualización en"
+
+#. module: stock_delivery_batch
+#: model:ir.model.fields,help:stock_delivery_batch.field_stock_delivery_batch_picking_ids
+msgid "List of picking associated to this batch"
+msgstr "Listado asociado a este lote"
+
+#. module: stock_delivery_batch
+#: model:ir.model.fields,help:stock_delivery_batch.field_stock_delivery_batch_name
+msgid "Name of the delivery batch picking"
+msgstr "Nombre del lote"
+
+#. module: stock_delivery_batch
+#: code:addons/stock_delivery_batch/models/stock_delivery_batch.py:59
+#: code:addons/stock_delivery_batch/models/stock_delivery_batch.py:83
+#, python-format
+msgid "Nothing to print."
+msgstr "Nada que imprimir."
+
+#. module: stock_delivery_batch
+#: model:ir.ui.view,arch_db:stock_delivery_batch.delivery_batch_view
+msgid "Origen"
+msgstr "Origen"
+
+#. module: stock_delivery_batch
+#: model:ir.model.fields,help:stock_delivery_batch.field_stock_delivery_batch_user_id
+msgid "Person responsible for this batch picking"
+msgstr "Usuario que realiza el envío."
+
+#. module: stock_delivery_batch
+#: model:ir.ui.view,arch_db:stock_delivery_batch.delivery_batch_view
+msgid "Peso total:"
+msgstr "Peso total:"
+
+#. module: stock_delivery_batch
+#: model:ir.ui.view,arch_db:stock_delivery_batch.delivery_batch_view
+msgid "Peso:"
+msgstr "Peso:"
+
+#. module: stock_delivery_batch
+#: model:ir.model.fields,field_description:stock_delivery_batch.field_stock_delivery_transfer_pick_to_backorder_ids
+msgid "Pick To Backorder"
+msgstr "Pick To Backorder"
+
+#. module: stock_delivery_batch
+#: model:ir.model.fields,help:stock_delivery_batch.field_stock_delivery_transfer_pick_to_backorder_ids
+msgid "Picking to backorder"
+msgstr "Picking to backorder"
+
+#. module: stock_delivery_batch
+#: model:ir.model.fields,field_description:stock_delivery_batch.field_stock_delivery_batch_picking_ids
+#: model:ir.ui.view,arch_db:stock_delivery_batch.stock_delivery_batch_form
+msgid "Pickings"
+msgstr "Albaranes"
+
+#. module: stock_delivery_batch
+#: model:ir.ui.view,arch_db:stock_delivery_batch.stock_delivery_batch_form
+msgid "Print"
+msgstr "Imprimir"
+
+#. module: stock_delivery_batch
+#: model:ir.ui.view,arch_db:stock_delivery_batch.stock_delivery_batch_form
+msgid "Print RDA"
+msgstr "Print RDA"
+
+#. module: stock_delivery_batch
+#: model:ir.ui.view,arch_db:stock_delivery_batch.delivery_batch_view
+msgid "REFERENCIA"
+msgstr "REFERENCIA"
+
+#. module: stock_delivery_batch
+#: model:ir.model.fields,field_description:stock_delivery_batch.field_stock_delivery_batch_user_id
+msgid "Responsible"
+msgstr "Responsable"
+
+#. module: stock_delivery_batch
+#: selection:stock.delivery.batch,state:0
+msgid "Running"
+msgstr "Running"
+
+#. module: stock_delivery_batch
+#: model:ir.ui.view,arch_db:stock_delivery_batch.stock_delivery_batch_filter
+msgid "Search Delivery Batch"
+msgstr "Buscar"
+
+#. module: stock_delivery_batch
+#: model:ir.ui.view,arch_db:stock_delivery_batch.stock_picking_to_delivery_form
+msgid "Select a Delivery"
+msgstr "Seleccionar un envío"
+
+#. module: stock_delivery_batch
+#: code:addons/stock_delivery_batch/models/stock_delivery_batch.py:212
+#, python-format
+msgid "Some pickings are still waiting for goods. Please check or force their availability before setting this batch to done."
+msgstr "Algunos albaranes todavía están esperando por cantidades. Revisa su disponibilidad antes de marcar este lote como hecho."
+
+#. module: stock_delivery_batch
+#: code:addons/stock_delivery_batch/models/stock_delivery_batch.py:230
+#, python-format
+msgid "Some products require lots/serial numbers, so you need to specify those first!"
+msgstr "Algunos productos requieren lote/número de serie."
+
+#. module: stock_delivery_batch
+#: model:ir.model.fields,field_description:stock_delivery_batch.field_stock_delivery_batch_state
+#: model:ir.ui.view,arch_db:stock_delivery_batch.delivery_carrier_address_form
+#: model:ir.ui.view,arch_db:stock_delivery_batch.stock_delivery_batch_filter
+msgid "State"
+msgstr "Estado"
+
+#. module: stock_delivery_batch
+#: model:ir.ui.view,arch_db:stock_delivery_batch.stock_delivery_batch_form
+#: model:ir.ui.view,arch_db:stock_delivery_batch.stock_delivery_batch_tree
+msgid "Stock Delivery Batch"
+msgstr "Stock Delivery Batch"
+
+#. module: stock_delivery_batch
+#: model:ir.model.fields,field_description:stock_delivery_batch.field_delivery_carrier_street
+msgid "Street"
+msgstr "Calle"
+
+#. module: stock_delivery_batch
+#: model:ir.ui.view,arch_db:stock_delivery_batch.delivery_carrier_address_form
+msgid "Street 2..."
+msgstr "Calle 2..."
+
+#. module: stock_delivery_batch
+#: model:ir.ui.view,arch_db:stock_delivery_batch.delivery_carrier_address_form
+msgid "Street..."
+msgstr "Calle..."
+
+#. module: stock_delivery_batch
+#: model:ir.model.fields,field_description:stock_delivery_batch.field_delivery_carrier_street2
+msgid "Street2"
+msgstr "Calle2"
+
+#. module: stock_delivery_batch
+#: model:ir.actions.act_window,help:stock_delivery_batch.stock_delivery_batch_action
+msgid "The goal of the batch picking is to group operations that may\n"
+"            (needs to) be done together in order to increase their efficiency.\n"
+"            It may also be useful to assign jobs (one person = one batch) or\n"
+"            help the timing management of operations (tasks to be done at 1pm)."
+msgstr "La meta del lote de envío es juntar movimientos que puedan ser\n"
+"            (o tengan que ser) enviados en un mismo envío para incrementar la eficiencia."
+
+#. module: stock_delivery_batch
+#: model:ir.model,name:stock_delivery_batch.model_stock_picking
+msgid "Transfer"
+msgstr "Transferir"
+
+#. module: stock_delivery_batch
+#: code:addons/stock_delivery_batch/models/stock_delivery_batch.py:216
+#, python-format
+msgid "Transferred by"
+msgstr "Transferido por"
+
+#. module: stock_delivery_batch
+#: model:ir.ui.view,arch_db:stock_delivery_batch.delivery_batch_view
+msgid "Transportista"
+msgstr "Transportista"
+
+#. module: stock_delivery_batch
+#: model:ir.ui.view,arch_db:stock_delivery_batch.delivery_batch_view
+msgid "UDS"
+msgstr "UDS"
+
+#. module: stock_delivery_batch
+#: model:ir.ui.view,arch_db:stock_delivery_batch.delivery_batch_view
+msgid "UN"
+msgstr "UN"
+
+#. module: stock_delivery_batch
+#: model:ir.ui.view,arch_db:stock_delivery_batch.stock_delivery_batch_filter
+msgid "User"
+msgstr "Usuario"
+
+#. module: stock_delivery_batch
+#: model:ir.model.fields,field_description:stock_delivery_batch.field_delivery_carrier_vat
+msgid "VAT code"
+msgstr "NIF"
+
+#. module: stock_delivery_batch
+#: model:ir.model.fields,help:stock_delivery_batch.field_delivery_carrier_vat
+msgid "Value Added Tax number"
+msgstr "Nº de identificación fiscal"
+
+#. module: stock_delivery_batch
+#: model:ir.model.fields,field_description:stock_delivery_batch.field_stock_delivery_batch_delivery_data
+msgid "Vehicle plates"
+msgstr "Matrícula"
+
+#. module: stock_delivery_batch
+#: model:ir.ui.view,arch_db:stock_delivery_batch.delivery_carrier_address_form
+msgid "ZIP"
+msgstr "C.P."
+
+#. module: stock_delivery_batch
+#: model:ir.model.fields,field_description:stock_delivery_batch.field_delivery_carrier_zip
+msgid "Zip"
+msgstr "C.P."
+
+#. module: stock_delivery_batch
+#: model:ir.ui.view,arch_db:stock_delivery_batch.delivery_batch_view
+msgid "de"
+msgstr "de"
+
+#. module: stock_delivery_batch
+#: model:ir.model,name:stock_delivery_batch.model_report_delivery_batch_custom_report_delivery_batch_view
+msgid "report.delivery_batch_custom_report.delivery_batch_view"
+msgstr "report.delivery_batch_custom_report.delivery_batch_view"
+
+#. module: stock_delivery_batch
+#: model:ir.model,name:stock_delivery_batch.model_report_stock_delivery_batch_delivery_batch_view
+msgid "report.stock.delivery.batch.delivery_batch_view"
+msgstr "report.stock.delivery.batch.delivery_batch_view"
+

@@ -24,7 +24,10 @@ class AccountAnalyticAccount(models.Model):
         string='Date of Next Payment',
     )
     payment_qty = fields.Float(string='Payment quantity')
-
+    date_start_contract = fields.Date(
+        string='Date Start Contract',
+        default=fields.Date.context_today,
+    )
     date_start_voucher = fields.Date(
         string='Date Start',
         default=fields.Date.context_today,
@@ -57,10 +60,10 @@ class AccountAnalyticAccount(models.Model):
     supplier_id = fields.Many2one(comodel_name='res.partner',
         string='Supplier', domain=[('supplier', '=', True),
                                    ('company_type', '=', 'company')])
-    #payment_mode_invoice_id = fields.Many2one(
-    #    comodel_name='account.payment.mode',
-    #    string='Payment mode for Invoices',
-    #    domain=[('payment_type', '=', 'inbound')])
+    payment_mode_invoice_id = fields.Many2one(
+        comodel_name='account.payment.mode',
+        string='Payment mode for Invoices',
+        domain=[('payment_type', '=', 'inbound')])
     account_id = fields.Many2one(comodel_name='account.account',
                                   string='Voucher Account')
     next_voucher_number = fields.Integer(string='Next Voucher Number',
@@ -70,6 +73,9 @@ class AccountAnalyticAccount(models.Model):
         string='Payment Mode',
         domain=[]
     )
+    mandate_required = fields.Boolean(
+        related='payment_mode_id.payment_method_id.mandate_required',
+        readonly=True)
 
     def get_first_due_date(self):
         start_date = fields.Datetime.from_string(

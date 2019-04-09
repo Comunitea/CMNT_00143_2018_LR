@@ -7,3 +7,4 @@ from . import importation_log  # noqa
 from . import company  # noqa
 from . import account_invoice_history
 from . import res_partner
+from . import account_analytic_account

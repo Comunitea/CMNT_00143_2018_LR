@@ -2,6 +2,7 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 import re
 from odoo import api, fields, models, _
+from datetime import datetime, date, timedelta
 
 
 class AccountInvoice(models.Model):
@@ -34,6 +35,9 @@ class AccountInvoice(models.Model):
     tag = fields.Char('Tag')
     analytic_account_id = fields.Many2one(
         'account.analytic.account', compute='_compute_analytic_account_id')
+    customer_analytic_account_id = fields.Many2one(
+        'account.analytic.account', 'Contract account')
+    force_no_group = fields.Boolean('Force No Group', default=False)
 
     def _compute_analytic_account_id(self):
         for invoice in self:
@@ -104,10 +108,13 @@ class AccountInvoice(models.Model):
         """
         for inv in self:
             amount = inv.amount_total
+            date_ref = fields.Date.from_string(inv.date_invoice)
+            date_ref = fields.Datetime.to_string(date_ref - timedelta(
+                days=90))
             domain = [
                 ('supplier_id', '=', inv.partner_id.id),
                 ('fair_id.date_start', '<=', inv.date_invoice),
-                ('fair_id.date_end', '>=', inv.date_invoice),
+                ('fair_id.date_end', '>=', date_ref),
             ]
             line = self.env['fair.supplier.line'].search(domain, limit=1)
             if not line:
@@ -135,17 +142,16 @@ class AccountInvoice(models.Model):
         """
         for inv in self:
             domain = [
-                ('customer_id', '=', inv.partner_id.id),
-                ('id', '<=', inv.fair_id.id),
+                ('customer_id', '=', inv.commercial_partner_id.id),
+                ('fair_id', '=', inv.fair_id.id),
             ]
             line = self.env['fair.customer.line'].search(domain, limit=1)
             if not line:
                 continue
 
             term_id = False
-            if line.condition_type in ['PLAZO']:
+            if line.condition_type in ['PLAZO',]:
                 term_id = line.term_id.id
-                break
 
             vals = {}
             if term_id:
@@ -213,11 +219,28 @@ class AccountInvoice(models.Model):
         for invoice in self:
             analytic_account = self.env['account.analytic.account'].search(
                 [('recurring_voucher', '=', True),
-                 ('supplier_id', '=', invoice.partner_id.id),
-                 ('partner_id', '=', invoice.associate_id.id)])
+                 ('contract_type', '=', 'purchase'),
+                 ('partner_id', '=', invoice.commercial_partner_id.id)],
+                limit=1)
+            customer_analytic_account = self.env[
+                'account.analytic.account'].search(
+                [('recurring_voucher', '=', True),
+                 ('supplier_id', '=', invoice.commercial_partner_id.id),
+                 ('partner_id', '=', invoice.associate_id.id),
+                 ('date_start_contract', '<=', invoice.date_invoice),
+                 ('date_end_voucher', '>=', invoice.date_invoice),
+                 ('contract_type', '=', 'sale')], limit=1)
+            vals = {}
             if analytic_account:
-                invoice.invoice_line_ids.write(
-                    {'account_analytic_id': analytic_account[0].id})
+                vals.update(account_analytic_id= analytic_account.id)
+            if customer_analytic_account:
+                analytic_tag_ids = [(4, analytic_tag.id, None) for analytic_tag
+                                    in customer_analytic_account.tag_ids]
+                vals.update(analytic_tag_ids=analytic_tag_ids)
+                invoice.write({'customer_analytic_account_id':
+                                   customer_analytic_account.id })
+            if vals:
+                invoice.invoice_line_ids.write(vals)
 
     def check_duplicate_history(self):
         equal_args = [

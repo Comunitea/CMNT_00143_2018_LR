@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="adr_code_category_1" model="adr.code.category">
+            <field name="code">Categoría 1</field>
+            <field name="x_kgrs_11363">50</field>
+            <field name="x_kgrs_11364">1</field>
+            <field name="max_weight_11363">1000</field>
+            <field name="max_weight_11364">20</field>
+        </record>
+
+        <record id="adr_code_category_2" model="adr.code.category">
+            <field name="code">Categoría 2</field>
+            <field name="x_kgrs_11363">3</field>
+            <field name="x_kgrs_11364">1</field>
+            <field name="max_weight_11363">1000</field>
+            <field name="max_weight_11364">333</field>
+        </record>
+
+        <record id="adr_code_category_3" model="adr.code.category">
+            <field name="code">Categoría 3</field>
+            <field name="x_kgrs_11363">1</field>
+            <field name="x_kgrs_11364">1</field>
+            <field name="max_weight_11363">1000</field>
+            <field name="max_weight_11364">1000</field>
+        </record>
+
+        <record id="adr_code_category_4" model="adr.code.category">
+            <field name="code">Categoría 4</field>
+            <field name="x_kgrs_11363">1</field>
+            <field name="x_kgrs_11364">1</field>
+            <field name="max_weight_11363">1000</field>
+            <field name="max_weight_11364">0</field>
+        </record>
+
+    </data>
+</odoo>
