@@ -11,13 +11,15 @@
         'account',
         'account_due_dates_str',
         'base_multi_image',
-        'account_invoice_custom'
+        'account_invoice_custom',
+        'sale_stock' # Evitar error en herencia
     ],
     'data': [
         'data/report_paperformat.xml',
         'views/report_invoice.xml',
         'views/report_templates.xml',
-        'views/account_invoice.xml'
+        'views/account_invoice.xml',
+        'views/account_payment_mode.xml'
     ],
     'installable': True,
 }
