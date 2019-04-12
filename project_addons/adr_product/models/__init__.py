@@ -6,3 +6,4 @@ from . import product
 from . import product_adr_code
 from . import stock_picking
 from . import sale_order
+from . import stock_delivery_batch

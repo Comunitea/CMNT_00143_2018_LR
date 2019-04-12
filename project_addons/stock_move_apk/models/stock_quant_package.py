@@ -8,18 +8,6 @@ class StockQuantPackage(models.Model):
 
     _inherit = "stock.quant.package"
 
-    dest_partner_id = fields.Many2one("res.partner")
-    delivery_carrier_id = fields.Many2one("delivery.carrier")
-    selected_route = fields.Many2one("stock.location.route")
-    shipping_type = fields.Selection(
-        [('pasaran', 'Pasarán'),
-         ('agency', 'Agencia'),
-         ('route', 'Ruta')],
-        string='Tipo de envío',
-        help="Tipo de envío seleccionado."
-    )
-    partner_default_shipping_type = fields.Selection(related="dest_partner_id.default_shipping_type")
-
     @api.model
     def get_lines_info_apk(self, vals):
         package_id = vals['package']

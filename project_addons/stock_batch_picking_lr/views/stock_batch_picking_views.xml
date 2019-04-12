@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- stock.batch.picking form view -->
+    <record model="ir.ui.view" id="stock_batch_picking_lr_form">
+        <field name="name">stock.batch.picking.lr.form</field>
+        <field name="model">stock.batch.picking</field>
+        <field name="inherit_id" ref="stock_batch_picking.stock_batch_picking_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_cancel']" position="after">
+                <button name="batch_printing" string="Print" type="object" class="oe_highlight"/>
+            </xpath>
+            <xpath expr="//field[@name='picker_id']" position="after">
+                <field name="shipping_type"/>
+                <field name="carrier_id"/>
+                <field name="carrier_partner_id"/>
+                <field name="has_packages" invisible="1"/>
+            </xpath>
+            <xpath expr="//notebook/page[1]" position="before">
+                <page string="Packages">
+                    <field name="packages_added_manually" widget="many2many" context="{'shipping_type' : 'shipping_type'}" domain="[('stock_batch_id', '=', False), ('shipping_type','=', shipping_type)]">
+                        <tree>
+                            <field name="id" readonly="1"/>
+                            <field name="name" required="1" readonly="1"/>
+                            <field name="dest_partner_id" readonly="1"/>
+                            <field name="shipping_type" readonly="1"/>
+                            <field name="selected_route" readonly="1"/>
+                            <field name="delivery_carrier_id" readonly="1"/>
+                            <field name="stock_batch_id" readonly="1"/>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+            <xpath expr="//sheet/div[@class='oe_title']" position="before">
+                <div class="oe_button_box" name="button_box">
+                    <button name="action_see_packages" string="Packages" type="object"
+                        class="oe_stat_button" icon="fa-cubes"
+                        attrs="{'invisible': [('has_packages', '=', False)]}"/>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>

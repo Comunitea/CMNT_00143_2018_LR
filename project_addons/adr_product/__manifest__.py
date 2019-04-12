@@ -14,11 +14,14 @@
     'depends': [
         'sale',
         'stock',  # Mete el campo de productos alternativos
+        'stock_batch_picking_lr'
     ],
     'data': [
         'views/product.xml',
         'views/sale_order.xml',
         'security/ir.model.access.csv',
-        'data/adr_code.xml'
+        'report/report_delivery_batch_adr_views.xml',
+        'data/adr_code.xml',
+        'views/stock_delivery_batch_views.xml'
     ],
 }
