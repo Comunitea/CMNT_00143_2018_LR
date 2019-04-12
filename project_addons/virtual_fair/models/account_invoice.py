@@ -110,7 +110,7 @@ class AccountInvoice(models.Model):
             amount = inv.amount_total
             date_ref = fields.Date.from_string(inv.date_invoice)
             date_ref = fields.Datetime.to_string(date_ref - timedelta(
-                days=90))
+                days=30))
             domain = [
                 ('supplier_id', '=', inv.partner_id.id),
                 ('fair_id.date_start', '<=', inv.date_invoice),
