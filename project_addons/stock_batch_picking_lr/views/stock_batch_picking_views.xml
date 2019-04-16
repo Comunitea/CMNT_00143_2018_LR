@@ -11,13 +11,16 @@
             </xpath>
             <xpath expr="//field[@name='picker_id']" position="after">
                 <field name="shipping_type"/>
-                <field name="carrier_id"/>
-                <field name="carrier_partner_id"/>
+                <field name="carrier_id" context="{'shipping_type' : 'shipping_type'}" attrs="{'invisible': [('shipping_type', '!=', 'agency')]}"/>
+                <field name="delivery_route_id" context="{'shipping_type' : 'shipping_type'}" attrs="{'invisible': [('shipping_type', '!=', 'route')]}"/>
+                <field name="carrier_partner_id" context="{'shipping_type' : 'shipping_type', 'carrier_id': 'carrier_id'}" attrs="{'invisible': [('shipping_type', 'in', ['pasaran', False])]}"/>
                 <field name="has_packages" invisible="1"/>
+                <field name="current_location_id" readonly="1"/>
+                <field name="current_location_dest_id" readonly="1"/>
             </xpath>
             <xpath expr="//notebook/page[1]" position="before">
                 <page string="Packages">
-                    <field name="packages_added_manually" widget="many2many" context="{'shipping_type' : 'shipping_type'}" domain="[('stock_batch_id', '=', False), ('shipping_type','=', shipping_type)]">
+                    <field name="current_package_list" widget="many2many" context="{'shipping_type' : 'shipping_type'}" domain="[('stock_batch_id', '=', False), ('shipping_type','=', shipping_type)]">
                         <tree>
                             <field name="id" readonly="1"/>
                             <field name="name" required="1" readonly="1"/>
@@ -32,9 +35,8 @@
             </xpath>
             <xpath expr="//sheet/div[@class='oe_title']" position="before">
                 <div class="oe_button_box" name="button_box">
-                    <button name="action_see_packages" string="Packages" type="object"
-                        class="oe_stat_button" icon="fa-cubes"
-                        attrs="{'invisible': [('has_packages', '=', False)]}"/>
+                    <button name="action_see_packages" string="Packages" context="{'stock_batch_id' : 'id', 'shipping_type': 'shipping_type'}" type="object"
+                        class="oe_stat_button" icon="fa-cubes"/>
                 </div>
             </xpath>
         </field>
