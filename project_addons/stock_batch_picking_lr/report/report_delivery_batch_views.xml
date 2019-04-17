@@ -28,23 +28,19 @@
         
         <div class="article"  style="background-color:#fff !important;">
 
-            <div class="row" style="background-color:#fff !important;">
-                <div class="col-xs-4">
-                    <img t-if="company_data" t-att-src="'data:image/png;base64,%s' % to_text(company_data['logo_web'])"/>
-                </div>
-            </div>            
             <div class="row" style="background-color:#fff !important; padding-top: 5px;">
-                <div class="col-xs-4">
-                    <t t-if="company_data"  t-esc="company_data['company_name']"/><br/>
-                    <t t-if="company_data"  t-esc="company_data['street']"/><br/>
-                    <t t-if="company_data"  t-esc="company_data['street2']"/><br/>
-                    <t t-if="company_data"  t-esc="company_data['zip']"/> <t t-if="company_data"  t-esc="company_data['city']"/><br/>
-                    <t t-if="company_data"  t-esc="company_data['state_id']"/> (<t t-if="company_data"  t-esc="company_data['country_id']"/>)<br/>
-                    <t t-if="company_data"  t-esc="company_data['vat']"/><br/>
-                </div>
                 <t t-foreach="docs" t-as="doc">
                     <div class="col-xs-4">
-                        <div>
+                        <div class="panel panel-info break-word" style="border: none;">
+                            <div class="panel-body">
+                                <img t-if="company_data" t-att-src="'data:image/png;base64,%s' % to_text(doc.picker_id.company_id['logo_web'])"/>
+                                <div class='o_div_text_overflow' t-field="doc.picker_id.company_id.partner_id" t-options="{'widget': 'contact','fields': ['name', 'address'], 'no_marker': True}" />
+                                <t t-if="company_data"  t-esc="doc.picker_id.company_id['vat']"/><br/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-4">
+                        <div style="margin-top:100px;">
                             <strong>CARTA DE PORTE</strong><br/>
                             <t t-esc="doc['name']"/>
                         </div>
@@ -60,30 +56,34 @@
             <div class="row" style="background-color:#fff !important; padding-top:20px;">
                 <div class="col-xs-12" style="border: solid 1px black; margin-top: 5px; margin-bottom: 5px;">
                     <div class="col-xs-6" style="text-align:center;">
-                        Origen
+                        ORIGEN
                     </div>
                     <div class="col-xs-6" style="text-align:center;">
-                        Transportista
+                        TRANSPORTISTA
                     </div>
                 </div>
-                
-                <div class="col-xs-5" style="border: solid 1px black; margin-bottom: 5px;">
-                    <t t-if="company_data"  t-esc="company_data['company_name']"/><br/>
-                    <t t-if="company_data"  t-esc="company_data['street']"/><br/>
-                    <t t-if="company_data"  t-esc="company_data['street2']"/><br/>
-                    <t t-if="company_data"  t-esc="company_data['zip']"/> <t t-if="company_data"  t-esc="company_data['city']"/><br/>
-                    <t t-if="company_data"  t-esc="company_data['state_id']"/> (<t t-if="company_data"  t-esc="company_data['country_id']"/>)<br/>
-                    <t t-if="company_data"  t-esc="company_data['vat']"/><br/>
-                </div>
-                <div class="col-xs-5 col-xs-offset-2" style="border: solid 1px black;  margin-bottom: 5px;">
-                    <t t-if="delivery_carrier_data"  t-esc="delivery_carrier_data['name']"/><br/>
-                    <t t-if="delivery_carrier_data"  t-esc="delivery_carrier_data['street']"/><br/>
-                    <t t-if="delivery_carrier_data"  t-esc="delivery_carrier_data['street2']"/><br/>
-                    <t t-if="delivery_carrier_data"  t-esc="delivery_carrier_data['zip']"/> <t t-if="delivery_carrier_data"  t-esc="delivery_carrier_data['city']"/><br/>
-                    <t t-if="delivery_carrier_data"  t-esc="delivery_carrier_data['state_id']"/> (<t t-if="delivery_carrier_data"  t-esc="delivery_carrier_data['country_id']"/>)<br/>
-                    <t t-if="delivery_carrier_data"  t-esc="delivery_carrier_data['vat']"/><br/>
-                    Matrícula: <t t-if="delivery_carrier_data"  t-esc="delivery_carrier_data['vehicle']"/><br/>
-                </div>
+                <t t-foreach="docs" t-as="doc">
+                    <div class="col-xs-5" style="border: solid 1px black; margin-bottom: 5px;">
+                        <div class="panel panel-info break-word" style="border: none;">
+                            <div class="panel-body">
+                                <div class='o_div_text_overflow' t-field="doc.picker_id.company_id.partner_id" t-options="{'widget': 'contact','fields': ['name', 'address', 'vat'], 'no_marker': True}" />
+                                <t t-if="company_data"  t-esc="doc.picker_id.company_id['vat']"/><br/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-5 col-xs-offset-2" style="border: solid 1px black;  margin-bottom: 5px;">
+                        <div class="panel panel-info break-word" style="border: none;">
+                            <div t-if="doc.carrier_partner_id" class="panel-body">
+                                <div class='o_div_text_overflow' t-field="doc.carrier_partner_id" t-options="{'widget': 'contact','fields': ['name', 'address', 'vat', 'vehicle'], 'no_marker': True}"/>
+                                <t t-if="delivery_carrier_data"  t-esc="delivery_carrier_data['vat']"/><br/>
+                                Matrícula: <t t-if="delivery_carrier_data"  t-esc="delivery_carrier_data['vehicle']"/><br/>
+                            </div>
+                            <div t-if="not doc.carrier_partner_id" class="panel-body">
+                                <p>No se ha seleccionado un transportista para este envío.</p>
+                            </div>
+                        </div>
+                    </div>
+                </t>
                 
             </div>
 
@@ -99,7 +99,7 @@
                     <t t-foreach="element['partners']" t-as="partner">
                         <div class="col-xs-12">
                             <strong>
-                                <span t-esc="partner['name']"/>
+                                <span t-esc="partner['name']"/>- <span t-if="partner['street']" t-esc="partner['street']"/> <span t-if="partner['street2']" t-esc="partner['street2']"/>- <span t-if="partner['zip']" t-esc="partner['zip']"/>- <span t-if="partner['state_id']" t-esc="partner['state_id']"/>- <span t-if="partner['country_id']" t-esc="partner['country_id']"/>
                             </strong>
                         </div>                        
                     </t>

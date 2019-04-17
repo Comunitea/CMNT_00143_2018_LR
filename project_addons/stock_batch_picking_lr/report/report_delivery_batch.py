@@ -19,24 +19,10 @@ class DeliveryBatchReport(models.AbstractModel):
         
         company_data = {
             'logo_web': objects[0].picker_id.company_id.logo_web,
-            'company_name': objects[0].picker_id.company_id.name,
-            'street': objects[0].picker_id.company_id.street,
-            'street2': objects[0].picker_id.company_id.street2,
-            'zip': objects[0].picker_id.company_id.zip,
-            'city': objects[0].picker_id.company_id.city,
-            'state_id': objects[0].picker_id.company_id.state_id.name,
-            'country_id': objects[0].picker_id.company_id.country_id.name,
             'vat': objects[0].picker_id.company_id.vat
         }
 
         delivery_carrier_data = {
-            'name': objects[0].carrier_partner_id.name,
-            'street': objects[0].carrier_partner_id.street,
-            'street2': objects[0].carrier_partner_id.street2,
-            'zip': objects[0].carrier_partner_id.zip,
-            'city': objects[0].carrier_partner_id.city,
-            'state_id': objects[0].carrier_partner_id.state_id.name,
-            'country_id': objects[0].carrier_partner_id.country_id.name,
             'vat': objects[0].carrier_partner_id.vat,
             'vehicle': objects[0].carrier_partner_id.vehicle_plates
         }
@@ -58,7 +44,13 @@ class DeliveryBatchReport(models.AbstractModel):
                     partners_index.append(move_line.partner_id.id)
                     partners_data.append({
                         'id': move_line.partner_id.id,
-                        'name': move_line.partner_id.name
+                        'name': move_line.partner_id.name,
+                        'street': move_line.partner_id.street,
+                        'street2': move_line.partner_id.street2,
+                        'zip': move_line.partner_id.zip,
+                        'city': move_line.partner_id.city,
+                        'state_id': move_line.partner_id.state_id.name,
+                        'country_id': move_line.partner_id.country_id.name
                     })
 
                 partner_pickings.append({

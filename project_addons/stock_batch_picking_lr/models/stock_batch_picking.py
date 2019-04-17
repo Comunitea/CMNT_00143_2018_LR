@@ -36,7 +36,6 @@ class StockBatchPicking(models.Model):
     has_packages = fields.Boolean(
         'Has Packages', compute='_compute_has_packages',
         help='Check the existence of destination packages on move lines')
-    #packages_added_manually = fields.One2many('stock.quant.package', 'stock_batch_id', 'Quants')
     current_package_list = fields.One2many('stock.quant.package', compute="get_result_package_ids", string="Packages")
     current_location_id = fields.Many2one(
         string='Location',
@@ -52,13 +51,24 @@ class StockBatchPicking(models.Model):
     @api.model
     def check_batch_location_ids(self):
         for batch in self:
-            batch.current_location_id = batch.mapped('move_line_ids').mapped('location_id').id
-            batch.current_location_dest_id = batch.mapped('move_line_ids').mapped('location_dest_id').id
+            if len(batch.mapped('move_line_ids').mapped('location_id')) > 1:
+                batch.current_location_id = batch.mapped('move_line_ids').mapped('location_id')[0].id
+            else:
+                batch.current_location_id = batch.mapped('move_line_ids').mapped('location_id').id
+            
+            if len(batch.mapped('move_line_ids').mapped('location_id')) > 1:
+                batch.current_location_dest_id = batch.mapped('move_line_ids').mapped('location_dest_id')[0].id
+            else:
+                batch.current_location_dest_id = batch.mapped('move_line_ids').mapped('location_dest_id').id
 
     @api.onchange('shipping_type')
     def onchange_shipping_type(self):
+        for package in self.current_package_list:
+            if package.shipping_type != self.shipping_type:
+                raise UserError(_('The selected shipping type is different from the shipping type of the packages. If you wish to change this batch shipping type you must remove the packages first.'))
         if self.shipping_type == 'pasaran' or self.shipping_type == 'route':
             self.carrier_id = False
+            self.carrier_partner_id = False
 
     @api.multi
     def action_see_packages(self):
