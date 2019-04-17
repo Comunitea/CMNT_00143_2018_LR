@@ -3,7 +3,6 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import models, fields, api, _
-from pprint import pprint
 from odoo import exceptions 
 
 class StockQuantPackage(models.Model):
@@ -34,7 +33,12 @@ class StockQuantPackage(models.Model):
 
         if moves:
             for move in moves:
-                move.write({'origin':'{} / {}'.format(move.partner_id.name, batch_picking_id.carrier_id.name)})
+                if batch_picking_id.shipping_type and batch_picking_id.shipping_type == 'pasaran':
+                    move.write({'origin':'{} / {}'.format(batch_picking_id.date, batch_picking_id.shipping_type)})
+                elif batch_picking_id.shipping_type and batch_picking_id.shipping_type == 'route':
+                    move.write({'origin':'{} / {}'.format(batch_picking_id.date, batch_picking_id.delivery_route_id.name)})
+                elif batch_picking_id.shipping_type and batch_picking_id.shipping_type == 'agency':
+                    move.write({'origin':'{} / {}'.format(batch_picking_id.date, batch_picking_id.carrier_id.name)})
                 move.with_context(ctx).action_force_assign_picking()
         else:
             raise exceptions.ValidationError("This pack is empty!") 
