@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 11.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-04-22 09:32+0000\n"
-"PO-Revision-Date: 2019-04-22 09:32+0000\n"
+"POT-Creation-Date: 2019-04-22 10:43+0000\n"
+"PO-Revision-Date: 2019-04-22 10:43+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -307,7 +307,7 @@ msgstr "Envío"
 #. module: stock_batch_picking_lr
 #: model:ir.model,name:stock_batch_picking_lr.model_stock_move
 msgid "Stock Move"
-msgstr "Movimiento de Stock"
+msgstr "Movimiento de existencias"
 
 #. module: stock_batch_picking_lr
 #: model:ir.ui.view,arch_db:stock_batch_picking_lr.delivery_batch_view
@@ -340,6 +340,13 @@ msgstr "UDS"
 #: model:ir.model.fields,field_description:stock_batch_picking_lr.field_res_users_vehicle_plates
 msgid "Vehicle plates"
 msgstr "Matrícula"
+
+#. module: stock_batch_picking_lr
+#: code:addons/stock_batch_picking_lr/models/stock_quant_package.py:33
+#: code:addons/stock_batch_picking_lr/models/stock_quant_package.py:62
+#, python-format
+msgid "You can not add packages to a batch picking done or canceled."
+msgstr "No puedes añadir o eliminar paquetes de un envío hecho, cancelado o validado."
 
 #. module: stock_batch_picking_lr
 #: model:ir.model,name:stock_batch_picking_lr.model_delivery_route_path
