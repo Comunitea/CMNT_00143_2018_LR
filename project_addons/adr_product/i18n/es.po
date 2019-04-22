@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 11.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-04-05 07:56+0000\n"
-"PO-Revision-Date: 2019-04-05 07:56+0000\n"
+"POT-Creation-Date: 2019-04-22 09:34+0000\n"
+"PO-Revision-Date: 2019-04-22 09:34+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,9 +16,26 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: adr_product
-#: model:ir.model.fields,field_description:adr_product.field_product_adr_code_exe22315
-msgid "22315 Exention"
-msgstr "Exención 22315"
+#: model:ir.ui.view,arch_db:adr_product.delivery_batch_adr_view
+msgid "*Peligroso para el medioambiente"
+msgstr "*Peligroso para el medioambiente"
+
+#. module: adr_product
+#: model:ir.ui.view,arch_db:adr_product.delivery_batch_adr_view
+msgid "<br/>\n"
+"                                Matrícula:"
+msgstr "<br/>\n"
+"                                Matrícula:"
+
+#. module: adr_product
+#: model:ir.ui.view,arch_db:adr_product.delivery_batch_adr_view
+msgid "<i><small>Nota: Los albaranes indicados contienen productos Adr</small></i>"
+msgstr "<i><small>Nota: Los albaranes indicados contienen productos Adr</small></i>"
+
+#. module: adr_product
+#: model:ir.ui.view,arch_db:adr_product.delivery_batch_adr_view
+msgid "<strong>CARTA DE PORTE ÚNICA ADR</strong><br/>"
+msgstr "<strong>CARTA DE PORTE ÚNICA ADR</strong><br/>"
 
 #. module: adr_product
 #: model:ir.model.fields,field_description:adr_product.field_product_product_adr_idnumonu
@@ -27,14 +44,9 @@ msgid "ADR Code"
 msgstr "Código ADR"
 
 #. module: adr_product
-#: model:ir.model.fields,field_description:adr_product.field_product_adr_code_denomtecnica
-msgid "ADR Descripction"
-msgstr "Descripción ADR"
-
-#. module: adr_product
-#: model:ir.model.fields,field_description:adr_product.field_product_adr_code_acc_signals
-msgid "Access. signals"
-msgstr "Señales accesorias"
+#: model:ir.ui.view,arch_db:adr_product.delivery_batch_adr_view
+msgid "ADR."
+msgstr "ADR."
 
 #. module: adr_product
 #: model:ir.model.fields,field_description:adr_product.field_stock_picking_adr
@@ -59,6 +71,11 @@ msgid "Adr packing list"
 msgstr "Listado adr"
 
 #. module: adr_product
+#: model:ir.ui.view,arch_db:adr_product.delivery_batch_adr_view
+msgid "Albarán:"
+msgstr "Albarán:"
+
+#. module: adr_product
 #: model:ir.model.fields,field_description:adr_product.field_product_alternative_wzd_alternative_product_ids
 msgid "Alternative product"
 msgstr "Producto alternativo"
@@ -71,14 +88,29 @@ msgid "Alternative products"
 msgstr "Productos alternativos"
 
 #. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_product_adr_code_peligroma
+msgid "Artículo peligroso"
+msgstr "Artículo peligroso"
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_product_adr_code_qty_limit
+msgid "Cantidad limitada"
+msgstr "Cantidad limitada"
+
+#. module: adr_product
+#: model:ir.ui.view,arch_db:adr_product.delivery_batch_adr_view
+msgid "Cantidad:"
+msgstr "Cantidad:"
+
+#. module: adr_product
 #: model:ir.model.fields,field_description:adr_product.field_product_adr_code_adr_category_id
-msgid "Category"
+msgid "Categoría"
 msgstr "Categoría"
 
 #. module: adr_product
-#: model:ir.model.fields,field_description:adr_product.field_product_adr_code_multiplier
-msgid "Category 1 multiplier"
-msgstr "Multiplicador categoría 1"
+#: model:ir.model.fields,field_description:adr_product.field_product_adr_code_ranking_id
+msgid "Clasificación"
+msgstr "Clasificación"
 
 #. module: adr_product
 #: model:ir.model.fields,field_description:adr_product.field_adr_code_category_code
@@ -125,9 +157,14 @@ msgstr "Cantidad actual de los productos.\n"
 "En cualquier otro caso, esto incluye los bienes almacenados en cualquier ubicación de Stock de tipo 'Interna'."
 
 #. module: adr_product
-#: model:ir.model.fields,field_description:adr_product.field_product_adr_code_peligroma
-msgid "Dangerous"
-msgstr "Peligroso"
+#: model:ir.model.fields,field_description:adr_product.field_product_adr_code_t_code
+msgid "Código tunel"
+msgstr "Código tunel"
+
+#. module: adr_product
+#: model:ir.ui.view,arch_db:adr_product.delivery_batch_adr_view
+msgid "DESCRIPCIÓN"
+msgstr "DESCRIPCIÓN"
 
 #. module: adr_product
 #: model:ir.model.fields,help:adr_product.field_product_alternative_wzd_uom_id
@@ -145,12 +182,48 @@ msgid "Delivered Date"
 msgstr "Fecha de entrega"
 
 #. module: adr_product
+#: model:ir.actions.report,name:adr_product.delivery_batch_adr_report
+msgid "Delivery Batch ADR Report"
+msgstr "Reporte ADR del envío"
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_product_adr_code_denomtecnica
+msgid "Denominación técnica"
+msgstr "Denominación técnica"
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_product_adr_code_bultodesc
+msgid "Descripción del bulto"
+msgstr "Descripción del bulto"
+
+#. module: adr_product
+#: model:ir.ui.view,arch_db:adr_product.delivery_batch_adr_view
+msgid "Descripción embalaje:"
+msgstr "Descripción embalaje:"
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_product_adr_code_official_name
+msgid "Descripción oficial"
+msgstr "Descripción oficial"
+
+#. module: adr_product
+#: model:ir.ui.view,arch_db:adr_product.delivery_batch_adr_view
+msgid "Destinatarios"
+msgstr "Destinatarios"
+
+#. module: adr_product
+#: model:ir.ui.view,arch_db:adr_product.delivery_batch_adr_view
+msgid "Detalle de mercancía de la carta de porte ADR:"
+msgstr "Detalle de mercancía de la carta de porte ADR:"
+
+#. module: adr_product
 #: model:ir.model.fields,field_description:adr_product.field_adr_code_category_display_name
 #: model:ir.model.fields,field_description:adr_product.field_adr_code_ranking_display_name
 #: model:ir.model.fields,field_description:adr_product.field_adr_packing_list_display_name
 #: model:ir.model.fields,field_description:adr_product.field_product_adr_code_display_name
 #: model:ir.model.fields,field_description:adr_product.field_product_alternative_variant_wzd_display_name
 #: model:ir.model.fields,field_description:adr_product.field_product_alternative_wzd_display_name
+#: model:ir.model.fields,field_description:adr_product.field_report_adr_product_delivery_batch_adr_view_display_name
 msgid "Display Name"
 msgstr "Nombre"
 
@@ -158,6 +231,26 @@ msgstr "Nombre"
 #: model:ir.model.fields,field_description:adr_product.field_product_alternative_variant_wzd_name
 msgid "Display name"
 msgstr "Nombre"
+
+#. module: adr_product
+#: model:ir.ui.view,arch_db:adr_product.delivery_batch_adr_view
+msgid "Exención"
+msgstr "Exención"
+
+#. module: adr_product
+#: model:ir.ui.view,arch_db:adr_product.delivery_batch_adr_view
+msgid "Exención 2.2.3.1.5"
+msgstr "Exención 2.2.3.1.5"
+
+#. module: adr_product
+#: model:ir.ui.view,arch_db:adr_product.delivery_batch_adr_view
+msgid "Exención por cantidad limitada (LQ)"
+msgstr "Exención por cantidad limitada (LQ)"
+
+#. module: adr_product
+#: model:ir.ui.view,arch_db:adr_product.delivery_batch_adr_view
+msgid "Fecha:"
+msgstr "Fecha:"
 
 #. module: adr_product
 #: model:ir.model.fields,help:adr_product.field_adr_code_category_x_kgrs_11363
@@ -186,6 +279,11 @@ msgstr "Cantidad prevista (calculada como cantidad a mano - saliente + entrante)
 "En cualquier otro caso, esto incluye los bienes almacenados en cualquier ubicación de stock de tipo 'Interna'."
 
 #. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_product_adr_code_packing_group
+msgid "Grupo de embalaje"
+msgstr "Grupo de embalaje"
+
+#. module: adr_product
 #: model:ir.model.fields,field_description:adr_product.field_adr_code_category_id
 #: model:ir.model.fields,field_description:adr_product.field_adr_code_ranking_id
 #: model:ir.model.fields,field_description:adr_product.field_adr_packing_list_id
@@ -193,6 +291,7 @@ msgstr "Cantidad prevista (calculada como cantidad a mano - saliente + entrante)
 #: model:ir.model.fields,field_description:adr_product.field_product_alternative_variant_wzd_id
 #: model:ir.model.fields,field_description:adr_product.field_product_alternative_variant_wzd_p_id
 #: model:ir.model.fields,field_description:adr_product.field_product_alternative_wzd_id
+#: model:ir.model.fields,field_description:adr_product.field_report_adr_product_delivery_batch_adr_view_id
 msgid "ID"
 msgstr "ID"
 
@@ -207,12 +306,33 @@ msgid "Internal Reference"
 msgstr "Referencia interna"
 
 #. module: adr_product
+#: model:ir.ui.view,arch_db:adr_product.delivery_batch_adr_view
+msgid "Kg."
+msgstr "Kg."
+
+#. module: adr_product
+#: model:ir.ui.view,arch_db:adr_product.delivery_batch_adr_view
+msgid "Kg. Transporte acogido a la exención"
+msgstr "Kg. Transporte acogido a la exención"
+
+#. module: adr_product
+#: model:ir.ui.view,arch_db:adr_product.delivery_batch_adr_view
+msgid "Kg. Transporte acogido a la exención 2.2.3.1.5 ADR."
+msgstr "Kg. Transporte acogido a la exención 2.2.3.1.5 ADR."
+
+#. module: adr_product
+#: model:ir.ui.view,arch_db:adr_product.delivery_batch_adr_view
+msgid "Kg. Transporte acogido a la exención por cantidades limitadas."
+msgstr "Kg. Transporte acogido a la exención por cantidades limitadas."
+
+#. module: adr_product
 #: model:ir.model.fields,field_description:adr_product.field_adr_code_category___last_update
 #: model:ir.model.fields,field_description:adr_product.field_adr_code_ranking___last_update
 #: model:ir.model.fields,field_description:adr_product.field_adr_packing_list___last_update
 #: model:ir.model.fields,field_description:adr_product.field_product_adr_code___last_update
 #: model:ir.model.fields,field_description:adr_product.field_product_alternative_variant_wzd___last_update
 #: model:ir.model.fields,field_description:adr_product.field_product_alternative_wzd___last_update
+#: model:ir.model.fields,field_description:adr_product.field_report_adr_product_delivery_batch_adr_view___last_update
 msgid "Last Modified on"
 msgstr "Última modificación en"
 
@@ -258,11 +378,36 @@ msgid "Medium-sized image"
 msgstr "Imagen de tamaño mediano"
 
 #. module: adr_product
+#: model:ir.model.fields,help:adr_product.field_product_adr_code_multiplier
+msgid "Multiplicador aplicable para artículos de la categoría 1 en caso de producirse la exención 11363."
+msgstr "Multiplicador aplicable para artículos de la categoría 1 en caso de producirse la exención 11363."
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_product_adr_code_multiplier
+msgid "Multiplicador categoría 1"
+msgstr "Multiplicador categoría 1"
+
+#. module: adr_product
 #: model:ir.model.fields,field_description:adr_product.field_adr_code_ranking_name
 #: model:ir.model.fields,field_description:adr_product.field_adr_packing_list_name
-#: model:ir.model.fields,field_description:adr_product.field_product_adr_code_numero_onu
 msgid "Name"
 msgstr "Nombre"
+
+#. module: adr_product
+#: model:ir.ui.view,arch_db:adr_product.delivery_batch_adr_view
+msgid "No se ha seleccionado un transportista para este envío."
+msgstr "No se ha seleccionado un transportista para este envío."
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_product_adr_code_numero_onu
+msgid "Nombre"
+msgstr "Nombre"
+
+#. module: adr_product
+#: code:addons/adr_product/models/stock_delivery_batch.py:18
+#, python-format
+msgid "Nothing to print."
+msgstr "Nada que imprimir."
 
 #. module: adr_product
 #: model:ir.ui.view,arch_db:adr_product.product_template_adr_view_form
@@ -270,24 +415,34 @@ msgid "Número ONU"
 msgstr "Número ONU"
 
 #. module: adr_product
-#: model:ir.model.fields,field_description:adr_product.field_product_adr_code_official_name
-msgid "Offical desc."
-msgstr "Descripción oficial"
+#: model:ir.ui.view,arch_db:adr_product.delivery_batch_adr_view
+msgid "ORIGEN"
+msgstr "ORIGEN"
 
 #. module: adr_product
-#: model:ir.model.fields,field_description:adr_product.field_product_adr_code_bultodesc
-msgid "Package description"
-msgstr "Descripción del bulto"
+#: model:ir.ui.view,arch_db:adr_product.delivery_batch_adr_view
+msgid "PAQUETE"
+msgstr "PAQUETE"
 
 #. module: adr_product
-#: model:ir.model.fields,field_description:adr_product.field_product_adr_code_packing_group
-msgid "Packing group"
-msgstr "Grupo embalaje"
+#: model:ir.ui.view,arch_db:adr_product.delivery_batch_adr_view
+msgid "Peso total:"
+msgstr "Peso total:"
+
+#. module: adr_product
+#: model:ir.ui.view,arch_db:adr_product.delivery_batch_adr_view
+msgid "Peso:"
+msgstr "Peso:"
 
 #. module: adr_product
 #: model:ir.model.fields,field_description:adr_product.field_adr_packing_list_picking_ids
 msgid "Picking"
 msgstr "Albarán"
+
+#. module: adr_product
+#: model:ir.ui.view,arch_db:adr_product.stock_batch_picking_lr_adr_form
+msgid "Print RDA"
+msgstr "Imprimir ADR"
 
 #. module: adr_product
 #: model:ir.model.fields,field_description:adr_product.field_product_alternative_variant_wzd_product_id
@@ -307,20 +462,15 @@ msgid "Public Price"
 msgstr "Precio al público"
 
 #. module: adr_product
-#: model:ir.model.fields,field_description:adr_product.field_product_adr_code_qty_limit
-msgid "Qty limit"
-msgstr "Cantidad limitada"
-
-#. module: adr_product
 #: model:ir.model.fields,field_description:adr_product.field_product_alternative_variant_wzd_qty_available
 #: model:ir.model.fields,field_description:adr_product.field_product_alternative_wzd_qty_available
 msgid "Quantity On Hand"
 msgstr "Cantidad a mano"
 
 #. module: adr_product
-#: model:ir.model.fields,field_description:adr_product.field_product_adr_code_ranking_id
-msgid "Ranking"
-msgstr "Clasificación"
+#: model:ir.ui.view,arch_db:adr_product.delivery_batch_adr_view
+msgid "REFERENCIA"
+msgstr "REFERENCIA"
 
 #. module: adr_product
 #: model:ir.model.fields,field_description:adr_product.field_product_alternative_wzd_sale_order_line_id
@@ -333,14 +483,34 @@ msgid "Sales Order Line"
 msgstr "Línea de pedido de ventas"
 
 #. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_product_adr_code_acc_signals
+msgid "Señales accesorias"
+msgstr "Señales accesorias"
+
+#. module: adr_product
+#: model:ir.model.fields,field_description:adr_product.field_product_adr_code_exe22315
+msgid "Sujeto a la exención 22315"
+msgstr "Sujeto a la exención 22315"
+
+#. module: adr_product
+#: model:ir.ui.view,arch_db:adr_product.delivery_batch_adr_view
+msgid "TRANSPORTISTA"
+msgstr "TRANSPORTISTA"
+
+#. module: adr_product
 #: model:ir.model,name:adr_product.model_stock_picking
 msgid "Transfer"
 msgstr "Transferir"
 
 #. module: adr_product
-#: model:ir.model.fields,field_description:adr_product.field_product_adr_code_t_code
-msgid "Tunnel code"
-msgstr "Código tunel"
+#: model:ir.ui.view,arch_db:adr_product.delivery_batch_adr_view
+msgid "UDS"
+msgstr "UDS"
+
+#. module: adr_product
+#: model:ir.ui.view,arch_db:adr_product.delivery_batch_adr_view
+msgid "UN"
+msgstr "UN"
 
 #. module: adr_product
 #: model:ir.model.fields,field_description:adr_product.field_product_alternative_wzd_uom_id
@@ -368,6 +538,11 @@ msgid "adr.packing.list"
 msgstr "adr.packing.list"
 
 #. module: adr_product
+#: model:ir.ui.view,arch_db:adr_product.delivery_batch_adr_view
+msgid "de"
+msgstr "de"
+
+#. module: adr_product
 #: model:ir.model.fields,field_description:adr_product.field_product_alternative_variant_wzd_image_small
 msgid "image_small"
 msgstr "image_small"
@@ -393,9 +568,19 @@ msgid "product_id"
 msgstr "product_id"
 
 #. module: adr_product
+#: model:ir.model,name:adr_product.model_report_adr_product_delivery_batch_adr_view
+msgid "report.adr_product.delivery_batch_adr_view"
+msgstr "report.adr_product.delivery_batch_adr_view"
+
+#. module: adr_product
 #: model:ir.model.fields,field_description:adr_product.field_product_alternative_variant_wzd_selected
 msgid "selected"
 msgstr "Seleccionado"
+
+#. module: adr_product
+#: model:ir.model,name:adr_product.model_stock_batch_picking
+msgid "stock.batch.picking"
+msgstr "stock.batch.picking"
 
 #. module: adr_product
 #: model:ir.model.fields,field_description:adr_product.field_product_alternative_variant_wzd_uom_id

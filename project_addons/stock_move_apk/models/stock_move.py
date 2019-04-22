@@ -26,9 +26,8 @@ class StockMoveLine(models.Model):
         location_dest_id = vals['location_dest_id']
         partner_id = vals['partner_id']
 
-        domain = [('location_dest_id', '=', location_dest_id), ('state', 'in', ['done'])]
-        domain2 = [('move_id.partner_id', '=', partner_id), ('state', 'in', ['assigned'])]
-        move_lines = self.env['stock.move'].search(domain).mapped('move_dest_ids').mapped('move_line_ids').search(domain2)
+        domain = [('location_dest_id', '=', location_dest_id), ('state', 'in', ['done']), ('move_dest_ids.move_line_ids.state', 'in', ['assigned']), ('move_dest_ids.move_line_ids.move_id.partner_id', '=', partner_id)]
+        move_lines = self.env['stock.move'].search(domain).mapped('move_dest_ids').mapped('move_line_ids')
         pkg_list = move_lines.mapped('result_package_id')
         arrival_pkgs_list = move_lines.mapped('package_id.id')
 
@@ -85,15 +84,18 @@ class StockMove(models.Model):
     def get_users_list_for_apk(self, vals):
         location_dest_id = vals['location_dest_id']
         
-        domain = [('location_dest_id', '=', location_dest_id), ('state', 'in', ['done'])]
-        domain2 = [('state', 'in', ['assigned'])]
-        partner_ids = self.env['stock.move'].search(domain).mapped('move_dest_ids').mapped('move_line_ids').search(domain2).mapped('move_id').mapped('partner_id')
-        partner_list = []
-        for partner in partner_ids:
-            partner_obj = {
-                '0': partner.id,
-                '1': partner.name,
-                '2': partner.default_shipping_type
-            }
-            partner_list.append(partner_obj)
-        return partner_list
+        domain = [('location_dest_id', '=', location_dest_id), ('state', 'in', ['done']), ('move_dest_ids.move_line_ids.state', 'in', ['assigned'])]
+        if len(self.env['stock.move'].search(domain)) > 0:
+            partner_ids = self.env['stock.move'].search(domain).mapped('move_dest_ids').mapped('move_line_ids').mapped('move_id').mapped('partner_id')
+            partner_list = []
+            for partner in partner_ids:
+                partner_obj = {
+                    '0': partner.id,
+                    '1': partner.name,
+                    '2': partner.default_shipping_type
+                }
+                partner_list.append(partner_obj)
+            return partner_list
+        else:
+            partner_list = []
+            return partner_list
