@@ -256,35 +256,25 @@ class DirectInvoiceWzd(models.TransientModel):
                     [('name', 'like', '1v15d')])[0]
                 inv.write({'payment_term_id': pay_term_15.id})
             else:
-                date_ref = fields.Date.from_string(prov_inv.date_invoice)
-                date_ref = fields.Datetime.to_string(date_ref - timedelta(
-                    days=15))
-                inv.write({'payment_term_id': alternative_pt.id,
-                           'payment_ref_date': date_ref})
+                inv.write({'payment_term_id': prov_inv.payment_term_id.id,
+                           'supplier_maturity_date': True})
             created_invoices += inv
             _logger.info("Creando socios sin agrupacion")
 
         for prov_inv in fair_invoices:  #Facturacion feria
             inv = self._create_invoice(prov_inv)
-            pay_term = self.env['account.payment.term'].search(
-                [('name', 'like', '3v60d')])[0]
-            inv.write({'payment_term_id': pay_term.id})
+            # pay_term = self.env['account.payment.term'].search(
+            #     [('name', 'like', '3v60d')])[0]
+            # inv.write({'payment_term_id': pay_term.id})
             created_invoices += inv
             _logger.info("Creando facturas feria")
 
         for prov_inv in normal_invoices:  #Facturacion normal
             inv = self._create_invoice(prov_inv)
             prov_inv._onchange_payment_term_date_invoice()
-            alternative_pt = \
-                prov_inv.partner_id.property_direct_payment_term_id or \
-                prov_inv.partner_id\
-                .commercial_partner_id.property_direct_payment_term_id
-            date_ref = fields.Date.from_string(prov_inv.date_invoice)
-            date_ref = fields.Datetime.to_string(date_ref - timedelta(
-                days=15))
-            payment_term_id = alternative_pt or prov_inv.payment_term_id
+            payment_term_id = prov_inv.payment_term_id
             inv.write({'payment_term_id': payment_term_id.id,
-                       'payment_ref_date': date_ref})
+                       'supplier_maturity_date': True})
             created_invoices += inv
             _logger.info("Creando facturación normal")
 
