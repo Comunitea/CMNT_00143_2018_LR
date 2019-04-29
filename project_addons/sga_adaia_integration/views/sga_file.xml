@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_sga_form" model="ir.ui.view">
+        <field name="name">res.config.settings.sga.form</field>
+        <field name="inherit_id" ref="stock.res_config_settings_view_form"/>
+        <field name="model">res.config.settings</field>
+        <field name="arch" type="xml">
+            <xpath expr="//h2[@id='schedule_info']" position="before">
+                <h2>Adaia files exchange</h2>
+                <div class="row mt16 o_settings_container">
+                    <field name="path_files"/>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+    <menuitem id="menu_sga_adaia" name="Sga Adaia" parent="stock.menu_stock_config_settings" groups="stock.group_stock_manager"
+        sequence="25" />
+
+    <record id="sga_file_action_view" model="ir.actions.act_window">
+        <field name="name">Sga File</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">sga.file</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_type">form</field>
+        <!--<field name="context">{"search_default_stage_id": 1, 'default_type': 'in'}</field>-->
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Click to define a new Sga file.
+            </p>
+        </field>
+    </record>
+
+    <menuitem action="sga_file_action_view" id="Processed Files" parent="menu_sga_adaia" sequence="1" />
+
+    <record id="sga_file_line_action_view" model="ir.actions.act_window">
+        <field name="name">Sga File Line</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">sga.file.line</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_type">form</field>
+        <!--<field name="context">{"search_default_stage_id": 1, 'default_type': 'in'}</field>-->
+        <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                Click to define a new Sga Line.
+            </p>
+        </field>
+    </record>
+
+    <menuitem action="sga_file_line_action_view" id="Processed Lines" parent="menu_sga_adaia" sequence="2" />
+
+    <record id="model_sgafile_action_view" model="ir.actions.act_window">
+        <field name="name">Model Sgafile</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">sgavar.file</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_type">form</field>
+        <!--<field name="context">{"search_default_stage_id": 1, 'default_type': 'in'}</field>-->
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Click to define a sga var file.
+            </p>
+            </field>
+    </record>
+    <record id="model_sgafile_var_form_view" model="ir.ui.view">
+        <field name="name">sgavar.file.var.form.view</field>
+        <field name="model">sgavar.file.var</field>
+        <field name="arch" type="xml">
+            <form >
+                <group>
+                    <group>
+                        <field name="name"/>
+                        <field name="odoo_model"/>
+                        <field name="odoo_name"/>
+                        <field name="adaia_type"/>
+                    </group>
+                    <group>
+
+                        <field name="length"/>
+                        <field name="length_int"/>
+                        <field name="length_dec"/>
+                        <field name="default"/>
+                        <field name="fillchar"/>
+                    </group>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record id="model_sgafile_tree_view" model="ir.ui.view">
+        <field name="name">sgavar.file.tree.view</field>
+        <field name="model">sgavar.file</field>
+        <field name="arch" type="xml">
+            <tree >
+                <field name="name"/>
+                <field name="code"/>
+                <field name="version"/>
+                <field name ="odoo_model"/>
+                <field name ="cte_name"/>
+            </tree>
+        </field>
+    </record>
+    <record id="model_sgafile_form_view" model="ir.ui.view">
+        <field name="name">sgavar.file.form.view</field>
+        <field name="model">sgavar.file</field>
+        <field name="arch" type="xml">
+            <form >
+                <group>
+                    <group>
+                        <field name="name"/>
+                        <field name="code"/>
+                        <field name="version"/>
+                        <field name="file_bytes"/>
+                    </group>
+                    <group>
+                        <field name="odoo_model"/>
+                        <field name="file_filter"/>
+                        <field name="model"/>
+                        <field name="cte_name"/>
+                    </group>
+                </group>
+
+                    <field name="sga_file_var_ids">
+                        <tree editable="top">
+                            <field name="sequence" widget="handle"/>
+                            <field name="name"/>
+                            <field name="required"/>
+                            <field name="adaia_type"/>
+                            <field name="odoo_name"/>
+                            <field name="odoo_model"/>
+                            <field name="st"/>
+                            <field name="en"/>
+                            <field name="length"/>
+                            <field name="length_int"/>
+                            <field name="length_dec"/>
+                            <field name="default"/>
+                            <field name="fillchar"/>
+                            <field name="sga_file_id"/>
+                        </tree>
+                    </field>
+
+                <!--<button name="import_ctes" string="Import Ctes" type="object" groups="base.group_user"/>-->
+            </form>
+        </field>
+    </record>
+    <record id="model_sgafile_var_tree_view" model="ir.ui.view">
+        <field name="name">sgavar.file.var.tree.view</field>
+        <field name="model">sgavar.file.var</field>
+        <field name="arch" type="xml">
+            <tree >
+                <field name="sequence" widget="handle"/>
+                <field name="required"/>
+                <field name="name"/>
+                <field name="adaia_type"/>
+                <field name="odoo_name"/>
+                <field name="odoo_model"/>
+                <field name="length"/>
+                <field name="length_int"/>
+                <field name="length_dec"/>
+                <field name="default"/>
+                <field name="fillchar"/>
+                <field name="sga_file_id"/>
+            </tree>
+        </field>
+    </record>
+
+
+    <record id="model_sgafile_var_action_view" model="ir.actions.act_window">
+        <field name="name">Model Sgafile Var</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">sgavar.file.var</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_type">form</field>
+
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Click to define a sga file var.
+            </p>
+            </field>
+    </record>
+
+    <menuitem action="model_sgafile_action_view" id="Models SGAfiles" parent="menu_sga_adaia" sequence="3"/>
+    <menuitem action="model_sgafile_var_action_view" id="Vars SGAfiles" parent="menu_sga_adaia" sequence="4"/>
+
+</odoo>
