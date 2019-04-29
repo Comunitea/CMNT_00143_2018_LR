@@ -15,8 +15,27 @@ class SaleOrder(models.Model):
     def onchange_campaign_id(self):
         self.ensure_one()
         self.pricelist_id = self.campaign_id.pricelist_id.id
+    
+    @api.multi
+    def get_campaign_payment_term(self):
+        for order in self:
+            if not order.campaign_id:
+              continue
+            amount = order.amount_untaxed
+            domain = [
+                ('campaign_id', '=', order.campaign_id.id),
+                ('amount', '<=', amount)
+            ]
+            st = self.env['section.term'].search(domain, order='amount desc', 
+                                                 limit=1)
+            if st:
+                order.write({'payment_term_id': st.term_id.id})
+        return
 
-
+    @api.multi
+    def action_confirm(self):
+        self.get_campaign_payment_term()
+        return super().action_confirm()
 
 class SaleOrderLine(models.Model):
 

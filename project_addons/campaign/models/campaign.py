@@ -33,6 +33,9 @@ class Campaign(models.Model):
     sale_prices_date = fields.Date(string='Sale prices Date')
     days_prices = fields.Integer('Validity Sale Prices', default=30)
 
+    section_ids = fields.One2many('section.term', 'campaign_id',
+                                  'Terms by amount')
+
     @api.multi
     def _count_articles(self):
         for campaign in self:
@@ -58,6 +61,16 @@ class CampaignSupplierLines(models.Model):
                 name += ' ' + record.supplier_id.name
             res.append((record.id, name))
         return res
+
+
+class SectionTerm(models.Model):
+    _name = 'section.term'
+    _order = 'amount asc'
+
+    campaign_id = fields.Many2one('campaign', 'Campaign', required=True)
+    amount = fields.Float('From amount', required=True)
+    term_id = fields.Many2one(
+        'account.payment.term', 'Payment Terms', required=True)
 
 
 class CampaignProductLine(models.Model):
