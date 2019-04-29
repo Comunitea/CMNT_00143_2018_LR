@@ -17,7 +17,8 @@
         'base_multi_image',
         'invoice_early_payment_discount',
         'partner_paydays',
-        'contract_recurring_payment'
+        'contract_recurring_payment',
+        'onchange_helper'
     ],
     'data': [
         'security/ir.model.access.csv',

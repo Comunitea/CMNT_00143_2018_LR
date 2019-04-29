@@ -2,6 +2,8 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
+import odoo.addons.decimal_precision as dp
+from odoo.tools.float_utils import float_compare, float_round
 from dateutil.relativedelta import relativedelta
 
 class AccountAnalyticAccount(models.Model):
@@ -44,8 +46,10 @@ class AccountAnalyticAccount(models.Model):
         copy=False,
         string='Date Last Voucher',
     )
-    voucher_qty = fields.Float(string='Voucher quantity')
-    total_voucher_qty = fields.Float(string='Total vouchers quantity')
+    voucher_qty = fields.Float(string='Voucher quantity',
+                                     digits=dp.get_precision('Account'))
+    total_voucher_qty = fields.Float(string='Total vouchers quantity',
+                                     digits=dp.get_precision('Account'))
     number_vouchers = fields.Integer(string='Number of vouchers')
     voucher_journal_id = fields.Many2one(
         comodel_name='account.journal',
@@ -226,7 +230,7 @@ class AccountAnalyticAccount(models.Model):
             date = first_due
             total_amount =0
             while iter_num <= contract.number_vouchers:
-                voucher_number = contract.next_voucher_number +iter_num -1
+                voucher_number = contract.next_voucher_number + iter_num - 1
                 name = "%s.%d" % (contract.name, voucher_number)
                 if contract.contract_type == 'sale':
                     account_voucher = self.env['account.voucher'].create(
@@ -265,10 +269,12 @@ class AccountAnalyticAccount(models.Model):
                          })
 
                 if iter_num == contract.number_vouchers:
-                    amount = contract.total_voucher_qty - total_amount
+                    amount = float_round(contract.total_voucher_qty -
+                                          total_amount, precision_digits=2)
                 else:
-                    amount = contract.voucher_qty
-                self.env['account.voucher.line'].create({
+                    amount = float_round(contract.voucher_qty,
+                                          precision_digits=2)
+                line = self.env['account.voucher.line'].create({
                     'voucher_id': account_voucher.id,
                     'name': name,
                     'account_id': contract.account_id.id,
@@ -278,7 +284,7 @@ class AccountAnalyticAccount(models.Model):
                     'price_unit': amount
                 })
                 iter_num += 1
-                total_amount += amount
+                total_amount += line.price_unit
                 date = date + self.get_relative_delta(
                     contract.recurring_voucher_rule_type,
                     contract.recurring_voucher_interval)
