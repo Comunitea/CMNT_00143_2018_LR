@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+     <record id="view_move_line_tree_sel" model="ir.ui.view">
+        <field name="name">stock.move.tree.sel</field>
+        <field name="model">stock.move</field>
+        <field name="arch" type="xml">
+            <tree decoration-muted="state == 'cancel'"
+                  decoration-danger="(state not in ('cancel','done'))"
+                  string="Move Lines"
+                  create="0" default_order="date">
+                <field name="id"/>
+                <field name="date"/>
+                <!--field name="reference" string="Reference"/-->
+                <field name="product_id"/>
+                <field name="location_id"/>
+                <field name="location_dest_id" invisible="1"/>
+
+                <field name="product_uom_qty" string="Quantity Ordered"/>
+                <!--field name="qty_done" string="Quantity Done"/-->
+                <!--field name="product_uom_id" options="{'no_open': True, 'no_create': True}" string="Unit of Measure" groups="product.group_uom"/-->
+                <field name="picking_id"/>
+                <field name="sale_id"/>
+                <field name="shipping_id"/>
+                <field name="state"/>
+                <field name="company_id" invisible="1"/>
+                <field name="move_dest_ids" widget="many2many_tags"/>
+                <!--field name="wh_state"/-->
+            </tree>
+        </field>
+    </record>
+
+     <record id="stock_move_view_sel_search" model="ir.ui.view">
+        <field name="name">stock.move.search</field>
+        <field name="model">stock.move</field>
+        <field name="arch" type="xml">
+            <search string="Stock Moves">
+                <field name="picking_id" string="Reference"/>
+                <field name="dunmy_picking_id" string="To assign ref."
+                       context="{'picking': self, 'group_by': 'picking_id'}"
+                       filter_domain="['|', ('picking_id', '=', self), ('picking_id','=', False)]"/>
+                <field name="picking_type_id" string="Type"/>
+                <field name="product_id"/>
+                <field name="location_id" groups="stock.group_stock_multi_locations"/>
+                <field name="location_dest_id" groups="stock.group_stock_multi_locations"/>
+                <field name="sale_id" groups="stock.group_stock_multi_locations"/>
+                <field name="shipping_id" groups="stock.group_stock_multi_locations"/>
+                <field name="company_id"/>
+                <separator/>
+                <!--filter string="To SGA" name="sga" domain="[('state','in', ['assigned', 'partially_available'])]"/-->
+                <filter string="Waiting" name="todo" domain="[('state','in', ['waiting', 'confirmed', 'assigned', 'partially_available'])]"/>
+                <filter string="Done" name="done" domain="[('wh_state','=','done')]"/>
+                <separator/>
+                <filter string="With pick" name="with_pick" domain="[('picking_id','!=', False)]"/>
+                <filter string="To pick" name="without_pick" domain="[('picking_id','=', False)]"/>
+                <separator/>
+                <filter string="Pickings" name="internal_picking" domain="[('picking_id.picking_type_id.code','=','internal')]"/>
+                <filter string="Receipts" name="incoming_moves" domain="[('picking_id.picking_type_id.code','=','supplier')]"/>
+                <filter string="Outgoing" name="outgoing_moves" domain="[('picking_id.picking_type_id.code','=','customer')]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="Status" name="by_state" domain="[]"  context="{'group_by':'state'}"/>
+                    <!--filter string="SGA status" name="by_wh_status" domain="[]"  context="{'group_by':'wh_state'}"/-->
+                    <filter string="Partner" name="by_partner_id" domain="[]"  context="{'group_by':'partner_id'}"/>
+                    <filter string="Sale order" name="by_sale_id" domain="[]"  context="{'group_by':'sale_id'}"/>
+                    <filter string="Origin" name="by_origin" domain="[]"  context="{'group_by':'location_id.location_id'}"/>
+                    <filter string="Company" name="by_company" domain="[]"  context="{'group_by':'company_id'}"/>
+                    <filter string="Type" name="by_type" domain="[]"  context="{'group_by':'picking_type_id'}"/>
+                    <filter string="Picking" name="by_picking" domain="[]"  context="{'group_by':'picking_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_move_sel_kanban" model="ir.ui.view">
+            <field name="name">stock.move.kanban</field>
+            <field name="model">stock.move</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_mobile">
+                    <field name="name"/>
+                    <field name="product_id"/>
+                    <field name="priority"/>
+                    <field name="state"/>
+                    <field name="show_details_visible"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_global_click">
+                                <div class="o_kanban_record_top">
+                                    <div class="o_kanban_record_headings">
+                                        <strong class="o_kanban_record_title" invisible="1">
+                                            <span><field name="name"/></span>
+                                        </strong>
+                                        <div t-if="record.picking_id.raw_value" class="oe_kanban_bottom_right">
+                                            <button name="move_desel_assign_picking"
+                                                string="Unlink picking"
+                                                class="o_icon_button fa fa-sign-out"
+                                                type="object" options="{&quot;warn&quot;: true}"/>
+                                            <field name="picking_id"/>
+                                        </div>
+                                        <div t-if="!record.picking_id.raw_value" class="oe_kanban_bottom_right">
+                                            <button name="move_sel_assign_picking"
+                                                string="Assign picking"
+                                                class="o_icon_button fa fa-sign-in"
+                                                type="object" options="{&quot;warn&quot;: true}"/>
+                                        </div>
+                                    </div>
+                                    <field name="state" widget="label_selection" options="{'classes': {'draft': 'default', 'cancel': 'danger', 'assigned': 'success', 'confirmed': 'default'}}"/>
+                                </div>
+                                <div class="o_kanban_record_body">
+                                    <div>
+                                        <field name="product_id"/>
+                                    </div>
+                                </div>
+                                <div class="o_kanban_record_bottom">
+                                    <div class="oe_kanban_bottom_left">
+                                        <button name="action_show_details" string="Register lots, packs, location"
+                                                class="o_icon_button fa fa-list" type="object"
+                                                attrs="{'invisible': [('show_details_visible', '=', False)]}" options='{"warn": true}'/>
+                                         <span><field name="date_expected"/></span>
+                                    </div>
+                                    <div class="oe_kanban_bottom_right">
+                                        <span><field name="product_uom_qty"/></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+    <record id="stock_move_sel_action2" model="ir.actions.act_window">
+            <field name="name">Product Moves</field>
+            <field name="res_model">stock.move</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,pivot,form</field>
+            <field name="view_id" ref="view_move_line_tree_sel"/>
+            <field name="search_view_id" ref="stock_move_view_sel_search"/>
+            <field name="context">{'search_default_todo': 1, 'search_default_without_pick' :1}</field>
+    </record>
+    <record id="stock_move_sel_action" model="ir.actions.server">
+            <field name="name">Product Moves</field>
+            <field name="res_model">stock.move</field>
+            <field name="model_id" ref="model_stock_move"/>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="code">
+                action = env['stock.move']._return_action_show_moves()
+            </field>
+    </record>
+
+
+     <menuitem
+        action="stock_move_sel_action"
+        id="stock_move_sel_menu"
+        parent="stock.menu_stock_root"
+        sequence="0" name="Moves panel"/>
+
+    <record id="action_assign_picking" model="ir.actions.server">
+        <field name="name">Asignar albarán</field>
+        <field name="model_id" ref="stock.model_stock_move"/>
+        <field name="binding_model_id" ref="stock.model_stock_move"/>
+        <field name="state">code</field>
+        <field name="code">records.move_sel_assign_picking()</field>
+    </record>
+
+    <record id="action_deassign_picking" model="ir.actions.server">
+        <field name="name">Desasignar albarán</field>
+        <field name="model_id" ref="stock.model_stock_move"/>
+        <field name="binding_model_id" ref="stock.model_stock_move"/>
+        <field name="state">code</field>
+        <field name="code">records.move_de_sel_assign_picking()</field>
+    </record>
+
+</odoo>
