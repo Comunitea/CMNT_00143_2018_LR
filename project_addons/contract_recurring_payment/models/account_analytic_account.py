@@ -214,7 +214,9 @@ class AccountAnalyticAccount(models.Model):
             })
             self = self.with_context(ctx)
             # Re-read contract with correct company
-            if contract.contract_type == 'sale':
+            if contract.contract_type == 'sale' and contract.payment_mode_id\
+                    and contract.payment_mode_id.payment_method_id\
+                    .mandate_required:
                 mandate = self.env['account.banking.mandate'].search(
                     [('partner_id', '=', contract.partner_id.id),
                      ('state', '=', 'valid')], limit=1)
@@ -243,7 +245,8 @@ class AccountAnalyticAccount(models.Model):
                          'journal_id': contract.voucher_journal_id.id,
                          'account_date': fields.Date.to_string(date),
                          'date_due': fields.Date.to_string(date),
-                         'mandate_id': contract.mandate_id.id,
+                         'mandate_id': contract.mandate_id and
+                         contract.mandate_id.id or False,
                          'payment_mode_id': contract.payment_mode_id.id,
                          'contract_id': contract.id,
                          'voucher_type': 'sale',
