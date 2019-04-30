@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <record model="ir.ui.view" id="delivery_route_path_form">
+        <field name="name">delivery.route.path.form</field>
+        <field name="model">delivery.route.path</field>
+        <field name="arch" type="xml">
+            <form string="Route">
+                <sheet>
+                    <div class="oe_title" name="title">
+                        <label for="name" string="Name" class="oe_edit_only"/>
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="delivery_route_path_search">
+        <field name="name">delivery.route.path.search</field>
+        <field name="model">delivery.route.path</field>
+        <field name="arch" type="xml">
+                <search string="Delivery Route">
+                    <field name="name" string="Route" />
+                </search>
+            </field>
+    </record>
+
+    <record model="ir.ui.view" id="delivery_route_path_tree">
+        <field name="name">delivery.route.path.tree</field>
+        <field name="model">delivery.route.path</field>
+        <field name="arch" type="xml">
+            <tree string="Route">
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_delivery_route_path_view" model="ir.actions.act_window">
+        <field name="name">Delivery Routes</field>
+        <field name="res_model">delivery.route.path</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree', 'view_id': ref('stock_batch_picking_lr.delivery_route_path_tree')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('stock_batch_picking_lr.delivery_route_path_form')})]"/>
+        <field name="search_view_id" ref="delivery_route_path_search"/>
+    </record>
+
+    <menuitem id="menu_delivery_route_path" name="Delivery Routes" parent="delivery.menu_delivery" action="stock_batch_picking_lr.action_delivery_route_path_view"  groups="stock.group_tracking_lot"/>
+</odoo>

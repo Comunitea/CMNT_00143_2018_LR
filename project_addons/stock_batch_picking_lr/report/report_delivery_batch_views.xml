@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record model="report.paperformat" id="paperformat_delivery_batch_report">
+        <field name="name">paperformat.delivery.batch.report</field>
+        <field name="default" eval="True"/>
+        <field name="format">A4</field>
+        <field name="page_width">0</field>
+        <field name="page_width">0</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">5</field>
+        <field name="margin_right">5</field>
+        <field name="margin_bottom">5</field>
+        <field name="margin_left">5</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">20</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <report id="delivery_batch_report"
+            model="stock.batch.picking"
+            string="Delivery Batch Report"
+            report_type="qweb-pdf"
+            name="stock_batch_picking_lr.delivery_batch_view"
+            paperformat="paperformat_delivery_batch_report"
+            menu="False"/>
+
+    <template id="delivery_batch_view">
+        
+        <div class="article"  style="background-color:#fff !important;">
+
+            <div class="row" style="background-color:#fff !important; padding-top: 5px;">
+                <t t-foreach="docs" t-as="doc">
+                    <div class="col-xs-4">
+                        <div class="panel panel-info break-word" style="border: none;">
+                            <div class="panel-body">
+                                <img t-if="company_data" t-att-src="'data:image/png;base64,%s' % to_text(doc.picker_id.company_id['logo_web'])"/>
+                                <div class='o_div_text_overflow' t-field="doc.picker_id.company_id.partner_id" t-options="{'widget': 'contact','fields': ['name', 'address'], 'no_marker': True}" />
+                                <t t-if="company_data"  t-esc="doc.picker_id.company_id['vat']"/><br/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-4">
+                        <div style="margin-top:100px;">
+                            <strong>CARTA DE PORTE</strong><br/>
+                            <t t-esc="doc['name']"/>
+                        </div>
+                    </div>
+                    <div class="col-xs-4">
+                        <div>
+                            Fecha: <t t-esc="doc['date']"/>
+                        </div>
+                    </div>
+                </t>
+            </div>
+
+            <div class="row" style="background-color:#fff !important; padding-top:20px;">
+                <div class="col-xs-12" style="border: solid 1px black; margin-top: 5px; margin-bottom: 5px;">
+                    <div class="col-xs-6" style="text-align:center;">
+                        ORIGEN
+                    </div>
+                    <div class="col-xs-6" style="text-align:center;">
+                        TRANSPORTISTA
+                    </div>
+                </div>
+                <t t-foreach="docs" t-as="doc">
+                    <div class="col-xs-5" style="border: solid 1px black; margin-bottom: 5px;">
+                        <div class="panel panel-info break-word" style="border: none;">
+                            <div class="panel-body">
+                                <div class='o_div_text_overflow' t-field="doc.picker_id.company_id.partner_id" t-options="{'widget': 'contact','fields': ['name', 'address', 'vat'], 'no_marker': True}" />
+                                <t t-if="company_data"  t-esc="doc.picker_id.company_id['vat']"/><br/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-5 col-xs-offset-2" style="border: solid 1px black;  margin-bottom: 5px;">
+                        <div class="panel panel-info break-word" style="border: none;">
+                            <div t-if="doc.carrier_partner_id" class="panel-body">
+                                <div class='o_div_text_overflow' t-field="doc.carrier_partner_id" t-options="{'widget': 'contact','fields': ['name', 'address', 'vat', 'vehicle'], 'no_marker': True}"/>
+                                <t t-if="delivery_carrier_data"  t-esc="delivery_carrier_data['vat']"/><br/>
+                                Matrícula: <t t-if="delivery_carrier_data"  t-esc="delivery_carrier_data['vehicle']"/><br/>
+                            </div>
+                            <div t-if="not doc.carrier_partner_id" class="panel-body">
+                                <p>No se ha seleccionado un transportista para este envío.</p>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+                
+            </div>
+
+            <div class="row" style="background-color:#fff !important; padding-top: 10px; border-top: solid 1px black;">
+            </div>
+
+            <div class="row" style="background-color:#fff !important; border-left: solid 1px black; border-right: solid 1px black;">
+                <div class="col-xs-12 text-center" style="border-bottom: solid 1px black; border-top: solid 1px black;">
+                    Destinatarios
+                </div>
+
+                <t t-foreach="elements" t-as="element">
+                    <t t-foreach="element['partners']" t-as="partner">
+                        <div class="col-xs-12">
+                            <strong>
+                                <span t-esc="partner['name']"/>- <span t-if="partner['street']" t-esc="partner['street']"/> <span t-if="partner['street2']" t-esc="partner['street2']"/>- <span t-if="partner['zip']" t-esc="partner['zip']"/>- <span t-if="partner['state_id']" t-esc="partner['state_id']"/>- <span t-if="partner['country_id']" t-esc="partner['country_id']"/>
+                            </strong>
+                        </div>                        
+                    </t>
+                </t>
+                
+            </div>
+
+            <div class="row" style="background-color:#fff !important; padding-top: 10px; border-top: solid 1px black; page-break-after: always;">
+            </div>
+
+            <div class="row" style="background-color:#fff !important;">
+                <div class="col-xs-12">
+                    <div class="col-xs-2">
+                        <t t-esc="date"/>
+                    </div>
+                    <div class="col-xs-10">
+                        <t t-foreach="docs" t-as="doc">
+                            Detalle de mercancía de la carta de porte: <t t-esc="doc['name']"/>
+                        </t>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" style="background-color:#fff !important; padding-top: 10px; border-top: solid 1px black;">
+            </div>
+
+            <div class="row" style="background-color:#fff !important; border: solid 1px black;">
+                <div class="col-xs-12" style="border-bottom: solid 1px black; text-align: left;">
+                    <div class="col-xs-2">
+                        PAQUETE
+                    </div>
+                    <div class="col-xs-2">
+                        REFERENCIA
+                    </div>
+                    <div class="col-xs-7">
+                        DESCRIPCIÓN
+                    </div>
+                    <div class="col-xs-1">
+                        UDS
+                    </div>
+                </div> 
+
+                <t t-foreach="elements" t-as="element">
+                    <t t-set="previous_origin" t-value="0"/>
+                    <t t-foreach="element['movements']" t-as="movement">
+                        <t t-if="previous_origin != movement['picking_id']">
+                            <div class="col-xs-12">
+                                <div class="col-xs-3 col-xs-offset-1" style="border-bottom: solid 1px black; text-align: left;">
+                                    Albarán: <t t-esc="movement['picking_id']"/> 
+                                </div>
+                            </div>
+                        </t>
+                        <div class="col-xs-12" style="text-align: left;">
+                            <div class="col-xs-2">
+                                <t t-esc="movement['result_package_id']"/> 
+                                <t t-set="previous_origin" t-value="movement['picking_id']"/>
+                            </div>
+                            <div class="col-xs-2">
+                                <t t-esc="movement['default_code']"/>
+                            </div>
+                            <div class="col-xs-7">
+                                <t t-esc="movement['name']"/>
+                            </div>
+                            <div class="col-xs-1">
+                                <t t-esc="movement['product_qty']"/>
+                            </div>
+                        </div>                    
+                    </t>
+                </t>
+            </div>
+
+        </div>
+
+    </template>
+</odoo>

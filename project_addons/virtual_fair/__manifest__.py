@@ -16,7 +16,9 @@
         'partner_custom',
         'base_multi_image',
         'invoice_early_payment_discount',
-        'partner_paydays'
+        'partner_paydays',
+        'contract_recurring_payment',
+        'onchange_helper'
     ],
     'data': [
         'security/ir.model.access.csv',
@@ -28,6 +30,7 @@
         'views/res_company.xml',
         'views/account_invoice.xml',
         'views/res_partner.xml',
+        'views/account_analytic_account.xml',
         'wizard/virtual_fair_import_wzd.xml',
         'wizard/invoice_supplier_import_wzd.xml',
         'wizard/direct_invoice_wzd.xml',

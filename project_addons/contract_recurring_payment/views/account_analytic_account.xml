@@ -63,14 +63,18 @@
                         <field name="number_vouchers"/>
                         <field name="voucher_qty"/>
                         <field name="supplier_id"/>
-                        <!--field name="payment_mode_invoice_id"/-->
+                        <field name="payment_mode_invoice_id"/>
                         <field name="account_id"/>
                     </group>
                     <group>
                         <field name="voucher_journal_id" attrs="{'required': [('recurring_voucher', '=', True)]}"/>
                         <field name="day_due" attrs="{'required': [('recurring_voucher', '=', True)]}"/>
                         <field name="next_voucher_number" attrs="{'required': [('recurring_voucher', '=', True)]}"/>
-                        <field name="mandate_id" attrs="{'required': [('recurring_voucher', '=', True), ('contract_type', '=', 'sale')]}" domain="[('partner_id', '=', partner_id), ('state', '=', 'valid')]"/>
+                       
+                        <field name="mandate_required" invisible="1"/>
+
+                        <field name="mandate_id" attrs="{'required': [('mandate_required', '=', True)]}" domain="[('partner_id', '=', partner_id), ('state', '=', 'valid')]"/>
+                        <field name="date_start_contract"/>
                         <field name="date_start_voucher" attrs="{'required': [('recurring_voucher', '=', True)]}"/>
                         <field name="date_end_voucher"/>
                         <field name="recurring_voucher_end_date" attrs="{'required': [('recurring_voucher', '=', True)]}"/>

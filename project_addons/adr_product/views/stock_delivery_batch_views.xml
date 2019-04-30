@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="stock_batch_picking_lr_adr_form" model="ir.ui.view">
+        <field name="name">stock.batch.picking.lr.form</field>
+        <field name="model">stock.batch.picking</field>
+        <field name="inherit_id" ref="stock_batch_picking_lr.stock_batch_picking_lr_form"/>
+        <field name="arch" type="xml">
+            <button name="batch_printing" position="after">
+                <button name="print_rda_delivery" string="Print RDA" type="object" class="oe_highlight"/>
+            </button>
+            <field name="picking_ids" position="inside">
+                <field name="adr"/>
+                <field name="adr_packing_list"/>
+            </field>
+        </field>
+    </record>
+
+</odoo>

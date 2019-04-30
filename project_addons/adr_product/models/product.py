@@ -10,13 +10,21 @@ class ProductTemplate(models.Model):
 
     _inherit = "product.template"
 
+    adr_idnumonu = fields.Many2one('product.adr.code', string='ADR Code')
+    adr_weight_x_kgrs_11363 = fields.Float(compute="_weight_calculator")
+    adr_weight_x_kgrs_11364 = fields.Float(compute="_weight_calculator")
 
-    adr_esadr = fields.Boolean('ADR', default=False, help = "Is ADR")
-    adr_idnumonu = fields.Many2one('product.adr.code', 'ADR Code')
-    adr_denomtecnica = fields.Char('ADR Descripction')
-    adr_peligroma = fields.Boolean('Dangerous')
-    adr_exe22315 = fields.Boolean ('22315 Exention')
-    adr_bultodesc = fields.Char("Package description")
+    @api.multi
+    @api.depends('adr_idnumonu.multiplier', 'weight', 'adr_idnumonu.adr_category_id')
+    def _weight_calculator(self):
+
+        for product in self:
+            if product.adr_idnumonu.multiplier and product.adr_idnumonu.multiplier is not 0:
+                product.adr_weight_x_kgrs_11363 = product.weight*product.adr_idnumonu.multiplier
+                product.adr_weight_x_kgrs_11364 = product.weight*product.adr_idnumonu.adr_category_id.x_kgrs_11364
+            else:
+                product.adr_weight_x_kgrs_11363 = product.weight*product.adr_idnumonu.adr_category_id.x_kgrs_11363
+                product.adr_weight_x_kgrs_11364 = product.weight*product.adr_idnumonu.adr_category_id.x_kgrs_11364
 
 
 

@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_campaign,access_campaign,model_campaign,base.group_user,1,1,1,1
+access_campaign_supplier_line,access_campaign_supplier_line,model_campaign_supplier_line,base.group_user,1,1,1,1
+access_campaign_article_line,access_campaign_article_line,model_campaign_article_line,base.group_user,1,1,1,1
+access_section_term,access_section_term,model_section_term,base.group_user,1,1,1,1

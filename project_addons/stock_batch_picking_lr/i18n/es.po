@@ -1,0 +1,365 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* stock_batch_picking_lr
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 11.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-22 10:43+0000\n"
+"PO-Revision-Date: 2019-04-22 10:43+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: stock_batch_picking_lr
+#: model:ir.ui.view,arch_db:stock_batch_picking_lr.delivery_batch_view
+msgid "<br/>\n"
+"                                Matrícula:"
+msgstr "<br/>\n"
+"                                Matrícula:"
+
+#. module: stock_batch_picking_lr
+#: model:ir.ui.view,arch_db:stock_batch_picking_lr.delivery_batch_view
+msgid "<strong>CARTA DE PORTE</strong><br/>"
+msgstr "<strong>CARTA DE PORTE</strong><br/>"
+
+#. module: stock_batch_picking_lr
+#: model:ir.ui.view,arch_db:stock_batch_picking_lr.view_quant_package_delivery_batch_kanban
+msgid "Add to batch"
+msgstr "Añadir al envío"
+
+#. module: stock_batch_picking_lr
+#: selection:stock.batch.picking,shipping_type:0
+msgid "Agencia"
+msgstr "Agencia"
+
+#. module: stock_batch_picking_lr
+#: model:ir.ui.view,arch_db:stock_batch_picking_lr.delivery_batch_view
+msgid "Albarán:"
+msgstr "Albarán:"
+
+#. module: stock_batch_picking_lr
+#: model:ir.model,name:stock_batch_picking_lr.model_delivery_carrier
+msgid "Carrier"
+msgstr "Forma de envío"
+
+#. module: stock_batch_picking_lr
+#: model:ir.model.fields,field_description:stock_batch_picking_lr.field_delivery_carrier_partner_ids
+#: model:ir.ui.view,arch_db:stock_batch_picking_lr.delivery_carrier_address_form
+msgid "Carrier Drivers"
+msgstr "Conductores"
+
+#. module: stock_batch_picking_lr
+#: model:ir.model.fields,field_description:stock_batch_picking_lr.field_stock_batch_picking_carrier_partner_id
+msgid "Carrier driver"
+msgstr "Conductor"
+
+#. module: stock_batch_picking_lr
+#: model:ir.model.fields,help:stock_batch_picking_lr.field_stock_batch_picking_carrier_partner_id
+msgid "Carrier driver for this batch picking."
+msgstr "Conductor para este envío."
+
+#. module: stock_batch_picking_lr
+#: model:ir.model.fields,help:stock_batch_picking_lr.field_stock_batch_picking_has_packages
+msgid "Check the existence of destination packages on move lines"
+msgstr "Verifique la existencia de paquetes de destino en líneas de movimiento"
+
+#. module: stock_batch_picking_lr
+#: model:ir.model,name:stock_batch_picking_lr.model_res_partner
+msgid "Contact"
+msgstr "Contacto"
+
+#. module: stock_batch_picking_lr
+#: model:ir.model.fields,field_description:stock_batch_picking_lr.field_delivery_route_path_create_uid
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: stock_batch_picking_lr
+#: model:ir.model.fields,field_description:stock_batch_picking_lr.field_delivery_route_path_create_date
+msgid "Created on"
+msgstr "Creado en"
+
+#. module: stock_batch_picking_lr
+#: model:ir.ui.view,arch_db:stock_batch_picking_lr.delivery_batch_view
+msgid "DESCRIPCIÓN"
+msgstr "DESCRIPCIÓN"
+
+#. module: stock_batch_picking_lr
+#: model:ir.actions.report,name:stock_batch_picking_lr.delivery_batch_report
+msgid "Delivery Batch Report"
+msgstr "Reporte del envío."
+
+#. module: stock_batch_picking_lr
+#: model:ir.ui.view,arch_db:stock_batch_picking_lr.delivery_route_path_search
+msgid "Delivery Route"
+msgstr "Ruta"
+
+#. module: stock_batch_picking_lr
+#: model:ir.actions.act_window,name:stock_batch_picking_lr.action_delivery_route_path_view
+#: model:ir.ui.menu,name:stock_batch_picking_lr.menu_delivery_route_path
+msgid "Delivery Routes"
+msgstr "Rutas"
+
+#. module: stock_batch_picking_lr
+#: model:ir.model.fields,field_description:stock_batch_picking_lr.field_stock_batch_picking_carrier_id
+msgid "Delivery carrier"
+msgstr "Transportista"
+
+#. module: stock_batch_picking_lr
+#: model:ir.model.fields,help:stock_batch_picking_lr.field_stock_batch_picking_carrier_id
+msgid "Delivery carrier for this batch picking."
+msgstr "Transportista para este envío."
+
+#. module: stock_batch_picking_lr
+#: model:ir.model.fields,field_description:stock_batch_picking_lr.field_stock_batch_picking_delivery_route_id
+msgid "Delivery route"
+msgstr "Ruta"
+
+#. module: stock_batch_picking_lr
+#: model:ir.model.fields,help:stock_batch_picking_lr.field_stock_batch_picking_delivery_route_id
+msgid "Delivery route for this batch picking."
+msgstr "Ruta para este envío."
+
+#. module: stock_batch_picking_lr
+#: model:ir.ui.view,arch_db:stock_batch_picking_lr.delivery_batch_view
+msgid "Destinatarios"
+msgstr "Destinatarios"
+
+#. module: stock_batch_picking_lr
+#: model:ir.ui.view,arch_db:stock_batch_picking_lr.delivery_batch_view
+msgid "Detalle de mercancía de la carta de porte:"
+msgstr "Detalle de mercancía de la carta de porte:"
+
+#. module: stock_batch_picking_lr
+#: model:ir.model.fields,field_description:stock_batch_picking_lr.field_delivery_route_path_display_name
+#: model:ir.model.fields,field_description:stock_batch_picking_lr.field_report_stock_batch_picking_lr_delivery_batch_view_display_name
+msgid "Display Name"
+msgstr "Nombre"
+
+#. module: stock_batch_picking_lr
+#: model:ir.ui.view,arch_db:stock_batch_picking_lr.delivery_batch_view
+msgid "Fecha:"
+msgstr "Fecha:"
+
+#. module: stock_batch_picking_lr
+#: model:ir.ui.view,arch_db:stock_batch_picking_lr.quant_package_delivery_batch_search_view
+msgid "Group by..."
+msgstr "Agrupar por..."
+
+#. module: stock_batch_picking_lr
+#: model:ir.model.fields,field_description:stock_batch_picking_lr.field_stock_batch_picking_has_packages
+msgid "Has Packages"
+msgstr "Tiene paquetes"
+
+#. module: stock_batch_picking_lr
+#: model:ir.model.fields,field_description:stock_batch_picking_lr.field_delivery_route_path_id
+#: model:ir.model.fields,field_description:stock_batch_picking_lr.field_report_stock_batch_picking_lr_delivery_batch_view_id
+msgid "ID"
+msgstr "ID"
+
+#. module: stock_batch_picking_lr
+#: model:ir.model.fields,field_description:stock_batch_picking_lr.field_stock_quant_package_in_batch
+msgid "In Batch"
+msgstr "En envío"
+
+#. module: stock_batch_picking_lr
+#: model:ir.ui.view,arch_db:stock_batch_picking_lr.quant_package_delivery_batch_search_view
+msgid "In batch"
+msgstr "En envío"
+
+#. module: stock_batch_picking_lr
+#: model:ir.model.fields,field_description:stock_batch_picking_lr.field_delivery_route_path___last_update
+#: model:ir.model.fields,field_description:stock_batch_picking_lr.field_report_stock_batch_picking_lr_delivery_batch_view___last_update
+msgid "Last Modified on"
+msgstr "Última modificación en"
+
+#. module: stock_batch_picking_lr
+#: model:ir.model.fields,field_description:stock_batch_picking_lr.field_delivery_route_path_write_uid
+msgid "Last Updated by"
+msgstr "Última actualización de"
+
+#. module: stock_batch_picking_lr
+#: model:ir.model.fields,field_description:stock_batch_picking_lr.field_delivery_route_path_write_date
+msgid "Last Updated on"
+msgstr "Última actualización en"
+
+#. module: stock_batch_picking_lr
+#: model:ir.model.fields,field_description:stock_batch_picking_lr.field_stock_batch_picking_current_location_id
+msgid "Location"
+msgstr "Ubicación"
+
+#. module: stock_batch_picking_lr
+#: model:ir.model.fields,field_description:stock_batch_picking_lr.field_stock_batch_picking_current_location_dest_id
+msgid "Location Dest"
+msgstr "Destino"
+
+#. module: stock_batch_picking_lr
+#: model:ir.ui.view,arch_db:stock_batch_picking_lr.delivery_route_path_form
+msgid "Name"
+msgstr "Nombre"
+
+#. module: stock_batch_picking_lr
+#: model:ir.ui.view,arch_db:stock_batch_picking_lr.delivery_batch_view
+msgid "No se ha seleccionado un transportista para este envío."
+msgstr "No se ha seleccionado un transportista para este envío."
+
+#. module: stock_batch_picking_lr
+#: code:addons/stock_batch_picking_lr/models/stock_batch_picking.py:104
+#, python-format
+msgid "Nothing to print."
+msgstr "Nada que imprimir."
+
+#. module: stock_batch_picking_lr
+#: model:ir.ui.view,arch_db:stock_batch_picking_lr.delivery_batch_view
+msgid "ORIGEN"
+msgstr "ORIGEN"
+
+#. module: stock_batch_picking_lr
+#: model:ir.ui.view,arch_db:stock_batch_picking_lr.delivery_batch_view
+msgid "PAQUETE"
+msgstr "PAQUETE"
+
+#. module: stock_batch_picking_lr
+#: model:ir.ui.view,arch_db:stock_batch_picking_lr.quant_package_delivery_batch_search_view
+msgid "Package"
+msgstr "Paquete"
+
+#. module: stock_batch_picking_lr
+#: model:ir.ui.view,arch_db:stock_batch_picking_lr.quant_package_delivery_batch_search_view
+msgid "Package Name"
+msgstr "Nombre del paquete"
+
+#. module: stock_batch_picking_lr
+#: model:ir.actions.act_window,name:stock_batch_picking_lr.action_package_delivery_batch_view
+#: model:ir.model.fields,field_description:stock_batch_picking_lr.field_stock_batch_picking_current_package_list
+#: model:ir.ui.view,arch_db:stock_batch_picking_lr.stock_batch_picking_lr_form
+msgid "Packages"
+msgstr "Paquetes"
+
+#. module: stock_batch_picking_lr
+#: model:ir.actions.act_window,help:stock_batch_picking_lr.action_package_delivery_batch_view
+msgid "Packages are usually created by pack operations made on transfers and can contains several different products. You can then reuse a package to move its whole content somewhere else, or to pack it into another bigger package. A package can also be unpacked, allowing the disposal of its former content as single units again."
+msgstr "Los paquetes se crean generalmente por las operaciones del paquete hechas en transferencias y pueden contener diversos productos. A continuación, puede reutilizar un paquete para mover todo su contenido a otro lugar o para empaquetarlo en otro paquete más grande. Un paquete también se puede desempaquetar, lo que permite la eliminación de su contenido anterior generando de nuevo unidades individuales."
+
+#. module: stock_batch_picking_lr
+#: model:ir.ui.view,arch_db:stock_batch_picking_lr.quant_package_delivery_batch_search_view
+msgid "Packaging"
+msgstr "Empaquetado"
+
+#. module: stock_batch_picking_lr
+#: model:ir.model.fields,field_description:stock_batch_picking_lr.field_res_partner_delivery_id
+#: model:ir.model.fields,field_description:stock_batch_picking_lr.field_res_users_delivery_id
+msgid "Partner Carrier"
+msgstr "Carrier del partner"
+
+#. module: stock_batch_picking_lr
+#: selection:stock.batch.picking,shipping_type:0
+msgid "Pasarán"
+msgstr "Pasarán"
+
+#. module: stock_batch_picking_lr
+#: model:ir.model,name:stock_batch_picking_lr.model_stock_quant_package
+msgid "Physical Packages"
+msgstr "Paquetes físicos"
+
+#. module: stock_batch_picking_lr
+#: model:ir.ui.view,arch_db:stock_batch_picking_lr.stock_batch_picking_lr_form
+msgid "Print"
+msgstr "Imprimir"
+
+#. module: stock_batch_picking_lr
+#: model:ir.ui.view,arch_db:stock_batch_picking_lr.delivery_batch_view
+msgid "REFERENCIA"
+msgstr "REFERENCIA"
+
+#. module: stock_batch_picking_lr
+#: model:ir.ui.view,arch_db:stock_batch_picking_lr.view_quant_package_delivery_batch_kanban
+msgid "Remove from batch"
+msgstr "Eliminar del envío"
+
+#. module: stock_batch_picking_lr
+#: model:ir.ui.view,arch_db:stock_batch_picking_lr.delivery_route_path_form
+#: model:ir.ui.view,arch_db:stock_batch_picking_lr.delivery_route_path_search
+#: model:ir.ui.view,arch_db:stock_batch_picking_lr.delivery_route_path_tree
+msgid "Route"
+msgstr "Ruta"
+
+#. module: stock_batch_picking_lr
+#: model:ir.model.fields,field_description:stock_batch_picking_lr.field_delivery_route_path_name
+msgid "Route name"
+msgstr "Ruta"
+
+#. module: stock_batch_picking_lr
+#: selection:stock.batch.picking,shipping_type:0
+msgid "Ruta"
+msgstr "Ruta"
+
+#. module: stock_batch_picking_lr
+#: model:ir.model.fields,field_description:stock_batch_picking_lr.field_stock_quant_package_stock_batch_id
+#: model:ir.ui.view,arch_db:stock_batch_picking_lr.quant_package_delivery_batch_search_view
+msgid "Stock Batch"
+msgstr "Envío"
+
+#. module: stock_batch_picking_lr
+#: model:ir.model,name:stock_batch_picking_lr.model_stock_move
+msgid "Stock Move"
+msgstr "Movimiento de existencias"
+
+#. module: stock_batch_picking_lr
+#: model:ir.ui.view,arch_db:stock_batch_picking_lr.delivery_batch_view
+msgid "TRANSPORTISTA"
+msgstr "TRANSPORTISTA"
+
+#. module: stock_batch_picking_lr
+#: code:addons/stock_batch_picking_lr/models/stock_batch_picking.py:68
+#, python-format
+msgid "The selected shipping type is different from the shipping type of the packages. If you wish to change this batch shipping type you must remove the packages first."
+msgstr "El tipo de envío seleccionado es diferente del tipo de envío de los paquetes. Si deseas cambiar el tipo de envío debes retirar los paquetes del envío antes."
+
+#. module: stock_batch_picking_lr
+#: model:ir.model.fields,field_description:stock_batch_picking_lr.field_stock_batch_picking_shipping_type
+msgid "Tipo de envío"
+msgstr "Tipo de envío"
+
+#. module: stock_batch_picking_lr
+#: model:ir.model.fields,help:stock_batch_picking_lr.field_stock_batch_picking_shipping_type
+msgid "Tipo de envío seleccionado."
+msgstr "Tipo de envío seleccionado."
+
+#. module: stock_batch_picking_lr
+#: model:ir.ui.view,arch_db:stock_batch_picking_lr.delivery_batch_view
+msgid "UDS"
+msgstr "UDS"
+
+#. module: stock_batch_picking_lr
+#: model:ir.model.fields,field_description:stock_batch_picking_lr.field_res_partner_vehicle_plates
+#: model:ir.model.fields,field_description:stock_batch_picking_lr.field_res_users_vehicle_plates
+msgid "Vehicle plates"
+msgstr "Matrícula"
+
+#. module: stock_batch_picking_lr
+#: code:addons/stock_batch_picking_lr/models/stock_quant_package.py:33
+#: code:addons/stock_batch_picking_lr/models/stock_quant_package.py:62
+#, python-format
+msgid "You can not add packages to a batch picking done or canceled."
+msgstr "No puedes añadir o eliminar paquetes de un envío hecho, cancelado o validado."
+
+#. module: stock_batch_picking_lr
+#: model:ir.model,name:stock_batch_picking_lr.model_delivery_route_path
+msgid "delivery.route.path"
+msgstr "delivery.route.path"
+
+#. module: stock_batch_picking_lr
+#: model:ir.model,name:stock_batch_picking_lr.model_report_stock_batch_picking_lr_delivery_batch_view
+msgid "report.stock_batch_picking_lr.delivery_batch_view"
+msgstr "report.stock_batch_picking_lr.delivery_batch_view"
+
+#. module: stock_batch_picking_lr
+#: model:ir.model,name:stock_batch_picking_lr.model_stock_batch_picking
+msgid "stock.batch.picking"
+msgstr "stock.batch.picking"
+

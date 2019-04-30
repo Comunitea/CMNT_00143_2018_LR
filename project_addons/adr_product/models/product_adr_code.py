@@ -10,6 +10,8 @@ class AdrCodeCategory(models.Model):
     code = fields.Char('Code')
     x_kgrs_11363 = fields.Integer('x Kgrs', help ="For exception 1.1.3.6.3")
     x_kgrs_11364 = fields.Integer('x Kgrs', help ="For exception 1.1.3.6.4")
+    max_weight_11363 = fields.Integer('Max. Kg', help='Maximum amount allowed in one shipping for exception 1.1.3.6.3')
+    max_weight_11364 = fields.Integer('Max. Kg', help='Maximum amount allowed in one shipping for exception 1.1.3.6.4')
 
 
 class AdrCodeRanking(models.Model):
@@ -24,19 +26,20 @@ class ProductAdrCode(models.Model):
 
     _name = "product.adr.code"
 
-    denomtecnica = fields.Char('ADR Descripction')
-    peligroma = fields.Boolean('Dangerous')
-    exe22315 = fields.Boolean ('22315 Exention')
-    bultodesc = fields.Char("Package description")
+    denomtecnica = fields.Char('Denominación técnica')
+    peligroma = fields.Boolean('Artículo peligroso')
+    exe22315 = fields.Boolean ('Sujeto a la exención 22315')
+    bultodesc = fields.Char("Descripción del bulto")
 
-    numero_onu = fields.Char('Name')
-    official_name = fields.Char('Offical desc.')
-    acc_signals = fields.Char('Access. signals')
-    ranking_id = fields.Many2one('product.adr.code', 'Ranking')
-    packing_group = fields.Char('Packing group')
-    t_code = fields.Char("Tunnel code")
-    qty_limit = fields.Integer('Qty limit')
-    adr_category_id = fields.Many2one('adr.code.category', 'Category')
+    numero_onu = fields.Char('Nombre')
+    official_name = fields.Char('Descripción oficial')
+    acc_signals = fields.Char('Señales accesorias')
+    ranking_id = fields.Many2one('adr.code.ranking', 'Clasificación')
+    packing_group = fields.Char('Grupo de embalaje')
+    t_code = fields.Char("Código tunel")
+    qty_limit = fields.Integer('Cantidad limitada')
+    adr_category_id = fields.Many2one('adr.code.category', 'Categoría')
+    multiplier = fields.Integer('Multiplicador categoría 1', help="Multiplicador aplicable para artículos de la categoría 1 en caso de producirse la exención 11363.")
 
 
 class AdrPackingList(models.Model):
@@ -45,5 +48,5 @@ class AdrPackingList(models.Model):
 
     name = fields.Char('Name')
     delivered_date = fields.Datetime()
-    picking_ids = fields.One2many('stock.picking')
+    picking_ids = fields.One2many('stock.picking', 'adr_packing_list')
 

@@ -89,3 +89,8 @@ msgstr "<strong style=\"font-weight: bold; color: rgb(0,51,102); font-family: Ar
 #: model:ir.ui.view,arch_db:custom_documents.report_invoice_document
 msgid "<strong style=\"font-weight: bold; color: rgb(0,51,102); font-family: Arial\">Refunded invoice: </strong>"
 msgstr "<strong style=\"font-weight: bold; color: rgb(0,51,102); font-family: Arial\">Factura rectificada: </strong>"
+
+#. module: custom_documents
+#: model:ir.model.fields,field_description:custom_documents.field_account_payment_mode_not_show_due_dates_in_report
+msgid "Not Show Due Dates In Report"
+msgstr "No mostrar vencimientos en factura"

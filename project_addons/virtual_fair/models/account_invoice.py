@@ -2,6 +2,7 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 import re
 from odoo import api, fields, models, _
+from datetime import datetime, date, timedelta
 
 
 class AccountInvoice(models.Model):
@@ -34,6 +35,62 @@ class AccountInvoice(models.Model):
     tag = fields.Char('Tag')
     analytic_account_id = fields.Many2one(
         'account.analytic.account', compute='_compute_analytic_account_id')
+    customer_analytic_account_id = fields.Many2one(
+        'account.analytic.account', 'Contract account')
+    force_no_group = fields.Boolean('Force No Group', default=False)
+    supplier_maturity_date = fields.Boolean('Supllier Maturity Date')
+
+    @api.multi
+    def recalculate_maturity_date(self):
+        for inv in self:
+            if inv.supplier_maturity_date and inv.supplier_invoices_count == 1:
+                domain = [('customer_invoice_id', '=', self.id)]
+                sup_invoice = self.search(domain)[0]
+                if sup_invoice.move_id:
+                    move_lines_sup = self.env["account.move.line"]. \
+                        search([('move_id', '=', sup_invoice.move_id.id),
+                                ('account_id.internal_type', 'in',
+                                 ['payable', 'receivable']),
+                                ('date_maturity', "!=", False)],
+                               order="date_maturity asc")
+                    move_lines = self.env["account.move.line"]. \
+                        search([('move_id', '=', inv.move_id.id),
+                                ('account_id.internal_type', 'in',
+                                 ['payable', 'receivable']),
+                                ('date_maturity', "!=", False)],
+                               order="date_maturity asc")
+                    move_count = 0
+                    for move_line in move_lines:
+                        new_maturity = fields.Date.from_string(
+                            move_lines_sup[move_count].date_maturity)
+                        new_maturity = fields.Datetime.to_string(
+                            new_maturity - timedelta(days=15))
+                        payment_term_obj = self.env['account.payment.term']
+                        days = payment_term_obj._decode_payment_days(
+                            inv.commercial_partner_id.payment_days)
+
+                        new_date = False
+                        date = fields.Date.from_string(new_maturity)
+
+                        for day in days:
+                            if date.day <= day:
+                                new_date = payment_term_obj.next_day(date, day)
+                                break
+
+                        if days:
+                            if not new_date:
+                                day = days[0]
+                                date = payment_term_obj.next_day(date, day)
+                            else:
+                                date = new_date
+
+                        if not inv.commercial_partner_id.pays_during_holidays:
+                            date = payment_term_obj._after_holidays(
+                                inv.commercial_partner_id, date, days)
+
+                        move_line.write({'date_maturity': date})
+                    inv.date_due = date
+        return True
 
     def _compute_analytic_account_id(self):
         for invoice in self:
@@ -104,19 +161,33 @@ class AccountInvoice(models.Model):
         """
         for inv in self:
             amount = inv.amount_total
+            date_ref = fields.Date.from_string(inv.date_invoice)
+            date_ref = fields.Datetime.to_string(date_ref - timedelta(
+                days=30))
             domain = [
                 ('supplier_id', '=', inv.partner_id.id),
                 ('fair_id.date_start', '<=', inv.date_invoice),
-                ('fair_id.date_end', '>=', inv.date_invoice),
+                ('fair_id.date_end', '>=', date_ref),
             ]
             line = self.env['fair.supplier.line'].search(domain, limit=1)
-            if not line:
+
+            #Para establcer feria, debe estar también l alinea de cliente o
+            # para todos
+            domain = [
+                ('fair_id', '=', line.fair_id.id),
+                '|', ('customer_id', '=', inv.associate_id.id),
+                ('customer_id', '=', False)
+            ]
+            customer_line = self.env['fair.customer.line'].\
+                search(domain, limit=1, order='customer_id DESC')
+
+            if not line or not customer_line:
                 continue
 
             term_id = False
             if line.condition_type not in ['DESCUENTO_EUR', 'DESCUENTO_PCT']:
                 for cond in line.condition_ids:
-                    if cond.condition_type == 'PLAZO':
+                    if cond.condition_type in ('PLAZO', 'PLAZO_TODOS'):
                         for s in cond.section_ids:
                             if amount >= s.linf and amount <= s.lsup:
                                 term_id = s.term_id.id
@@ -134,20 +205,56 @@ class AccountInvoice(models.Model):
         Change conditions based on virtual fair. Only search for payment terms
         """
         for inv in self:
+
+            if not inv.fair_id:
+                return
+            term_id = False
+            vals = {}
+            amount = inv.amount_total
+
+
             domain = [
-                ('customer_id', '=', inv.partner_id.id),
-                ('id', '<=', inv.fair_id.id),
+                ('customer_id', '=', inv.commercial_partner_id.id),
+                ('fair_id', '=', inv.fair_id.id),
             ]
             line = self.env['fair.customer.line'].search(domain, limit=1)
-            if not line:
-                continue
+            if line:
+                if line.condition_type in ['PLAZO',]:
+                    term_id = line.term_id.id
+            else:
+                # comprobamos condiciones explícitas de proveedor (Nuevas
+                # condiciones de plazo) si no es cliente "congelado"
+                domain = [('customer_invoice_id', '=', self.id)]
+                sup_invoice = self.search(domain)[0]
+                domain = [
+                    ('supplier_id', '=',
+                     sup_invoice.commercial_partner_id.id),
+                    ('fair_id', '=', inv.fair_id.id),
+                ]
+                sup_line = self.env['fair.supplier.line']. \
+                    search(domain, limit=1)
+                if sup_line:
+                    if sup_line.condition_type not in ['DESCUENTO_EUR',
+                                                       'DESCUENTO_PCT']:
+                        for cond in sup_line.condition_ids:
+                            if cond.condition_type in ('PLAZO_SOCIO',
+                                                       'PLAZO_TODOS'):
+                                for s in cond.section_ids:
+                                    if amount >= s.linf and amount <= s.lsup:
+                                        term_id = s.term_id.id
+                                        vals.update(
+                                            {'supplier_maturity_date': True})
+                                        break
+                if not term_id:
+                    domain = [
+                        ('customer_id', '=', False),
+                        ('fair_id', '=', inv.fair_id.id),
+                    ]
+                    line = self.env['fair.customer.line'].search(domain,
+                                                                 limit=1)
+                    if line:
+                        term_id = line.term_id.id
 
-            term_id = False
-            if line.condition_type in ['PLAZO']:
-                term_id = line.term_id.id
-                break
-
-            vals = {}
             if term_id:
                 vals.update({'payment_term_id': term_id})
                 inv.write(vals)
@@ -213,11 +320,28 @@ class AccountInvoice(models.Model):
         for invoice in self:
             analytic_account = self.env['account.analytic.account'].search(
                 [('recurring_voucher', '=', True),
-                 ('supplier_id', '=', invoice.partner_id.id),
-                 ('partner_id', '=', invoice.associate_id.id)])
+                 ('contract_type', '=', 'purchase'),
+                 ('partner_id', '=', invoice.commercial_partner_id.id)],
+                limit=1)
+            customer_analytic_account = self.env[
+                'account.analytic.account'].search(
+                [('recurring_voucher', '=', True),
+                 ('supplier_id', '=', invoice.commercial_partner_id.id),
+                 ('partner_id', '=', invoice.associate_id.id),
+                 ('date_start_contract', '<=', invoice.date_invoice),
+                 ('date_end_voucher', '>=', invoice.date_invoice),
+                 ('contract_type', '=', 'sale')], limit=1)
+            vals = {}
             if analytic_account:
-                invoice.invoice_line_ids.write(
-                    {'account_analytic_id': analytic_account[0].id})
+                vals.update(account_analytic_id= analytic_account.id)
+            if customer_analytic_account:
+                analytic_tag_ids = [(4, analytic_tag.id, None) for analytic_tag
+                                    in customer_analytic_account.tag_ids]
+                vals.update(analytic_tag_ids=analytic_tag_ids)
+                invoice.write({'customer_analytic_account_id':
+                                   customer_analytic_account.id })
+            if vals:
+                invoice.invoice_line_ids.write(vals)
 
     def check_duplicate_history(self):
         equal_args = [
@@ -263,4 +387,5 @@ class AccountInvoice(models.Model):
                 supplier_invoices = self.search(domain)
                 supplier_invoices.write({'date': date})
                 supplier_invoices.action_invoice_open()
+        self.recalculate_maturity_date()
         return res

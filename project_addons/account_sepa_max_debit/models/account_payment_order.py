@@ -21,13 +21,13 @@ class AccountPaymentOrder(models.Model):
     @api.model
     def _recursive_ungroup_line(self, bline, limit):
         """
-        Create more lines whitch no limit rebased, if mor than one transition
+        Create more lines whitch no limit rebased, if more than one transition
         in other case we let the limit be raising
         """
         pline2split = self.env['account.payment.line']
 
         total = 0.0
-
+        # print(bline.payment_line_ids.ids)
         # Only ungroup if more than one transition
         if len(bline.payment_line_ids) > 1:
             # Get payment lines thar raises the partner limit
@@ -39,6 +39,11 @@ class AccountPaymentOrder(models.Model):
 
         # When no pline2split we are in base case of recursive funcion
         if pline2split:
+            # Si todas rebasan el límite, y son iguales que las originales,
+            # dejamos solo una payment_line y hacemos la función recursiva
+            # con las demás
+            if bline.payment_line_ids == pline2split:
+                pline2split -= pline2split[0]
             # Creating new bank payment line
             new_name = self.env['ir.sequence'].\
                 next_by_code('bank.payment.line') or 'New'

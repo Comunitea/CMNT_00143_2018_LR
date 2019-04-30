@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record model="report.paperformat" id="paperformat_delivery_batch_adr_report">
+        <field name="name">paperformat.delivery.batch.report</field>
+        <field name="default" eval="True"/>
+        <field name="format">A4</field>
+        <field name="page_width">0</field>
+        <field name="page_width">0</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">5</field>
+        <field name="margin_right">5</field>
+        <field name="margin_bottom">5</field>
+        <field name="margin_left">5</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">20</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <report id="delivery_batch_adr_report"
+            model="stock.batch.picking"
+            string="Delivery Batch ADR Report"
+            report_type="qweb-pdf"
+            name="adr_product.delivery_batch_adr_view"
+            paperformat="paperformat_delivery_batch_adr_report"
+            menu="False"/>
+
+    <template id="delivery_batch_adr_view">
+        
+        <div class="article"  style="background-color:#fff !important;">
+                 
+            <div class="row" style="background-color:#fff !important; padding-top: 5px;">
+                <t t-foreach="docs" t-as="doc">
+                    <div class="col-xs-4">
+                        <div class="panel panel-info break-word" style="border: none;">
+                            <div class="panel-body">
+                                <img t-if="company_data" t-att-src="'data:image/png;base64,%s' % to_text(doc.picker_id.company_id['logo_web'])"/>
+                                <div class='o_div_text_overflow' t-field="doc.picker_id.company_id.partner_id" t-options="{'widget': 'contact','fields': ['name', 'address'], 'no_marker': True}" />
+                                <t t-if="company_data"  t-esc="doc.picker_id.company_id['vat']"/><br/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-4">
+                        <div style="margin-top:100px;">
+                            <strong>CARTA DE PORTE ÚNICA ADR</strong><br/>
+                            <t t-esc="doc['name']"/>
+                        </div>
+                    </div>
+                    <div class="col-xs-4">
+                        <div>
+                            Fecha: <t t-esc="doc['date']"/>
+                        </div>
+                    </div>
+                </t>
+            </div>
+
+            <div class="row" style="background-color:#fff !important; padding-top:20px;">
+                <div class="col-xs-12" style="border: solid 1px black; margin-top: 5px; margin-bottom: 5px;">
+                    <div class="col-xs-6" style="text-align:center;">
+                        ORIGEN
+                    </div>
+                    <div class="col-xs-6" style="text-align:center;">
+                        TRANSPORTISTA
+                    </div>
+                </div>
+                <t t-foreach="docs" t-as="doc">
+                    <div class="col-xs-5" style="border: solid 1px black; margin-bottom: 5px;">
+                        <div class="panel panel-info break-word" style="border: none;">
+                            <div class="panel-body">
+                                <div class='o_div_text_overflow' t-field="doc.picker_id.company_id.partner_id" t-options="{'widget': 'contact','fields': ['name', 'address', 'vat'], 'no_marker': True}" />
+                                <t t-if="company_data"  t-esc="doc.picker_id.company_id['vat']"/><br/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-5 col-xs-offset-2" style="border: solid 1px black;  margin-bottom: 5px;">
+                        <div class="panel panel-info break-word" style="border: none;">
+                            <div t-if="doc.carrier_partner_id" class="panel-body">
+                                <div class='o_div_text_overflow' t-field="doc.carrier_partner_id" t-options="{'widget': 'contact','fields': ['name', 'address', 'vat', 'vehicle'], 'no_marker': True}"/>
+                                <t t-if="delivery_carrier_data"  t-esc="delivery_carrier_data['vat']"/><br/>
+                                Matrícula: <t t-if="delivery_carrier_data"  t-esc="delivery_carrier_data['vehicle']"/><br/>
+                            </div>
+                            <div t-if="not doc.carrier_partner_id" class="panel-body">
+                                <p>No se ha seleccionado un transportista para este envío.</p>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+                
+            </div>
+
+            <div class="row" style="background-color:#fff !important; padding-top: 10px; border-top: solid 1px black;">
+            </div>
+
+            <div class="row" style="background-color:#fff !important; border-left: solid 1px black; border-right: solid 1px black;">
+                <div class="col-xs-12 text-center" style="border-bottom: solid 1px black; border-top: solid 1px black;">
+                    Destinatarios
+                </div>
+
+                <t t-foreach="elements" t-as="element">
+                    <t t-foreach="element['partners']" t-as="partner">
+                        <div class="col-xs-12">
+                            <strong>
+                                <span t-esc="partner['name']"/>- <span t-if="partner['street']" t-esc="partner['street']"/> <span t-if="partner['street2']" t-esc="partner['street2']"/>- <span t-if="partner['zip']" t-esc="partner['zip']"/>- <span t-if="partner['state_id']" t-esc="partner['state_id']"/>- <span t-if="partner['country_id']" t-esc="partner['country_id']"/>
+                            </strong>
+                        </div>
+                        <t t-foreach="element['movements']" t-as="picking">
+                            <t t-if="picking['partner_id'] == partner['id']">
+                                <div class="col-xs-4">
+                                    <t t-esc="picking['picking_id']"/>[<t t-esc="picking['adr_acc_signals']"/>/<t t-esc="picking['adr_idnumonu']"/>]
+                                </div>
+                            </t>
+                        </t>
+                        
+                    </t>
+                    <div class="col-xs-12">
+                        <i><small>Nota: Los albaranes indicados contienen productos Adr</small></i>
+                    </div>
+                </t>
+                
+            </div>
+
+
+            <div class="row" t-if="exention_type" style="background-color:#fff !important; padding-top: 10px; border-top: solid 1px black;">
+            </div>
+
+            <div class="row" t-if="exention_type" style="background-color:#fff !important; border-left: solid 1px black; border-right: solid 1px black;">
+                <div class="col-xs-12 text-center" style="border-bottom: solid 1px black; border-top: solid 1px black;">
+                    Exención <t t-esc="exention_type"/>
+                </div>
+
+                <t t-foreach="elements" t-as="element">
+                    <t t-foreach="element['movements']" t-as="movement">
+                        <div class="col-xs-12" t-if="not movement['adr_exe22315'] and not movement['adr_qty_limit'] > 0">
+                            UN <t t-esc="movement['adr_idnumonu']"/> <t t-esc="movement['official_name']"/>, <small t-if="movement['adr_denomtecnica']">(<span t-esc="movement['adr_denomtecnica']"/>)</small>, <span t-if="movement['adr_acc_signals']" t-esc="movement['adr_acc_signals']"/> <span t-if="not movement['adr_acc_signals']" t-esc="movement['ranking_id']"/>, <t t-esc="movement['packing_group']"/>, (<t t-esc="movement['t_code']"/>) <small t-if="movement['adr_peligroma']">*Peligroso para el medioambiente</small>
+                        </div>
+                        <div class="col-xs-12" t-if="not movement['adr_exe22315'] and not movement['adr_qty_limit'] > 0">                         
+                            <div class="col-xs-3">
+                                Peso: <span t-if="exention_type == '1.1.3.6.3'" t-esc="movement['adr_weight_x_kgrs_11363']"/><span t-if="exention_type == '1.1.3.6.4'" t-esc="movement['adr_weight_x_kgrs_11364']"/> Kg.
+                            </div>
+                            <div class="col-xs-3">
+                                Cantidad: <span t-esc="movement['product_qty']"/>
+                            </div>
+                            <div class="col-xs-6">
+                                Descripción embalaje: <t t-esc="movement['adr_bultodesc']"/>
+                            </div>
+                        </div>                       
+                    </t>
+                    <div class="col-xs-12" t-if="exention_type == '1.1.3.6.3' or exention_type == '1.1.3.6.4'">
+                        <strong>Peso total: <t t-esc="regular_total_weight"/> de <t t-esc="category_max_weight"/> Kg. Transporte acogido a la exención <t t-esc="exention_type"/> ADR.</strong>
+                    </div>
+                </t>
+                
+            </div>
+
+            <div class="row" t-if="counter_22315 is not 0" style="background-color:#fff !important; padding-top: 10px; border-top: solid 1px black;">
+            </div>
+
+            <div class="row" t-if="counter_22315 is not 0" style="background-color:#fff !important; border-left: solid 1px black; border-right: solid 1px black;">
+                <div class="col-xs-12 text-center" style="border-bottom: solid 1px black; border-top: solid 1px black;">
+                    Exención 2.2.3.1.5
+                </div>
+
+                <t t-foreach="elements" t-as="element">
+                    <t t-foreach="element['movements']" t-as="movement">
+                        <div class="col-xs-12" t-if="movement['adr_exe22315'] and not movement['adr_qty_limit'] > 0">
+                            UN <t t-esc="movement['adr_idnumonu']"/> <t t-esc="movement['official_name']"/>, <small t-if="movement['adr_denomtecnica']">(<span t-esc="movement['adr_denomtecnica']"/>)</small>, <span t-if="movement['adr_acc_signals']" t-esc="movement['adr_acc_signals']"/> <span t-if="not movement['adr_acc_signals']" t-esc="movement['ranking_id']"/>, <t t-esc="movement['packing_group']"/>, (<t t-esc="movement['t_code']"/>) <small t-if="movement['adr_peligroma']">*Peligroso para el medioambiente</small>
+                        </div>
+                        <div class="col-xs-12" t-if="movement['adr_exe22315'] and not movement['adr_qty_limit'] > 0">
+                            <div class="col-xs-3">
+                                Peso: <span t-esc="movement['adr_regular_weight']"/> Kg.
+                            </div>
+                            <div class="col-xs-3">
+                                Cantidad: <span t-esc="movement['product_qty']"/>
+                            </div>
+                            <div class="col-xs-6">
+                                Descripción embalaje: <t t-esc="movement['adr_bultodesc']"/>
+                            </div>
+                        </div>                        
+                    </t>
+                    <div class="col-xs-12">
+                        <strong>Peso total: <t t-esc="exe22315_total_weight"/> Kg. Transporte acogido a la exención 2.2.3.1.5 ADR.</strong>
+                    </div>
+                </t>
+                
+            </div>
+
+            <div class="row" t-if="counter_lq is not 0" style="background-color:#fff !important; padding-top: 10px; border-top: solid 1px black;">
+            </div>
+
+            <div class="row" t-if="counter_lq is not 0" style="background-color:#fff !important; border-left: solid 1px black; border-right: solid 1px black; border-bottom: solid 1px black;">
+                <div class="col-xs-12 text-center" style="border-bottom: solid 1px black; border-top: solid 1px black;">
+                    Exención por cantidad limitada (LQ)
+                </div>
+
+                <t t-foreach="elements" t-as="element">
+                    <t t-foreach="element['movements']" t-as="movement">
+                        <div class="col-xs-12" t-if="movement['adr_qty_limit'] > 0">
+                            UN <t t-esc="movement['adr_idnumonu']"/> <t t-esc="movement['official_name']"/>, <small t-if="movement['adr_denomtecnica']">(<span t-esc="movement['adr_denomtecnica']"/>)</small>, <span t-if="movement['adr_acc_signals']" t-esc="movement['adr_acc_signals']"/> <span t-if="not movement['adr_acc_signals']" t-esc="movement['ranking_id']"/>, <t t-esc="movement['packing_group']"/>, (<t t-esc="movement['t_code']"/>) <small t-if="movement['adr_peligroma']">*Peligroso para el medioambiente</small>
+                        </div>
+                        <div class="col-xs-12" t-if="movement['adr_qty_limit'] > 0">
+                            <div class="col-xs-3">
+                                Peso: <span t-esc="movement['adr_regular_weight']"/> Kg.
+                            </div>
+                            <div class="col-xs-3">
+                                Cantidad: <span t-esc="movement['product_qty']"/>
+                            </div>
+                            <div class="col-xs-6">
+                                Descripción embalaje: <t t-esc="movement['adr_bultodesc']"/>
+                            </div>
+                        </div>                       
+                    </t>
+                    <div class="col-xs-12">
+                        <strong>Peso total: <t t-esc="lq_total_weight"/> Kg. Transporte acogido a la exención por cantidades limitadas.</strong>
+                    </div>
+                </t>
+                
+            </div>
+
+            <div class="row" style="background-color:#fff !important; padding-top: 10px; border-top: solid 1px black; page-break-after: always;">
+            </div>
+
+            <div class="row" style="background-color:#fff !important;">
+                <div class="col-xs-12">
+                    <div class="col-xs-2">
+                        <t t-esc="date"/>
+                    </div>
+                    <div class="col-xs-10">
+                        Detalle de mercancía de la carta de porte ADR: <t t-esc="picking_batch"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" style="background-color:#fff !important; padding-top: 10px; border-top: solid 1px black;">
+            </div>
+
+            <div class="row" style="background-color:#fff !important; border: solid 1px black;">
+                <div class="col-xs-12" style="border-bottom: solid 1px black; text-align: left;">
+                    <div class="col-xs-2">
+                        PAQUETE
+                    </div>
+                    <div class="col-xs-2">
+                        REFERENCIA
+                    </div>
+                    <div class="col-xs-7">
+                        DESCRIPCIÓN
+                    </div>
+                    <div class="col-xs-1">
+                        UDS
+                    </div>
+                </div> 
+
+                <t t-foreach="elements" t-as="element">
+                    <t t-set="previous_origin" t-value="0"/>
+                    <t t-foreach="element['movements']" t-as="movement">
+                        <t t-if="previous_origin != movement['picking_id']">
+                            <div class="col-xs-12">
+                                <div class="col-xs-3 col-xs-offset-1" style="border-bottom: solid 1px black; text-align: left;">
+                                    Albarán: <t t-esc="movement['picking_id']"/> 
+                                </div>
+                            </div>
+                        </t>
+                        <div class="col-xs-12" style="text-align: left;">
+                            <div class="col-xs-2">
+                                <t t-esc="movement['result_package_id']"/> 
+                                <t t-set="previous_origin" t-value="movement['picking_id']"/>
+                            </div>
+                            <div class="col-xs-2">
+                                <t t-esc="movement['default_code']"/>
+                            </div>
+                            <div class="col-xs-7">
+                                <t t-esc="movement['name']"/>
+                            </div>
+                            <div class="col-xs-1">
+                                <t t-esc="movement['product_qty']"/>
+                            </div>
+                        </div>                    
+                    </t>
+                </t>
+            </div>
+
+        </div>
+
+    </template>
+</odoo>

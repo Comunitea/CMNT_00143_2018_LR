@@ -5,7 +5,10 @@
     <record id="view_virtual_fair_form" model="ir.ui.view">
         <field name="model">virtual.fair</field>
         <field name="arch" type="xml">
-            <form string="Virtual Fair" create="false" edit="false">
+            <form string="Virtual Fair" create="false" >
+                <header>
+                    <button name="invoice_suppliers" type="object" string="Invoice fair end"/>
+                </header>
                 <sheet>
                     <div class="oe_title">
                         <h1>
@@ -29,8 +32,8 @@
                             </group>
                         </page>
                     </notebook>
-                    
-                </sheet> 
+
+                </sheet>
             </form>
         </field>
     </record>
@@ -38,7 +41,7 @@
     <record id="view_virtual_fair_tree" model="ir.ui.view">
         <field name="model">virtual.fair</field>
         <field name="arch" type="xml">
-            <tree string="Virtual Fair" create="false" edit="false">
+            <tree string="Virtual Fair" create="false" >
                 <field name="name"/>
                 <field name="id_name"/>
                 <field name="date_start"/>
@@ -60,7 +63,7 @@
         <field name="name">view.fair.customer.line.tree</field>
         <field name="model">fair.customer.line</field>
         <field name="arch" type="xml">
-            <tree string="Virtual Fair" create="false" edit="false" delete="false">
+            <tree string="Virtual Fair" >
                 <field name="ref_int"/>
                 <field name="customer_id"/>
                 <field name="condition_type"/>
@@ -74,7 +77,7 @@
         <field name="name">view.fair.customer.line.form</field>
         <field name="model">fair.customer.line</field>
         <field name="arch" type="xml">
-            <form string="Virtual Fair" create="false" edit="false" delete="false">
+            <form string="Virtual Fair" >
                 <group col="4">
                     <field name="customer_id"/>
                     <field name="term_id"/>
@@ -95,7 +98,7 @@
         <field name="name">view.fair.supplier.line.tree</field>
         <field name="model">fair.supplier.line</field>
         <field name="arch" type="xml">
-            <tree string="Virtual Fair" create="false" edit="false" delete="false">
+            <tree string="Virtual Fair" >
                 <field name="ref_int"/>
                 <field name="supplier_id"/>
                 <field name="condition_type"/>
@@ -108,7 +111,7 @@
         <field name="name">view.fair.customer.line.form</field>
         <field name="model">fair.supplier.line</field>
         <field name="arch" type="xml">
-            <form create="false" edit="false" delete="false">
+            <form >
                 <group>
                     <field name="supplier_id"/>
                 </group>
@@ -131,7 +134,7 @@
         <field name="name">view.condition.line.tree</field>
         <field name="model">condition.line</field>
         <field name="arch" type="xml">
-            <tree string="Virtual Fair" create="false" edit="false" delete="false">
+            <tree string="Virtual Fair" >
                 <field name="facturation"/>
                 <field name="condition_type"/>
             </tree>
@@ -142,7 +145,7 @@
         <field name="name">view.condition.line.form</field>
         <field name="model">condition.line</field>
         <field name="arch" type="xml">
-            <form create="false" edit="false" delete="false">
+            <form >
                 <group col="4">
                     <field name="facturation"/>
                     <field name="condition_type"/>
@@ -159,7 +162,7 @@
         <field name="name">view.section.line.tree</field>
         <field name="model">section.line</field>
         <field name="arch" type="xml">
-            <tree string="Virtual Fair" create="false" edit="false" delete="false">
+            <tree string="Virtual Fair" >
                 <field name="ean"/>
                 <field name="linf"/>
                 <field name="lsup"/>
@@ -174,7 +177,7 @@
         <field name="name">view.section.line.form</field>
         <field name="model">section.line</field>
         <field name="arch" type="xml">
-            <form string="Virtual Fair" create="false" edit="false" delete="false">
+            <form string="Virtual Fair">
                 <group>
                     <field name="term_id"/>
                 </group>
@@ -190,6 +193,6 @@
 
     <menuitem id="menu_virtual_fair" name="Virtual Fairs"  web_icon="virtual_fair,static/description/fair.png" sequence="8" parent="account.menu_finance"/>
     <menuitem id="menu_action_virtual_fair" name="Virtual Fairs" action="action_virtual_fair"  parent="menu_virtual_fair" sequence="1"/>
-    
-    
+
+
 </odoo>

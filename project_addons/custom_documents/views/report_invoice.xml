@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    <template id="report_invoice_custom_fix" inherit_id="sale_stock.report_invoice_document_inherit_sale_stock">
+        <xpath expr="//p[@t-field='o.date_due']/../.." position="replace"></xpath>
+    </template>
+
     <template id="custom_invoice_layout">
         <div class="article o_report_layout_standard">
             <t t-raw="0" />
@@ -89,21 +93,22 @@
                 <p t-if="o.payment_term_id">
                     <span t-field="o.payment_term_id.note"/>
                 </p>
-                <t t-set="expiration_dates" t-value="o.get_expiration_dates_tuples(1, True)"/>
-                <t t-if="expiration_dates">
-                    <center><h5 style="font-weight: bold; font-family: Courier New">Expiration dates</h5></center>
-                    <table class="table" style="font-weight: bold; font-family: Courier New">
-                        <t t-foreach="expiration_dates" t-as="expiration_line">
-                            <tr>
-                                <td> <span t-esc="expiration_line[0]"/> </td>
-                                <td> <span t-esc="expiration_line[1]"/> </td>
-                            </tr>
-                        </t>
-                    </table>
+                <t t-if="not o.payment_mode_id.not_show_due_dates_in_report">
+                    <t t-set="expiration_dates" t-value="o.get_expiration_dates_tuples(1, True)"/>
+                    <t t-if="expiration_dates">
+                        <center><h5 style="font-weight: bold; font-family: Courier New">Expiration dates</h5></center>
+                        <table class="table" style="font-weight: bold; font-family: Courier New">
+                            <t t-foreach="expiration_dates" t-as="expiration_line">
+                                <tr>
+                                    <td> <span t-esc="expiration_line[0]"/> </td>
+                                    <td> <span t-esc="expiration_line[1]"/> </td>
+                                </tr>
+                            </t>
+                        </table>
+                    </t>
                 </t>
             </div>
         </xpath>
-        <xpath expr="//p[@t-field='o.date_due']/../.." position="replace"></xpath>
         <xpath expr="//span[@t-field='o.number']/.." position="replace"></xpath>
 
         <xpath expr="//div[@t-field='o.partner_shipping_id']/../.." position="before">
