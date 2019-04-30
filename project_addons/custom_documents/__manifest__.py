@@ -11,7 +11,9 @@
         'account',
         'account_due_dates_str',
         'base_multi_image',
-        'account_invoice_custom'
+        'account_invoice_custom',
+        'sale',
+        'sale_stock'
     ],
     'data': [
         'data/report_paperformat.xml',
