@@ -21,5 +21,6 @@
         'views/campaign.xml',
         'views/sale_order_view.xml',
         'views/purchase_view.xml',
+        'wizard/close_campaign_wzd.xml',
     ],
 }
