@@ -135,10 +135,10 @@ class DeliveryBatchCustomReport(models.AbstractModel):
             'elements': elements,
             'exention_type': exention_type,
             'category_max_weight': category_max_weight,
-            'regular_total_weight': regular_total_weight,
-            'exe22315_total_weight': exe22315_total_weight,
+            'regular_total_weight': "%.2f" % round(regular_total_weight,2),
+            'exe22315_total_weight': "%.2f" % round(exe22315_total_weight,2),
             'counter_22315': counter_22315,
-            'lq_total_weight': lq_total_weight,
+            'lq_total_weight': "%.2f" % round(lq_total_weight,2),
             'counter_lq': counter_lq,
             'company_data': company_data,
             'delivery_carrier_data': delivery_carrier_data

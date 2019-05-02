@@ -29,7 +29,7 @@
         </div>
     </template>
 
-    <template id="report_invoice_document" inherit_id="sale.report_invoice_document_inherit_sale">
+    <!--template id="report_invoice_document" inherit_id="sale.report_invoice_document_inherit_sale">
         <xpath expr="//div[@id='total']" position="replace">
             <div id="total" class="row">
                 <div class="col-xs-5 pull-right">
@@ -247,5 +247,5 @@
         </xpath>
 
 
-    </template>
+    </template-->
 </odoo>

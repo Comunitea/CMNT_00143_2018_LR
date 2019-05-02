@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="view_check_adaia_stock" model="ir.ui.view">
+        <field name="name">view.check.adaia.stock</field>
+        <field name="model">wiz.check.adaia.stock</field>
+        <field name="arch" type="xml">
+            <form string="Check adaia stock">
+
+                    <p>This wizard check stock with adaia</p>
+                    <p>This are filters if you don't need all references</p>
+                <group>
+                    <field name="categ_ids"/>
+
+                    <field name="zero_qty"/>
+                    <field name="no_zero_qty"/>
+                    <field name="neg_qty"/>
+
+                </group>
+                <footer>
+                    <button name="regularize" string="Send file to Adaia" type="object" default_focus="1" class="oe_highlight" />
+                    or
+                    <button special="cancel" string="Cancel" class="oe_link" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
+    <record id="act_check_all_adaia_stock" model="ir.actions.act_window">
+        <field name="name">Check stock (Adaia)</field>
+        <field name="res_model">wiz.check.adaia.stock</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="check_all_adaia_stock" name="Check adaia stock" parent="menu_sga_adaia" sequence="17" action="act_check_all_adaia_stock"/>
+
+</odoo>
