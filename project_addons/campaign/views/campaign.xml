@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- VIRTUAL FAIR VIEWS -->
+    <!-- CAMPAIGN VIEWS -->
+
+    <record id="action_campaign_articles" model="ir.actions.act_window">
+        <field name="name">Campaign Articles</field>
+        <field name="res_model">campaign.article.line</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree</field>
+        <field name="context">{'search_default_campaign_id': active_id}</field>
+    </record>
+
+
     <record id="view_campaign_form" model="ir.ui.view">
         <field name="model">campaign</field>
         <field name="arch" type="xml">
@@ -140,15 +150,6 @@
         </field>
     </record>
 
-
-
-    <record id="action_campaign_articles" model="ir.actions.act_window">
-        <field name="name">Campaign Articles</field>
-        <field name="res_model">campaign.article.line</field>
-        <field name="view_type">form</field>
-        <field name="view_mode">tree</field>
-        <field name="context">{'search_default_campaign_id': active_id}</field>
-    </record>
 
     <record id="action_menu_campaign_articles" model="ir.actions.act_window">
         <field name="name">Campaign Articles</field>
