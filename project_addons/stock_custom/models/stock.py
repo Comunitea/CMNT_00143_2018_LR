@@ -9,23 +9,24 @@ class StockMove(models.Model):
     _inherit = 'stock.move'
 
     def _action_done(self):
+        
         result = super(StockMove, self)._action_done()
-        for move in self:
-            if move.state == 'done':
-                line = move.sale_line_id
-                if move.location_dest_id.usage == "customer":
-                    if not move.origin_returned_move_id or \
-                            (move.origin_returned_move_id and
-                                move.to_refund):
-                        qty = move.product_uom._compute_quantity(
-                            move.product_uom_qty, self.product_uom)
-                elif move.location_dest_id.usage != "customer" and \
-                        move.to_refund:
-                    qty = -move.product_uom._compute_quantity(
+        for move in self.filtered(lambda x: x.state == 'done' and x.sale_line_id):
+            qty=0.0
+            line = move.sale_line_id
+            if move.location_dest_id.usage == "customer":
+                if not move.origin_returned_move_id or \
+                        (move.origin_returned_move_id and
+                            move.to_refund):
+                    qty = move.product_uom._compute_quantity(
                         move.product_uom_qty, self.product_uom)
-                self.env['sale.order.line.delivery'].create({
-                    'line_id': line.id,
-                    'quantity': qty,
-                    'delivery_date': date.today(),
-                })
+            elif move.location_dest_id.usage != "customer" and \
+                    move.to_refund:
+                qty = -move.product_uom._compute_quantity(
+                    move.product_uom_qty, self.product_uom)
+            self.env['sale.order.line.delivery'].create({
+                'line_id': line.id,
+                'quantity': qty,
+                'delivery_date': date.today(),
+            })
         return result
