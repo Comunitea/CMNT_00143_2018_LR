@@ -16,6 +16,7 @@
         'delivery'
     ],
     'data': [
-        'views/res_partner_view.xml'
+        'views/res_partner_view.xml',
+        #'views/stock_picking.xml'
     ],
 }
