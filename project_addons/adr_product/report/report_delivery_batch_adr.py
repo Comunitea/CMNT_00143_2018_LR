@@ -112,7 +112,7 @@ class DeliveryBatchCustomReport(models.AbstractModel):
             'logo_web': objects[0].picker_id.company_id.logo_web,
             'vat': objects[0].picker_id.company_id.vat
         }
-
+        company_id = self.env.user.company_id
         delivery_carrier_data = {
             'vat': objects[0].carrier_partner_id.vat,
             'vehicle': objects[0].carrier_partner_id.vehicle_plates
@@ -141,6 +141,7 @@ class DeliveryBatchCustomReport(models.AbstractModel):
             'lq_total_weight': "%.2f" % round(lq_total_weight,2),
             'counter_lq': counter_lq,
             'company_data': company_data,
+            'company_id': company_id,
             'delivery_carrier_data': delivery_carrier_data
         }
         return docargs

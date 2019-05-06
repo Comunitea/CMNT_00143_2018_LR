@@ -33,9 +33,9 @@
                     <div class="col-xs-4">
                         <div class="panel panel-info break-word" style="border: none;">
                             <div class="panel-body">
-                                <img t-if="company_data" t-att-src="'data:image/png;base64,%s' % to_text(doc.picker_id.company_id['logo_web'])"/>
-                                <div class='o_div_text_overflow' t-field="doc.picker_id.company_id.partner_id" t-options="{'widget': 'contact','fields': ['name', 'address'], 'no_marker': True}" />
-                                <t t-if="company_data"  t-esc="doc.picker_id.company_id['vat']"/><br/>
+                                <img t-if="company_data" t-att-src="'data:image/png;base64,%s' % to_text(company_id['logo_web'])"/>
+                                <div class='o_div_text_overflow' t-field="company_id.partner_id" t-options="{'widget': 'contact','fields': ['name', 'address'], 'no_marker': True}" />
+                                <t t-if="company_data"  t-esc="company_id['vat']"/><br/>
                             </div>
                         </div>
                     </div>
@@ -66,8 +66,8 @@
                     <div class="col-xs-5" style="border: solid 1px black; margin-bottom: 5px;">
                         <div class="panel panel-info break-word" style="border: none;">
                             <div class="panel-body">
-                                <div class='o_div_text_overflow' t-field="doc.picker_id.company_id.partner_id" t-options="{'widget': 'contact','fields': ['name', 'address', 'vat'], 'no_marker': True}" />
-                                <t t-if="company_data"  t-esc="doc.picker_id.company_id['vat']"/><br/>
+                                <div class='o_div_text_overflow' t-field="company_id.partner_id" t-options="{'widget': 'contact','fields': ['name', 'address', 'vat'], 'no_marker': True}" />
+                                <t t-if="company_data"  t-esc="company_id['vat']"/><br/>
                             </div>
                         </div>
                     </div>
