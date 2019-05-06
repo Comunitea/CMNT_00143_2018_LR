@@ -273,7 +273,17 @@ class DirectInvoiceWzd(models.TransientModel):
             inv = self._create_invoice(prov_inv)
             prov_inv._onchange_payment_term_date_invoice()
             payment_term_id = prov_inv.payment_term_id
-            inv.write({'payment_term_id': payment_term_id.id,
+            # Comprobación CONFIRMING HARDCODEADO. Debemos buscar una
+            # solucion mejor !!!!
+            if prov_inv.payment_mode_id.id == 5 and \
+                    prov_inv.commercial_partner_id\
+                        .property_direct_payment_term_id:
+                payment_term_id = \
+                    prov_inv.commercial_partner_id\
+                        .property_direct_payment_term_id
+                inv.write({'payment_term_id': payment_term_id.id})
+            else:
+                inv.write({'payment_term_id': payment_term_id.id,
                        'supplier_maturity_date': True})
             created_invoices += inv
             _logger.info("Creando facturación normal")
