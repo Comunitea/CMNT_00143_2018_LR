@@ -15,7 +15,7 @@ class StockMove(models.Model):
         lot_stock = wh_ids.mapped('lot_stock_id')
         domain = [
                     ('state', 'not in', ['draft', 'cancel', 'done']),
-                    '|', ('location_id', 'child_of', lot_stock.ids), ('location_dest_id', 'child_of', lot_stock.ids)]
+                    '|', '|', ('location_id', 'child_of', lot_stock.ids), ('location_dest_id', 'child_of', lot_stock.ids), ('location_dest_id.usage', '=', 'customer')]
         return domain
 
     @api.multi

@@ -13,20 +13,20 @@ class StockMoveLine(models.Model):
     name = fields.Char(related="product_id.product_tmpl_id.name")
     partner_default_shipping_type = fields.Selection(related="move_id.partner_id.default_shipping_type")
     result_package_shipping_type = fields.Selection(related="result_package_id.shipping_type")
-    shipping_type = fields.Selection(
-        [('pasaran', 'Pasarán'),
-         ('agency', 'Agencia'),
-         ('route', 'Ruta')],
-        string='Tipo de envío',
-        help="Tipo de envío seleccionado.",
-    )
+
+
+    def get_domain_for_apk_list(self, vals):
+        location_dest_id = vals.get('location_dest_id', False)
+        partner_id = vals.get('partner_id', False)
+        domain = [('location_dest_id', '=', location_dest_id), ('state', 'in', ['done']),
+                  ('move_dest_ids.move_line_ids.state', 'in', ['assigned']),
+                  ('move_dest_ids.move_line_ids.move_id.partner_id', '=', partner_id)]
+        return domain
 
     @api.model
     def get_stock_move_lines_list_apk(self, vals):
-        location_dest_id = vals['location_dest_id']
-        partner_id = vals['partner_id']
 
-        domain = [('location_dest_id', '=', location_dest_id), ('state', 'in', ['done']), ('move_dest_ids.move_line_ids.state', 'in', ['assigned']), ('move_dest_ids.move_line_ids.move_id.partner_id', '=', partner_id)]
+        domain = self.get_domain_for_apk_list(vals)
         move_lines = self.env['stock.move'].search(domain).mapped('move_dest_ids').mapped('move_line_ids')
         pkg_list = move_lines.mapped('result_package_id')
         arrival_pkgs_list = move_lines.mapped('package_id.id')

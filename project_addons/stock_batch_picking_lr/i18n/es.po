@@ -299,7 +299,7 @@ msgid "Ruta"
 msgstr "Ruta"
 
 #. module: stock_batch_picking_lr
-#: model:ir.model.fields,field_description:stock_batch_picking_lr.field_stock_quant_package_stock_batch_id
+#: model:ir.model.fields,field_description:stock_batch_picking_lr.field_stock_quant_package_batch_picking_id
 #: model:ir.ui.view,arch_db:stock_batch_picking_lr.quant_package_delivery_batch_search_view
 msgid "Stock Batch"
 msgstr "Envío"

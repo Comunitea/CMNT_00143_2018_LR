@@ -15,7 +15,7 @@
         'stock',
         'shipping_type',
         'stock_batch_picking',
-        'stock_manual_picking_creation'
+        'stock_picking_group'
     ],
     'data': [
         'views/delivery_carrier_views.xml',
