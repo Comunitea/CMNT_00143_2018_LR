@@ -62,10 +62,12 @@
                     <!--filter string="SGA status" name="by_wh_status" domain="[]"  context="{'group_by':'wh_state'}"/-->
                     <filter string="Partner" name="by_partner_id" domain="[]"  context="{'group_by':'partner_id'}"/>
                     <filter string="Sale order" name="by_sale_id" domain="[]"  context="{'group_by':'sale_id'}"/>
+                    <filter string="Purchase order" name="by_purchase_id" domain="[]"  context="{'group_by':'purchase_id'}"/>
                     <filter string="Origin" name="by_origin" domain="[]"  context="{'group_by':'location_id.location_id'}"/>
                     <filter string="Company" name="by_company" domain="[]"  context="{'group_by':'company_id'}"/>
                     <filter string="Type" name="by_type" domain="[]"  context="{'group_by':'picking_type_id'}"/>
                     <filter string="Picking" name="by_picking" domain="[]"  context="{'group_by':'picking_id'}"/>
+
                 </group>
             </search>
         </field>

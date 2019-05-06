@@ -15,7 +15,7 @@ class StockMove(models.Model):
         lot_stock = wh_ids.mapped('lot_stock_id')
         domain = [
                     ('state', 'not in', ['draft', 'cancel', 'done']),
-                    '|', '|', ('location_dest_id.usage', '=', 'customer'), ('location_id', 'child_of', lot_stock.ids), ('location_dest_id', 'child_of', lot_stock.ids)]
+                    '|', ('location_id', 'child_of', lot_stock.ids), ('location_dest_id', 'child_of', lot_stock.ids)]
         return domain
 
     @api.multi
@@ -26,6 +26,7 @@ class StockMove(models.Model):
         action = self.env.ref(
             'stock_move_selection_wzd.stock_move_sel_action2').read()[0]
         action['domain'] = self.get_moves_selection_domain()
+
         action['views'] = [(tree and tree.id or False, 'tree'),
                            (kanban and kanban.id or False, 'kanban')]
         return action

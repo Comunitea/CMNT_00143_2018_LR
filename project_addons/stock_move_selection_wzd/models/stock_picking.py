@@ -10,6 +10,7 @@ class StockPicking(models.Model):
     @api.model
     def create(self, vals):
         if len(vals) == 1 and vals.get('name', False):
+
             domain = [('name', '=', vals.get('name', False))]
             picking_type_id = self.env['stock.picking.type'].search(domain)
             if not picking_type_id:
