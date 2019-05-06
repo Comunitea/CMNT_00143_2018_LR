@@ -20,6 +20,7 @@ class PurchaseOeder(models.Model):
     
     @api.onchange('campaign_id')
     def onchange_campaign_id(self):
+        return
         if self.supplier_id:
             domain = [
                 ('campaign_id', '=', self.campaign_id.id),
@@ -28,7 +29,7 @@ class PurchaseOeder(models.Model):
             line = self.env['campaign.supplier.line'].search(domain, limit=1)
             if line:
                 self.payment_term_id = line.payment_term_id.id
-        return res
+        return
 
 
 class PurchaseOederLine(models.Model):
