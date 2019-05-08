@@ -22,6 +22,8 @@ class DeliveryBatchReport(models.AbstractModel):
             'vat': objects[0].picker_id.company_id.vat
         }
 
+        company_id = self.env.user.company_id
+
         delivery_carrier_data = {
             'vat': objects[0].carrier_partner_id.vat,
             'vehicle': objects[0].carrier_partner_id.vehicle_plates
@@ -75,6 +77,7 @@ class DeliveryBatchReport(models.AbstractModel):
             'docs': objects,
             'elements': elements,
             'company_data': company_data,
+            'company_id': company_id,
             'delivery_carrier_data': delivery_carrier_data,
             'pickings': pickings
         }
