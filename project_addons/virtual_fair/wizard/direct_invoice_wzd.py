@@ -290,7 +290,7 @@ class DirectInvoiceWzd(models.TransientModel):
 
         if created_invoices:
             _logger.info("Comprobando condiciones feria")
-            created_invoices.set_customer_fair_conditions()
+            fair_invoices.set_customer_fair_conditions()
             _logger.info("Estableciendo colaboración")
             created_invoices.set_featured_line()
             _logger.info("Recalculando impuestos")

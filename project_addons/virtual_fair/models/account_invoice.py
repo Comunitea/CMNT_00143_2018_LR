@@ -205,10 +205,9 @@ class AccountInvoice(models.Model):
         Change conditions based on virtual fair. Only search for payment terms
         """
         for inv in self:
-
-            if not inv.fair_id:
-                return
             term_id = False
+            if not inv.fair_id:
+                continue
             vals = {}
             amount = inv.amount_total
 
