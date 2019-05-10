@@ -223,7 +223,7 @@ class AccountInvoice(models.Model):
             else:
                 # comprobamos condiciones explícitas de proveedor (Nuevas
                 # condiciones de plazo) si no es cliente "congelado"
-                domain = [('customer_invoice_id', '=', self.id)]
+                domain = [('customer_invoice_id', '=', inv.id)]
                 sup_invoice = self.search(domain)[0]
                 domain = [
                     ('supplier_id', '=',
