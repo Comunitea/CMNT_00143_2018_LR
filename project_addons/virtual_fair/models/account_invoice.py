@@ -60,14 +60,16 @@ class AccountInvoice(models.Model):
                                 ('date_maturity', "!=", False)],
                                order="date_maturity asc")
                     move_count = 0
+                    days = []
+                    payment_term_obj = self.env['account.payment.term']
+                    if inv.commercial_partner_id.payment_days:
+                        days = payment_term_obj._decode_payment_days(
+                            inv.commercial_partner_id.payment_days)
                     for move_line in move_lines:
                         new_maturity = fields.Date.from_string(
                             move_lines_sup[move_count].date_maturity)
                         new_maturity = fields.Datetime.to_string(
                             new_maturity - timedelta(days=15))
-                        payment_term_obj = self.env['account.payment.term']
-                        days = payment_term_obj._decode_payment_days(
-                            inv.commercial_partner_id.payment_days)
 
                         new_date = False
                         date = fields.Date.from_string(new_maturity)
@@ -87,7 +89,7 @@ class AccountInvoice(models.Model):
                         if not inv.commercial_partner_id.pays_during_holidays:
                             date = payment_term_obj._after_holidays(
                                 inv.commercial_partner_id, date, days)
-
+                        move_count += 1
                         move_line.write({'date_maturity': date})
                     inv.date_due = date
         return True
