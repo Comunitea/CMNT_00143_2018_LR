@@ -168,6 +168,8 @@ class AccountInvoice(models.Model):
                 days=30))
             domain = [
                 ('supplier_id', '=', inv.partner_id.id),
+                ('fair_id.condition_type', 'not in', ['DESCUENTO_EUR',
+                                                      'DESCUENTO_PCT']),
                 ('fair_id.date_start', '<=', inv.date_invoice),
                 ('fair_id.date_end', '>=', date_ref),
             ]
@@ -244,8 +246,10 @@ class AccountInvoice(models.Model):
                                 for s in cond.section_ids:
                                     if amount >= s.linf and amount <= s.lsup:
                                         term_id = s.term_id.id
-                                        vals.update(
-                                            {'supplier_maturity_date': True})
+                                        if cond.condition_type == \
+                                                'PLAZO_TODOS':
+                                            vals.update(
+                                                {'supplier_maturity_date': True})
                                         break
                 if not term_id:
                     domain = [
