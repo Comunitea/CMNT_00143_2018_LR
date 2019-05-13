@@ -234,6 +234,7 @@ class DirectInvoiceWzd(models.TransientModel):
                         inv_grouped[group_key] += inv
 
         created_invoices = self.env['account.invoice']
+        customer_fair_invoices = self.env['account.invoice']
         _logger.info("Finalizada agrupacion de facturas proveedor ")
         for group_key in inv_grouped: #QUINCENAL
             # Create Invoice for each associate
@@ -267,6 +268,7 @@ class DirectInvoiceWzd(models.TransientModel):
             #     [('name', 'like', '3v60d')])[0]
             # inv.write({'payment_term_id': pay_term.id})
             created_invoices += inv
+            customer_fair_invoices += inv
             _logger.info("Creando facturas feria")
 
         for prov_inv in normal_invoices:  #Facturacion normal
@@ -290,7 +292,7 @@ class DirectInvoiceWzd(models.TransientModel):
 
         if created_invoices:
             _logger.info("Comprobando condiciones feria")
-            fair_invoices.set_customer_fair_conditions()
+            customer_fair_invoices.set_customer_fair_conditions()
             _logger.info("Estableciendo colaboración")
             created_invoices.set_featured_line()
             _logger.info("Recalculando impuestos")

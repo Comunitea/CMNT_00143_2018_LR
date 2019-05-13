@@ -204,6 +204,7 @@ class AccountInvoice(models.Model):
         """
         Change conditions based on virtual fair. Only search for payment terms
         """
+        invoice_obj = self.env['account.invoice']
         for inv in self:
             term_id = False
             if not inv.fair_id:
@@ -224,7 +225,7 @@ class AccountInvoice(models.Model):
                 # comprobamos condiciones explícitas de proveedor (Nuevas
                 # condiciones de plazo) si no es cliente "congelado"
                 domain = [('customer_invoice_id', '=', inv.id)]
-                sup_invoice = self.search(domain)[0]
+                sup_invoice = invoice_obj.search(domain)[0]
                 domain = [
                     ('supplier_id', '=',
                      sup_invoice.commercial_partner_id.id),
