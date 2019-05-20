@@ -168,7 +168,7 @@ class AccountInvoice(models.Model):
                 days=30))
             domain = [
                 ('supplier_id', '=', inv.partner_id.id),
-                ('fair_id.condition_type', 'not in', ['DESCUENTO_EUR',
+                ('condition_type', 'not in', ['DESCUENTO_EUR',
                                                       'DESCUENTO_PCT']),
                 ('fair_id.date_start', '<=', inv.date_invoice),
                 ('fair_id.date_end', '>=', date_ref),
