@@ -15,6 +15,16 @@ class StockBatchPicking(models.Model):
     #     packages = self.move_line_ids.mapped('result_package_id')
     #     self.current_package_list = [(6,0,packages.ids)]
 
+    name = fields.Char(
+        'Name',
+        required=True, index=True,
+        copy=False, unique=True,
+        states={'draft': [('readonly', False)]},
+        default=lambda self: self.env['ir.sequence'].next_by_code(
+            'stock.batch.picking.lr'
+        ),
+    )
+
     carrier_id = fields.Many2one(
         'delivery.carrier', string='Delivery carrier', track_visibility='onchange',
         help='Delivery carrier for this batch picking.')
