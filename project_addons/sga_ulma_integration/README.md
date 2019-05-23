@@ -34,6 +34,8 @@ CREATE FOREIGN TABLE some_table ( field1 integer NOT NULL, field2 varchar(32) NO
 
 ## Integración con Odoo
 
+-- Se puede configurar automáticamente introduciendo los datos desde Inventario->Configuración->Ajustes->Ulma database configuration y utilizando los botones en el orden adecuado.
+
 -- Si necesitas añadir las tablas como un modelo entonces deben tener las tablas propias de Odoo (id, create_date, write_id, create_uid y write_uid),
 en caso de que no las tenga tendrás que crearlas en Oracle y luego agregarlas a tu foreing table.
 
