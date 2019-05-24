@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <template id="rias_homepage_content">
+        <t t-call="website.layout">
+            <div id="wrap">
+                <div class="container">
+                    <div id="carousel_homepage_content" class="carousel slide" data-ride="carousel">
+                        <ol class="carousel-indicators">
+                            <li data-target="#carousel_homepage_content" data-slide-to="0" class="active"/>
+                            <li data-target="#carousel_homepage_content" data-slide-to="1"/>
+                            <li data-target="#carousel_homepage_content" data-slide-to="2"/>
+                        </ol>
+                        <div class="carousel-inner" role="listbox">
+                            <div class="item active">
+                                <img class="img-responsive" src="/theme_rias/static/img/slides/first_slide.svg" alt="First slide"/>
+                                <div class="carousel-caption">
+                                    <h1>Título 1</h1>
+                                    <h3>Descripción 1</h3>
+                                </div>
+                            </div>
+                            <div class="item">
+                                <img class="img-responsive" src="/theme_rias/static/img/slides/second_slide.svg" alt="Second slide"/>
+                                <div class="carousel-caption">
+                                    <h1>Título 2</h1>
+                                    <h3>Descripción 2</h3>
+                                </div>
+                            </div>
+                            <div class="item">
+                                <img class="img-responsive" src="/theme_rias/static/img/slides/third_slide.svg" alt="Third slide"/>
+                                <div class="carousel-caption">
+                                    <h1>Título 3</h1>
+                                    <h3>Descripción 3</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Controls -->
+                        <a class="left carousel-control" href="#carousel_homepage_content" role="button" data-slide="prev">
+                            <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"/>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                        <a class="right carousel-control" href="#carousel_homepage_content" role="button" data-slide="next">
+                            <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"/>
+                            <span class="sr-only">Next</span>
+                        </a>
+                    </div>
+                    <div class="row mt32 mb32">
+                        <h2 class="text-center mt32 mb32">2 Sección</h2>
+                        <div class="col-md-2 col-sm-4 mb16">
+                            <p>Un párrafo</p>
+                            <p>...</p>
+                        </div>
+                        <div class="col-md-2 col-sm-4 mb16">
+                            <p>Otro párrafo</p>
+                            <p>...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <record id="website.homepage" model="ir.ui.view">
+        <field name="name">Home</field>
+        <field name="type">qweb</field>
+        <field name="key">website.homepage</field>
+        <field name="arch" type="xml">
+            <t name="Home" priority="29" t-name="website.homepage">
+                <t t-set="pageName" t-value="'homepage'"/>
+                <t t-call="theme_rias.rias_homepage_content"/>
+            </t>
+        </field>
+    </record>
+
+    <record id="website.homepage_page" model="website.page">
+        <field name="name">Home</field>
+        <field name="website_published">True</field>
+        <field name="url">/</field>
+        <field name="view_id" ref="website.homepage" />
+        <field name="website_ids" eval="[(6, 0, [ref('website.default_website')])]"/>
+    </record>
+
+    <record id="website.default_website" model="website">
+        <field name="homepage_id" ref="website.homepage_page" />
+    </record>
+
+</odoo>
