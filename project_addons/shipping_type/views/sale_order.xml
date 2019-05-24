@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+   <record id="view_sale_order_shipping_type" model="ir.ui.view">
+        <field name="name">sale.order.shipping.type</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <field name="procurement_group_id" position="before">
+                <field name="shipping_type"/>
+                <field name="delivery_route_path_id"/>
+
+
+            </field>
+        </field>
+    </record>
+</odoo>

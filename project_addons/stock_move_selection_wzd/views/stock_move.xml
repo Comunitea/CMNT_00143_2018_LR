@@ -1,5 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
+      <record id="view_picking_type_form" model="ir.ui.view">
+        <field name="name">stock.picking.type.form.grouo</field>
+        <field name="model">stock.picking.type</field>
+        <field name="inherit_id" ref="stock.view_picking_type_form"/>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <field name="code" position="after">
+                <field name="group_code"/>
+
+            </field>
+        </field>
+    </record>
+    <record id="view_pickingtype_filter" model="ir.ui.view">
+        <field name="name">stock.picking.type.filter</field>
+        <field name="model">stock.picking.type</field>
+        <field name="inherit_id" ref="stock.view_pickingtype_filter"/>
+        <field name="arch" type="xml">
+            <field name="warehouse_id" position="after">
+                <field name="group_code"/>
+                <field name="default_location_src_id"/>
+                <field name="default_location_dest_id"/>
+                <field name="group_code"/>
+
+            </field>
+            <xpath expr="//filter[@name='inactive']" position="after">
+                <separator/>
+                <filter string="Picking" name="picking" domain="[('group_code','=','picking')]"/>
+                <filter string="Internal" name="internal" domain="[('group_code','=','internal')]"/>
+                <filter string="Incoming" name="incoming" domain="[('group_code','=','incoming')]"/>
+                <filter string="Outgoing" name="outgoing" domain="[('group_code','=','outgoing')]"/>
+                <filter string="Location" name="location" domain="[('group_code','=','location')]"/>
+                <filter string="Reposition" name="reposition" domain="[('group_code','=','reposition')]"/>
+                <filter string="Other" name="other" domain="[('group_code','=','other')]"/>
+
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter name="group_by_group_code" string="Group code" context="{'group_by': 'group_code'}"/>
+                    <filter name="group_by_code" string="Supplier" context="{'group_by': 'code'}"/>
+                    <filter name="group_by_location_id" string="Origin" context="{'group_by': 'default_location_src_id'}"/>
+                    <filter name="group_by_location_dest_id" string="Destino" context="{'group_by': 'default_location_dest_id'}"/>
+                </group>
+            </xpath>
+
+            </field>
+        </record>
+
+
      <record id="view_move_line_tree_sel" model="ir.ui.view">
         <field name="name">stock.move.tree.sel</field>
         <field name="model">stock.move</field>
@@ -8,23 +56,33 @@
                   decoration-danger="(state not in ('cancel','done'))"
                   string="Move Lines"
                   create="0" default_order="date">
-                <field name="id"/>
-                <field name="date"/>
+                <field name="id" groups="base.group_no_one"/>
+                <field name="date" invisible="context.get('show_date', False)"/>
                 <!--field name="reference" string="Reference"/-->
                 <field name="product_id"/>
-                <field name="location_id"/>
-                <field name="location_dest_id" invisible="1"/>
-
+                <field name="location_id"  invisible="context.get('incoming', False)"/>
+                <field name="package_id" />
+                <field name="location_dest_id" invisible="context.get('outgoing', False)"/>
+                <field name="result_package_id" />
                 <field name="product_uom_qty" string="Quantity Ordered"/>
+                <field name="campaign_id"/>
                 <!--field name="qty_done" string="Quantity Done"/-->
                 <!--field name="product_uom_id" options="{'no_open': True, 'no_create': True}" string="Unit of Measure" groups="product.group_uom"/-->
                 <field name="picking_id"/>
-                <field name="sale_id"/>
-                <field name="shipping_id"/>
+                <field name="picking_type_id" invisible="not context.get('all', False)"/>
+                <field name="shipping_type" invisible="context.get('incoming', False)"/>
+                <field name="delivery_route_path_id" invisible="context.get('incoming', False)"/>
+                <field name="carrier_id" invisible="context.get('incoming', False)"/>
+                <field name="urgent" invisible="context.get('incoming', False)"/>
+
+                <field name="purchase_id" invisible="context.get('outgoing', False)"/>
+                <field name="sale_id" invisible="context.get('incoming', False)"/>
+                <field name="shipping_id" invisible="context.get('show_partner', False)"/>
                 <field name="state"/>
                 <field name="company_id" invisible="1"/>
                 <field name="move_dest_ids" widget="many2many_tags"/>
                 <!--field name="wh_state"/-->
+
             </tree>
         </field>
     </record>
@@ -45,28 +103,66 @@
                 <field name="sale_id" groups="stock.group_stock_multi_locations"/>
                 <field name="shipping_id" groups="stock.group_stock_multi_locations"/>
                 <field name="company_id"/>
+                <field name="package_id"/>
+                <field name="result_package_id"/>
+                <field name="campaign_id"/>
+                <field name="carrier_id"/>
+                <field name="shipping_type"/>
+                <field name="delivery_route_path_id"/>
+                <field name="urgent"/>
+
                 <separator/>
+                <filter name="late" string="Retrasados" domain="[('expected_date','&lt;', time.strftime('%%Y-%%m-%%d %%H:%%M:%%S'))]" help="Movimientos retrasados"/>
                 <!--filter string="To SGA" name="sga" domain="[('state','in', ['assigned', 'partially_available'])]"/-->
-                <filter string="Waiting" name="todo" domain="[('state','in', ['waiting', 'confirmed', 'assigned', 'partially_available'])]"/>
-                <filter string="Done" name="done" domain="[('wh_state','=','done')]"/>
+                <filter string="Waiting" name="todo" domain="[('state','in', ['waiting', 'confirmed', 'partially_available'])]"/>
+                <filter string="Reservado" name="ready" domain="[('state','in', ['assigned', 'partially_available'])]"/>
+                <filter string="Hechos" name="done" domain="[('state','=','done')]"/>
+                <filter string="No hechos" name="not_done" domain="[('state','not in',['done', 'draft'])]"/>
+
+
                 <separator/>
+                <filter string="Urgente" name="urgent" domain="[('urgent','=', True)]"/>
                 <filter string="With pick" name="with_pick" domain="[('picking_id','!=', False)]"/>
                 <filter string="To pick" name="without_pick" domain="[('picking_id','=', False)]"/>
                 <separator/>
-                <filter string="Pickings" name="internal_picking" domain="[('picking_id.picking_type_id.code','=','internal')]"/>
-                <filter string="Receipts" name="incoming_moves" domain="[('picking_id.picking_type_id.code','=','supplier')]"/>
-                <filter string="Outgoing" name="outgoing_moves" domain="[('picking_id.picking_type_id.code','=','customer')]"/>
+                <filter string="Campaña" name="with_campaign_id" domain="[('campaign_id','!=', False)]"/>
+                <filter string="Normal" name="no_campaign_id" domain="[('campaign_id','=', False)]"/>
+                <filter string="Devoluciones" name="returns" domain="[('origin_returned_move_id','!=',False)]"/>
                 <separator/>
+                <filter string="Picking" name="picking" domain="[('picking_type_id.group_code','=','picking')]"/>
+                <filter string="Internal" name="internal" domain="[('picking_type_id.group_code','=','internal')]"/>
+                <filter string="Incoming" name="incoming" domain="[('picking_type_id.group_code','=','incoming')]"/>
+                <filter string="Outgoing" name="outgoing" domain="[('picking_type_id.group_code','=','outgoing')]"/>
+                <filter string="Location" name="location" domain="[('picking_type_id.group_code','=','location')]"/>
+                <filter string="Reposition" name="reposition" domain="[('picking_type_id.group_code','=','reposition')]"/>
+                <filter string="Other" name="other" domain="[('picking_type_id.group_code','=','other')]"/>
+
+                <separator/>
+                <filter string="With package" name="with_package" domain="[('result_package_id','!=', False)]"/>
+                <filter string="With no package" name="with_package" domain="[('result_package_id','=', False)]"/>
+                <separator/>
+                <filter string="Pasarán" name="pasaran_route" domain="[('shipping_type','=', 'pasaran')]"/>
+                <filter string="Agencia" name="agency_route" domain="[('shipping_type','=', 'agency')]"/>
+                <filter string="Ruta" name="route_route" domain="[('shipping_type','=', 'route')]"/>
+
+
                 <group expand="0" string="Group By">
                     <filter string="Status" name="by_state" domain="[]"  context="{'group_by':'state'}"/>
                     <!--filter string="SGA status" name="by_wh_status" domain="[]"  context="{'group_by':'wh_state'}"/-->
                     <filter string="Partner" name="by_partner_id" domain="[]"  context="{'group_by':'partner_id'}"/>
+                    <filter string="Campaña" name="by_campaign_id" domain="[]"  context="{'group_by':'campaign_id'}"/>
                     <filter string="Sale order" name="by_sale_id" domain="[]"  context="{'group_by':'sale_id'}"/>
+                    <filter string="Ruta de transporte" name="by_delivery_path_route_id" domain="[]"  context="{'group_by':'delivery_route_path_id'}"/>
+                    <filter string="Forma de envío" name="by_carrier_id" domain="[]"  context="{'group_by':'carrier_id'}"/>
                     <filter string="Purchase order" name="by_purchase_id" domain="[]"  context="{'group_by':'purchase_id'}"/>
-                    <filter string="Origin" name="by_origin" domain="[]"  context="{'group_by':'location_id.location_id'}"/>
+                    <filter string="Origin" name="by_origin" domain="[]"  context="{'group_by':'location_id'}"/>
+                    <filter string="Dest" name="by_origin" domain="[]"  context="{'group_by':'location_dest_id'}"/>
                     <filter string="Company" name="by_company" domain="[]"  context="{'group_by':'company_id'}"/>
                     <filter string="Type" name="by_type" domain="[]"  context="{'group_by':'picking_type_id'}"/>
                     <filter string="Picking" name="by_picking" domain="[]"  context="{'group_by':'picking_id'}"/>
+                    <filter string="Package" name="by_package" domain="[]"  context="{'group_by':'package_id'}"/>
+                    <filter string="Dest. Package" name="by_dest_package" domain="[]"  context="{'group_by':'result_package_id'}"/>
+
 
                 </group>
             </search>
@@ -138,9 +234,19 @@
             <field name="view_mode">tree,kanban,pivot,form</field>
             <field name="view_id" ref="view_move_line_tree_sel"/>
             <field name="search_view_id" ref="stock_move_view_sel_search"/>
-            <field name="context">{'search_default_todo': 1, 'search_default_without_pick' :1}</field>
+            <field name="context">{'search_default_todo': 1, 'search_default_without_pick': 1}</field>
     </record>
-    <record id="stock_move_sel_action" model="ir.actions.server">
+
+
+     <menuitem
+
+        id="stock_move_sel_menu"
+        parent="stock.menu_stock_root"
+        sequence="0" name="Moves panel"/>
+
+
+
+    <record id="stock_move_sel_action_all" model="ir.actions.server">
             <field name="name">Product Moves</field>
             <field name="res_model">stock.move</field>
             <field name="model_id" ref="model_stock_move"/>
@@ -149,14 +255,126 @@
             <field name="code">
                 action = env['stock.move']._return_action_show_moves()
             </field>
+
     </record>
+    <menuitem
+        action="stock_move_sel_action_all"
+        parent="stock_move_selection_wzd.stock_move_sel_menu"
+        id="stock_move_selection_wzd.menu_stock_move_sel_all"
+        sequence="99" name="All moves"/>
 
+     <record id="stock_move_sel_action_incoming" model="ir.actions.server">
+            <field name="name">Incoming Moves</field>
+            <field name="res_model">stock.move</field>
+            <field name="model_id" ref="model_stock_move"/>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="code">
+                action = env['stock.move']._return_action_show_moves('incoming')
+            </field>
+    </record>
+    <menuitem
+        action="stock_move_sel_action_incoming"
+        parent="stock_move_selection_wzd.stock_move_sel_menu"
+        id="stock_move_selection_wzd.menu_stock_move_sel_incoming"
+        sequence="1" name="Incoming moves"/>
 
-     <menuitem
-        action="stock_move_sel_action"
-        id="stock_move_sel_menu"
-        parent="stock.menu_stock_root"
-        sequence="0" name="Moves panel"/>
+    <record id="stock_move_sel_action_picking" model="ir.actions.server">
+            <field name="name">Picking Moves</field>
+            <field name="res_model">stock.move</field>
+            <field name="model_id" ref="model_stock_move"/>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="code">
+                action = env['stock.move']._return_action_show_moves('picking')
+            </field>
+    </record>
+    <menuitem
+        action="stock_move_sel_action_picking"
+        parent="stock_move_selection_wzd.stock_move_sel_menu"
+        id="stock_move_selection_wzd.stock_move_sel_menu_picking"
+        sequence="2" name="Picking moves"/>
+
+    <record id="stock_move_sel_action_outgoing" model="ir.actions.server">
+            <field name="name">Outgoing Moves</field>
+            <field name="res_model">stock.move</field>
+            <field name="model_id" ref="model_stock_move"/>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="code">
+                action = env['stock.move']._return_action_show_moves('outgoing')
+            </field>
+    </record>
+    <menuitem
+        action="stock_move_sel_action_outgoing"
+        parent="stock_move_selection_wzd.stock_move_sel_menu"
+        id="stock_move_selection_wzd.stock_move_sel_menu_outgoing"
+        sequence="3" name="Outgoing moves"/>
+
+    <record id="stock_move_sel_action_location" model="ir.actions.server">
+            <field name="name">Location Moves</field>
+            <field name="res_model">stock.move</field>
+            <field name="model_id" ref="model_stock_move"/>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="code">
+                action = env['stock.move']._return_action_show_moves('location')
+            </field>
+    </record>
+    <menuitem
+        action="stock_move_sel_action_location"
+        parent="stock_move_selection_wzd.stock_move_sel_menu"
+        id="stock_move_selection_wzd.stock_move_sel_menu_location"
+        sequence="4" name="Location moves"/>
+
+    <record id="stock_move_sel_action_internal" model="ir.actions.server">
+            <field name="name">Internal Moves</field>
+            <field name="res_model">stock.move</field>
+            <field name="model_id" ref="model_stock_move"/>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="code">
+                action = env['stock.move']._return_action_show_moves('internal')
+            </field>
+    </record>
+    <menuitem
+        action="stock_move_sel_action_internal"
+        parent="stock_move_selection_wzd.stock_move_sel_menu"
+        id="stock_move_selection_wzd.stock_move_sel_menu_internal"
+        sequence="5" name="Internal moves"/>
+
+    <record id="stock_move_sel_action_reposition" model="ir.actions.server">
+            <field name="name">Reposition Moves</field>
+            <field name="res_model">stock.move</field>
+            <field name="model_id" ref="model_stock_move"/>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="code">
+                action = env['stock.move']._return_action_show_moves('reposition')
+            </field>
+    </record>
+    <menuitem
+        action="stock_move_sel_action_reposition"
+        parent="stock_move_selection_wzd.stock_move_sel_menu"
+        id="stock_move_selection_wzd.stock_move_sel_menu_reposition"
+        sequence="6" name="Reposition moves"/>
+
+     <record id="stock_move_sel_action_other" model="ir.actions.server">
+            <field name="name">Other Moves</field>
+            <field name="res_model">stock.move</field>
+            <field name="model_id" ref="model_stock_move"/>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="code">
+                action = env['stock.move']._return_action_show_moves('other')
+            </field>
+    </record>
+    <menuitem
+        action="stock_move_sel_action_other"
+        parent="stock_move_selection_wzd.stock_move_sel_menu"
+        id="stock_move_selection_wzd.stock_move_sel_menu_other"
+        sequence="7" name="Other moves"/>
+
 
     <record id="action_assign_picking" model="ir.actions.server">
         <field name="name">Asignar albarán</field>
@@ -175,3 +393,6 @@
     </record>
 
 </odoo>
+
+
+

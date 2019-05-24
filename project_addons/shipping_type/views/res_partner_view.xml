@@ -6,7 +6,8 @@
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
             <field name="property_delivery_carrier_id" position="before">
-                <field name="default_shipping_type"  attrs="{'invisible': [('customer', '=', False)]}"/>
+                <field name="shipping_type"  attrs="{'invisible': [('customer', '=', False)]}"/>
+                <field name="delivery_route_path_id"  attrs="{'invisible': [('customer', '=', False)]}"/>
             </field>
         </field>
      </record>

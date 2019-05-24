@@ -15,13 +15,14 @@
         'stock',
         'shipping_type',
         'stock_batch_picking',
-        'stock_picking_group'
+        'stock_picking_group',
+        'stock_move_selection_wzd'
     ],
     'data': [
-        'views/delivery_carrier_views.xml',
+        #'views/delivery_carrier_views.xml',
         'views/res_partner_views.xml',
         'views/stock_batch_picking_views.xml',
-        'views/delivery_route_path.xml',
+        #'views/delivery_route_path.xml',
         'views/stock_quant_package_views.xml',
         'report/report_delivery_batch_views.xml',
         'security/ir.model.access.csv'

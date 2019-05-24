@@ -11,7 +11,6 @@ from pprint import pprint
 class StockMove(models.Model):
     _inherit = 'stock.move'
 
-
     def _get_new_picking_values(self):
 
         res = super()._get_new_picking_values()

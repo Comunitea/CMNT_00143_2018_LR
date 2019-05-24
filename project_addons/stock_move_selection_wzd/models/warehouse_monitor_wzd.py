@@ -28,22 +28,13 @@ class WarehouseMonitorWzd(models.Model):
 
             move_line = self.env['stock.picking'].search(moves_domain)
             todo_move_line = todo_picking_ids.mapped('move_line')
-
-
                             # '|', '&', ('state', 'not in', ['draft', 'cancel']), ('date_expected', '<=', fields.datetime.now() + timedelta(days=1)),
                             # '&', ('state', '=' , 'done'),  ('date', '>=', fields.datetime.now() - timedelta(days=1))
                             # ]
-
-
             todo_move_line = move_line.filtered(lambda x:x.state != 'done')
 
 
-
-
     type_id = fields.Many2one('stock.picking.type')
-
-
-
     move_line = fields.One2many('stock.move')
     move_line_ids = fields.One2many('stock.move.line')
     #picking_ids = fields.One2many('stock.picking')

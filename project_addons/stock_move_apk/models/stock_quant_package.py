@@ -10,6 +10,14 @@ class StockQuantPackage(models.Model):
 
     @api.model
     def get_lines_info_apk(self, vals):
+        ##Cambio por rendimeinto
+        domain = [('result_package_id', '=',  vals['package'])]
+        lines = self.env['stock.move.line'].search(domain)
+        move_lines_info = []
+        for line in lines:
+            move_lines_info.append((line.id, line.product_id.name, line.ordered_qty))
+        return move_lines_info
+
         package_id = vals['package']
         package_obj = self.env['stock.quant.package'].browse(package_id)
         lines = package_obj.move_line_ids
@@ -39,8 +47,14 @@ class StockQuantPackage(models.Model):
         partner_empty_packages = self.env['stock.quant.package'].search(domain)
         partner_empty_packages_info = []
         for package in partner_empty_packages:
-            partner_empty_packages_info.append((package.id, package.name, package.shipping_type, package.partner_default_shipping_type))
+            partner_empty_packages_info.append((package.id, package.name, package.shipping_type, package.partner_shipping_type))
         return partner_empty_packages_info
+
+    def get_package_vals(self, package_id):
+        vals = {'shipping_type': self.shipping_type,
+                }
+        return vals
+
 
     @api.model
     def change_shipping_type(self, vals):
@@ -54,9 +68,12 @@ class StockQuantPackage(models.Model):
 
         domain = [('result_package_id', '=', package_id)]
         move_line_ids = self.env['stock.move.line'].search(domain)
-        for move_line in move_line_ids:
-            move_line.update({
-                'shipping_type': shipping_type
-            })
+
+        ##saco vals de la función por claridad
+        vals = package_obj.get_package_vals()
+        move_line_ids.write(vals)
+        #necesito escribir en los move.line y en los move para porder filtrar despues
+        move_line_ids.mapped('move_id').write(vals)
+
 
         return True

@@ -25,7 +25,6 @@ class StockQuantPackage(models.Model):
     @api.multi
     def add_package_to_batch(self):
 
-
         batch_picking_id = self.env['stock.batch.picking'].browse(self._context.get('batch_picking_id'))
 
         if batch_picking_id.state not in ['draft', 'assigned']:

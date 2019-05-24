@@ -12,11 +12,13 @@
     'application': False,
     'installable': True,
     'depends': [
-        'base',
-        'delivery'
+        'stock_batch_picking',
+        'campaign'
+
     ],
     'data': [
         'views/res_partner_view.xml',
-        #'views/stock_picking.xml'
+        'views/sale_order.xml',
+        'views/stock_picking.xml'
     ],
 }

@@ -11,7 +11,7 @@ class StockMoveLine(models.Model):
     origin = fields.Char(related="move_id.origin")
     partner_id = fields.Many2one(related="move_id.partner_id")
     name = fields.Char(related="product_id.product_tmpl_id.name")
-    partner_default_shipping_type = fields.Selection(related="move_id.partner_id.default_shipping_type")
+    partner_shipping_type = fields.Selection(related="move_id.partner_id.shipping_type")
     result_package_shipping_type = fields.Selection(related="result_package_id.shipping_type")
 
 
@@ -41,7 +41,7 @@ class StockMoveLine(models.Model):
                 'origin': move_line.origin,
                 'product_qty': move_line.product_qty,
                 'shipping_type': move_line.shipping_type,
-                'partner_default_shipping_type': move_line.partner_default_shipping_type
+                'partner_shipping_type': move_line.partner_shipping_type
             }
 
             if move_line.package_id.id:
@@ -59,7 +59,7 @@ class StockMoveLine(models.Model):
                     '0': move_line.result_package_id.id,
                     '1': move_line.result_package_id.name,
                     '2': move_line.result_package_id.shipping_type,
-                    '3': move_line.result_package_id.dest_partner_id.default_shipping_type
+                    '3': move_line.result_package_id.dest_partner_id.shipping_type
                 }
                 if move_line_obj['result_package_id'] not in current_partner_pkg_list:
                     current_partner_pkg_list.append(move_line_obj['result_package_id'])
@@ -92,7 +92,7 @@ class StockMove(models.Model):
                 partner_obj = {
                     '0': partner.id,
                     '1': partner.name,
-                    '2': partner.default_shipping_type
+                    '2': partner.shipping_type
                 }
                 partner_list.append(partner_obj)
             return partner_list

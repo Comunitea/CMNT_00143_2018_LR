@@ -1,13 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+     <record id="stock_picking_type_shipping_typr" model="ir.ui.view">
+        <field name="name">stock.picking.type.shipping.type</field>
+        <field name="inherit_id" ref="stock.view_picking_type_form"/>
+        <field name="model">stock.picking.type</field>
+        <field name="arch" type="xml">
+            <xpath expr="//group/field[@name='default_location_src_id']/../.." position="after" >
+                <group string="Logística albaranes" name = "logistics">
+                    <field name="campaign_id"/>
+                    <field name="shipping_type"/>
+                    <field name="delivery_route_path_id"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+    <record id="view_move_shipping_type" model="ir.ui.view">
+        <field name="name">view.move.shipping_type</field>
+        <field name="model">stock.move</field>
+        <field name="inherit_id" ref="stock.view_move_tree"/>
+        <field name="arch" type="xml">
+            <field name="reference" position="after">
+                <field name="campaign_id"/>
+                 <field name="shipping_type" />
+                 <field name="delivery_route_path_id"/>
+                <field name="urgent"/>
+            </field>
+        </field>
+    </record>
    <record id="view_picking_shipping_type" model="ir.ui.view">
         <field name="name">stock.picking.shipping.type</field>
         <field name="model">stock.picking</field>
         <field name="inherit_id" ref="stock.view_picking_form"/>
         <field name="arch" type="xml">
             <field name="picking_type_id" position="after">
+                <field name="campaign_id"/>
                 <field name="shipping_type"/>
+                <field name="delivery_route_path_id"/>
+                <field name="urgent"/>
             </field>
         </field>
     </record>
+
+    <record model="ir.ui.view" id="stock_batch_picking_shipping_type">
+        <field name="name">stock.batch.picking.shipping_type.form</field>
+        <field name="model">stock.batch.picking</field>
+        <field name="inherit_id" ref="stock_batch_picking.stock_batch_picking_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//notebook" position="before">
+
+                <group>
+                    <group>
+
+                        <field name="shipping_type"/>
+                        <field name="delivery_route_path_id"/>
+
+                    </group>
+                    <group>
+                       <field name="carrier_id"/>
+                        <field name="urgent"/>
+                    </group>
+                </group>
+
+
+            </xpath>
+
+        </field>
+    </record>
+    <record id="stock_batch_picking_search" model="ir.ui.view">
+        <field name="name">batch.picking.search</field>
+        <field name="model">stock.batch.picking</field>
+        <field name="inherit_id" ref="stock_batch_picking.stock_batch_picking_search"/>
+
+        <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field name="shipping_type"/>
+                <field name="delivery_route_path_id"/>
+                <field name="carrier_id"/>
+                <field name="urgent"/>
+
+            </field>
+
+            <xpath expr="//filter[@name='picker_id']" position="after">
+                <filter name="shipping_type" string="Shipping type" context="{'group_by':'shipping_type'}"/>
+                <filter name="delivery_route_path_id" string="Ruta de transporte" context="{'group_by':'delivery_route_path_id'}"/>
+                <filter name="carrier_id" string="Forma de envío" context="{'group_by':'carrier_id'}"/>
+                <filter name="group_code" string="Group code" context="{'group_by':'group_code'}"/>
+                <filter name="picking_type_id" string="Picking type" context="{'group_by':'picking_type_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 </odoo>

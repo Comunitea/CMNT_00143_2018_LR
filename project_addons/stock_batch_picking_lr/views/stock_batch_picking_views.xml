@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
     <!-- stock.batch.picking form view -->
     <record model="ir.ui.view" id="stock_batch_picking_lr_form">
         <field name="name">stock.batch.picking.lr.form</field>
@@ -9,36 +10,91 @@
             <xpath expr="//button[@name='action_cancel']" position="after">
                 <button name="batch_printing" string="Print" type="object" class="oe_highlight"/>
             </xpath>
-            <xpath expr="//field[@name='picker_id']" position="after">
-                <field name="picking_type_id"/>
-                <field name="shipping_type"/>
-                <field name="carrier_id" context="{'shipping_type' : 'shipping_type'}" attrs="{'invisible': [('shipping_type', '!=', 'agency')]}"/>
-                <field name="delivery_route_id" context="{'shipping_type' : 'shipping_type'}" attrs="{'invisible': [('shipping_type', '!=', 'route')]}"/>
-                <field name="carrier_partner_id" context="{'shipping_type' : 'shipping_type', 'carrier_id': 'carrier_id'}" attrs="{'invisible': [('shipping_type', 'in', ['pasaran', False])]}"/>
+            <xpath expr="//notebook" position="before">
+
+
+                    <group>
+                        <field name="shipping_type"/>
+                    </group>
+
                 <field name="has_packages" invisible="1"/>
-                <!--field name="current_location_id" readonly="1"/>
-                <field name="current_location_dest_id" readonly="1"/-->
             </xpath>
-            <xpath expr="//notebook/page[1]" position="before">
+            <xpath expr="//field[@name='notes']/.." position="before">
+
                 <page string="Packages">
-                    <field name="current_package_list" widget="many2many" context="{'shipping_type' : 'shipping_type'}" domain="[('batch_picking_id', '=', False), ('shipping_type','=', shipping_type)]">
-                        <tree>
-                            <field name="id" readonly="1"/>
-                            <field name="name" required="1" readonly="1"/>
-                            <field name="dest_partner_id" readonly="1"/>
-                            <field name="shipping_type" readonly="1"/>
-                            <field name="delivery_carrier_id" readonly="1"/>
-                            <field name="batch_picking_id" readonly="1"/>
+                    <field name="current_package_list"
+                           context="{'shipping_type' : shipping_type}"
+                           domain="[('batch_picking_id', '=', False), ('shipping_type','=', shipping_type)]">
+                        <tree edit="0">
+                            <field name="id" />
+                            <field name="name"/>
+                            <field name="dest_partner_id"/>
+                            <field name="shipping_type" />
+                            <!--field name="delivery_carrier_id" readonly="1"/-->
+                            <field name="batch_picking_id"/>
                         </tree>
                     </field>
+                </page>
+                <page string="Delivery" >
+                <group>
+                    <group>
+                        <field name="carrier_id" />
+                        <!--field name="delivery_route_id"/-->
+                    </group>
+                    <group>
+                        <field name="route_driver_id" context="{'default_customer': False, 'supplier': False,
+                        'default_route_driver': True,
+                        'form_view_ref': 'stock_batch_picking_lr.view_partner_form_driver'}">
+                        </field>
+                        <field name="route_plate_id">
+                            <form>
+                                <sheet>
+                                    <group>
+                                        <group>
+                                            <field name="name"/>
+                                        </group>
+                                        <group>
+                                            <field name="default_route_id"/>
+                                            <field name="default_driver_id"/>
+                                        </group>
+                                    </group>
+                                </sheet>
+                            </form>
+
+                        </field>
+                    </group>
+                </group>
                 </page>
             </xpath>
             <xpath expr="//sheet/div[@class='oe_title']" position="before">
                 <div class="oe_button_box" name="button_box">
-                    <button name="action_see_packages" string="Packages" context="{'batch_picking_id' : 'id', 'shipping_type': 'shipping_type'}" type="object"
-                        class="oe_stat_button" icon="fa-cubes"/>
+                    <button name="action_see_packages" string="Packages"
+                            context="{'batch_picking_id' : id, 'shipping_type': shipping_type}"
+                            type="object" class="oe_stat_button" icon="fa-cubes"/>
                 </div>
             </xpath>
         </field>
     </record>
+    <record id="stock_batch_picking_search" model="ir.ui.view">
+        <field name="name">batch.picking.search</field>
+        <field name="model">stock.batch.picking</field>
+        <field name="inherit_id" ref="stock_batch_picking.stock_batch_picking_search"/>
+
+        <field name="arch" type="xml">
+            <field name="name" position="after">
+
+                <field name="picking_type_id"/>
+
+            </field>
+
+            <xpath expr="//filter[@name='picker_id']" position="after">
+                <filter name="group_code" string="Group code" context="{'group_by':'group_code'}"/>
+                <filter name="picking_type_id" string="Picking type" context="{'group_by':'picking_type_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
 </odoo>
+
+
+

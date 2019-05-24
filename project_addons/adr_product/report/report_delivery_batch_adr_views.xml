@@ -73,12 +73,12 @@
                     </div>
                     <div class="col-xs-5 col-xs-offset-2" style="border: solid 1px black;  margin-bottom: 5px;">
                         <div class="panel panel-info break-word" style="border: none;">
-                            <div t-if="doc.carrier_partner_id" class="panel-body">
-                                <div class='o_div_text_overflow' t-field="doc.carrier_partner_id" t-options="{'widget': 'contact','fields': ['name', 'address', 'vat', 'vehicle'], 'no_marker': True}"/>
-                                <t t-if="delivery_carrier_data"  t-esc="delivery_carrier_data['vat']"/><br/>
-                                Matrícula: <t t-if="delivery_carrier_data"  t-esc="delivery_carrier_data['vehicle']"/><br/>
+                            <div t-if="doc.route_driver_id" class="panel-body">
+                                <div class='o_div_text_overflow' t-field="doc.route_driver_id" t-options="{'widget': 'contact','fields': ['name', 'address', 'vat', 'vehicle'], 'no_marker': True}"/>
+                                <t t-if="doc.route_driver_id"  t-esc="doc.route_driver_id['vat']"/><br/>
+                                Matrícula: <t t-if="doc.route_plate_id"  t-esc="doc.route_plate_id.name"/><br/>
                             </div>
-                            <div t-if="not doc.carrier_partner_id" class="panel-body">
+                            <div t-if="not doc.route_driver_id" class="panel-body">
                                 <p>No se ha seleccionado un transportista para este envío.</p>
                             </div>
                         </div>

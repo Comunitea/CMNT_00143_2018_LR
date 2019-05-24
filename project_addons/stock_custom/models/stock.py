@@ -9,7 +9,7 @@ class StockMove(models.Model):
     _inherit = 'stock.move'
 
     def _action_done(self):
-        
+
         result = super(StockMove, self)._action_done()
         for move in self.filtered(lambda x: x.state == 'done' and x.sale_line_id):
             qty=0.0
@@ -19,11 +19,11 @@ class StockMove(models.Model):
                         (move.origin_returned_move_id and
                             move.to_refund):
                     qty = move.product_uom._compute_quantity(
-                        move.product_uom_qty, self.product_uom)
+                        move.product_uom_qty, move.product_uom)
             elif move.location_dest_id.usage != "customer" and \
                     move.to_refund:
                 qty = -move.product_uom._compute_quantity(
-                    move.product_uom_qty, self.product_uom)
+                    move.product_uom_qty, move.product_uom)
             self.env['sale.order.line.delivery'].create({
                 'line_id': line.id,
                 'quantity': qty,

@@ -9,14 +9,16 @@
     'author': "Comunitea, ",
     'depends': [
         'sale_stock',
+
         'stock_picking_imp',
-        'stock_picking_group'
+        'stock_picking_group',
+        'shipping_type'
 
     ],
     'data': [
-        #'views/product_view.xml',
+        'views/picking_type.xml',
         'views/stock_move.xml',
-        #'wizard/stock_move_selection_wzd.xml',
+        'wizard/batch_picking_wzd_view.xml',
 
     ],
     'installable': True,

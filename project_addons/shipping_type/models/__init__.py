@@ -5,3 +5,6 @@
 from . import res_partner
 from . import stock_picking
 from . import stock_quant_package
+from . import procurement
+from . import sale_order
+from . import delivery_route

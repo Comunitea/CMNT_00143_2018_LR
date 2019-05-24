@@ -4,31 +4,73 @@
 
 from odoo import models, fields, api, _
 
+from .stock_picking import PICKING_TYPE_GROUP
+
+class ProcurementRule(models.Model):
+    _inherit = 'procurement.rule'
+
+    def _get_stock_move_values(self, product_id, product_qty, product_uom, location_id, name, origin, values, group_id):
+
+        vals = super()._get_stock_move_values(product_id=product_id,
+                                              product_qty=product_qty,
+                                              product_uom=product_uom,
+                                              location_id=location_id,
+                                              name=name,
+                                              origin=origin,
+                                              values=values,
+                                              group_id=group_id)
+
+        if values.get('sale_line_id', False):
+            sol = self.env['sale.order.line'].browse(values['sale_line_id'])
+            vals.update({'campaign_id': sol.campaign_id and sol.campaign_id.id,
+                         'carrier_id': sol.order_id.carrier_id and sol.order_id.carrier_id.id})
+
+        return vals
+
+
+
 class StockMove(models.Model):
     _inherit = 'stock.move'
 
 
+    ##NEcesito traer estos campos de stock_move_line
+    package_id = fields.Many2one('stock.quant.package', 'Source Package', ondelete='restrict')
+    lot_id = fields.Many2one('stock.production.lot', 'Lot')
+    result_package_id = fields.Many2one(
+        'stock.quant.package', 'Destination Package',
+        ondelete='restrict', required=False,
+        help="If set, the operations are packed into this package")
     dunmy_picking_id = fields.Many2one('stock.picking', 'Transfer Reference', store=False)
 
-    def get_moves_selection_domain(self):
+    def get_moves_selection_domain(self, group_code=''):
         wh_ids = self.env['stock.warehouse'].search([('company_id', '=', self.env.user.company_id.id)])
         lot_stock = wh_ids.mapped('lot_stock_id')
-        domain = [
-                    ('state', 'not in', ['draft', 'cancel', 'done']),
-                    '|', '|', ('location_id', 'child_of', lot_stock.ids), ('location_dest_id', 'child_of', lot_stock.ids), ('location_dest_id.usage', '=', 'customer')]
+        domain = []
+        if group_code:
+            domain += [('picking_type_id.group_code', '=', group_code)]
+        domain += [('state', 'not in', ['draft', 'cancel', 'done'])]
+        print(domain)
         return domain
 
     @api.multi
-    def _return_action_show_moves(self):
+    def _return_action_show_moves(self, group_code=''):
         tree = self.env.ref('stock_move_selection_wzd.view_move_line_tree_sel', False)
         kanban = self.env.ref('stock_move_selection_wzd.view_move_sel_kanban', False)
-
         action = self.env.ref(
             'stock_move_selection_wzd.stock_move_sel_action2').read()[0]
-        action['domain'] = self.get_moves_selection_domain()
-
+        action['domain'] = self.get_moves_selection_domain(group_code)
         action['views'] = [(tree and tree.id or False, 'tree'),
                            (kanban and kanban.id or False, 'kanban')]
+
+        action['context'] = {group_code if group_code else 'all': True,
+                             'show_partner': group_code in ['internal', 'location', 'reposition'],
+                             'show_date': group_code in ['incoming', 'outgoing'],
+                             'search_default_todo': 1,
+                             'search_default_without_pick': 1}
+
+        name_str = [x[1] for x in PICKING_TYPE_GROUP if x[0] == group_code]
+        if name_str:
+            action['display_name'] = "---------> {} Moves".format(name_str[0])
         return action
 
     def get_domain_moves_to_asign(self):
@@ -53,3 +95,17 @@ class StockMove(models.Model):
 
 class StockMoveLine(models.Model):
     _inherit = 'stock.move.line'
+
+    @api.multi
+    def write(self, vals):
+        move_vals = {}
+
+        for f in ['package_id', 'result_package_id']:
+            if f in vals:
+                move_vals.update({f: vals[f]})
+
+        if move_vals:
+            for line in self:
+                line.move_id.write(move_vals)
+
+        return super().write(vals)

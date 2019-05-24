@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_picking_type_kanaban_form" model="ir.ui.view">
+        <field name="name">stock.picking.type.form.selection</field>
+        <field name="model">stock.picking.type</field>
+        <field name="inherit_id" ref="stock.view_picking_type_form"/>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <field name="show_reserved" position="after">
+                <field name="num_error_day"/>
+
+            </field>
+        </field>
+    </record>
+    <record id="stock_picking_type_kanban_moves" model="ir.ui.view">
+            <field name="name">stock.picking.type.kanban.moves</field>
+            <field name="model">stock.picking.type</field>
+            <field name="arch" type="xml">
+                <kanban class="oe_background_grey o_kanban_dashboard o_emphasize_colors o_account_kanban" create="0">
+                    <field name="color"/>
+                    <field name="code"/>
+                    <field name="count_move_ready"/>
+                    <field name="count_move_draft"/>
+                    <field name="count_move_waiting"/>
+                    <field name="count_move_late"/>
+                    <field name="count_move_backorders"/>
+
+                    <field name="kanban_dashboard_graph"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-if="['incoming', 'outgoing', 'internal'].indexOf(record.code.raw_value) &gt; -1" t-attf-class="#{kanban_color(record.color.raw_value)}" name="stock_picking">
+                                <div>
+                                    <div t-attf-class="o_kanban_card_header">
+                                        <div class="o_kanban_card_header_title">
+                                            <div class="o_primary">
+                                                <a type="object" name="get_stock_move_action_move_type">
+                                                    <field name="name"/>
+                                                </a>
+                                            </div>
+                                            <div class="o_secondary"><field class="o_secondary" name="warehouse_id"/></div>
+                                        </div>
+                                        <div class="o_kanban_manage_button_section">
+                                            <a class="o_kanban_manage_toggle_button" href="#"><i class="fa fa-ellipsis-v"/></a>
+                                        </div>
+                                    </div>
+                                    <div class="container o_kanban_card_content">
+                                        <div class="row">
+                                            <div class="col-xs-6 o_kanban_primary_left">
+                                                <button class="btn btn-primary" name="get_action_move_tree_ready" type="object">
+                                                    <span t-if="record.code.raw_value =='incoming'"><t t-esc="record.count_move_ready.value"/> Para recibir</span>
+                                                    <span t-if="record.code.raw_value =='outgoing'"><t t-esc="record.count_move_ready.value"/> Para enviar</span>
+                                                    <span t-if="record.code.raw_value =='internal'"><t t-esc="record.count_move_ready.value"/> Para transferir</span>
+                                                </button>
+                                                <div t-if="record.count_move_ready.raw_value &gt; 0" class="row">
+                                                    <div class="col-xs-9">
+                                                        <a name="get_action_move_tree_ready" type="object">
+                                                            Preparados
+                                                        </a>
+                                                    </div>
+                                                    <div class="col-xs-3">
+                                                        <field name="count_move_ready"/>
+                                                    </div>
+                                                </div>
+
+                                                <div t-if="record.count_move_waiting.raw_value &gt; 0" class="row">
+                                                    <div class="col-xs-9">
+                                                        <a name="get_action_move_tree_waiting" type="object">
+                                                            En espera
+                                                        </a>
+                                                    </div>
+                                                    <div class="col-xs-3">
+                                                        <field name="count_move_waiting"/>
+                                                    </div>
+                                                </div>
+
+                                                <div t-if="record.count_move_late.raw_value &gt; 0" class="row">
+                                                    <div class="col-xs-9">
+                                                        <a class="oe_kanban_stock_picking_type_list" name="get_action_move_tree_late" type="object">
+                                                            Retrasados
+                                                        </a>
+                                                    </div>
+                                                    <div class="col-xs-3">
+                                                        <field name="count_move_late"/>
+                                                    </div>
+                                                </div>
+
+                                                <div t-if="record.count_move_backorders.raw_value &gt; 0" class="row">
+                                                    <div class="col-xs-9">
+                                                        <a class="oe_kanban_stock_picking_type_list" name="get_action_move_tree_backorder" type="object">
+                                                            Back Orders
+                                                        </a>
+                                                    </div>
+                                                    <div class="col-xs-3">
+                                                        <field name="count_move_backorders"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row col-xs-6 text-center">
+                                                <span >
+                                                  <a type="object" name="get_stock_move_action_move_type">
+                                                    <field name="count_move_todo_today"/>
+                                                  </a>
+                                                </span>
+                                                <span class="o_label">Hoy: </span>
+                                                <span class="o_label">
+                                                    <field name="rate_done" widget="gauge" style="cursor: pointer;"/>
+                                                </span>
+                                            </div>
+                                        </div>
+
+
+
+
+                                        <div class="row">
+                                             <field name="kanban_dashboard_graph" t-att-graph_type="'bar'" widget="dashboard_graph"/>
+                                        </div>
+                                    </div>
+                                    <div class="container o_kanban_card_manage_pane">
+                                        <div class="row">
+                                            <div class="col-xs-6 o_kanban_card_manage_section o_kanban_manage_view">
+                                                <div class="o_kanban_card_manage_title">
+                                                    <span>View</span>
+                                                </div>
+                                                <div>
+                                                    <a name="get_stock_move_action_move_type" type="object">Todos</a>
+                                                </div>
+                                                <div>
+                                                    <a name="get_action_move_tree_all_done" type="object">Hechos</a>
+                                                </div>
+                                                <div>
+                                                    <a name="get_action_move_tree_all_not_done" type="object">No hechos</a>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-6 o_kanban_card_manage_section o_kanban_manage_new">
+
+                                                <div>
+                                                    <a name="get_action_move_tree_no_pick" type="object">Sin albaranar</a>
+                                                </div>
+                                                <div>
+                                                    <a name="get_action_move_tree_pasaran" type="object">Pasarán</a>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div t-if="widget.editable" class="o_kanban_card_manage_settings row">
+                                            <div class="col-xs-8">
+                                                <ul class="oe_kanban_colorpicker" data-field="color"/>
+                                            </div>
+                                            <div class="col-xs-4 text-right">
+                                                <a type="edit">Settings</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </t>
+
+                    </templates>
+
+                </kanban>
+            </field>
+   </record>
+
+    <record id="stock_move_kanban_view" model="ir.actions.act_window">
+            <field name="name">Monitor de almacén</field>
+            <field name="res_model">stock.picking.type</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">kanban</field>
+            <field name="view_id" ref="stock_picking_type_kanban_moves"/>
+
+    </record>
+     <menuitem
+        action="stock_move_kanban_view"
+        parent="stock_move_selection_wzd.stock_move_sel_menu"
+        id="stock_move_selection_wzd.menu_stock_move_kanban"
+        sequence="0" name="Monitor de almacén"/>
+</odoo>

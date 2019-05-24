@@ -4,6 +4,23 @@
 
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
+
+
+PICKING_TYPE_GROUP = [('incoming', 'Incoming'),
+                      ('outgoing', 'Outgoing'),
+                      ('picking', 'Picking'),
+                      ('internal', 'Internal'),
+                      ('location','Location'),
+                      ('reposition','Reposition'),
+                      ('other','Other')]
+
+
+class StockPickingType(models.Model):
+    _inherit = 'stock.picking.type'
+
+    group_code = fields.Selection(PICKING_TYPE_GROUP, string="Code group")
+
+
 class StockPicking(models.Model):
     _inherit = 'stock.picking'
 
