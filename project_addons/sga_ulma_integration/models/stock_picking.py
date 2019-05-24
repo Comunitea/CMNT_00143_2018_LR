@@ -22,7 +22,6 @@ class StockBatchPicking(models.Model):
 
                 batch_values_to_send = {
                     'mmmcmdref': "SAL",
-                    'mmmcod': batch.name,
                     'mmmdisref': "SUBPAL",
                     'mmmges': "ULMA",
                     'mmmres': "FINPED",
@@ -74,7 +73,6 @@ class StockPicking(models.Model):
                             'mmmartref': move_line.product_id.product_tmpl_id.default_code,
                             'mmmcanuni': move_line.ordered_qty,
                             'mmmcmdref': "SAL",
-                            'mmmcod': 1,
                             'mmmdisref': "SUBPAL",
                             'mmmexpordref': pick.name,
                             'mmmges': "ULMA",
@@ -97,7 +95,6 @@ class StockPicking(models.Model):
                     pick_values_to_send = {
                         'mmmacccolcod': pick.id,
                         'mmmcmdref': "SAL",
-                        'mmmcod': 1,
                         'mmmdisref': "SUBPAL",
                         'mmmentdes': str(pick.partner_id.name)+'('+str(pick.name)+')',
                         'mmmexpordref': 'N('+str(pick.name)+')',
@@ -131,7 +128,7 @@ class StockPicking(models.Model):
                     flag_type = 2
                 elif ulma_obj.mmmcmdref == 'ERR':
                     pick.write({
-                        'ulma_error': ulma_obj.mmmresmsj or ulma_obj.mmmerrmsj
+                        'ulma_error': ulma_obj.mmmresmsj
                     })
                     flag_type = 1
                 elif ulma_obj.mmmcmdref == 'SAL':

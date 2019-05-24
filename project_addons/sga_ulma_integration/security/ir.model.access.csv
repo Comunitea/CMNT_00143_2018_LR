@@ -1,3 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 sga_ulma_integration,access_sga_ulma_integration,model_ulma_mmmout,base.group_user,1,1,1,1
 sga_ulma_integration_mmminp,access_sga_ulma_integration_mmminp,model_ulma_mmminp,base.group_user,1,1,1,1
+sga_ulma_integration_packinglist,access_sga_ulma_integration_packinglist,model_ulma_packinglist,base.group_user,1,1,1,1

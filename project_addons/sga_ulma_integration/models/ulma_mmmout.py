@@ -9,10 +9,9 @@ class UlmaMmmout(models.Model):
     _name = "ulma.mmmout"
     _description = "Movements sent to Ulma"
     _auto = False
-    _table = "mmmout"
+    _table = "ulma_mmmout"
 
     mmmcmdref = fields.Char(string="mmmcmdref", default='SAL', max=9, NULL=False)
-    mmmcod = fields.Integer(string="mmmcod", max=9, NULL=False)
     mmmdisref = fields.Char(string="mmmdisref", max=9)
     mmmges = fields.Char(default='ULMA', max=9, NULL=False)
     mmmres = fields.Char(max=9)
@@ -50,6 +49,7 @@ class UlmaMmmout(models.Model):
     mmmrecref = fields.Char(max=15)
     mmmubidesref = fields.Char(max=16)
     mmmzondesref = fields.Char(max=4)
+    mmmobs = fields.Char(max=255)
 
 
     @api.model

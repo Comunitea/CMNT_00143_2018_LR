@@ -5,5 +5,6 @@
 from . import stock_picking
 from . import ulma_mmmout
 from . import ulma_mmminp
+from . import ulma_packinglist
 from . import stock_quant_package
 from . import res_config

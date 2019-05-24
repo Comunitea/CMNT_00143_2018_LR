@@ -30,22 +30,18 @@ GRANT ALL PRIVILEGES ON FOREIGN DATA WRAPPER oracle_fdw TO my_postgres_user;
 
 GRANT USAGE ON FOREIGN SERVER oradb_aserver_fire_cons TO my_postgres_user;
 
-CREATE FOREIGN TABLE some_table ( field1 integer NOT NULL, field2 varchar(32) NOT NULL) SERVER oradb_my_server OPTIONS (TABLE 'ORA_TABLE'); <= Poner todas las columnas a las que necesites acceder.
-
-## Integración con Odoo
-
--- Si necesitas añadir las tablas como un modelo entonces deben tener las tablas propias de Odoo (id, create_date, write_id, create_uid y write_uid),
-en caso de que no las tenga tendrás que crearlas en Oracle y luego agregarlas a tu foreing table.
-
-ALTER FOREIGN TABLE foreign_table ADD COLUMN id SERIAL
-ALTER FOREIGN TABLE foreign_table ADD COLUMN create_date timestamp without time zone
-ALTER FOREIGN TABLE foreign_table ADD COLUMN write_date timestamp without time zone
-ALTER FOREIGN TABLE foreign_table ADD COLUMN create_uid integer
-ALTER FOREIGN TABLE foreign_table ADD COLUMN write_uid integer
+CREATE FOREIGN TABLE some_table ( field1 integer NOT NULL, field2 varchar(32) NOT NULL) SERVER oradb_my_server OPTIONS (TABLE 'ORA_TABLE'); <= Poner todas las columnas a las que necesites acceder respetando el orden de filas. Tendrás que sustituir mmmcod por ID si quieres agregar la tabla como modelo a Odoo.
 
 En el modelo escribimos:
 _auto = False
 _table = foreign_table
+
+
+## Modificar tablas
+
+-- Si necesitas añadir columnas nuevas tendrás que crearlas en Oracle y luego agregarlas a tu foreing table en las mismas posiciones que en la tabla original.
+
+ALTER FOREIGN TABLE foreign_table ADD COLUMN column_name data_type
 
 
 # Fuente

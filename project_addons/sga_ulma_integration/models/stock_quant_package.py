@@ -5,7 +5,6 @@
 from odoo import fields, models, tools, api, _
 import datetime, time
 from odoo.exceptions import UserError
-from pprint import pprint
 
 class StockQuantPackage(models.Model):
     _inherit = "stock.quant.package"
@@ -21,7 +20,6 @@ class StockQuantPackage(models.Model):
                 for move_line in package.move_line_ids:
                     des = move_line.product_id.product_tmpl_id.name
                     line_values_to_send = {
-                        'mmmcod': 1,
                         'mmmabclog': move_line.product_id.abc_classification[0],
                         'mmmacccolcod': package.id,
                         'mmmartdes': (des[:40]) if len(des) > 40 else des,
@@ -53,7 +51,6 @@ class StockQuantPackage(models.Model):
                     flag = self.env['ulma.mmmout'].write_package_line(line_values_to_send)
                 
                 line_values_to_send = {
-                    'mmmcod': 1,
                     'mmmacccolcod': package.id,
                     'mmmcmdref': 'ENT',
                     'mmmcntdorref': package.name,
@@ -93,7 +90,7 @@ class StockQuantPackage(models.Model):
                     flag_type = 2
                 elif ulma_obj.mmmcmdref == 'ERR':
                     package.write({
-                        'ulma_error': ulma_obj.mmmresmsj or ulma_obj.mmmerrmsj
+                        'ulma_error': ulma_obj.mmmresmsj
                     })
                     flag_type = 1
                 elif ulma_obj.mmmcmdref == 'ENT':

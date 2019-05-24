@@ -9,8 +9,8 @@
                 <sheet>
                     <group>
                         <group>
+                            <field name="id"/>
                             <field name="mmmcmdref"/>
-                            <field name="mmmcod"/>
                             <field name="mmmges"/>
                             <field name="mmmres"/>
                             <field name="mmmsesid"/>
@@ -53,6 +53,7 @@
                             <field name="mmmrecref"/>
                             <field name="mmmubidesref"/>
                             <field name="mmmzondesref"/>
+                            <field name="mmmobs"/>
                         </group>
                     </group>
                 </sheet>
@@ -65,9 +66,12 @@
         <field name="model">ulma.mmmout</field>
         <field name="arch" type="xml">
                 <search string="Ulma MMMOUT">
-                    <field name="mmmcmdref" string="Reference"/>
                     <field name="mmmbatch" string="Batch"/>
                     <field name="mmmcntdorref" string="Package"/>
+                    <field name="mmmartdes" string="Product"/>
+                    <field name="mmmartref" string="Reference"/>
+                    <field name="mmmcmdref" string="Type"/>
+                    <field name="momcre" string="Package"/>
                 </search>
             </field>
     </record>
@@ -78,9 +82,12 @@
         <field name="arch" type="xml">
             <tree string="Ulma MMMOUT">
                 <field name="id" />
-                <field name="mmmcmdref" string="Reference"/>
+                <field name="mmmcmdref" string="Type"/>
+                <field name="mmmartref" string="Reference"/>
+                <field name="mmmartdes" string="Product"/>
                 <field name="mmmbatch" string="Batch"/>
                 <field name="mmmcntdorref" string="Package"/>
+                <field name="momcre" string="Date"/>
             </tree>
         </field>
     </record>

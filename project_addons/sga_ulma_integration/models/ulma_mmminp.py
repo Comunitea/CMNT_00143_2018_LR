@@ -8,7 +8,7 @@ class UlmaMmminp(models.Model):
     _name = "ulma.mmminp"
     _description = "Movements from Ulma"
     _auto = False
-    _table = "mmminp"
+    _table = "ulma_mmminp"
     
     mmmres = fields.Char(max=9)
     mmmges = fields.Char(default="ULMA", NULL=False, max=9)
@@ -17,9 +17,9 @@ class UlmaMmminp(models.Model):
     mmmsesid = fields.Integer(max=9)
     mmmacccolcod = fields.Integer(max=9)
     mmmresmsj = fields.Char(max=80)
-    mmmerrmsj = fields.Char(max=80)
-    mmmcod = fields.Integer(max=9, NULL=False)
     mmmcanuni = fields.Integer(max=9)
+    mmmartref = fields.Char(max=16)
+    momcre = fields.Date()
 
     @api.multi
     def check_on_create(self, record_id):
