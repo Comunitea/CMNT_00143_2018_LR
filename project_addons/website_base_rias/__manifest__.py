@@ -37,9 +37,12 @@
     'depends': [
         'ecommerce_base',
         'seo_base',
+        'breadcrumbs_base',
+        'purchase',
     ],
     'data': [
         'data/website_data.xml',
+        'data/page_data.xml',
     ],
     'images': [
         '/static/description/icon.png',
