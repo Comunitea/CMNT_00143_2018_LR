@@ -25,6 +25,7 @@
         #'views/delivery_route_path.xml',
         'views/stock_quant_package_views.xml',
         'report/report_delivery_batch_views.xml',
-        'security/ir.model.access.csv'
+        'security/ir.model.access.csv',
+        'data/stock_batch_picking_sequence.xml'
     ]
 }

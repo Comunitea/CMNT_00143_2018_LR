@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- New Sequence for stock.batch.picking, only numeral -->
+    <record id="seq_stock_batch_picking_numeral" model="ir.sequence">
+        <field name="name">Batch Picking</field>
+        <field name="code">stock.batch.picking.lr</field>
+        <field name="prefix">0000</field>
+        <field name="padding">4</field>
+        <field name="company_id" eval="False"/>
+    </record>
+</odoo>

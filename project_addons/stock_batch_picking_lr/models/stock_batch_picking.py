@@ -25,11 +25,34 @@ class StockBatchPicking(models.Model):
     #     packages = self.move_line_ids.mapped('result_package_id')
     #     self.current_package_list = [(6,0,packages.ids)]
     group_code = fields.Selection(PICKING_TYPE_GROUP, string="Code group")
-
-
     route_driver_id = fields.Many2one('res.partner', string='Route driver',
         help='Carrier driver for this batch picking.', domain="[('route_driver', '=', True)]")
     route_plate_id = fields.Many2one('delivery.plate', string='Route plate', help='Plate for this batch picking.')
+    name = fields.Char(
+        'Name',
+        required=True, index=True,
+        copy=False, unique=True,
+        states={'draft': [('readonly', False)]},
+        default=lambda self: self.env['ir.sequence'].next_by_code(
+            'stock.batch.picking.lr'
+        ),
+    )
+    carrier_id = fields.Many2one(
+        'delivery.carrier', string='Delivery carrier', track_visibility='onchange',
+        help='Delivery carrier for this batch picking.')
+    carrier_partner_id = fields.Many2one(
+        'res.partner', string='Carrier driver', track_visibility='onchange',
+        help='Carrier driver for this batch picking.', domain="[('delivery_id', '=', carrier_id)]")
+    delivery_route_id = fields.Many2one(
+        'delivery.route.path', string='Delivery route', track_visibility='onchange',
+        help='Delivery route for this batch picking.')
+    shipping_type = fields.Selection(
+        [('pasaran', 'Pasarán'),
+         ('agency', 'Agencia'),
+         ('route', 'Ruta')],
+        string='Tipo de envío',
+        help="Tipo de envío seleccionado."
+    )
     has_packages = fields.Boolean(
         'Has Packages', compute='_compute_has_packages',
         help='Check the existence of destination packages on move lines')

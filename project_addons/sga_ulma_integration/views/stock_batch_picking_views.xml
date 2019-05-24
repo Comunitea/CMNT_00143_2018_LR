@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="stock_batch_picking_ulma_form" model="ir.ui.view">
+        <field name="name">stock.batch.picking.ulma.form</field>
+        <field name="model">stock.batch.picking</field>
+        <field name="inherit_id" ref="stock_batch_picking.stock_batch_picking_form"/>
+        <field name="arch" type="xml">
+            <notebook position="inside">
+                <page string="Integración ULMA">
+                    <group>
+                        <field name="ulma_state" widget="statusbar" statusbar_visible="W,P,E"
+                            statusbar_colors='{"E":"red", "W":"blue", "P":"green"}'/>
+                        <button name="send_to_ulma" string="Mover a ULMA" type="object"
+                            class="oe_stat_button" icon="fa-shopping-cart"/>
+                        <button name="get_from_ulma" string="Recibir de ULMA" type="object"
+                            class="oe_stat_button" icon="fa-shopping-cart"/>
+                    </group>
+                </page>
+            </notebook>
+        </field>
+    </record>
+
+    <!-- stock.batch.picking tree ulma status view -->
+    <record model="ir.ui.view" id="stock_batch_picking_ulma_tree">
+        <field name="name">stock.batch.picking.ulma.tree</field>
+        <field name="model">stock.batch.picking</field>
+        <field name="inherit_id" ref="stock_batch_picking.stock_batch_picking_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree" position="replace">
+                <tree string="Batch Picking Ulma Status" decoration-info="ulma_state == 'W'" decoration-danger="ulma_state == 'E'"
+                  decoration-success="ulma_state == 'P'">
+                    <field name="name"/>
+                    <field name="picker_id"/>
+                    <field name="date"/>
+                    <field name="state"/>
+                    <field name="ulma_state"/>
+                </tree>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- stock.batch.picking ulma status search view -->
+    <record id="stock_batch_picking_ulma_search" model="ir.ui.view">
+        <field name="name">batch.picking.ulma.search</field>
+        <field name="model">stock.batch.picking</field>
+        <field name="inherit_id" ref="stock_batch_picking.stock_batch_picking_search"/>
+        <field name="arch" type="xml">
+            <field name="state" position="after">
+                <field name="ulma_state"/>
+            </field>
+            <filter name="state" position="after">
+                <filter name="ulma_state" string="Ulma State" context="{'group_by':'ulma_state'}"/>
+            </filter>
+            <filter name="no_picker_id" position="after">
+                <filter name="waiting" string="Waiting" domain="[('ulma_state','=', 'W')]"/>
+                <filter name="error" string="Error" domain="[('ulma_state','=', 'E')]"/>
+                <filter name="processed" string="Processed" domain="[('ulma_state','=', 'P')]"/>
+            </filter>
+        </field>
+    </record>
+
+    <record id="action_stock_batch_picking_ulma_tree"
+            model="ir.actions.act_window">
+        <field name="name">Batch Picking Ulma</field>
+        <field name="res_model">stock.batch.picking</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('ulma_state', 'not in', ['N'])]</field>
+        <field name="context">{'search_default_waiting': 1}</field>
+        <field name="view_id" ref="stock_batch_picking_ulma_tree"/>
+        <field name="search_view_id" ref="stock_batch_picking_ulma_search"/>
+    </record>
+
+    <menuitem id="menu_sga_ulma" name="SGA ULMA" parent="stock.menu_stock_config_settings" groups="stock.group_stock_manager"
+        sequence="26" />
+
+    <!-- stock.batch.picking menuitem in Inventory main menu -->
+    <menuitem action='action_stock_batch_picking_ulma_tree'
+              parent='menu_sga_ulma'
+              id='menu_action_stock_batch_picking_ulma_tree'
+              sequence='1'/>
+
+</odoo>
