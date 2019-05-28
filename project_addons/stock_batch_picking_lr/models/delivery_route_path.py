@@ -5,7 +5,7 @@
 from odoo import models, fields, api, _
 
 class DeliveryRoutePath(models.Model):
-    _name = 'delivery.route.path'
+    _inherit = 'delivery.route.path'
     _order = 'name ASC'
 
     name = fields.Char('Route code')
@@ -24,7 +24,7 @@ class DeliveryPlate(models.Model):
 
 class DeliveryRoutePathDay(models.Model):
 
-    _name = "delivery.route.path.day"
+    _inherit = "delivery.route.path.day"
 
     sequence = fields.Integer('Sequence')
     name = fields.Char('Day')
