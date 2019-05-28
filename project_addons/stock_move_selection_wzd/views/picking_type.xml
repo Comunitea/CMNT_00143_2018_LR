@@ -32,6 +32,7 @@
                     <field name="sga_integrated"/>
                      <field name="count_picking_ready"/>
                     <field name="group_code"/>
+                                        <field name="grouped"/>
 
                     <field name="kanban_dashboard_graph"/>
                     <templates>
@@ -69,7 +70,7 @@
                                                     <span t-if="record.group_code.raw_value =='other'"><t t-esc="record.count_picking_ready.value"/> Albaranes </span>
                                                 </button>
                                                 <button t-if="record.sga_integrated.raw_value" class="btn btn-primary" name="get_action_picking_tree_ready" type="object">
-                                                    <span><t t-esc="record.count_picking_ready.value"/> Para enviar a SGA</span>
+                                                    <span><t t-esc="record.count_picking_ready.value"/> Para SGA</span>
                                                 </button>
 
 
@@ -78,7 +79,7 @@
                                                     <span t-if="record.code.raw_value =='outgoing'"><t t-esc="record.count_move_ready.value"/> Para enviar</span>
                                                     <span t-if="record.code.raw_value =='internal'"><t t-esc="record.count_move_ready.value"/> Para transferir</span>
                                                 </button-->
-                                                <button t-if="record.sga_integrated.raw_value" class="btn btn-warning" name="get_action_move_to_picking_ready" type="object">
+                                                <button t-if="record.grouped.raw_value" class="btn btn-warning" name="get_action_move_to_picking_ready" type="object">
                                                     <span><t t-esc="record.count_move_to_pick.value"/> Sin albarán</span>
                                                 </button>
 

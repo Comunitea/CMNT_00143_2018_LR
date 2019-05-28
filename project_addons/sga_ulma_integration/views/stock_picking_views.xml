@@ -9,7 +9,6 @@
             <xpath expr="//field[@name='sga_integrated']" position="after" >
                 <field name="ulma_integrated" attrs="{'invisible': [('sga_integrated', '=', False)]}"/>
                 <field name="ulma_type" attrs="{'invisible': [('ulma_integrated', '=', False)]}"/>
-
             </xpath>
         </field>
     </record>
@@ -18,30 +17,27 @@
         <field name="model">stock.picking</field>
         <field name="inherit_id" ref="stock_move_selection_wzd.view_picking_form_sga"/>
         <field name="arch" type="xml">
+
+            <xpath expr="//button[@name='button_validate']" position="attributes">
+                <attribute name="attrs">{'invisible': ['|', ('sga_state', '=', 'PS'), ('show_validate', '=', False)]}</attribute>
+            </xpath>
             <field name="sga_integrated" position="after">
                 <field name="ulma_integrated" attrs="{'invisible': [('ulma_integrated', '=', False)]}"/>
             </field>
             <xpath expr="//field[@name='sga_state']" position="before" >
+                        <button name="force_button_validate" string="Forzar validación" type="object"
+                            class="oe_stat_button" icon="fa-shopping-cart" attrs="{'invisible': ['|', ('sga_state', '!=', 'PS'), ('ulma_integrated', '=', False)]}"/>
+
                         <button name="send_to_sga" string="Mover a ULMA" type="object"
-                            class="oe_stat_button" icon="fa-shopping-cart" attrs="{'invisible': [('ulma_integrated', '=', False)]}"/>
+                            class="oe_stat_button" icon="fa-shopping-cart" attrs="{'invisible': ['|', ('sga_state', '=', 'PS'), ('ulma_integrated', '=', False)]}"/>
                         <button name="get_from_ulma" string="Recibir de ULMA" type="object"
                             class="oe_stat_button" icon="fa-shopping-cart" attrs="{'invisible': [('ulma_integrated', '=', False)]}"/>
                         <button name="create_packages_for_ulma" string="Create packages" type="object"
                             class="oe_stat_button" icon="fa-shopping-cart" attrs="{'invisible': [('ulma_integrated', '=', False)]}"/>
+                        <button name="show_ulma_mmmout" string="Mostrar registros en ulma" type="object"
+                            class="oe_stat_button" icon="fa-shopping-cart" attrs="{'invisible': [('ulma_integrated', '=', False)]}"/>
+            </xpath>
 
-            </xpath>
-            <xpath expr="//group[@name='sga_lines']" position="inside" >
-                    <field name="ulma_ids" attrs="{'invisible': [('ulma_integrated', '=', False)]}">
-                        <tree>
-                            <field name="mmmcmdref" readonly="1"/>
-                            <field name="momcre" readonly="1"/>
-                            <field name="mmmentdes" readonly="1"/>
-                            <field name="mmmartdes" readonly="1"/>
-                            <field name="mmmcanuni" readonly="1"/>
-                            <field name="mmmexpordref" readonly="1"/>
-                        </tree>
-                    </field>
-            </xpath>
         </field>
     </record>
 

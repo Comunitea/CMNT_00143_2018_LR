@@ -9,11 +9,11 @@ ULMA_PARAMS = ['ulma_user', 'ulma_pass', 'ulma_host', 'ulma_port', 'ulma_sid',  
 
 SGA_STATES = [('NI', 'Sin integracion'),
               ('NE', 'No enviado'),
-              ('PM', 'Pendiente Sga'),
+              ('PS', 'Pendiente Sga'),
               ('EE', 'Error en exportacion'),
               ('EI', 'Error en importacion'),
-              ('MT', 'Realizado'),
-              ('MC', 'Cancelado')]
+              ('SR', 'Realizado'),
+              ('SC', 'Cancelado')]
 
 
 class ConfigUlmaData(models.TransientModel):

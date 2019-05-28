@@ -56,29 +56,32 @@
                   decoration-danger="(state not in ('cancel','done'))"
                   string="Movimientos"
                   create="0" default_order="date">
-                <field name="id" groups="base.group_no_one"/>
+                <field name="id" groups="base.group_no_one" invisible="1"/>
+                <field name="shipping_id" invisible="context.get('show_partner', False)"/>
                 <field name="date" invisible="1" />
+                <field name="purchase_id" invisible="context.get('outgoing', False)"/>
+                <field name="sale_id" invisible="context.get('incoming', False)"/>
+                <field name="campaign_id" invisible="context.get('incoming', False)"/>
                 <field name="date_expected" invisible="context.get('show_date', False)"/>
                 <!--field name="reference" string="Reference"/-->
+                <field name="shipping_type" invisible="context.get('incoming', False)"/>
+                <field name="delivery_route_path_id" invisible="context.get('incoming', False)"/>
+                <field name="carrier_id" invisible="context.get('incoming', False)"/>
+                <field name="urgent" invisible="context.get('incoming', False)"/>
+
+
                 <field name="product_id"/>
                 <field name="location_id"  invisible="context.get('incoming', False)"/>
                 <field name="package_id" />
                 <field name="location_dest_id" invisible="context.get('outgoing', False)"/>
                 <field name="result_package_id" />
                 <field name="product_uom_qty" string="Quantity Ordered"/>
-                <field name="campaign_id"/>
+
                 <!--field name="qty_done" string="Quantity Done"/-->
                 <!--field name="product_uom_id" options="{'no_open': True, 'no_create': True}" string="Unit of Measure" groups="product.group_uom"/-->
                 <field name="picking_id"/>
                 <field name="picking_type_id" invisible="not context.get('all', False)"/>
-                <field name="shipping_type" invisible="context.get('incoming', False)"/>
-                <field name="delivery_route_path_id" invisible="context.get('incoming', False)"/>
-                <field name="carrier_id" invisible="context.get('incoming', False)"/>
-                <field name="urgent" invisible="context.get('incoming', False)"/>
 
-                <field name="purchase_id" invisible="context.get('outgoing', False)"/>
-                <field name="sale_id" invisible="context.get('incoming', False)"/>
-                <field name="shipping_id" invisible="context.get('show_partner', False)"/>
                 <field name="state"/>
                 <field name="company_id" invisible="1"/>
                 <field name="move_dest_ids" widget="many2many_tags"/>
@@ -112,6 +115,7 @@
                 <field name="delivery_route_path_id"/>
                 <field name="urgent"/>
                 <field name="sga_integrated"/>
+                <field name="shipping_type"/>
                 <separator/>
                 <filter name="late" string="Retrasados" domain="[('date_expected','&lt;', time.strftime('%%Y-%%m-%%d %%H:%%M:%%S'))]" help="Movimientos retrasados"/>
                 <!--filter string="To SGA" name="sga" domain="[('state','in', ['assigned', 'partially_available'])]"/-->
@@ -146,10 +150,11 @@
                 <filter string="Ruta" name="route_route" domain="[('shipping_type','=', 'route')]"/>
                 <separator/>
                 <filter name="sga_integrated" string="SGA" domain="[('sga_integrated','=', True)]"/>
-                <filter name="waiting" string="SGA. Enviado" domain="[('sga_state','=', 'PM')]"/>
+                <filter name="waiting" string="SGA. Enviado" domain="[('sga_state','=', 'PS')]"/>
                 <filter name="error" string="SGA. Error" domain="[('sga_state','in', ['EI', 'EE'])]"/>
                 <filter name="processed" string="SGA. Completado" domain="[('sga_state','=', 'MT')]"/>
                 <group expand="0" string="Group By">
+                    <filter string="Tipo de envío" name="by_shipping_type" domain="[]"  context="{'group_by':'shipping_type'}"/>
                     <filter string="Status" name="by_state" domain="[]"  context="{'group_by':'state'}"/>
                     <!--filter string="SGA status" name="by_wh_status" domain="[]"  context="{'group_by':'wh_state'}"/-->
                     <filter string="Partner" name="by_partner_id" domain="[]"  context="{'group_by':'partner_id'}"/>

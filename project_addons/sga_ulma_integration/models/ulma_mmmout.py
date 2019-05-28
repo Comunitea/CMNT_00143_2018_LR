@@ -4,6 +4,7 @@
 
 from odoo import api, fields, models, tools
 from odoo.exceptions import UserError
+from pprint import pprint
 
 class UlmaMmmout(models.Model):
     _name = "ulma.mmmout"
@@ -53,6 +54,5 @@ class UlmaMmmout(models.Model):
 
     @api.model
     def create(self, vals):
-        new_line = super().create(vals)
-        return new_line
+        return super().create(vals)
 

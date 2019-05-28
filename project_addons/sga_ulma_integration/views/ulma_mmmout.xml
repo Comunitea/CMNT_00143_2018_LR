@@ -81,12 +81,12 @@
         <field name="model">ulma.mmmout</field>
         <field name="arch" type="xml">
             <tree string="Ulma MMMOUT">
-                <field name="id" />
-                <field name="mmmcmdref" string="Type"/>
-                <field name="mmmartref" string="Reference"/>
-                <field name="mmmartdes" string="Product"/>
-                <field name="mmmbatch" string="Batch"/>
-                <field name="mmmcntdorref" string="Package"/>
+                <field name="mmmres" />
+                <field name="mmmcmdref" string="Tipo"/>
+                <field name="mmmartdes" string="Artículo"/>
+                <field name="mmmbatch" string="Albarán"/>
+                <field name="mmmentdes" string="Pedido"/>
+                <field name="mmmcntdorref" string="Paquete"/>
                 <field name="momcre" string="Date"/>
             </tree>
         </field>

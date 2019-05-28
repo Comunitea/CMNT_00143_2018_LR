@@ -12,18 +12,13 @@ class SaleOrder(models.Model):
 
     def get_sale_to_ulma(self, pick, ulma_move, date_expected):
         partner_id = self.partner_id
-        vals = {
+        vals = pick.picking_type_id.get_ulma_vals('sale')
+        update_vals = {
             'mmmacccolcod': self.id,
-            'mmmCOD': 1,
-            'mmmcmdref': "SAL",
-            'mmmdisref': ulma_move.mmmdisref,
             'mmmentdes': '{} ({})'.format(self.partner_id.name, self.name),
             'mmmexpordref': 'N' + self.name,
-            'mmmges': "ULMA",
-            'mmmres': "FIN",
             'mmmsesid': 2,
             'momcre': ulma_move.momcre,
-            'mmmartean': "ean13",
             'mmmterref': partner_id.ref,
             'mmmentdir1': str(partner_id.street) + str(partner_id.street2),
             'mmmentdir2': partner_id.city,
@@ -34,4 +29,6 @@ class SaleOrder(models.Model):
             'mmmurgnte': '' if pick.urgent else 'N',
             'mmmtraref': str(pick.shipping_type) + '-N'
             }
+
+        vals.update(update_vals)
         return vals

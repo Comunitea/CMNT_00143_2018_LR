@@ -16,7 +16,7 @@ class StockPicking(models.Model):
     _inherit = 'stock.picking'
 
     sga_integrated = fields.Boolean('Sga', help='Marcar si tiene un tipo de integración con el sga')
-    sga_state = fields.Selection(SGA_STATES, string="SGA Estado")
+    sga_state = fields.Selection(SGA_STATES, default='NI', string="SGA Estado")
 
     @api.model
     def create(self, vals):
@@ -49,13 +49,8 @@ class StockPicking(models.Model):
 
     @api.multi
     def send_to_sga(self):
-        ##PARA HEREDAR EN ULMA Y ADAIA
 
-        ctx = self._context.copy()
-        ctx.update(no_update_sga_state=True)
-        val = {'sga_state': 'PM'}
-        self.with_context(ctx).write(val)
-        self.with_context(ctx).move_lines.write(val)
-        self.with_context(ctx).move_line_ids.write(val)
+        ##PARA HEREDAR EN ULMA Y ADAIA
+        return True
 
 

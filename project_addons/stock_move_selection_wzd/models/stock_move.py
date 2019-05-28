@@ -45,7 +45,7 @@ class StockMove(models.Model):
     dunmy_picking_id = fields.Many2one('stock.picking', 'Transfer Reference', store=False)
 
     sga_integrated = fields.Boolean('Sga', help='Marcar si tiene un tipo de integración con el sga')
-    sga_state = fields.Selection(SGA_STATES, string="SGA Estado")
+    sga_state = fields.Selection(SGA_STATES, default='NI', string="SGA Estado")
 
 
     def get_new_location_vals(self, location_field, location):
@@ -117,7 +117,10 @@ class StockMoveLine(models.Model):
     _inherit = 'stock.move.line'
 
     sga_integrated = fields.Boolean('Sga', help='Marcar si tiene un tipo de integración con el sga')
-    sga_state = fields.Selection(SGA_STATES, string="SGA Estado")
+    sga_state = fields.Selection(SGA_STATES, default='NI', string="SGA Estado")
+
+
+
 
     @api.multi
     def write(self, vals):

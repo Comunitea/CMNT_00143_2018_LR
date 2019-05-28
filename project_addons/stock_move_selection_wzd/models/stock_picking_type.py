@@ -21,11 +21,11 @@ PICKING_TYPE_GROUP = [('incoming', 'Incoming'),
 
 SGA_STATES = [('NI', 'Sin integracion'),
               ('NE', 'No enviado'),
-              ('PM', 'Pendiente Sga'),
+              ('PS', 'Pendiente Sga'),
               ('EE', 'Error en exportacion'),
               ('EI', 'Error en importacion'),
-              ('MT', 'Realizado'),
-              ('MC', 'Cancelado')]
+              ('SR', 'Realizado'),
+              ('SC', 'Cancelado')]
 
 
 class PickingType(models.Model):
@@ -57,16 +57,16 @@ class PickingType(models.Model):
         ### LO PONGO AQUI PORQUE ES DONDE ESTA SGA_STATE
         if all(child.sga_state == 'NI' for child in child_ids):
             sga_state = 'NI'
-        elif all(child.sga_state == 'MT' for child in child_ids):
-            sga_state = 'MT'
-        elif all(child.sga_state == 'PM' for child in child_ids):
-            sga_state = 'PM'
-        elif all(child.sga_state == 'MC' for child in child_ids):
-            sga_state = 'MC'
+        elif all(child.sga_state == 'SR' for child in child_ids):
+            sga_state = 'SR'
+        elif all(child.sga_state == 'PS' for child in child_ids):
+            sga_state = 'PS'
+        elif all(child.sga_state == 'SC' for child in child_ids):
+            sga_state = 'SC'
         elif all(child.sga_state == 'NE' for child in child_ids):
             sga_state = 'NE'
-        elif all(child.sga_state in ('MT', 'PM') for child in child_ids):
-            sga_state = 'PM'
+        elif all(child.sga_state in ('SR', 'PS') for child in child_ids):
+            sga_state = 'PS'
         elif any(child.sga_state == 'EI' for child in child_ids):
             sga_state = 'EI'
         elif any(child.sga_state == 'EE' for child in child_ids):
@@ -83,7 +83,7 @@ class PickingType(models.Model):
         today_filter = [('date_expected', '<', tomorrow), ('date_expected', '>', today)]
         hide_state = [('state', 'not in', ('draft', 'done', 'cancel'))]
         to_do_state = [('state', 'in', ('partially_available', 'assigned', 'waiting', 'confirmed'))]
-        ready_state = [('state', 'in', ('partially_available', 'assigned'))]
+        ready_state = [('state', 'in', ('partially_available', 'assigned')), ('sga_state', 'in', ('NI', 'NE'))]
 
         domains = {
             'count_move_todo_today': to_do_state + [('date_expected', '<', today)],
@@ -92,8 +92,8 @@ class PickingType(models.Model):
             'count_move_waiting': to_do_state,
             'count_move_ready': ready_state + [('picking_id', '!=', False), ('date_expected', '<', tomorrow)],
             'count_move': [('state', 'in', ('partially_available', 'assigned', 'waiting', 'confirmed'))],
-            'count_move_to_pick': to_do_state + [('picking_id', '=', False), ('date_expected', '<', tomorrow)] ,
-            'count_move_late': to_do_state + [('date_expected', '>', yesterday)],
+            'count_move_to_pick': ready_state + [('picking_id', '=', False), ('date_expected', '<', tomorrow)] ,
+            'count_move_late': to_do_state + [('date_expected', '<', yesterday)],
             'count_move_backorders': to_do_state + [('origin_returned_move_id', '!=', False)],
         }
         return domains
@@ -131,6 +131,44 @@ class PickingType(models.Model):
                 tristates.insert(0, {'tooltip': move.name or '' + ": " + _('OK'), 'value': 1})
         self.last_done_move = json.dumps(tristates)
 
+    def update_context(self, context={}):
+
+        if self.group_code == 'picking':
+            context.update({
+                'search_default_by_shipping_type': True,
+                'search_default_by_delivery_path_route_id': True,
+                'search_default_by_carrier_id': True
+
+            })
+
+        elif self.group_code=='outgoing':
+            context.update({
+                'search_default_by_shipping_type':True,
+                'search_default_by_delivery_route_path_id':True,
+                'search_default_by_carrier_id': True,
+                'search_default_by_partner_id':True
+            })
+        elif self.group_code=='incoming':
+            context.update({
+                'search_default_partner_id':1,
+
+            })
+        elif self.group_code == 'location':
+            context.update({
+                'search_default_location_dest_id': 1,
+            })
+
+        elif self.group_code == 'internal':
+            context.update({
+                'search_default_location_id': 1,
+                'search_default_location_dest_id': 1,
+            })
+
+
+
+        return context
+
+
 
 
     @api.multi
@@ -145,6 +183,7 @@ class PickingType(models.Model):
         action['views'] = [(tree and tree.id or False, 'tree'), (False, 'form'),
                            (kanban and kanban.id or False, 'kanban')]
 
+        self.update_context(context)
         if context:
             action['context'] = context
 
@@ -280,5 +319,29 @@ class PickingType(models.Model):
         return self.return_action_show_moves(domain, context)
 
 
+    def _compute_picking_count(self):
+        # TDE TODO count picking can be done using previous two
+        ### SOBREESCRIBO LA FUNCION COMPLETA PARA AÑADIR EL SGA_STATE
 
+        domains = {
+            'count_picking_draft': [('state', '=', 'draft')],
+            'count_picking_waiting': [('state', 'in', ('confirmed', 'waiting'))],
+            'count_picking_ready': [('state', '=', 'assigned'), ('sga_state', 'in', ('NI', 'NE'))],
+            'count_picking': [('state', 'in', ('assigned', 'waiting', 'confirmed'))],
+            'count_picking_late': [('scheduled_date', '<', datetime.now().strftime(DEFAULT_SERVER_DATETIME_FORMAT)), ('state', 'in', ('assigned', 'waiting', 'confirmed'))],
+            'count_picking_backorders': [('backorder_id', '!=', False), ('state', 'in', ('confirmed', 'assigned', 'waiting'))],
+        }
+        for field in domains:
+            data = self.env['stock.picking'].read_group(domains[field] +
+                [('state', 'not in', ('done', 'cancel')), ('picking_type_id', 'in', self.ids)],
+                ['picking_type_id'], ['picking_type_id'])
+            count = {
+                x['picking_type_id'][0]: x['picking_type_id_count']
+                for x in data if x['picking_type_id']
+            }
+            for record in self:
+                record[field] = count.get(record.id, 0)
+        for record in self:
+            record.rate_picking_late = record.count_picking and record.count_picking_late * 100 / record.count_picking or 0
+            record.rate_picking_backorders = record.count_picking and record.count_picking_backorders * 100 / record.count_picking or 0
 

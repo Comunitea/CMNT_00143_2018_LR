@@ -24,7 +24,7 @@ class SaleOrder(models.Model):
                 'delivery_route_path_id': self.delivery_route_path_id.id,
                 'urgent': self.urgent,
                 'carrier_id': self.carrier_id.id,
-                'campaign_id': self.campaign_id and self.campaign_id.id
+                'campaign_id': self.campaign_id and self.campaign_id.id or False,
                 }
         return vals
 

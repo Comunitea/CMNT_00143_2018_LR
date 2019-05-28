@@ -23,60 +23,60 @@ class StockPicking(models.Model):
 
     _inherit = "stock.picking"
 
-
-    def _get_mmmouts(self):
-        domain =[('mmmbatch', '=', self.name)]
-        self.write({'ulma_ids': [(6,0, self.env['ulma.mmmout'].search(domain).ids)]})
-
-
-
+    def show_ulma_mmmout(self):
+        tree = self.env.ref('sga_ulma_integration.ulma_mmmout_tree', False)
+        action = self.env.ref(
+            'sga_ulma_integration.action_ulma_mmmout_view').read()[0]
+        action['domain'] = [('mmmbatch', '=', self.name)]
+        action['views'] = [(tree and tree.id or False, 'tree'), (False, 'form')]
+        return action
 
     ulma_error = fields.Text(default="", string="Error msg in case the Ulma integration failed")
     ulma_integrated = fields.Boolean(related='picking_type_id.ulma_integrated')
 
-    ulma_ids = fields.One2many('ulma.mmmout', compute=_get_mmmouts)
-
-
 
     def get_picking_ulma_vals(self):
-
-        ### Modificar cuando se hagan entradas para hacer la misma función para entradas y salidas
-        vals= {
-            'mmmcmdref': "SAL",
-            'mmmdisref': self.picking_type_id.ulma_type,
-            'mmmges': "ULMA",
-            'mmmres': "FINPED",
-            'mmmsesid': 2 if self.picking_type_id.ulma_type == 'SUBPAL' else 1,
+        vals = self.picking_type_id.get_ulma_vals('pick')
+        update_vals= {
             'momcre': fields.datetime.now().date().strftime('%Y-%m-%d'),
-            'mmmartean': "ean13",
             'mmmbatch': self.name,
             'mmmmomexp': self.date
         }
+        vals.update(update_vals)
         return vals
 
+    def force_button_validate(self):
+        self.sga_state = 'SR'
+        return self.button_validate()
     @api.multi
     def send_to_sga(self):
-        to_ulma = self.filtered(lambda x: x.picking_type_id.ulma_integrated)
+        to_ulma = self.filtered(lambda x: x.picking_type_id.ulma_integrated and self.state == 'assigned')
+        ulma_out = self.env['ulma.mmmout']
         for pick in to_ulma:
+            ##ulma_out.search([('mmmbatch', '=', self.name)]).unlink()
             cont = 0
-            move_lines = pick.move_line_ids
-            sale_ids = move_lines.mapped('move_id').mapped('sale_id')
+            move_lines_ids = pick.move_line_ids
+            move_lines = pick.move_lines
+            sale_ids = move_lines.mapped('sale_id')
 
             for sale in sale_ids:
-
-
-                sale_moves = move_lines.filtered(lambda x: x.move_id.sale_id.id == sale.id)
+                sale_moves = move_lines_ids.filtered(lambda x: x.move_id.sale_id.id == sale.id)
                 for move in sale_moves:
                     vals = move.get_move_line_ulma_vals(cont=cont)
-                    ulma_move = self.env['ulma.mmmout'].create(vals)
+                    ulma_move = ulma_out.create(vals)
                     cont += 1
+                    move.sga_state='PS'
 
                 if ulma_move:
                     vals = sale.get_sale_to_ulma(pick, ulma_move, min(move.move_id.date_expected for move in sale_moves))
-                    ulma_move = self.env['ulma.mmmout'].create(vals)
-                sale_moves.write({'sga_state': 'PM'})
+                    ulma_move = ulma_out.create(vals)
+
+
             vals = pick.get_picking_ulma_vals()
-            self.env['ulma.mmmout'].create(vals)
+            ulma_out.create(vals)
+            for move in move_lines:
+                move.sga_state = pick.picking_type_id.get_parent_state(move.move_line_ids)
+            pick.sga_state = pick.picking_type_id.get_parent_state(move_lines)
 
         return super(StockPicking, self - to_ulma).send_to_sga()
 

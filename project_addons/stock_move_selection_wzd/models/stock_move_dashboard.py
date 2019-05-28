@@ -41,7 +41,7 @@ class StockPickingType(models.Model):
             retrasados = res and res[0] or 0
 
             ##HOY
-            sql = "{} and state in {} and date(date_expected) = current_date".format(sql1, state_pendientes)
+            sql = "{} and state in {} and date(date_expected) = current_date ".format(sql1, state_pendientes)
             self.env.cr.execute(sql)
             res = self.env.cr.dictfetchall()
             hoy = res and res[0] or 0
@@ -56,7 +56,7 @@ class StockPickingType(models.Model):
             sql = "{} and state = 'done' and  date(date_expected) = current_date".format(sql1)
             self.env.cr.execute(sql)
             res = self.env.cr.dictfetchall()
-            don_today = res and res[0] or 0
+            done_today = res and res[0] or 0
 
             sql = "{} and state in {} and  date(date_expected) > current_date".format(sql1,state_pendientes)
             self.env.cr.execute(sql)
@@ -75,7 +75,7 @@ class StockPickingType(models.Model):
 
             res = [{'values': [
                      {'label': 'Retrasados.', 'value': retrasados['count'] + hoy['count'], 'type': 'past'},
-                     {'label': 'Hoy', 'value': don_today['count'], 'type': 'today'},
+                     {'label': 'Hoy', 'value': done_today['count'], 'type': 'today'},
                      #{'label': 'Retornos', 'value': retornos['count'], 'type': 'return'},
                      {'label': 'Futuro', 'value': futuro['count'], 'type': 'future'},
                      {'label': 'Errores', 'value': errores['count'], 'type': 'error'}],

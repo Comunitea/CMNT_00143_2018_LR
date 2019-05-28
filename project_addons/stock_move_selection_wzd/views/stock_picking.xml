@@ -8,7 +8,7 @@
             <notebook position="inside">
                 <page string="Integración SGA" attributes="{'invisible': [('sga_integrated','=', False)]}">
                     <header>
-                            <field name="sga_state" widget="statusbar" statusbar_visible="NE,PM,MT"/> statusbar_colors='{"EE":"red", "EI":"red", "W":"blue", "P":"green"}'/>
+                            <field name="sga_state" widget="statusbar" statusbar_visible="NE,PS,SD" statusbar_colors='{"EE":"red", "EI":"red", "PS":"blue", "SD":"green"}'/>
                     </header>
                     <group>
                         <group>
@@ -53,7 +53,7 @@
             </field>
             <filter name="picking_type" position="after">
                 <filter name="sga_integrated" string="SGA" domain="[('sga_integrated','=', True)]"/>
-                <filter name="waiting" string="SGA. Enviado" domain="[('sga_state','=', 'PM')]"/>
+                <filter name="waiting" string="SGA. Enviado" domain="[('sga_state','=', 'PS')]"/>
                 <filter name="error" string="SGA. Error" domain="[('sga_state','in', ['EI', 'EE'])]"/>
                 <filter name="processed" string="SGA. Completado" domain="[('sga_state','=', 'MT')]"/>
             </filter>
