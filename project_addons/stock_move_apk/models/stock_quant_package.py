@@ -10,7 +10,7 @@ class StockQuantPackage(models.Model):
 
     @api.model
     def get_lines_info_apk(self, vals):
-        ##Cambio por rendimeinto
+        ##Cambio por rendimiento
         domain = [('result_package_id', '=',  vals['package'])]
         lines = self.env['stock.move.line'].search(domain)
         move_lines_info = []
@@ -70,7 +70,7 @@ class StockQuantPackage(models.Model):
         move_line_ids = self.env['stock.move.line'].search(domain)
 
         ##saco vals de la función por claridad
-        vals = package_obj.get_package_vals()
+        vals = package_obj.get_package_vals(package_id)
         move_line_ids.write(vals)
         #necesito escribir en los move.line y en los move para porder filtrar despues
         move_line_ids.mapped('move_id').write(vals)
