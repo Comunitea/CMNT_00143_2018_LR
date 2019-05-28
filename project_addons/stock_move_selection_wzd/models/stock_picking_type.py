@@ -3,18 +3,35 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 
-from collections import namedtuple
 import json
 
 from datetime import datetime, timedelta
 
 from odoo import api, fields, models, _
 from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT, DEFAULT_SERVER_DATE_FORMAT
-from .stock_picking import PICKING_TYPE_GROUP
+
+
+PICKING_TYPE_GROUP = [('incoming', 'Incoming'),
+                      ('outgoing', 'Outgoing'),
+                      ('picking', 'Picking'),
+                      ('internal', 'Internal'),
+                      ('location','Location'),
+                      ('reposition','Reposition'),
+                      ('other','Other')]
+
+SGA_STATES = [('NI', 'Sin integracion'),
+              ('NE', 'No enviado'),
+              ('PM', 'Pendiente Sga'),
+              ('EE', 'Error en exportacion'),
+              ('EI', 'Error en importacion'),
+              ('MT', 'Realizado'),
+              ('MC', 'Cancelado')]
+
 
 class PickingType(models.Model):
     _inherit = "stock.picking.type"
 
+    group_code = fields.Selection(PICKING_TYPE_GROUP, string="Code group")
 
     # Statistics for the kanban view for moves
     last_done_move = fields.Char('Last 10 Done Pickings', compute='_compute_last_done_moves')
@@ -26,30 +43,68 @@ class PickingType(models.Model):
     count_move_waiting = fields.Integer(compute='_compute_move_count')
     count_move_late = fields.Integer(compute='_compute_move_count')
     count_move_backorders = fields.Integer(compute='_compute_move_count')
-
+    count_move_to_pick = fields.Integer(compute='_compute_move_count')
     rate_move_late = fields.Integer(compute='_compute_move_count', string="Ratio")
     rate_move_backorders = fields.Integer(compute='_compute_move_count')
     rate_done = fields.Integer(compute='_compute_move_count', string="Ratio")
+    sga_integrated = fields.Boolean('Sga', help='Marcar si tiene un tipo de integración con el sga')
+
+
+    def get_sga_integrated(self):
+        return self.sga_integrated
+
+    def get_parent_state(self, child_ids):
+        ### LO PONGO AQUI PORQUE ES DONDE ESTA SGA_STATE
+        if all(child.sga_state == 'NI' for child in child_ids):
+            sga_state = 'NI'
+        elif all(child.sga_state == 'MT' for child in child_ids):
+            sga_state = 'MT'
+        elif all(child.sga_state == 'PM' for child in child_ids):
+            sga_state = 'PM'
+        elif all(child.sga_state == 'MC' for child in child_ids):
+            sga_state = 'MC'
+        elif all(child.sga_state == 'NE' for child in child_ids):
+            sga_state = 'NE'
+        elif all(child.sga_state in ('MT', 'PM') for child in child_ids):
+            sga_state = 'PM'
+        elif any(child.sga_state == 'EI' for child in child_ids):
+            sga_state = 'EI'
+        elif any(child.sga_state == 'EE' for child in child_ids):
+            sga_state = 'EE'
+        else:
+            sga_state = 'EE'
+        return sga_state
+
+    def get_moves_domain(self):
+        today = datetime.now().strftime(DEFAULT_SERVER_DATE_FORMAT)
+        tomorrow = (datetime.now() + timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT)
+        yesterday = (datetime.now() - timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT)
+
+        today_filter = [('date_expected', '<', tomorrow), ('date_expected', '>', today)]
+        hide_state = [('state', 'not in', ('draft', 'done', 'cancel'))]
+        to_do_state = [('state', 'in', ('partially_available', 'assigned', 'waiting', 'confirmed'))]
+        ready_state = [('state', 'in', ('partially_available', 'assigned'))]
+
+        domains = {
+            'count_move_todo_today': to_do_state + [('date_expected', '<', today)],
+            'count_move_done': [('state', '=', 'done'), ('date', '>', yesterday)],
+            'count_move_draft': [('state', '=', 'draft')],
+            'count_move_waiting': to_do_state,
+            'count_move_ready': ready_state + [('picking_id', '!=', False), ('date_expected', '<', tomorrow)],
+            'count_move': [('state', 'in', ('partially_available', 'assigned', 'waiting', 'confirmed'))],
+            'count_move_to_pick': to_do_state + [('picking_id', '=', False), ('date_expected', '<', tomorrow)] ,
+            'count_move_late': to_do_state + [('date_expected', '>', yesterday)],
+            'count_move_backorders': to_do_state + [('origin_returned_move_id', '!=', False)],
+        }
+        return domains
 
     def _compute_move_count(self):
         # TDE TODO count picking can be done using previous two
+        domains = self.get_moves_domain()
 
-        domains = {
-            'count_move_todo_today': [('state', 'not in', ('done', 'draft', 'cancel')),
-                                    ('date_expected', '<', (datetime.now() + timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT)),
-                                    ('date_expected', '>', datetime.now().strftime(DEFAULT_SERVER_DATE_FORMAT))],
-            'count_move_done': [('state', '=', 'done'), ('date', '>', datetime.now().strftime(DEFAULT_SERVER_DATE_FORMAT))],
-            'count_move_draft': [('state', '=', 'draft')],
-            #'count_move_today_todo': [('state', 'in', ('partially_available', 'assigned', 'waiting', 'confirmed')), ('date_expected', '=', datetime.now().strftime(DEFAULT_SERVER_DATE_FORMAT))],
-            'count_move_waiting': [('state', 'in', ('partially_available', 'confirmed', 'waiting'))],
-            'count_move_ready': [('state', 'in', ('partially_available','assigned'))],
-            'count_move': [('state', 'in', ('partially_available', 'assigned', 'waiting', 'confirmed'))],
-            'count_move_late': [('date_expected', '<', datetime.now().strftime(DEFAULT_SERVER_DATETIME_FORMAT)), ('state', 'in', ('partially_available', 'assigned', 'waiting', 'confirmed'))],
-            'count_move_backorders': [('origin_returned_move_id', '!=', False), ('state', 'in', ('partially_available', 'confirmed', 'assigned', 'waiting'))],
-        }
         for field in domains:
             data = self.env['stock.move'].read_group(domains[field] +
-                [('state', 'not in', ('done', 'cancel')), ('picking_type_id', 'in', self.ids)],
+                [('picking_type_id', 'in', self.ids)],
                 ['picking_type_id'], ['picking_type_id'])
             count = {
                 x['picking_type_id'][0]: x['picking_type_id_count']
@@ -102,36 +157,42 @@ class PickingType(models.Model):
 
 
     def get_action_move_tree_late(self):
-        domain = []
+        domain = self.get_moves_domain()['count_move_late']
         context = {
                    'search_default_picking_type_id': self.id,
-                   'search_default_late': 1,
-                   'search_default_todo': 1
         }
         return self.return_action_show_moves(domain, context)
 
     def get_action_move_tree_backorder(self):
-        domain = []
+        domain = self.get_moves_domain()['count_move_backorders']
         context = {
-                   'search_default_picking_type_id': self.id,
-                   'search_default_returns': 1,
-                   'search_default_todo': 1}
+                   'search_default_picking_type_id': self.id,}
+        return self.return_action_show_moves(domain, context)
+
+    def get_action_move_to_picking_ready(self):
+        domain = self.get_moves_domain()['count_move_to_pick']
+        context = {
+                   'search_default_picking_type_id': self.id}
+        return self.return_action_show_moves(domain, context)
+
+    def get_action_move_to_sga_ready(self):
+        domain = self.get_moves_domain()['count_move_ready']
+        context = {
+                   'search_default_picking_type_id': self.id}
         return self.return_action_show_moves(domain, context)
 
 
     def get_action_move_tree_waiting(self):
-        domain = []
+        domain = self.get_moves_domain()['count_move_waiting']
         context = {
-            'search_default_picking_type_id': self.id,
-            'search_default_todo': 1}
+            'search_default_picking_type_id': self.id}
         return self.return_action_show_moves(domain, context)
 
 
     def get_action_move_tree_ready(self):
-        domain = []
+        domain = self.get_moves_domain()['count_move_ready']
         context = {
-            'search_default_picking_type_id': self.id,
-            'search_default_ready': 1}
+            'search_default_picking_type_id': self.id,}
 
         return self.return_action_show_moves(domain, context)
 
@@ -151,6 +212,26 @@ class PickingType(models.Model):
 
         return self.return_action_show_moves(domain, context)
 
+    def get_action_picking_tree_ready(self):
+
+        action = self.env.ref('stock.action_picking_tree_ready').read()[0]
+        if self.sga_integrated:
+            action['context'] ={'search_default_picking_type_id': [self.id],
+                                'default_picking_type_id': self.id,
+                                'contact_display': 'partner_address',
+                                'search_default_available': 1,
+                                'hide_sga_state': False}
+        if self:
+            action['display_name'] = self.display_name
+        return action
+
+    def get_stock_move_action_move_type_today(self):
+
+        domain = self.get_moves_domain()['count_move_todo_today']
+        context = {
+            'search_default_picking_type_id': self.id,
+        }
+        return self.return_action_show_moves(domain, context)
 
     def get_stock_move_action_move_type(self):
         domain = [('state', '!=', 'draft')]
@@ -167,6 +248,16 @@ class PickingType(models.Model):
             'search_default_without_pick': 1
             }
         return self.return_action_show_moves(domain, context)
+
+    def get_action_move_tree_no_package(self):
+        domain = []
+        context = {
+            'search_default_picking_type_id': self.id,
+            'search_default_todo': 1,
+            'search_default_with_no_package': 1
+            }
+        return self.return_action_show_moves(domain, context)
+
 
     def get_action_move_tree_pasaran(self):
         domain = []
@@ -187,3 +278,7 @@ class PickingType(models.Model):
             'search_default_ready': 1,
         }
         return self.return_action_show_moves(domain, context)
+
+
+
+

@@ -54,10 +54,11 @@
         <field name="arch" type="xml">
             <tree decoration-muted="state == 'cancel'"
                   decoration-danger="(state not in ('cancel','done'))"
-                  string="Move Lines"
+                  string="Movimientos"
                   create="0" default_order="date">
                 <field name="id" groups="base.group_no_one"/>
-                <field name="date" invisible="context.get('show_date', False)"/>
+                <field name="date" invisible="1" />
+                <field name="date_expected" invisible="context.get('show_date', False)"/>
                 <!--field name="reference" string="Reference"/-->
                 <field name="product_id"/>
                 <field name="location_id"  invisible="context.get('incoming', False)"/>
@@ -110,16 +111,16 @@
                 <field name="shipping_type"/>
                 <field name="delivery_route_path_id"/>
                 <field name="urgent"/>
-
+                <field name="sga_integrated"/>
                 <separator/>
-                <filter name="late" string="Retrasados" domain="[('expected_date','&lt;', time.strftime('%%Y-%%m-%%d %%H:%%M:%%S'))]" help="Movimientos retrasados"/>
+                <filter name="late" string="Retrasados" domain="[('date_expected','&lt;', time.strftime('%%Y-%%m-%%d %%H:%%M:%%S'))]" help="Movimientos retrasados"/>
                 <!--filter string="To SGA" name="sga" domain="[('state','in', ['assigned', 'partially_available'])]"/-->
                 <filter string="Waiting" name="todo" domain="[('state','in', ['waiting', 'confirmed', 'partially_available'])]"/>
                 <filter string="Reservado" name="ready" domain="[('state','in', ['assigned', 'partially_available'])]"/>
                 <filter string="Hechos" name="done" domain="[('state','=','done')]"/>
                 <filter string="No hechos" name="not_done" domain="[('state','not in',['done', 'draft'])]"/>
-
-
+                <separator/>
+                <filter string="SGA" name="sga_integrated" domain="[('sga_integrated','=', True)]"/>
                 <separator/>
                 <filter string="Urgente" name="urgent" domain="[('urgent','=', True)]"/>
                 <filter string="With pick" name="with_pick" domain="[('picking_id','!=', False)]"/>
@@ -136,16 +137,18 @@
                 <filter string="Location" name="location" domain="[('picking_type_id.group_code','=','location')]"/>
                 <filter string="Reposition" name="reposition" domain="[('picking_type_id.group_code','=','reposition')]"/>
                 <filter string="Other" name="other" domain="[('picking_type_id.group_code','=','other')]"/>
-
                 <separator/>
                 <filter string="With package" name="with_package" domain="[('result_package_id','!=', False)]"/>
-                <filter string="With no package" name="with_package" domain="[('result_package_id','=', False)]"/>
+                <filter string="With no package" name="with_no_package" domain="[('result_package_id','=', False)]"/>
                 <separator/>
                 <filter string="Pasarán" name="pasaran_route" domain="[('shipping_type','=', 'pasaran')]"/>
                 <filter string="Agencia" name="agency_route" domain="[('shipping_type','=', 'agency')]"/>
                 <filter string="Ruta" name="route_route" domain="[('shipping_type','=', 'route')]"/>
-
-
+                <separator/>
+                <filter name="sga_integrated" string="SGA" domain="[('sga_integrated','=', True)]"/>
+                <filter name="waiting" string="SGA. Enviado" domain="[('sga_state','=', 'PM')]"/>
+                <filter name="error" string="SGA. Error" domain="[('sga_state','in', ['EI', 'EE'])]"/>
+                <filter name="processed" string="SGA. Completado" domain="[('sga_state','=', 'MT')]"/>
                 <group expand="0" string="Group By">
                     <filter string="Status" name="by_state" domain="[]"  context="{'group_by':'state'}"/>
                     <!--filter string="SGA status" name="by_wh_status" domain="[]"  context="{'group_by':'wh_state'}"/-->
@@ -184,6 +187,9 @@
                             <div t-attf-class="oe_kanban_global_click">
                                 <div class="o_kanban_record_top">
                                     <div class="o_kanban_record_headings">
+                                        <span t-if="record.sga_integrated.raw_value" class="badge">
+                                            <i class="fa fa-fw fa-rss-square"/>
+                                        </span>
                                         <strong class="o_kanban_record_title" invisible="1">
                                             <span><field name="name"/></span>
                                         </strong>
@@ -202,6 +208,7 @@
                                         </div>
                                     </div>
                                     <field name="state" widget="label_selection" options="{'classes': {'draft': 'default', 'cancel': 'danger', 'assigned': 'success', 'confirmed': 'default'}}"/>
+                                    <field name="sga_state" widget="label_selection" />
                                 </div>
                                 <div class="o_kanban_record_body">
                                     <div>

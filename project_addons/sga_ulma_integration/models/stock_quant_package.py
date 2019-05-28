@@ -5,10 +5,11 @@
 from odoo import fields, models, tools, api, _
 import datetime, time
 from odoo.exceptions import UserError
-
+from .res_config import SGA_STATES
 class StockQuantPackage(models.Model):
     _inherit = "stock.quant.package"
-    ulma_state = fields.Selection([('W', 'En espera'), ('P', 'Procesado'), ('E', 'Error'), ('N', 'Not sent')], default='N')
+
+    sga_state = fields.Selection(SGA_STATES)
     ulma_error = fields.Text(default="", string="Error msg in case the Ulma integration failed")
 
     @api.multi
@@ -48,7 +49,7 @@ class StockQuantPackage(models.Model):
                         'mmmartapi': 0
                     }
                     cont += 1
-                    flag = self.env['ulma.mmmout'].write_package_line(line_values_to_send)
+                    flag = self.env['ulma.mmmout'].create(line_values_to_send)
                 
                 line_values_to_send = {
                     'mmmacccolcod': package.id,
@@ -69,11 +70,11 @@ class StockQuantPackage(models.Model):
                     'mmmmonlot': None,
                     'mmmrecref': 0
                 }
-                flag = self.env['ulma.mmmout'].write_package_line(line_values_to_send)
+                flag = self.env['ulma.mmmout'].create(line_values_to_send)
                 
                 if flag == True:
                     package.write({
-                        'ulma_state': 'P'
+                        'sga_state': 'P'
                     })                
                     
             except Exception as error:                  
@@ -95,7 +96,7 @@ class StockQuantPackage(models.Model):
                     flag_type = 1
                 elif ulma_obj.mmmcmdref == 'ENT':
                     package.write({
-                        'ulma_state': 'P'
+                        'sga_state': 'P'
                     })
                 return flag_type
         except Exception as error:                  

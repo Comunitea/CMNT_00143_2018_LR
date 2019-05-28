@@ -10,6 +10,10 @@
                 <field name="num_error_day"/>
 
             </field>
+            <field name="warehouse_id" position="after">
+                <field name="sga_integrated"/>
+
+            </field>
         </field>
     </record>
     <record id="stock_picking_type_kanban_moves" model="ir.ui.view">
@@ -24,6 +28,10 @@
                     <field name="count_move_waiting"/>
                     <field name="count_move_late"/>
                     <field name="count_move_backorders"/>
+                    <field name="count_move_to_pick"/>
+                    <field name="sga_integrated"/>
+                     <field name="count_picking_ready"/>
+                    <field name="group_code"/>
 
                     <field name="kanban_dashboard_graph"/>
                     <templates>
@@ -33,9 +41,14 @@
                                     <div t-attf-class="o_kanban_card_header">
                                         <div class="o_kanban_card_header_title">
                                             <div class="o_primary">
+                                                <span t-if="record.sga_integrated.raw_value" class="badge">
+                                                    <i class="fa fa-fw fa-rss-square"/>
+                                                </span>
+
                                                 <a type="object" name="get_stock_move_action_move_type">
                                                     <field name="name"/>
                                                 </a>
+
                                             </div>
                                             <div class="o_secondary"><field class="o_secondary" name="warehouse_id"/></div>
                                         </div>
@@ -46,11 +59,36 @@
                                     <div class="container o_kanban_card_content">
                                         <div class="row">
                                             <div class="col-xs-6 o_kanban_primary_left">
-                                                <button class="btn btn-primary" name="get_action_move_tree_ready" type="object">
+                                                <button t-if="!record.sga_integrated.raw_value" class="btn btn-primary" color="green" name="get_action_picking_tree_ready" type="object">
+                                                    <span t-if="record.group_code.raw_value =='incoming'"><t t-esc="record.count_picking_ready.value"/> Recepciones</span>
+                                                    <span t-if="record.group_code.raw_value =='outgoing'"><t t-esc="record.count_picking_ready.value"/> Envíos</span>
+                                                    <span t-if="record.group_code.raw_value =='picking'"><t t-esc="record.count_picking_ready.value"/> Picking</span>
+                                                    <span t-if="record.group_code.raw_value =='internal'"><t t-esc="record.count_picking_ready.value"/> Internos </span>
+                                                    <span t-if="record.group_code.raw_value =='location'"><t t-esc="record.count_picking_ready.value"/> Ubicaciones </span>
+                                                    <span t-if="record.group_code.raw_value =='reposition'"><t t-esc="record.count_picking_ready.value"/> Reposiciones </span>
+                                                    <span t-if="record.group_code.raw_value =='other'"><t t-esc="record.count_picking_ready.value"/> Albaranes </span>
+                                                </button>
+                                                <button t-if="record.sga_integrated.raw_value" class="btn btn-primary" name="get_action_picking_tree_ready" type="object">
+                                                    <span><t t-esc="record.count_picking_ready.value"/> Para enviar a SGA</span>
+                                                </button>
+
+
+                                                <!--button t-if="!record.sga_integrated.raw_value" class="btn btn-primary" name="get_action_move_tree_ready" type="object">
                                                     <span t-if="record.code.raw_value =='incoming'"><t t-esc="record.count_move_ready.value"/> Para recibir</span>
                                                     <span t-if="record.code.raw_value =='outgoing'"><t t-esc="record.count_move_ready.value"/> Para enviar</span>
                                                     <span t-if="record.code.raw_value =='internal'"><t t-esc="record.count_move_ready.value"/> Para transferir</span>
+                                                </button-->
+                                                <button t-if="record.sga_integrated.raw_value" class="btn btn-warning" name="get_action_move_to_picking_ready" type="object">
+                                                    <span><t t-esc="record.count_move_to_pick.value"/> Sin albarán</span>
                                                 </button>
+
+                                                <!--button t-if="record.sga_integrated.raw_value" class="btn btn-primary" name="get_action_move_to_sga_ready" type="object">
+                                                    <span><t t-esc="record.count_move_ready.value"/> Para enviar SGA</span>
+                                                </button-->
+
+
+
+
                                                 <div t-if="record.count_move_ready.raw_value &gt; 0" class="row">
                                                     <div class="col-xs-9">
                                                         <a name="get_action_move_tree_ready" type="object">
@@ -98,7 +136,7 @@
 
                                             <div class="row col-xs-6 text-center">
                                                 <span >
-                                                  <a type="object" name="get_stock_move_action_move_type">
+                                                  <a type="object" name="get_stock_move_action_move_type_today">
                                                     <field name="count_move_todo_today"/>
                                                   </a>
                                                 </span>

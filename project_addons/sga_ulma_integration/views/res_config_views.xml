@@ -53,4 +53,7 @@
             </xpath>
         </field>
     </record>
+
+     <menuitem id="menu_sga_ulma" name="SGA ULMA" parent="stock.menu_stock_config_settings" groups="stock.group_stock_manager"
+        sequence="26" />
 </odoo>

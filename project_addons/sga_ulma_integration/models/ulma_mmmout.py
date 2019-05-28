@@ -51,42 +51,8 @@ class UlmaMmmout(models.Model):
     mmmzondesref = fields.Char(max=4)
     mmmobs = fields.Char(max=255)
 
-
     @api.model
-    def write_line(self, values, reg_type, obj_id):
+    def create(self, vals):
+        new_line = super().create(vals)
+        return new_line
 
-        if values and obj_id:
-            try:
-
-                if reg_type == 2:
-                    reg_object = self.env['stock.batch.picking']
-                elif reg_type == 1:
-                    reg_object = self.env['stock.picking']
-                elif reg_type == 0:
-                    reg_object = self.env['stock.move.line']
-                
-                self.create(values)
-
-                reg_object.browse(obj_id).write({
-                    'ulma_state': 'W'
-                })
-            except Exception as error :
-                reg_object.browse(obj_id).write({
-                    'ulma_state': 'E'
-                })
-                raise UserError(error)
-        else:
-            raise UserError("There is a problem with your request, not connection or reg type were supplied.")
-
-    @api.model
-    def write_package_line(self, values):
-
-        if values:
-            try:
-                self.create(values)
-
-                return True
-            except Exception as error :
-                return False
-        else:
-            return False

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_picking_form_sga" model="ir.ui.view">
+        <field name="name">view.picking.form.sga</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <notebook position="inside">
+                <page string="Integración SGA" attributes="{'invisible': [('sga_integrated','=', False)]}">
+                    <header>
+                            <field name="sga_state" widget="statusbar" statusbar_visible="NE,PM,MT"/> statusbar_colors='{"EE":"red", "EI":"red", "W":"blue", "P":"green"}'/>
+                    </header>
+                    <group>
+                        <group>
+                            <field name="sga_integrated" invisible="1"></field>
+                        </group>
+                        <group name="buttons">
+
+                        </group>
+                    </group>
+                    <group string="Lineas SGA" name="sga_lines">
+
+                    </group>
+                </page>
+            </notebook>
+        </field>
+    </record>
+
+     <record model="ir.ui.view" id="stock_vpicktree_sga">
+        <field name="name">stock.vpicktree.sga</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.vpicktree"/>
+        <field name="arch" type="xml">
+            <field name="state" position="after">
+
+                <field name="sga_state" invisible="context.get('hide_sga_state', True)"/>
+                <button name="action_send_to_sga"
+                        attrs="{'invisible': [('sga_state','!=', 'NE')]}"
+                        string="Enviar a SGA"
+                         icon="fa-rss-square"
+                        type="object"
+                        groups="stock.group_stock_user"/>
+            </field>
+        </field>
+    </record>
+    <record id="view_picking_internal_search_sga" model="ir.ui.view">
+        <field name="name">view.picking.internal.search.ulma</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_internal_search"/>
+        <field name="arch" type="xml">
+            <field name="group_id" position="after">
+                <field name="sga_state"/>
+            </field>
+            <filter name="picking_type" position="after">
+                <filter name="sga_integrated" string="SGA" domain="[('sga_integrated','=', True)]"/>
+                <filter name="waiting" string="SGA. Enviado" domain="[('sga_state','=', 'PM')]"/>
+                <filter name="error" string="SGA. Error" domain="[('sga_state','in', ['EI', 'EE'])]"/>
+                <filter name="processed" string="SGA. Completado" domain="[('sga_state','=', 'MT')]"/>
+            </filter>
+        </field>
+    </record>
+</odoo>
+

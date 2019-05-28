@@ -11,112 +11,76 @@ from pprint import pprint
 class StockBatchPicking(models.Model):
 
     _inherit = "stock.batch.picking"
-    ulma_state = fields.Selection([('W', 'En espera'), ('P', 'Procesado'), ('E', 'Error'), ('N', 'Not sent')], default='N')
 
+    ulma_integrated = fields.Boolean(related='picking_type_id.ulma_integrated')
 
     def send_to_ulma(self):
-        try:
-            for batch in self:
-                for pick in batch.picking_ids:
-                    pick.send_to_ulma()                
-
-                batch_values_to_send = {
-                    'mmmcmdref': "SAL",
-                    'mmmdisref': "SUBPAL",
-                    'mmmges': "ULMA",
-                    'mmmres': "FINPED",
-                    'mmmsesid': 2,
-                    'momcre': datetime.datetime.now().date().strftime('%Y-%m-%d'),
-                    'mmmartean': "ean13",
-                    'mmmbatch': batch.name,
-                    'mmmmomexp': batch.date
-                }
-                self.env['ulma.mmmout'].write_line(batch_values_to_send, 2, batch.id)
-        except Exception as error:                  
-            raise UserError("Sorry! we found an error in your records, solve it and try again: %s" % error)              
-
-    def get_from_ulma(self):
-        try:
-            for batch in self:
-                flag_type = None
-                for pick in batch.picking_ids:
-                    flag_type = pick.get_from_ulma()
-
-                if flag_type == 0:
-                    batch.write({
-                        'ulma_state': 'P'
-                    })
-                elif flag_type == 1:
-                    batch.write({
-                        'ulma_state': 'E'
-                    })
-        except Exception as error:                  
-            raise UserError("Sorry! we found an error in your records, solve it and try again: %s" % error)
+        for batch in self:
+            for picking in batch.picking_ids:
+                picking.send_to_ulma()
 
 class StockPicking(models.Model):
 
     _inherit = "stock.picking"
-    ulma_state = fields.Selection([('W', 'En espera'), ('P', 'Procesado'), ('E', 'Error'), ('N', 'Not sent')], default='N')    
+
+
+    def _get_mmmouts(self):
+        domain =[('mmmbatch', '=', self.name)]
+        self.write({'ulma_ids': [(6,0, self.env['ulma.mmmout'].search(domain).ids)]})
+
+
+
+
     ulma_error = fields.Text(default="", string="Error msg in case the Ulma integration failed")
+    ulma_integrated = fields.Boolean(related='picking_type_id.ulma_integrated')
+
+    ulma_ids = fields.One2many('ulma.mmmout', compute=_get_mmmouts)
+
+
+
+    def get_picking_ulma_vals(self):
+
+        ### Modificar cuando se hagan entradas para hacer la misma función para entradas y salidas
+        vals= {
+            'mmmcmdref': "SAL",
+            'mmmdisref': self.picking_type_id.ulma_type,
+            'mmmges': "ULMA",
+            'mmmres': "FINPED",
+            'mmmsesid': 2 if self.picking_type_id.ulma_type == 'SUBPAL' else 1,
+            'momcre': fields.datetime.now().date().strftime('%Y-%m-%d'),
+            'mmmartean': "ean13",
+            'mmmbatch': self.name,
+            'mmmmomexp': self.date
+        }
+        return vals
 
     @api.multi
-    def send_to_ulma(self):
-        try:
-            for pick in self:
-                cont = 0
-                if pick.move_line_ids:
-                    for move_line in pick.move_line_ids:
-                        des = move_line.product_id.product_tmpl_id.name
-                        line_values_to_send = {
-                            'mmmacccolcod': pick.id,
-                            'mmmartdes':  (des[:40]) if len(des) > 40 else des,
-                            'mmmartref': move_line.product_id.product_tmpl_id.default_code,
-                            'mmmcanuni': move_line.ordered_qty,
-                            'mmmcmdref': "SAL",
-                            'mmmdisref': "SUBPAL",
-                            'mmmexpordref': pick.name,
-                            'mmmges': "ULMA",
-                            'mmmres': "",
-                            'mmmsecada': move_line.id,
-                            'mmmsesid': 2,
-                            'momcre': datetime.datetime.strptime(move_line.create_date, "%Y-%m-%d %H:%M:%S").strftime('%Y-%m-%d'),
-                            'mmmartean': "ean13",
-                            'mmmterref': None,
-                            'mmmacccod': cont,
-                            'mmmbatch': pick.batch_picking_id.name,
-                            'mmmmomexp': datetime.datetime.strptime(pick.scheduled_date, "%Y-%m-%d %H:%M:%S").strftime('%Y-%m-%d'),
-                            'mmmfeccad': datetime.datetime.strptime(pick.scheduled_date, "%Y-%m-%d %H:%M:%S").strftime('%Y-%m-%d'),
-                            'mmmartapi': 0,
-                            'mmmminudsdis': 1
-                        }
-                        self.env['ulma.mmmout'].write_line(line_values_to_send, 0, move_line.id)
-                        cont += 1
+    def send_to_sga(self):
+        to_ulma = self.filtered(lambda x: x.picking_type_id.ulma_integrated)
+        for pick in to_ulma:
+            cont = 0
+            move_lines = pick.move_line_ids
+            sale_ids = move_lines.mapped('move_id').mapped('sale_id')
 
-                    pick_values_to_send = {
-                        'mmmacccolcod': pick.id,
-                        'mmmcmdref': "SAL",
-                        'mmmdisref': "SUBPAL",
-                        'mmmentdes': str(pick.partner_id.name)+'('+str(pick.name)+')',
-                        'mmmexpordref': 'N('+str(pick.name)+')',
-                        'mmmges': "ULMA",
-                        'mmmres': "FIN",
-                        'mmmsesid': 2,
-                        'momcre': datetime.datetime.strptime(pick.create_date, "%Y-%m-%d %H:%M:%S").strftime('%Y-%m-%d'),
-                        'mmmartean': "ean13",
-                        'mmmterref': pick.partner_id.ref,
-                        'mmmentdir1': str(pick.partner_id.street)+str(pick.partner_id.street2),
-                        'mmmentdir2': pick.partner_id.city,
-                        'mmmentdir3': pick.partner_id.state_id.name,
-                        'mmmentdir4': pick.partner_id.zip,
-                        'mmmbatch': pick.batch_picking_id.name,
-                        'mmmmomexp': datetime.datetime.strptime(pick.scheduled_date, "%Y-%m-%d %H:%M:%S").strftime('%Y-%m-%d'),
-                        'mmmurgnte': 'N',
-                        'mmmtraref': str(pick.batch_picking_id.shipping_type)+'-N'
-                    }
-                    self.env['ulma.mmmout'].write_line(pick_values_to_send, 1, pick.id)
-        except Exception as error:                  
-            raise UserError("Sorry! we found an error in your records, solve it and try again: %s" % error)
-    
+            for sale in sale_ids:
+
+
+                sale_moves = move_lines.filtered(lambda x: x.move_id.sale_id.id == sale.id)
+                for move in sale_moves:
+                    vals = move.get_move_line_ulma_vals(cont=cont)
+                    ulma_move = self.env['ulma.mmmout'].create(vals)
+                    cont += 1
+
+                if ulma_move:
+                    vals = sale.get_sale_to_ulma(pick, ulma_move, min(move.move_id.date_expected for move in sale_moves))
+                    ulma_move = self.env['ulma.mmmout'].create(vals)
+                sale_moves.write({'sga_state': 'PM'})
+            vals = pick.get_picking_ulma_vals()
+            self.env['ulma.mmmout'].create(vals)
+
+        return super(StockPicking, self - to_ulma).send_to_sga()
+
+
     @api.multi
     def get_from_ulma(self):
         flag_type = 0
@@ -138,10 +102,10 @@ class StockPicking(models.Model):
                         move_line = self.env['stock.move.line'].browse(index)
                         pick.move_line_ids[index].write({
                             'qty_done': ulma_move.mmmcanuni,
-                            'ulma_state': 'P'
+                            'sga_state': 'P'
                         })
                     pick.write({
-                        'ulma_state': 'P'
+                        'sga_state': 'P'
                     })
                 return flag_type
         except Exception as error:                  
@@ -174,11 +138,4 @@ class StockPicking(models.Model):
         else:
             self.create_package_from_selection(type_selecction_list[0:8])
             self.create_package_from_selection(type_selecction_list[8:])
-
-
-
-class StockMoveLine(models.Model):
-
-    _inherit = "stock.move.line"
-    ulma_state = fields.Selection([('W', 'En espera'), ('P', 'Procesado'), ('E', 'Error'), ('N', 'Not sent')], default='N')
 

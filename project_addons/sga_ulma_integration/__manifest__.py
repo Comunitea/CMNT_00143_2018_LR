@@ -13,20 +13,18 @@
     'application': False,
     'installable': True,
     'depends': [
-        'base',
         'stock',
-        'shipping_type',
-        'stock_batch_picking',
+        'stock_move_selection_wzd',
         'stock_batch_picking_lr'
     ],
-    'data': [
-        'views/stock_batch_picking_views.xml',
+    'data': ['views/res_config_views.xml',
+        #'views/stock_batch_picking_views.xml',
         'views/stock_picking_views.xml',
         'views/ulma_mmmout.xml',
         'views/ulma_mmminp.xml',
         'views/ulma_packinglist.xml',
         'views/stock_quant_package_views.xml',
-        'views/res_config_views.xml',
+
         'security/ir.model.access.csv'
     ]
 }
