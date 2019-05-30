@@ -29,8 +29,8 @@ class StockPickingSGA(models.Model):
                                    ('PM', 'Pendiente Adaia'),
                                    ('EE', 'Error en exportacion'),
                                    ('EI', 'Error en importacion'),
-                                   ('MT', 'Realizado'),
-                                   ('MC', 'Cancelado')], 'Estado Adaia', default="NI", track_visibility='onchange', copy=False)
+                                   ('SR', 'Realizado'),
+                                   ('SC', 'Cancelado')], 'Estado Adaia', default="NI", track_visibility='onchange', copy=False)
 
     do_backorder = fields.Selection([('default', 'Por defecto'), ('yes', 'Si'), ('no', 'No')], "Crea entrega parcial", default='default')
     sga_integrated = fields.Boolean(related="picking_type_id.sga_integrated")
@@ -83,7 +83,7 @@ class StockPickingSGA(models.Model):
     @api.multi
     def move_to_done(self):
         picks = self.filtered(lambda x: x.sga_state != 'NI')
-        picks.write({'sga_state': 'MT'})
+        picks.write({'sga_state': 'SR'})
 
 
     def button_move_to_NE(self):
@@ -91,7 +91,7 @@ class StockPickingSGA(models.Model):
 
     @api.multi
     def move_to_NE(self):
-        sga_states_to_NE = ('PM', 'EI', 'EE', 'MT', 'MC', False)
+        sga_states_to_NE = ('PM', 'EI', 'EE', 'SR', 'SC', False)
         picks = self.filtered(lambda x: x.sga_integrated and x.sga_state in sga_states_to_NE)
         picks.write({'sga_state': 'NE'})
 
@@ -250,7 +250,7 @@ class StockPickingSGA(models.Model):
             for pick in pick_pool:
                 pick_id = self.env['stock.picking'].browse(pick.id)
                 pick_id.write({
-                    'sga_state': 'MT'
+                    'sga_state': 'SR'
                 })
                 pick_id.button_validate()
 
@@ -332,7 +332,7 @@ class StockPickingSGA(models.Model):
             for pick in pick_pool:
                 pick_id = self.env['stock.picking'].browse(pick.id)
                 pick_id.write({
-                    'sga_state': 'MT'
+                    'sga_state': 'SR'
                 })
                 pick_id.button_validate()
 

@@ -43,16 +43,6 @@ class StockBatchPicking(models.Model):
     carrier_partner_id = fields.Many2one(
         'res.partner', string='Carrier driver', track_visibility='onchange',
         help='Carrier driver for this batch picking.', domain="[('delivery_id', '=', carrier_id)]")
-    delivery_route_id = fields.Many2one(
-        'delivery.route.path', string='Delivery route', track_visibility='onchange',
-        help='Delivery route for this batch picking.')
-    shipping_type = fields.Selection(
-        [('pasaran', 'Pasarán'),
-         ('agency', 'Agencia'),
-         ('route', 'Ruta')],
-        string='Tipo de envío',
-        help="Tipo de envío seleccionado."
-    )
     has_packages = fields.Boolean(
         'Has Packages', compute='_compute_has_packages',
         help='Check the existence of destination packages on move lines')

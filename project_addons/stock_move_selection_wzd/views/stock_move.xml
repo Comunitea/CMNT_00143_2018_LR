@@ -13,39 +13,7 @@
             </field>
         </field>
     </record>
-    <record id="view_pickingtype_filter" model="ir.ui.view">
-        <field name="name">stock.picking.type.filter</field>
-        <field name="model">stock.picking.type</field>
-        <field name="inherit_id" ref="stock.view_pickingtype_filter"/>
-        <field name="arch" type="xml">
-            <field name="warehouse_id" position="after">
-                <field name="group_code"/>
-                <field name="default_location_src_id"/>
-                <field name="default_location_dest_id"/>
-                <field name="group_code"/>
 
-            </field>
-            <xpath expr="//filter[@name='inactive']" position="after">
-                <separator/>
-                <filter string="Picking" name="picking" domain="[('group_code','=','picking')]"/>
-                <filter string="Internal" name="internal" domain="[('group_code','=','internal')]"/>
-                <filter string="Incoming" name="incoming" domain="[('group_code','=','incoming')]"/>
-                <filter string="Outgoing" name="outgoing" domain="[('group_code','=','outgoing')]"/>
-                <filter string="Location" name="location" domain="[('group_code','=','location')]"/>
-                <filter string="Reposition" name="reposition" domain="[('group_code','=','reposition')]"/>
-                <filter string="Other" name="other" domain="[('group_code','=','other')]"/>
-
-                <separator/>
-                <group expand="0" string="Group By">
-                    <filter name="group_by_group_code" string="Group code" context="{'group_by': 'group_code'}"/>
-                    <filter name="group_by_code" string="Supplier" context="{'group_by': 'code'}"/>
-                    <filter name="group_by_location_id" string="Origin" context="{'group_by': 'default_location_src_id'}"/>
-                    <filter name="group_by_location_dest_id" string="Destino" context="{'group_by': 'default_location_dest_id'}"/>
-                </group>
-            </xpath>
-
-            </field>
-        </record>
 
 
      <record id="view_move_line_tree_sel" model="ir.ui.view">
@@ -56,18 +24,24 @@
                   decoration-danger="(state not in ('cancel','done'))"
                   string="Movimientos"
                   create="0" default_order="date">
-                <field name="id" groups="base.group_no_one" invisible="1"/>
-                <field name="shipping_id" invisible="context.get('show_partner', False)"/>
-                <field name="date" invisible="1" />
-                <field name="purchase_id" invisible="context.get('outgoing', False)"/>
-                <field name="sale_id" invisible="context.get('incoming', False)"/>
-                <field name="campaign_id" invisible="context.get('incoming', False)"/>
-                <field name="date_expected" invisible="context.get('show_date', False)"/>
-                <!--field name="reference" string="Reference"/-->
+
                 <field name="shipping_type" invisible="context.get('incoming', False)"/>
                 <field name="delivery_route_path_id" invisible="context.get('incoming', False)"/>
                 <field name="carrier_id" invisible="context.get('incoming', False)"/>
                 <field name="urgent" invisible="context.get('incoming', False)"/>
+                <field name="picking_id"/>
+                <field name="sale_id" invisible="context.get('incoming', False)"/>
+                <field name="purchase_id" invisible="context.get('outgoing', False)"/>
+
+                <field name="id" groups="base.group_no_one" invisible="1"/>
+                <field name="picking_type_id" invisible="not context.get('all', False)"/>
+
+                <field name="shipping_id" invisible="context.get('show_partner', False)"/>
+                <field name="date" invisible="1" />
+                <field name="campaign_id" invisible="context.get('incoming', False)"/>
+                <field name="date_expected" invisible="context.get('show_date', False)"/>
+                <!--field name="reference" string="Reference"/-->
+
 
 
                 <field name="product_id"/>
@@ -77,10 +51,6 @@
                 <field name="result_package_id" />
                 <field name="product_uom_qty" string="Quantity Ordered"/>
 
-                <!--field name="qty_done" string="Quantity Done"/-->
-                <!--field name="product_uom_id" options="{'no_open': True, 'no_create': True}" string="Unit of Measure" groups="product.group_uom"/-->
-                <field name="picking_id"/>
-                <field name="picking_type_id" invisible="not context.get('all', False)"/>
 
                 <field name="state"/>
                 <field name="company_id" invisible="1"/>
@@ -97,25 +67,29 @@
         <field name="arch" type="xml">
             <search string="Stock Moves">
                 <field name="picking_id" string="Reference"/>
+
+
                 <field name="dunmy_picking_id" string="To assign ref."
                        context="{'picking': self, 'group_by': 'picking_id'}"
                        filter_domain="['|', ('picking_id', '=', self), ('picking_id','=', False)]"/>
                 <field name="picking_type_id" string="Type"/>
-                <field name="product_id"/>
-                <field name="location_id" groups="stock.group_stock_multi_locations"/>
-                <field name="location_dest_id" groups="stock.group_stock_multi_locations"/>
-                <field name="sale_id" groups="stock.group_stock_multi_locations"/>
-                <field name="shipping_id" groups="stock.group_stock_multi_locations"/>
-                <field name="company_id"/>
-                <field name="package_id"/>
-                <field name="result_package_id"/>
-                <field name="campaign_id"/>
-                <field name="carrier_id"/>
                 <field name="shipping_type"/>
                 <field name="delivery_route_path_id"/>
                 <field name="urgent"/>
+                <field name="sale_id" groups="stock.group_stock_multi_locations"/>
+                <field name="package_id"/>
+                <field name="result_package_id"/>
+
+
+                <field name="product_id"/>
+                <field name="location_id" groups="stock.group_stock_multi_locations"/>
+                <field name="location_dest_id" groups="stock.group_stock_multi_locations"/>
+                <field name="shipping_id" groups="stock.group_stock_multi_locations"/>
+                <field name="company_id"/>
+                <field name="campaign_id"/>
+                <field name="carrier_id"/>
                 <field name="sga_integrated"/>
-                <field name="shipping_type"/>
+
                 <separator/>
                 <filter name="late" string="Retrasados" domain="[('date_expected','&lt;', time.strftime('%%Y-%%m-%%d %%H:%%M:%%S'))]" help="Movimientos retrasados"/>
                 <!--filter string="To SGA" name="sga" domain="[('state','in', ['assigned', 'partially_available'])]"/-->
@@ -187,6 +161,11 @@
                     <field name="priority"/>
                     <field name="state"/>
                     <field name="show_details_visible"/>
+                    <field name="shipping_type"/>
+                <field name="delivery_route_path_id" />
+                <field name="carrier_id" />
+                <field name="urgent" />
+
                     <templates>
                         <t t-name="kanban-box">
                             <div t-attf-class="oe_kanban_global_click">

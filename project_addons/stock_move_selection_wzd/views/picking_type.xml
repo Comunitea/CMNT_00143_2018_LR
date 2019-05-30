@@ -32,7 +32,12 @@
                     <field name="sga_integrated"/>
                      <field name="count_picking_ready"/>
                     <field name="group_code"/>
-                                        <field name="grouped"/>
+                    <field name="grouped"/>
+                    <field name="context_domain"/>
+
+                    <field name="shipping_type"/>
+                            <field name="urgent"/>
+                                    <field name="delivery_route_path_id"/>
 
                     <field name="kanban_dashboard_graph"/>
                     <templates>
@@ -202,6 +207,46 @@
                 </kanban>
             </field>
    </record>
+     <record id="view_pickingtype_filter" model="ir.ui.view">
+        <field name="name">stock.picking.type.filter</field>
+        <field name="model">stock.picking.type</field>
+        <field name="inherit_id" ref="stock.view_pickingtype_filter"/>
+        <field name="arch" type="xml">
+
+            <field name="name" position="after">
+                <field name="shipping_type" widget="selection" context="{'search1_shipping_type': self}"/>
+                <field name="delivery_route_path_id" widget="selection" context="{'search1_delivery_route_path_id': self}"/>
+                <field name="urgent" widget="selection" context="{'search1_urgent': self}"/>
+            </field>
+            <field name="warehouse_id" position="after">
+                <field name="group_code"/>
+                <field name="default_location_src_id"/>
+                <field name="default_location_dest_id"/>
+                <field name="group_code"/>
+
+            </field>
+            <xpath expr="//filter[@name='inactive']" position="after">
+                <filter string="Ver todos" name="ver_todos" context="{'search1_all': True}" domain="[('active','=',True)]"/>
+                <separator/>
+                <filter string="Picking" name="picking" domain="[('group_code','=','picking')]"/>
+                <filter string="Internal" name="internal" domain="[('group_code','=','internal')]"/>
+                <filter string="Incoming" name="incoming" domain="[('group_code','=','incoming')]"/>
+                <filter string="Outgoing" name="outgoing" domain="[('group_code','=','outgoing')]"/>
+                <filter string="Location" name="location" domain="[('group_code','=','location')]"/>
+                <filter string="Reposition" name="reposition" domain="[('group_code','=','reposition')]"/>
+                <filter string="Other" name="other" domain="[('group_code','=','other')]"/>
+
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter name="group_by_group_code" string="Group code" context="{'group_by': 'group_code'}"/>
+                    <filter name="group_by_code" string="Supplier" context="{'group_by': 'code'}"/>
+                    <filter name="group_by_location_id" string="Origin" context="{'group_by': 'default_location_src_id'}"/>
+                    <filter name="group_by_location_dest_id" string="Destino" context="{'group_by': 'default_location_dest_id'}"/>
+                </group>
+            </xpath>
+
+            </field>
+        </record>
 
     <record id="stock_move_kanban_view" model="ir.actions.act_window">
             <field name="name">Monitor de almacén</field>

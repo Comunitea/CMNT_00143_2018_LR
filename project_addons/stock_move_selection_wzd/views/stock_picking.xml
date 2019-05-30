@@ -37,7 +37,7 @@
                 <button name="action_send_to_sga"
                         attrs="{'invisible': [('sga_state','!=', 'NE')]}"
                         string="Enviar a SGA"
-                         icon="fa-rss-square"
+                        icon="fa-rss-square"
                         type="object"
                         groups="stock.group_stock_user"/>
             </field>

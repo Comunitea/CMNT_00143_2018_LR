@@ -15,7 +15,6 @@
                     </group>
                     <group attrs="{'invisible': [('associate', '=', False)]}">
                         <field name="financiable_payment"/>
-                        <field name="urgent"/>
                     </group>
                 </group>
             </xpath>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- stock.quant.package kanban ulma status view -->
+    <record model="ir.ui.view" id="view_quant_package_kanban_move_wzd">
+        <field name="name">view.quant.package.kanban.mov_wzd</field>
+        <field name="model">stock.quant.package</field>
+        <field name="inherit_id" ref="stock.view_quant_package_kanban"/>
+        <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field name="sga_state"/>
+            </field>
+            <xpath expr="//field[@name='name']" position="after">
+
+                <span t-if="record.count_move_line.raw_value &gt; 0" class="badge">
+                        <i class="fa fa-fw fa-rss-square"/>
+                            <span>
+                                <t t-esc="record.count_move_line.value"/>
+                            </span>
+                    </span>
+                <span t-if="record.sga_state" class="badge right">
+                   <field name="sga_state"/>
+                </span>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- stock.quant.package ulma status search view -->
+    <record id="quant_package_search_view_move_wzd" model="ir.ui.view">
+        <field name="name">quant.package.search.view.move.wzd</field>
+        <field name="model">stock.quant.package</field>
+        <field name="inherit_id" ref="stock.quant_package_search_view"/>
+        <field name="arch" type="xml">
+            <field name="packaging_id" position="after">
+                <field name="sga_state"/>
+                <separator/>
+            </field>
+
+            <xpath expr="//group" position="inside">
+                <filter name="sga_state" context="{'group_by': 'sga_State'}"/>
+
+            </xpath>
+        </field>
+    </record>
+
+    <!-- stock.quant.package ulma status form view -->
+    <record id="view_quant_package_form_move_wzd" model="ir.ui.view">
+        <field name="name">view.quant.package.form.move.wzd</field>
+        <field name="model">stock.quant.package</field>
+        <field name="inherit_id" ref="stock.view_quant_package_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <field name="sga_state" widget="statusbar" statusbar_visible="NE,PS,SR"/>
+            </xpath>
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button class="oe_stat_button" name="action_view_moves_line" string="Movimientos de stock" type="object" widget="statinfo" icon="fa-list-ul"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

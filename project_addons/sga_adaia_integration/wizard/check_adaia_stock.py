@@ -45,7 +45,7 @@ class WizCheckAdaiaStock(models.TransientModel):
 
     def get_product_waiting_sga_confirm(self, domain= []):
 
-        domain += [('state', '=', 'assigned'), ('sga_state', 'in', ('PM', 'MT', 'MC'))]
+        domain += [('state', '=', 'assigned'), ('sga_state', 'in', ('PM', 'SR', 'SC'))]
         picks = self.env['stock.picking'].sudo().search(domain)
         if picks:
             pick_ids = picks.ids

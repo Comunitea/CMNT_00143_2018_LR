@@ -23,7 +23,7 @@
         'views/ulma_mmmout.xml',
         'views/ulma_mmminp.xml',
         'views/ulma_packinglist.xml',
-        'views/stock_quant_package_views.xml',
+        #'views/stock_quant_package_views.xml',
 
         'security/ir.model.access.csv'
     ]

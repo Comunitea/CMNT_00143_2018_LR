@@ -20,7 +20,7 @@
             <notebook position="inside">
                 <page string="Integración Adaia" attrs="{'invisible':[('sga_integrated','=','False')]}">
                     <group>
-                        <field name="sga_state" widget="statusbar" statusbar_visible="NE,PM,MT"
+                        <field name="sga_state" widget="statusbar" statusbar_visible="NE,PS,MT"
                             attrs="{'invisible': [('sga_state', '=', 'NI')], 'readonly': 1}"
                             statusbar_colors='{"EE":"red", "EI":"red", "PM":"red", "MT":"green"}'/>
                         <field name="sga_integrated" invisible="1"/>

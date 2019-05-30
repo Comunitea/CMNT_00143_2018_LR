@@ -3,13 +3,12 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import models, fields, api, _
-from .res_partner import SHIPPING_TYPE_SEL, DEFAULT_SHIPPING_TYPE, STRING_SHIPPING_TYPE,HELP_SHIPPING_TYPE
+#from .res_partner import SHIPPING_TYPE_SEL, DEFAULT_SHIPPING_TYPE, STRING_SHIPPING_TYPE,HELP_SHIPPING_TYPE
 
 class SaleOrder(models.Model):
-    _inherit = 'sale.order'
 
-    shipping_type = fields.Selection(SHIPPING_TYPE_SEL, default=DEFAULT_SHIPPING_TYPE, string=STRING_SHIPPING_TYPE, help=HELP_SHIPPING_TYPE)
-    delivery_route_path_id = fields.Many2one('delivery.route.path', string="Route path")
+    _inherit = ['sale.order', 'info.route.mixin']
+    _name = 'sale.order'
 
     @api.multi
     @api.onchange('partner_id')
@@ -17,15 +16,11 @@ class SaleOrder(models.Model):
         res = super().onchange_partner_id()
         self.shipping_type = self.partner_id and self.partner_id.shipping_type or False
         self.delivery_route_path_id = self.partner_id and self.partner_id.delivery_route_path_id or False
+        self.urgent = self.partner_id.urgent
         return res
 
     def get_new_vals(self):
-        vals = {'shipping_type': self.shipping_type,
-                'delivery_route_path_id': self.delivery_route_path_id.id,
-                'urgent': self.urgent,
-                'carrier_id': self.carrier_id.id,
-                'campaign_id': self.campaign_id and self.campaign_id.id or False,
-                }
+        vals = self.update_info_route_vals()
         return vals
 
 class SaleOrderLine(models.Model):

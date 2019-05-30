@@ -15,8 +15,8 @@ class StockBatchPickingSGA(models.Model):
                                    ('PM', 'Pendiente Adaia'),
                                    ('EE', 'Error en exportacion'),
                                    ('EI', 'Error en importacion'),
-                                   ('MT', 'Realizado'),
-                                   ('MC', 'Cancelado')], 'Estado Adaia', default="NE", track_visibility='onchange', copy=False)
+                                   ('SR', 'Realizado'),
+                                   ('SC', 'Cancelado')], 'Estado Adaia', default="NE", track_visibility='onchange', copy=False)
 
     def button_move_to_done(self):
         return self.move_to_done
@@ -25,8 +25,8 @@ class StockBatchPickingSGA(models.Model):
     def move_to_done(self):
         pickings = self.mapped('picking_ids')
         picks = pickings.filtered(lambda x: x.sga_state != 'NI')
-        picks.write({'sga_state': 'MT'})
-        self.write({'sga_state': 'MT'})
+        picks.write({'sga_state': 'SR'})
+        self.write({'sga_state': 'SR'})
 
 
     def button_move_to_NE(self):
@@ -34,7 +34,7 @@ class StockBatchPickingSGA(models.Model):
 
     @api.multi
     def move_to_NE(self):
-        sga_states_to_NE = ('PM', 'EI', 'EE', 'MT', 'MC', False)
+        sga_states_to_NE = ('PM', 'EI', 'EE', 'SR', 'SC', False)
         pickings = self.mapped('picking_ids')
         picks = pickings.filtered(lambda x: x.sga_integrated and x.sga_state in sga_states_to_NE)
         self.write({'sga_state': 'NE'})

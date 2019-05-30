@@ -17,11 +17,11 @@ class StockPickintType(models.Model):
 
 
 class StockBatchPicking(models.Model):
-    _inherit = 'stock.batch.picking'
 
-    shipping_type = fields.Selection(SHIPPING_TYPE_SEL, default=DEFAULT_SHIPPING_TYPE, string=STRING_SHIPPING_TYPE, help=HELP_SHIPPING_TYPE)
-    delivery_route_path_id = fields.Many2one('delivery.route.path', string="Route path")
-    urgent = fields.Boolean("Urgent", help='Plus 3,20%')
+
+    _inherit = ['stock.batch.picking', 'info.route.mixin']
+    _name = 'stock.batch.picking'
+
     carrier_id = fields.Many2one("delivery.carrier", string="Carrier")
 
     @api.onchange('carrier_id')
@@ -46,43 +46,33 @@ class StockBatchPicking(models.Model):
 
 
 class StockPicking(models.Model):
-    _inherit = "stock.picking"
 
-    shipping_type = fields.Selection(SHIPPING_TYPE_SEL, default=DEFAULT_SHIPPING_TYPE, string=STRING_SHIPPING_TYPE, help=HELP_SHIPPING_TYPE)
-    delivery_route_path_id = fields.Many2one('delivery.route.path', string="Route path")
-    urgent = fields.Boolean("Urgent", help='Plus 3,20%')
-    campaign_id = fields.Many2one('campaign', 'Campaign')
-
-    @api.onchange('shipping_type')
-    def onchange_shipping_type(self):
-        for pick in self:
-            pick.move_line.write({'shipping_type': pick.shipping_type})
-
-    @api.onchange('delivery_route_path_id')
-    def onchange_delivery_route_path_id(self):
-        for pick in self:
-            pick.move_line.write({'delivery_route_path_id': pick.delivery_route_path_id.id})
-
-    @api.onchange('urgent')
-    def onchange_urgent(self):
-        for pick in self:
-            pick.move_line.write({'urgent': pick.urgent})
+    _inherit = ['stock.picking', 'info.route.mixin']
+    _name = 'stock.picking'
 
     def get_new_vals(self):
-        vals = {'shipping_type': self.shipping_type,
-                'delivery_route_path_id': self.delivery_route_path_id.id,
-                'urgent': self.urgent,
-                'carrier_id': self.carrier_id.id
-                }
+        vals = self.update_info_route_vals()
         return vals
 
-class StockMoveLine(models.Model):
-    _inherit = 'stock.move.line'
+    @api.multi
+    def write(self, vals):
+        child_vals = self.get_child_vals(vals)
+        if child_vals:
+            ctx = self._context.copy()
+            ctx.update(write_from_pick=True)
+            packages = self.move_line_ids.mapped('result_package_id')
+            moves = self.move_line_ids.filtered(lambda x: not x.result_package_id).mapped('move_id')
+            if packages:
+                packages.with_context(ctx).write(child_vals)
+            if moves:
+                moves.with_context(ctx).write(child_vals)
+        super().write(vals)
 
-    shipping_type = fields.Selection(SHIPPING_TYPE_SEL, default=DEFAULT_SHIPPING_TYPE, string=STRING_SHIPPING_TYPE,
-                                     help=HELP_SHIPPING_TYPE)
-    delivery_route_path_id = fields.Many2one('delivery.route.path', string="Route path")
-    urgent = fields.Boolean("Urgent", help='Plus 3,20%')
+
+class StockMoveLine(models.Model):
+
+    _inherit = ['stock.move.line', 'info.route.mixin']
+    _name = 'stock.move.line'
     carrier_id = fields.Many2one("delivery.carrier", string="Carrier")
     campaign_id = fields.Many2one('campaign', 'Campaign')
 
@@ -97,13 +87,10 @@ class StockMoveLine(models.Model):
             #ml.move_id and ml.move_id.write(vals)
 
 
+
 class StockMove(models.Model):
-
-    _inherit = "stock.move"
-
-    shipping_type = fields.Selection(SHIPPING_TYPE_SEL, default=DEFAULT_SHIPPING_TYPE, string=STRING_SHIPPING_TYPE, help=HELP_SHIPPING_TYPE)
-    delivery_route_path_id = fields.Many2one('delivery.route.path', string="Route path")
-    urgent = fields.Boolean("Urgent", help='Plus 3,20%')
+    _inherit = ['stock.move', 'info.route.mixin']
+    _name = 'stock.move'
     carrier_id = fields.Many2one("delivery.carrier", string="Carrier")
     campaign_id = fields.Many2one('campaign', 'Campaign')
 
@@ -121,12 +108,7 @@ class StockMove(models.Model):
         return domain
 
     def get_new_vals(self):
-        vals = {'shipping_type': self.shipping_type,
-                'delivery_route_path_id': self.delivery_route_path_id.id,
-                'urgent': self.urgent,
-                'carrier_id': self.carrier_id.id,
-                'campaign_id': self.campaign_id and self.campaign_id.id or False
-                }
+        vals = self.update_info_route_vals()
         return vals
 
     def _get_new_picking_values(self):
@@ -153,3 +135,19 @@ class StockMove(models.Model):
         res = super()._prepare_move_split_vals(qty=qty)
         res.update(self.get_new_vals())
         return res
+
+    @api.multi
+    def write(self, vals):
+        child_vals = self.get_child_vals(vals)
+        if child_vals:
+            ctx = self._context.copy()
+            ctx.update(write_from_move=True)
+            if self.mapped('move_line_ids').mapped('result_package_id') and not self._context.get('write_from_package') and not self._context.get('write_from_pick'):
+                raise ValidationError('Hay movimientos con paquetes. Debes cambiar los datos de envío en los paquetes')
+            if self.mapped('picking_id') and not self._context.get('write_from_pick') :
+                raise ValidationError('Hay movimientos con albaranes. Debes cambiar los datos de envío en los albaranes')
+            self.mapped('move_line_ids').write(child_vals)
+        super().write(vals)
+
+
+
