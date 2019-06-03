@@ -25,7 +25,7 @@ class StockQuantPackage(models.Model):
             'move_lines_info': move_lines_info,
             'package_info': {
                 'name': package_obj.name,
-                'info_str': package_obj.shipping_type
+                'info_str': package_obj.info_route_str or package_obj.shipping_type
             }
         }
         
