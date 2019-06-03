@@ -9,7 +9,6 @@
     'author': "Comunitea, ",
     'depends': [
         'sale_stock',
-
         'stock_picking_imp',
         'stock_picking_group',
         'shipping_type'

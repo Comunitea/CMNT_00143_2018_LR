@@ -22,7 +22,7 @@ class InfoRouteMixin(models.AbstractModel):
     info_route_str = fields.Char('Info route', compute='get_info_route')
     urgent = fields.Boolean('Urgent', help='Default urgent for partner orders\nPlus 3.20%')
 
-    @api.onchange('associate')
+
     def _onchange_associate(self):
         super()._onchange_associate()
         if not self.associate:

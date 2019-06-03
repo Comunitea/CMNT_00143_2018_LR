@@ -17,14 +17,7 @@
         <field name="model">stock.picking</field>
         <field name="inherit_id" ref="stock_move_selection_wzd.view_picking_form_sga"/>
         <field name="arch" type="xml">
-
-            <xpath expr="//button[@name='button_validate']" position="attributes">
-                <attribute name="attrs">{'invisible': ['|', ('sga_state', '=', 'PS'), ('show_validate', '=', False)]}</attribute>
-            </xpath>
-            <field name="sga_integrated" position="after">
-                <field name="ulma_integrated" attrs="{'invisible': [('ulma_integrated', '=', False)]}"/>
-            </field>
-            <xpath expr="//field[@name='sga_state']" position="before" >
+<xpath expr="//field[@name='sga_state']" position="before" >
                         <button name="force_button_validate" string="Forzar validación" type="object"
                             class="oe_stat_button" icon="fa-shopping-cart" attrs="{'invisible': ['|', ('sga_state', '!=', 'PS'), ('ulma_integrated', '=', False)]}"/>
 
@@ -37,6 +30,13 @@
                         <button name="show_ulma_mmmout" string="Mostrar registros en ulma" type="object"
                             class="oe_stat_button" icon="fa-shopping-cart" attrs="{'invisible': [('ulma_integrated', '=', False)]}"/>
             </xpath>
+            <xpath expr="//button[@name='button_validate']" position="attributes">
+                <attribute name="attrs">{'invisible': ['|', ('sga_state', '=', 'PS'), ('show_validate', '=', False)]}</attribute>
+            </xpath>
+            <field name="sga_integrated" position="after">
+                <field name="ulma_integrated" attrs="{'invisible': [('sga_integrated', '=', False)]}"/>
+            </field>
+
 
         </field>
     </record>

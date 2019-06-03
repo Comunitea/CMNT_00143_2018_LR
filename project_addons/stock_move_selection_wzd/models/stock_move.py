@@ -119,11 +119,9 @@ class StockMoveLine(models.Model):
     sga_integrated = fields.Boolean('Sga', help='Marcar si tiene un tipo de integración con el sga')
     sga_state = fields.Selection(SGA_STATES, default='NI', string="SGA Estado")
 
-
-
-
     @api.multi
     def write(self, vals):
+
         move_vals = {}
 
         for f in ['package_id', 'result_package_id']:

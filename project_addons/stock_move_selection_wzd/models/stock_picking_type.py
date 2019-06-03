@@ -38,18 +38,18 @@ class PickingType(models.Model):
 
     # Statistics for the kanban view for moves
     last_done_move = fields.Char('Last 10 Done Pickings', compute='_compute_last_done_moves')
-    count_move_draft = fields.Integer(compute='_compute_move_count')
-    count_move_done = fields.Integer(compute='_compute_move_count')
-    count_move_todo_today = fields.Integer(compute='_compute_move_count')
-    count_move_ready = fields.Integer(compute='_compute_move_count')
-    count_move = fields.Integer(compute='_compute_move_count')
-    count_move_waiting = fields.Integer(compute='_compute_move_count')
-    count_move_late = fields.Integer(compute='_compute_move_count')
-    count_move_backorders = fields.Integer(compute='_compute_move_count')
-    count_move_to_pick = fields.Integer(compute='_compute_move_count')
-    rate_move_late = fields.Integer(compute='_compute_move_count', string="Ratio")
-    rate_move_backorders = fields.Integer(compute='_compute_move_count')
-    rate_done = fields.Integer(compute='_compute_move_count', string="Ratio")
+    count_move_draft = fields.Integer(compute='_compute_picking_count')
+    count_move_done = fields.Integer(compute='_compute_picking_count')
+    count_move_todo_today = fields.Integer(compute='_compute_picking_count')
+    count_move_ready = fields.Integer(compute='_compute_picking_count')
+    count_move = fields.Integer(compute='_compute_picking_count')
+    count_move_waiting = fields.Integer(compute='_compute_picking_count')
+    count_move_late = fields.Integer(compute='_compute_picking_count')
+    count_move_backorders = fields.Integer(compute='_compute_picking_count')
+    count_move_to_pick = fields.Integer(compute='_compute_picking_count')
+    rate_move_late = fields.Integer(compute='_compute_picking_count', string="Ratio")
+    rate_move_backorders = fields.Integer(compute='_compute_picking_count')
+    rate_done = fields.Integer(compute='_compute_picking_count', string="Ratio")
     sga_integrated = fields.Boolean('Sga', help='Marcar si tiene un tipo de integración con el sga')
 
     shipping_type = fields.Selection(SHIPPING_TYPE_SEL, default=DEFAULT_SHIPPING_TYPE, string=STRING_SHIPPING_TYPE,
@@ -109,21 +109,23 @@ class PickingType(models.Model):
     def _compute_picking_count(self):
         # TDE TODO count picking can be done using previous two
         ### SOBREESCRIBO LA FUNCION COMPLETA PARA AÑADIR EL SGA_STATE
-        context_domain = self.get_context_domain()
-        print (context_domain)
 
-        domains = {
-            'count_picking_draft': context_domain + [('state', '=', 'draft')],
-            'count_picking_waiting': context_domain + [('state', 'in', ('confirmed', 'waiting'))],
-            'count_picking_ready': context_domain + [('state', '=', 'assigned'), ('sga_state', 'in', ('NI', 'NE'))],
-            'count_picking': context_domain +  [('state', 'in', ('assigned', 'waiting', 'confirmed'))],
-            'count_picking_late': context_domain +  [('scheduled_date', '<', datetime.now().strftime(DEFAULT_SERVER_DATETIME_FORMAT)), ('state', 'in', ('assigned', 'waiting', 'confirmed'))],
-            'count_picking_backorders': context_domain + [('backorder_id', '!=', False), ('state', 'in', ('confirmed', 'assigned', 'waiting'))],
-        }
+        context_domain = self.get_context_domain(date_expected='scheduled_date')
 
+        move_domains, picking_domains = self.get_moves_domain()
+        for field in move_domains:
+            domain = move_domains[field] + [('picking_type_id', 'in', self.ids)]
+            data = self.env['stock.move'].read_group(domain, ['picking_type_id'], ['picking_type_id'])
+            count = {
+                x['picking_type_id'][0]: x['picking_type_id_count']
+                for x in data if x['picking_type_id']
+            }
 
-        for field in domains:
-            data = self.env['stock.picking'].read_group(domains[field] +
+            for record in self:
+                record[field] = count.get(record.id, 0)
+
+        for field in picking_domains:
+            data = self.env['stock.picking'].read_group(picking_domains[field] +
                 [('state', 'not in', ('done', 'cancel')), ('picking_type_id', 'in', self.ids)],
                 ['picking_type_id'], ['picking_type_id'])
             count = {
@@ -138,10 +140,26 @@ class PickingType(models.Model):
             record.rate_picking_late = record.count_picking and record.count_picking_late * 100 / record.count_picking or 0
             record.rate_picking_backorders = record.count_picking and record.count_picking_backorders * 100 / record.count_picking or 0
 
+            count_move_today = record.count_move_todo_today + record.count_move_done
+            record.rate_done = count_move_today and record.count_move_done * 100 / count_move_today or 0
+            record.rate_move_late = record.count_move and record.count_move_late * 100 / record.count_move or 0
+            record.rate_move_backorders = record.count_move and record.count_move_backorders * 100 / record.count_move or 0
+
+
+    def get_type_domain(self, type=''):
+        if type=='moves':
+        ## domain para movimientos de salida listos
+            type_domain = [('picking_type_id.group_code', '=', 'outgoing'), ('state', 'in', ('partially_available', 'assigned')), ('result_package_id', '!=', False)]
+        else:
+            type_domain=[]
+
+        return type_domain
 
     def get_moves_domain(self):
-        context_domain = self.get_context_domain()
-        print (context_domain)
+        type_domain = self.get_type_domain('moves')
+        c_dom = self.get_context_domain()
+        context_domain = expression.AND([type_domain, c_dom])
+
         today = datetime.now().strftime(DEFAULT_SERVER_DATE_FORMAT)
         tomorrow = (datetime.now() + timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT)
         yesterday = (datetime.now() - timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT)
@@ -151,7 +169,7 @@ class PickingType(models.Model):
         to_do_state = [('state', 'in', ('partially_available', 'assigned', 'waiting', 'confirmed'))]
         ready_state = [('state', 'in', ('partially_available', 'assigned')), ('sga_state', 'in', ('NI', 'NE'))]
 
-        domains = {
+        move_domains = {
             'count_move_todo_today': context_domain + to_do_state + [('date_expected', '<', today)],
             'count_move_done': context_domain + [('state', '=', 'done'), ('date', '>', yesterday)],
             'count_move_draft': context_domain + [('state', '=', 'draft')],
@@ -162,9 +180,23 @@ class PickingType(models.Model):
             'count_move_late': context_domain + to_do_state + [('date_expected', '<', yesterday)],
             'count_move_backorders': context_domain + to_do_state + [('origin_returned_move_id', '!=', False)],
         }
+        type_domain = self.get_type_domain('picks')
+        c_dom = self.get_context_domain('scheduled_date')
+        context_domain = expression.AND([type_domain, c_dom])
+        picking_domains = {
+            'count_picking_draft': context_domain + [('state', '=', 'draft')],
+            'count_picking_waiting': context_domain + [('state', 'in', ('confirmed', 'waiting'))],
+            'count_picking_ready': context_domain + [('state', '=', 'assigned'), ('sga_state', 'in', ('NI', 'NE'))],
+            'count_picking': context_domain + [('state', 'in', ('assigned', 'waiting', 'confirmed'))],
+            'count_picking_late': context_domain + [
+                ('scheduled_date', '<', datetime.now().strftime(DEFAULT_SERVER_DATETIME_FORMAT)),
+                ('state', 'in', ('assigned', 'waiting', 'confirmed'))],
+            'count_picking_backorders': context_domain + [('backorder_id', '!=', False),
+                                                          ('state', 'in', ('confirmed', 'assigned', 'waiting'))],
+        }
 
 
-        return domains
+        return move_domains, picking_domains
 
     @api.model
     def search(self, args, offset=0, limit=None, order=None, count=False):
@@ -182,7 +214,8 @@ class PickingType(models.Model):
         )
 
 
-    def get_context_domain(self):
+
+    def get_context_domain(self, date_expected ='date_expected'):
         def delete(domain, var, new_token):
             print('Token: {}'.format(new_token))
             if domain:
@@ -248,7 +281,19 @@ class PickingType(models.Model):
 
         if clear:
             domain=[]
-        self.write({'context_domain': '{}'.format(domain)})
+
+        if self._context.get('filter_day', False):
+
+            f_day = self._context['filter_day']
+            today = datetime.now().strftime(DEFAULT_SERVER_DATE_FORMAT)
+            tomorrow = (datetime.now() + timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT)
+            yesterday = (datetime.now() - timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT)
+            if f_day =='today':
+                domain = [(date_expected, '<', tomorrow),(date_expected, '>', yesterday)]
+            elif f_day=='tomorrow':
+                domain = [(date_expected, '>=', tomorrow)]
+            elif f_day=='yesterday':
+                domain = [(date_expected, '<=', today)]
         return domain or []
 
 
