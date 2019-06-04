@@ -13,6 +13,7 @@
     'installable': True,
     'depends': [
         'sale_stock',
+        'stock_picking_group',
         'stock_batch_picking',
         'campaign'
 
