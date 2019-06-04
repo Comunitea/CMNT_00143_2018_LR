@@ -17,6 +17,25 @@ class StockPicking(models.Model):
 
     sga_integrated = fields.Boolean('Sga', help='Marcar si tiene un tipo de integración con el sga')
     sga_state = fields.Selection(SGA_STATES, default='NI', string="SGA Estado")
+    state = fields.Selection(selection_add=[('packaging', 'Empaquetado')])
+
+
+    @api.depends('move_type', 'move_lines.state', 'move_lines.picking_id', 'move_line_ids.result_package_id')
+    @api.one
+    def _compute_state(self):
+
+        super()._compute_state()
+        for pick in self.filtered (lambda x: x.picking_type_id.group_code == 'outgoing' and x.state == 'assigned'):
+            if pick.move_line_ids.filtered(lambda x: x.result_package_id == False):
+                pick.state = 'packaging'
+
+
+    @api.multi
+    def action_done(self):
+        for pick in self:
+            if pick.state == 'packaging':
+                raise ValidationError ('No puedes validar el albarán {} porque está en empaquetado'.format(pick.name))
+        return super().action_done()
 
     @api.model
     def create(self, vals):

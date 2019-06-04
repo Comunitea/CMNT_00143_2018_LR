@@ -55,9 +55,3 @@ class StockMove(models.Model):
     def get_new_vals(self):
         return super().get_new_vals()
 
-
-    def _get_new_picking_domain(self):
-        vals = super(StockMove, self)._get_new_picking_domain()
-        if self.picking_type_id.sga_integrated:
-            vals += [('sga_state', '=', 'NE')]
-        return vals

@@ -48,15 +48,17 @@ class StockMove(models.Model):
 
     def _get_new_picking_domain(self):
         domain = super()._get_new_picking_domain()
-        if self.picking_type_id:
-            if self.picking_type_id.shipping_type:
+        if self.picking_type_id.code == 'outgoing':
+            if self.shipping_type:
                 domain += [('shipping_type', '=', self.shipping_type)]
-            if self.picking_type_id.delivery_route_path_id:
+            if self.delivery_route_path_id:
                 domain += [('delivery_route_path_id', '=', self.delivery_route_path_id.id)]
-            if self.picking_type_id.carrier_id:
+            if self.carrier_id:
                 domain += [('carrier_id', '=', self.carrier_id.id)]
-            if self.picking_type_id.campaign_id:
+            if self.campaign_id and False:
                 domain += [('campaign_id', '=', self.campaign_id.id)]
+            domain += [('urgent', '=', self.urgent)]
+        print('Get new picking domain {}'.format(domain))
         return domain
 
     def get_new_vals(self):
@@ -66,6 +68,7 @@ class StockMove(models.Model):
     def _get_new_picking_values(self):
         res = super()._get_new_picking_values()
         res.update(self.get_new_vals())
+        print ('Valores para el nuevo pick: {}'.format(res))
         return res
 
     def _prepare_procurement_values(self):

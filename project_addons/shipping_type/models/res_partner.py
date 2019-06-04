@@ -59,11 +59,11 @@ class InfoRouteMixin(models.AbstractModel):
         for obj in self:
             if obj.shipping_type or obj.delivery_route_path_id:
                 if 'carrier_id' in obj.fields_get_keys():
-                    carrier_id = obj.carrier_id and obj.carrier_id.name or '--'
+                    carrier_id = obj.carrier_id and obj.carrier_id.name or ''
                 else:
-                    carrier_id = '--'
+                    carrier_id = ''
 
-                name2 = obj.delivery_route_path_id.name or 'Sin ruta' if obj.shipping_type != 'agency' else carrier_id
+                name2 = '{}. {}'.format(obj.delivery_route_path_id.name or 'Sin ruta', carrier_id)
                 name = '* ' if obj.urgent else ''
                 shipping_type = obj._fields['shipping_type'].convert_to_export(obj.shipping_type, obj) if obj.shipping_type else 'Sin envío'
                 obj.info_route_str = '{}{}: {}'.format(name, shipping_type, name2)

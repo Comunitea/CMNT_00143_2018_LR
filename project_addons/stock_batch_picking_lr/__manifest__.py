@@ -23,6 +23,7 @@
         'views/res_partner_views.xml',
         'views/stock_batch_picking_views.xml',
         #'views/delivery_route_path.xml',
+        'views/stock.xml',
         'views/stock_quant_package_views.xml',
         'report/report_delivery_batch_views.xml',
         'security/ir.model.access.csv',

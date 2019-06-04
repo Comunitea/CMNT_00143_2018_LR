@@ -36,12 +36,12 @@ class StockMove(models.Model):
 
 
     ##NEcesito traer estos campos de stock_move_line
-    package_id = fields.Many2one('stock.quant.package', 'Source Package', ondelete='restrict')
-    lot_id = fields.Many2one('stock.production.lot', 'Lot')
+    package_id = fields.Many2one('stock.quant.package', 'Paquete origen', ondelete='restrict')
+    lot_id = fields.Many2one('stock.production.lot', 'Lote')
     result_package_id = fields.Many2one(
-        'stock.quant.package', 'Destination Package',
+        'stock.quant.package', 'Paquete destino',
         ondelete='restrict', required=False,
-        help="If set, the operations are packed into this package")
+        help="Si está marcado, las operaciones se empaquetan en el paquete")
     dunmy_picking_id = fields.Many2one('stock.picking', 'Transfer Reference', store=False)
 
     sga_integrated = fields.Boolean('Sga', help='Marcar si tiene un tipo de integración con el sga')
@@ -109,8 +109,9 @@ class StockMove(models.Model):
 
     @api.multi
     def move_de_sel_assign_picking(self):
-        self.picking_id = False
-        self.move_line_ids.write({'picking_id':False})
+
+        self.write({'picking_id': False})
+        self.mapped('move_line_ids').write({'picking_id': False})
 
 
 class StockMoveLine(models.Model):

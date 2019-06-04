@@ -10,7 +10,7 @@
             </field>
 
             <notebook position="inside">
-                <page string="Integración SGA" attributes="{'invisible': [('picking_type_id.sga_integrated','=', False)]}">
+                <page string="Integración SGA" attrs="{'invisible': [('sga_state','=', 'NI')]}">
                     <header>
                             <field name="sga_state" widget="statusbar" statusbar_visible="NE,PS,SD" statusbar_colors='{"EE":"red", "EI":"red", "PS":"blue", "SD":"green"}'/>
                     </header>

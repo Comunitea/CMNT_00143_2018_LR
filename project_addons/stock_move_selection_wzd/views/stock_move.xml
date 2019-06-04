@@ -23,7 +23,9 @@
             <tree decoration-muted="state == 'cancel'"
                   decoration-danger="(state not in ('cancel','done'))"
                   string="Movimientos"
-                  create="0" default_order="date">
+                  edit="1"
+                  create="0"
+                  default_order="date">
 
                 <field name="shipping_type" invisible="context.get('incoming', False)"/>
                 <field name="delivery_route_path_id" invisible="context.get('incoming', False)"/>
@@ -61,7 +63,7 @@
         </field>
     </record>
 
-     <record id="stock_move_view_sel_search" model="ir.ui.view">
+     <record id="carrier_id" model="ir.ui.view">
         <field name="name">stock.move.search</field>
         <field name="model">stock.move</field>
         <field name="arch" type="xml">
@@ -73,7 +75,7 @@
                        context="{'picking': self, 'group_by': 'picking_id'}"
                        filter_domain="['|', ('picking_id', '=', self), ('picking_id','=', False)]"/>
                 <field name="picking_type_id" string="Type"/>
-                <field name="shipping_type"/>
+                <field name="shipping_type" />
                 <field name="delivery_route_path_id"/>
                 <field name="urgent"/>
                 <field name="sale_id" groups="stock.group_stock_multi_locations"/>

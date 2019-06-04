@@ -81,11 +81,11 @@
             </field>
 
             <xpath expr="//filter[@name='picker_id']" position="after">
-                <filter name="shipping_type" string="Shipping type" context="{'group_by':'shipping_type'}"/>
-                <filter name="delivery_route_path_id" string="Ruta de transporte" context="{'group_by':'delivery_route_path_id'}"/>
-                <filter name="carrier_id" string="Forma de envío" context="{'group_by':'carrier_id'}"/>
-                <filter name="group_code" string="Group code" context="{'group_by':'group_code'}"/>
-                <filter name="picking_type_id" string="Picking type" context="{'group_by':'picking_type_id'}"/>
+                <filter name="shipping_type" context="{'group_by':'shipping_type'}"/>
+                <filter name="delivery_route_path_id" context="{'group_by':'delivery_route_path_id'}"/>
+                <filter name="carrier_id" context="{'group_by':'carrier_id'}"/>
+                <filter name="group_code"  context="{'group_by':'group_code'}"/>
+                <filter name="picking_type_id" context="{'group_by':'picking_type_id'}"/>
             </xpath>
         </field>
     </record>
