@@ -13,18 +13,23 @@ class StockQuantPackage(models.Model):
         ##Cambio por rendimiento
         domain = [('result_package_id', '=',  vals['package'])]
         lines = self.env['stock.move.line'].search(domain)
-        move_lines_info = []
-        for line in lines:
-            move_lines_info.append((line.id, line.product_id.name, line.ordered_qty))
-        return move_lines_info
-
+        
         package_id = vals['package']
         package_obj = self.env['stock.quant.package'].browse(package_id)
         lines = package_obj.move_line_ids
         move_lines_info = []
         for line in lines:
             move_lines_info.append((line.id, line.product_id.name, line.ordered_qty))
-        return move_lines_info
+        
+        data = {
+            'move_lines_info': move_lines_info,
+            'package_info': {
+                'name': package_obj.name,
+                'info_str': package_obj.info_route_str or package_obj.shipping_type
+            }
+        }
+        
+        return data
     
     @api.model
     def delete_package_from_apk(self, vals):
@@ -77,3 +82,17 @@ class StockQuantPackage(models.Model):
 
 
         return True
+
+    @api.model
+    def create_new_package_from_move(self, vals):
+        move_line_id = vals['move_line_id']
+        line_id = self.env['stock.move.line'].browse(move_line_id)
+        new_package = self.env['stock.quant.package'].create({
+            'dest_partner_id': vals['dest_partner_id'],
+            'shipping_type': line_id.move_id.shipping_type
+        })
+        if new_package.id:
+            line_id.update({
+                'result_package_id': new_package.id
+            })
+        return new_package.id
