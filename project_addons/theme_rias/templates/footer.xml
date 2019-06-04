@@ -35,7 +35,7 @@
                         <li t-esc="res_company.name"/>
                         <li>
                             <i class="fa fa-map-marker"/>
-                            <a href="https://goo.gl/maps/GDHmgREq3oNuDYGs7" target="_blank" alt="Company Link" title="Company" rel="nofollow">
+                            <a href="https://goo.gl/maps/GDHmgREq3oNuDYGs7" target="_blank" alt="Open en Google Maps" title="Open en Google Maps" rel="nofollow">
                                 <t t-esc="res_company.street"/>,
                                 <t t-esc="res_company.zip"/>,
                                 <t t-esc="res_company.city"/>,
