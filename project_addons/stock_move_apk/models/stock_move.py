@@ -16,20 +16,22 @@ class StockMoveLine(models.Model):
 
 
     def get_domain_for_apk_list(self, vals):
-        location_dest_id = vals.get('location_dest_id', False)
+        
         partner_id = vals.get('partner_id', False)
-        domain = [('location_dest_id', '=', location_dest_id), ('state', 'in', ['done']),
-                  ('move_dest_ids.move_line_ids.state', 'in', ['assigned']),
-                  ('move_dest_ids.move_line_ids.move_id.partner_id', '=', partner_id)]
+        domain = [('location_dest_id.usage', '=', 'customer'),
+                  ('state', 'in', ['assigned', 'partially_available']),
+                  ('picking_id', '=', False)]
+        if partner_id:
+            domain +=[('move_id.partner_id', '=', partner_id)]
+
         return domain
 
     @api.model
     def get_stock_move_lines_list_apk(self, vals):
 
         domain = self.get_domain_for_apk_list(vals)
-        move_lines = self.env['stock.move'].search(domain).mapped('move_dest_ids').mapped('move_line_ids')
+        move_lines = self.env['stock.move.line'].search(domain)
         pkg_list = move_lines.mapped('result_package_id')
-        arrival_pkgs_list = move_lines.mapped('package_id.id')
 
         full_stock_moves = []
         current_partner_pkg_list = []
@@ -41,13 +43,13 @@ class StockMoveLine(models.Model):
                 'origin': move_line.origin,
                 'product_qty': move_line.product_qty,
                 'shipping_type': move_line.shipping_type,
-                'partner_shipping_type': move_line.partner_shipping_type
+                'isChecked': False
             }
 
-            if move_line.package_id.id:
+            if move_line.package_id and move_line.package_id.id:
                 move_line_obj['package_id'] = {
-                    '0': move_line.package_id.id,
-                    '1': move_line.package_id.name
+                    'id': move_line.package_id.id,
+                    'name': move_line.package_id.name
                 }
                 if move_line_obj['package_id'] not in current_partner_arrival_pkgs_list:
                     current_partner_arrival_pkgs_list.append(move_line_obj['package_id'])
@@ -56,10 +58,9 @@ class StockMoveLine(models.Model):
             
             if move_line.result_package_id.id:
                 move_line_obj['result_package_id'] = {
-                    '0': move_line.result_package_id.id,
-                    '1': move_line.result_package_id.name,
-                    '2': move_line.result_package_id.shipping_type,
-                    '3': move_line.result_package_id.dest_partner_id.shipping_type
+                    'id': move_line.result_package_id.id,
+                    'name': move_line.result_package_id.name,
+                    'shipping_type': move_line.result_package_id.shipping_type
                 }
                 if move_line_obj['result_package_id'] not in current_partner_pkg_list:
                     current_partner_pkg_list.append(move_line_obj['result_package_id'])
@@ -67,6 +68,17 @@ class StockMoveLine(models.Model):
                 move_line_obj['result_package_id'] = False
 
             full_stock_moves.append(move_line_obj)
+        
+        package_obj = self.env['stock.quant.package']
+        empty_pkgs = package_obj.get_partner_empty_packages(vals)
+
+        for pkg in empty_pkgs:
+            pkg_data = {
+                'id': pkg.id,
+                'name': pkg.name,
+                'shipping_type': pkg.shipping_type
+            }
+            current_partner_pkg_list.append(pkg_data)
         
         res = {
             'move_lines': full_stock_moves,
@@ -76,23 +88,17 @@ class StockMoveLine(models.Model):
         
         return res
 
-                
-class StockMove(models.Model):
-    _inherit = 'stock.move'
-
     @api.model
     def get_users_list_for_apk(self, vals):
-        location_dest_id = vals['location_dest_id']
-        
-        domain = [('location_dest_id', '=', location_dest_id), ('state', 'in', ['done']), ('move_dest_ids.move_line_ids.state', 'in', ['assigned'])]
-        if len(self.env['stock.move'].search(domain)) > 0:
-            partner_ids = self.env['stock.move'].search(domain).mapped('move_dest_ids').mapped('move_line_ids').mapped('move_id').mapped('partner_id')
+        domain = self.get_domain_for_apk_list({})
+        if len(self.env['stock.move.line'].search(domain)) > 0:
+            partner_ids = self.env['stock.move.line'].search(domain).mapped('partner_id')
             partner_list = []
             for partner in partner_ids:
                 partner_obj = {
-                    '0': partner.id,
-                    '1': partner.name,
-                    '2': partner.shipping_type
+                    'id': partner.id,
+                    'name': partner.name,
+                    'shipping_type': partner.shipping_type
                 }
                 partner_list.append(partner_obj)
             return partner_list

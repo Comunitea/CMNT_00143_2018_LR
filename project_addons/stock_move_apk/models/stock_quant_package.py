@@ -19,7 +19,12 @@ class StockQuantPackage(models.Model):
         lines = package_obj.move_line_ids
         move_lines_info = []
         for line in lines:
-            move_lines_info.append((line.id, line.product_id.name, line.ordered_qty))
+            line_data = {
+                'id': line.id,
+                'name': line.product_id.name,
+                'ordered_qty': line.ordered_qty
+            }
+            move_lines_info.append(line_data)
         
         data = {
             'move_lines_info': move_lines_info,
@@ -45,15 +50,13 @@ class StockQuantPackage(models.Model):
     
     @api.model
     def get_partner_empty_packages(self, vals):
-        partner_id = vals['dest_partner_id']
+        partner_id = vals['partner_id']
         domain = [
             ('dest_partner_id', '=', partner_id),
             ('move_line_ids', '=', False)]
         partner_empty_packages = self.env['stock.quant.package'].search(domain)
-        partner_empty_packages_info = []
-        for package in partner_empty_packages:
-            partner_empty_packages_info.append((package.id, package.name, package.shipping_type, package.partner_shipping_type))
-        return partner_empty_packages_info
+        return partner_empty_packages
+        
 
     def get_package_vals(self, package_id):
         vals = {'shipping_type': self.shipping_type,
