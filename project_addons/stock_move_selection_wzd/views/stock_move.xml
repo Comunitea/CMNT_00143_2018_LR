@@ -218,7 +218,7 @@
                 </kanban>
             </field>
         </record>
-    <delete id="stock_move_sel_action2" model="ir.actions.act_window">
+    <delete id="stock_move_sel_action2" model="ir.actions.act_window"/>
     <record id="stock_move_sel_action2" model="ir.actions.act_window">
             <field name="name">Product Moves</field>
             <field name="res_model">stock.move</field>
