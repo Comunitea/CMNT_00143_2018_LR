@@ -229,15 +229,10 @@
             <field name="search_view_id" ref="stock_move_view_sel_search"/>
             <field name="context">{'search_default_todo': 1, 'search_default_without_pick': 1}</field>
     </record>
-
-
-     <menuitem
-
+    <menuitem
         id="stock_move_sel_menu"
         parent="stock.menu_stock_root"
-        sequence="0" name="Moves panel"/>
-
-
+        sequence="1" name="Moves panel"/>
 
     <record id="stock_move_sel_action_all" model="ir.actions.server">
             <field name="name">Product Moves</field>
@@ -250,6 +245,7 @@
             </field>
 
     </record>
+    model="ir.actions.act_window"/>
     <menuitem
         action="stock_move_sel_action_all"
         parent="stock_move_selection_wzd.stock_move_sel_menu"

@@ -10,14 +10,13 @@ from .res_partner import SHIPPING_TYPE_SEL, DEFAULT_SHIPPING_TYPE, STRING_SHIPPI
 class StockPickintType(models.Model):
     _inherit = 'stock.picking.type'
 
-    shipping_type = fields.Boolean('Agrupa por tipo de envío')
-    delivery_route_path_id = fields.Boolean('Agrupa por ruta de transporte')
-    carrier_id = fields.Boolean('Agrupa por forma de envío')
-    campaign_id = fields.Boolean('Agrupa por campaña')
+    bool_shipping_type = fields.Boolean('Agrupa por tipo de envío')
+    bool_delivery_route_path_id = fields.Boolean('Agrupa por ruta de transporte')
+    bool_carrier_id = fields.Boolean('Agrupa por forma de envío')
+    bool_campaign_id = fields.Boolean('Agrupa por campaña')
 
 
 class StockBatchPicking(models.Model):
-
 
     _inherit = ['stock.batch.picking', 'info.route.mixin']
     _name = 'stock.batch.picking'

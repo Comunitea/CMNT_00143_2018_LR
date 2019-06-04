@@ -49,13 +49,13 @@ class StockMove(models.Model):
     def _get_new_picking_domain(self):
         domain = super()._get_new_picking_domain()
         if self.picking_type_id.code == 'outgoing':
-            if self.shipping_type:
+            if self.picking_type_id.bool_shipping_type and self.shipping_type :
                 domain += [('shipping_type', '=', self.shipping_type)]
-            if self.delivery_route_path_id:
+            if self.picking_type_id.bool_delivery_route_path_id and self.delivery_route_path_id:
                 domain += [('delivery_route_path_id', '=', self.delivery_route_path_id.id)]
-            if self.carrier_id:
+            if self.picking_type_id.bool_carrier_id and self.carrier_id:
                 domain += [('carrier_id', '=', self.carrier_id.id)]
-            if self.campaign_id and False:
+            if self.picking_type_id.bool_campaign_id and self.campaign_id:
                 domain += [('campaign_id', '=', self.campaign_id.id)]
             domain += [('urgent', '=', self.urgent)]
         print('Get new picking domain {}'.format(domain))

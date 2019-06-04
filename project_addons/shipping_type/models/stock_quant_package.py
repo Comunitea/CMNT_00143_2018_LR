@@ -19,6 +19,7 @@ class StockQuantPackage(models.Model):
     partner_shipping_type = fields.Char('')#Selection(related="dest_partner_id.shipping_type")
     count_move_line = fields.Integer(compute=_count_move_line_ids)
 
+
     def get_picking_id(self):
 
         picks = self.mapped('move_line_ids').mapped('picking_id')
@@ -29,7 +30,7 @@ class StockQuantPackage(models.Model):
         child_vals = self.get_child_vals(vals)
         if child_vals and not self._context.get('write_from_pick', False):
             for pack in self:
-                if pack.picking_id:
+                if pack.get_picking_id():
                     raise ValidationError ('No puedes cambiar estos valores en el paquete si ya está en un albarán')
         if child_vals:
             ctx = self._context.copy()
