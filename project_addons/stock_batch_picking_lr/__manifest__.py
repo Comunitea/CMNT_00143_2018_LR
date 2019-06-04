@@ -13,9 +13,10 @@
     'installable': True,
     'depends': [
         'stock',
-        'shipping_type',
+
         'stock_batch_picking',
         'stock_picking_group',
+        'shipping_type',
         'stock_move_selection_wzd'
     ],
     'data': [

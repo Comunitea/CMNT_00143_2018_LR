@@ -28,8 +28,6 @@ class StockPicking(models.Model):
                 'delivery_route_path_id': self.delivery_route_path_id and self.delivery_route_path_id.id or False,
                 'carrier_id':  self.carrier_id and self.carrier_id.id or False,
                 'urgent': self.urgent}
-
-
         return vals
 
     @api.multi
@@ -49,6 +47,7 @@ class StockPicking(models.Model):
 
     @api.multi
     def write(self, vals):
+
         super().write(vals)
         if 'batch_picking_id' in vals:
             val = {'batch_picking_id': vals['batch_picking_id']}
@@ -60,8 +59,8 @@ class StockMove(models.Model):
     _inherit = 'stock.move'
 
     batch_picking_id = fields.Many2one(related = 'picking_id.batch_picking_id')
-    def _get_new_picking_values(self):
 
+    def _get_new_picking_values(self):
         res = super()._get_new_picking_values()
         res['batch_picking_id'] = self._context.get('batch_picking_id', False)
         res['origin'] = self.origin

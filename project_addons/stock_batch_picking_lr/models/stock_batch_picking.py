@@ -95,7 +95,7 @@ class StockBatchPicking(models.Model):
     def action_see_packages(self):
         self.ensure_one()
         ctx = self._context.copy()
-        ctx.update(batch_picking_id= self.id)
+        ctx.update(batch_picking_id = self.id)
         ctx.update(shipping_type= self.shipping_type)
         action = self.env.ref('stock_batch_picking_lr.action_package_delivery_batch_view').read()[0]
         domain_move = self.get_domain_move()
