@@ -12,6 +12,7 @@
     'application': False,
     'installable': True,
     'depends': [
+        'sale_stock',
         'stock_batch_picking',
         'campaign'
 

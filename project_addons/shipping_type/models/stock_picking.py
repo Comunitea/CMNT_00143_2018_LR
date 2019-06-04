@@ -44,6 +44,14 @@ class StockBatchPicking(models.Model):
         for batch in self:
             batch.picking_ids.write({'urgent': batch.urgent})
 
+    @api.multi
+    def write(self, vals):
+        child_vals = self.get_child_vals(vals)
+        if child_vals:
+            ctx = self._context.copy()
+            ctx.update(write_from_pick=True)
+            self.mapped('picking_ids').with_context(ctx).write(child_vals)
+        super().write(vals)
 
 class StockPicking(models.Model):
 
@@ -57,6 +65,10 @@ class StockPicking(models.Model):
     @api.multi
     def write(self, vals):
         child_vals = self.get_child_vals(vals)
+        if child_vals and not self._context.get('write_from_pick', False):
+            for pick in self:
+                if pick.batch_picking_id:
+                    raise ValidationError ('No puedes cambiar estos valores en el albarán si ya está en un a carta de porte')
         if child_vals:
             ctx = self._context.copy()
             ctx.update(write_from_pick=True)

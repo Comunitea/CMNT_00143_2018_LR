@@ -27,6 +27,10 @@ class StockQuantPackage(models.Model):
     @api.multi
     def write(self, vals):
         child_vals = self.get_child_vals(vals)
+        if child_vals and not self._context.get('write_from_pick', False):
+            for pack in self:
+                if pack.picking_id:
+                    raise ValidationError ('No puedes cambiar estos valores en el paquete si ya está en un albarán')
         if child_vals:
             ctx = self._context.copy()
             ctx.update(write_from_package=True)
