@@ -88,6 +88,7 @@ class StockQuantPackage(models.Model):
 
     @api.model
     def create_new_package_from_move(self, vals):
+        import ipdb; ipdb.set_trace()
         move_line_id = vals['move_line_id']
         line_id = self.env['stock.move.line'].browse(move_line_id)
         new_package = self.env['stock.quant.package'].create({

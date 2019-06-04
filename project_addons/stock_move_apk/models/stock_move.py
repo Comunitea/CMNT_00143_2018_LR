@@ -88,11 +88,12 @@ class StockMoveLine(models.Model):
         
         return res
 
+
     @api.model
     def get_users_list_for_apk(self, vals):
-        domain = self.get_domain_for_apk_list({})
-        if len(self.env['stock.move.line'].search(domain)) > 0:
-            partner_ids = self.env['stock.move.line'].search(domain).mapped('partner_id')
+        domain = self.env['stock.move.line'].get_domain_for_apk_list({})
+        if len(self.env['stock.move'].search(domain)) > 0:
+            partner_ids = self.env['stock.move'].search(domain).mapped('partner_id')
             partner_list = []
             for partner in partner_ids:
                 partner_obj = {
