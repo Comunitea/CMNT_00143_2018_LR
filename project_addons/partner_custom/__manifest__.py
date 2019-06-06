@@ -11,7 +11,11 @@
     'application': False,
     'installable': True,
     'depends': [
-        'base','account','sale', 'contract'
+        'base',
+        'account',
+        'sale',
+        'contract',
+        'shipping_type',
     ],
     'data': [
         'data/analytic_tag.xml',

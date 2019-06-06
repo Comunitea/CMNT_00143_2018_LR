@@ -13,11 +13,13 @@
     'depends': [
         'base',
         'account',
-        'account_due_list'
+        'account_due_list',
+        'email_template_qweb'
     ],
     'data': [
         'data/invoice_mailing_template.xml',
         'wizard/invoice_mailing_wzd_view.xml',
-        'views/account_move_line.xml'
+        'views/account_move_line.xml',
+        'data/netting_template.xml'
     ]
 }
