@@ -3,7 +3,6 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import models, fields, api, _
-from pprint import pprint
 
 class DeliveryRoutePath(models.Model):
     _inherit = 'delivery.route.path'

@@ -15,33 +15,6 @@ class StockMoveLine(models.Model):
     partner_shipping_type = fields.Selection(related="move_id.partner_id.shipping_type")
     result_package_shipping_type = fields.Selection(related="result_package_id.shipping_type")
 
-    @api.model
-    def update_to_new_package_from_apk(self, values):
-        ctx = self._context.copy()
-        ctx.update(write_from_package=True)
-        move_line_ids = self.env['stock.move_line'].browse(values['move_line_ids'])
-        action = values.get['action']
-        package_ids = self.env['stock.quant.package']
-        if action == 'new':
-            for line in move_line_ids:
-                package_ids = line.with_context(ctx).update_to_new_package(package_ids)
-
-        elif action == 'unlink':
-            move_line_ids.mapped('move_id').with_context(ctx).write({'result_package_id': False})
-
-        else:
-            package_ids = self.env['stock.quant.package'].browse(values['result_package_id'])
-            ##Si ya tienen moviemintos, entonces todos lo movimeitneos pasana tener info ruta del pack
-            if package_ids.move_line_ids:
-                move_vals = {'result_package_id': package_ids.id}
-                move_vals.update(package_ids.update_info_route_vals())
-                move_line_ids.mapped('move_id').with_context(ctx).write(move_vals)
-            else:
-                for line in move_line_ids:
-                    line.write({'result_package_id': package_ids.ids})
-
-        return package_ids.ids
-
     def update_to_new_package(self, new_package_ids):
         create = True
         for pack in new_package_ids:
@@ -117,16 +90,6 @@ class StockMoveLine(models.Model):
             full_stock_moves.append(move_line_obj)
         
         package_obj = self.env['stock.quant.package']
-        empty_pkgs = package_obj.get_partner_empty_packages(vals)
-
-        for pkg in empty_pkgs:
-            pkg_data = {
-                'id': pkg.id,
-                'name': pkg.name,
-                'shipping_type': pkg.shipping_type,
-                'urgent': pkg.urgent
-            }
-            current_partner_pkg_list.append(pkg_data)
         
         res = {
             'move_lines': full_stock_moves,
