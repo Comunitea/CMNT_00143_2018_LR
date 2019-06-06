@@ -21,7 +21,7 @@
                     <span  t-if="record.info_route_str">
                         <field class="o_secondary" name="info_route_str"/>
                     </span>
-                </div>
+                 </div>
             </xpath>
 
         </field>
@@ -58,12 +58,12 @@
         <field name="inherit_id" ref="stock.view_quant_package_form"/>
         <field name="arch" type="xml">
             <xpath expr="//separator" position="before">
-                <group string="Tipo de envío" attr="{'invisible': [('move_line_ids[0].picking_type_id.code','=', 'outgoing')]}" >
+                <group string="Tipo de envío" attr="{'invisible': [('move_line_ids[0].picking_type_id.code','=', 'outgoing')]}">
                     <group>
-                        <field name="picking_id"/>
-                        <field name="shipping_type"/>
-                        <field name="delivery_route_path_id"/>
-                        <field name="urgent"/>
+                        <field name="picking_id" context="{'write_from_picking': True}"/>
+                        <field name="shipping_type" context="{'write_from_package': True}"/>
+                        <field name="delivery_route_path_id" context="{'write_from_package': True}"/>
+                        <field name="urgent" context="{'write_from_package': True}"/>
                     </group>
                 </group>
             </xpath>

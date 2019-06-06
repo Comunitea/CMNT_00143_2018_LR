@@ -17,17 +17,25 @@ class StockMoveLine(models.Model):
 
     @api.model
     def update_to_new_package_from_apk(self, values):
+
         ctx = self._context.copy()
         ctx.update(write_from_package=True)
         move_line_ids = self.env['stock.move_line'].browse(values['move_line_ids'])
         action = values.get['action']
         package_ids = self.env['stock.quant.package']
+
         if action == 'new':
             for line in move_line_ids:
                 package_ids = line.with_context(ctx).update_to_new_package(package_ids)
 
         elif action == 'unlink':
             move_line_ids.mapped('move_id').with_context(ctx).write({'result_package_id': False})
+
+        elif action == "new_partner_pack":
+            partner_id = self.env['res.partner'].browse[(values.get('partner_id'))]
+            vals_0 = partner_id.update_info_route_vals()
+            new_result_package_id = self.env['stock.quant.package'].create(vals_0)
+            package_ids += new_result_package_id
 
         else:
             package_ids = self.env['stock.quant.package'].browse(values['result_package_id'])

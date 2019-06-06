@@ -35,10 +35,4 @@ class StockQuantPackage(models.Model):
 
     @api.multi
     def write(self, vals):
-        if 'picking_id' in vals:
-            ctx = self._context.copy()
-            ctx.update(from_package=True)
-            moves = self.with_context(ctx).mapped('move_line_ids').mapped('move_id')
-            moves.write({'picking_id': vals['picking_id']})
-
         return super().write(vals)

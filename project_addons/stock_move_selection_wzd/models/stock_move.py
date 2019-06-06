@@ -34,14 +34,12 @@ class ProcurementRule(models.Model):
 class StockMove(models.Model):
     _inherit = 'stock.move'
 
-
     ##NEcesito traer estos campos de stock_move_line
     package_id = fields.Many2one('stock.quant.package', 'Paquete origen', ondelete='restrict')
+    result_package_id = fields.Many2one('stock.quant.package', 'Paquete origen', ondelete='restrict',
+                                 inverse='set_package_id_to_lines', compute="get_package_id_from_line", store=True)
     lot_id = fields.Many2one('stock.production.lot', 'Lote')
-    result_package_id = fields.Many2one(
-        'stock.quant.package', 'Paquete destino',
-        ondelete='restrict', required=False,
-        help="Si está marcado, las operaciones se empaquetan en el paquete")
+
     dunmy_picking_id = fields.Many2one('stock.picking', 'Transfer Reference', store=False)
 
     sga_integrated = fields.Boolean('Sga', help='Marcar si tiene un tipo de integración con el sga')
@@ -114,6 +112,26 @@ class StockMove(models.Model):
         self.mapped('move_line_ids').write({'picking_id': False})
 
 
+    @api.multi
+    def write(self, vals):
+
+        if 'picking_id' in vals:
+            self.mapped('move_line_ids').write({'picking_id': vals['picking_id']})
+        return super().write(vals)
+
+
+    def set_package_id_to_lines(self):
+
+        for move in self:
+            move.mapped('move_line_ids').write({'result_package_id': move.result_package_id.id})
+
+    @api.depends('move_line_ids.result_package_id')
+    def get_package_id_from_line(self):
+
+        for move in self:
+            move.result_package_id = move.move_line_ids.mapped('result_package_id')
+
+
 class StockMoveLine(models.Model):
     _inherit = 'stock.move.line'
 
@@ -122,15 +140,4 @@ class StockMoveLine(models.Model):
 
     @api.multi
     def write(self, vals):
-
-        move_vals = {}
-
-        for f in ['package_id', 'result_package_id']:
-            if f in vals:
-                move_vals.update({f: vals[f]})
-
-        if move_vals:
-            for line in self:
-                line.move_id.write(move_vals)
-
         return super().write(vals)

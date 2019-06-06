@@ -20,35 +20,43 @@ class StockQuantPackage(models.Model):
     count_move_line = fields.Integer(compute=_count_move_line_ids)
     picking_id = fields.Many2one('stock.picking')
 
-    def get_picking_id(self):
 
-        picks = self.mapped('move_line_ids').mapped('picking_id')
-        return picks or False
+    def propagate_route_vals(self, vals):
+        ctx = self._context.copy()
+        ctx.update(write_from_picking=True)
+        move_vals= {}
+        if 'picking_id' in vals:
+            picking_id = vals['picking_id']
+            move_vals.update({'picking_id': vals['picking_id']})
+            pick = self.env['stock.picking'].browse(picking_id)
+            if pick:
+                child_vals = pick.get_child_vals(vals)
+                if child_vals:
+                    move_vals.update(child_vals)
+
+            ctx = self._context.copy()
+            ctx.update(write_from_package=True, write_from_picking=True)
+            self.mapped('move_line_ids').mapped('move_id').with_context(ctx).write(move_vals)
+        else:
+            child_vals = self.get_child_vals(vals)
+            if child_vals:
+                if self.mapped('picking_id') and not self._context.get('write_from_pick', False):
+                    raise ValidationError ('No puedes cambiar estos valores en el paquete si ya está en un albarán')
+                ctx = self._context.copy()
+                ctx.update(write_from_package=True)
+                move_vals.update(child_vals)
+                self.mapped('move_line_ids').mapped('move_id').with_context(ctx).write(move_vals)
 
     @api.multi
     def write(self, vals):
-
-        child_vals = self.get_child_vals(vals)
-
-        if child_vals and not self._context.get('write_from_pick', False):
-            for pack in self:
-                if pack.get_picking_id():
-                    raise ValidationError ('No puedes cambiar estos valores en el paquete si ya está en un albarán')
-
-        if child_vals:
-            ctx = self._context.copy()
-            ctx.update(write_from_package=True)
-            # si está en un albarán no se puede modificar a noser que sea el propio albaran
-            if self.filtered(lambda x: x.get_picking_id()) and not self._context.get('write_from_pick', False):
-                raise ValidationError('Hay paquetes en un albarán. Debes cambiar los datos de envío en el albaran')
-            self.mapped('move_line_ids').mapped('move_id').with_context(ctx).write(child_vals)
+        if self._context.get('no_propagate_route_vals', True):
+            self.propagate_route_vals(vals)
 
         super().write(vals)
         if 'move_line_ids' in vals:
             for pack in self:
                 picking_id = pack.move_line_ids.mapped('picking_id')
-                if len(picking_id) < 2:
-                    pack.picking_id = picking_id
+                pack.picking_id = picking_id and picking_id[0]
 
 
 

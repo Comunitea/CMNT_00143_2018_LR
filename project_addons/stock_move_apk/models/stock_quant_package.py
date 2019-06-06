@@ -127,8 +127,14 @@ class StockQuantPackage(models.Model):
     def write(self, vals):
         return super().write(vals)
 
+    def update_from_move_line(self, move_line):
+        vals = move_line.move_id.update_info_route_vals()
+        for pack in self:
+            pack.write(vals)
+
     @api.model
     def update_to_new_package_from_apk(self, values):
+        
         ctx = self._context.copy()
         ctx.update(write_from_package=True)
         move_line_ids = self.env['stock.move.line'].browse(values['move_line_ids'])
@@ -150,12 +156,17 @@ class StockQuantPackage(models.Model):
         else:
             package_ids = self.env['stock.quant.package'].browse(values['result_package_id'])
             ##Si ya tienen movimientos, entonces todos lo movimientos pasan a tener info ruta del pack
+            if not package_ids or len(package_ids)!=1:
+                raise ValueError ('No se ha encontrado el paquete id={}, o se ha encontrado más de uno'.format(values['result_package_id']))
+
+            move_vals = {'result_package_id': package_ids.id}
             if package_ids.move_line_ids:
-                move_vals = {'result_package_id': package_ids.id}
                 move_vals.update(package_ids.update_info_route_vals())
-                move_line_ids.mapped('move_id').with_context(ctx).write(move_vals)
             else:
-                for line in move_line_ids:
-                    line.write({'result_package_id': package_ids.id})
+                ctx.update(no_propagate_route_vals=False)
+                package_ids.with_context(ctx).write(move_line_ids[0].update_info_route_vals())
+
+            move_line_ids.mapped('move_id').with_context(ctx).write(move_vals)
+
 
         return package_ids.ids

@@ -64,10 +64,11 @@ class InfoRouteMixin(models.AbstractModel):
                 else:
                     carrier_id = ''
 
-                name2 = '{}. {}'.format(obj.delivery_route_path_id.name or 'Sin ruta', carrier_id)
-                name = '* ' if obj.urgent else ''
+                name2 = '{} {}'.format(obj.delivery_route_path_id.name or 'Sin ruta', carrier_id)
                 shipping_type = obj._fields['shipping_type'].convert_to_export(obj.shipping_type, obj) if obj.shipping_type else 'Sin envío'
-                obj.info_route_str = '{}{}: {}'.format(name, shipping_type, name2)
+                obj.info_route_str = '{}: {}'.format(shipping_type, name2)
+                if obj.urgent:
+                    obj.info_route_str = obj.info_route_str + ' (*)'
             else:
                 obj.info_route_str = False
 
