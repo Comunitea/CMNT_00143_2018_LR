@@ -37,6 +37,7 @@ class InfoRouteMixin(models.AbstractModel):
             child_vals.update(delivery_route_path_id=vals['delivery_route_path_id'])
         if 'urgent' in vals:
             child_vals.update(urgent=vals['urgent'])
+
         if 'carrier_id' in vals and 'carrier_id' in self.fields_get_keys():
             child_vals.update(carrier_id=vals['carrier_id'])
         if 'campaign_id' in vals and 'campaign_id' in self.fields_get_keys():

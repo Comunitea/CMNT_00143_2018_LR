@@ -14,6 +14,48 @@ class StockMoveLine(models.Model):
     partner_shipping_type = fields.Selection(related="move_id.partner_id.shipping_type")
     result_package_shipping_type = fields.Selection(related="result_package_id.shipping_type")
 
+    @api.model
+    def update_to_new_package_from_apk(self, values):
+        ctx = self._context.copy()
+        ctx.update(write_from_package=True)
+        move_line_ids = self.env['stock.move_line'].browse(values['move_line_ids'])
+        action = values.get['action']
+        package_ids = self.env['stock.quant.package']
+        if action == 'new':
+            for line in move_line_ids:
+                package_ids = line.with_context(ctx).update_to_new_package(package_ids)
+
+        elif action == 'unlink':
+            move_line_ids.mapped('move_id').with_context(ctx).write({'result_package_id': False})
+
+        else:
+            package_ids = self.env['stock.quant.package'].browse(values['result_package_id'])
+            ##Si ya tienen moviemintos, entonces todos lo movimeitneos pasana tener info ruta del pack
+            if package_ids.move_line_ids:
+                move_vals = {'result_package_id': package_ids.id}
+                move_vals.update(package_ids.update_info_route_vals())
+                move_line_ids.mapped('move_id').with_context(ctx).write(move_vals)
+            else:
+                for line in move_line_ids:
+                    line.write({'result_package_id': package_ids.ids})
+
+        return package_ids.ids
+
+    def update_to_new_package(self, new_package_ids):
+        create = True
+        for pack in new_package_ids:
+            ok = pack.update_info_route_vals() == self.update_info_route_vals()
+            if ok:
+                self.move_id.write({'result_package_id': pack.id})
+                create = False
+                break
+        if create:
+            vals_0 = self.update_info_route_vals()
+            new_result_package_id = pack.create(vals_0)
+            self.move_id.write({'result_package_id': new_result_package_id.id})
+            new_package_ids += new_result_package_id
+        return new_package_ids
+
 
     def get_domain_for_apk_list(self, vals):
         
@@ -106,3 +148,16 @@ class StockMoveLine(models.Model):
         else:
             partner_list = []
             return partner_list
+
+    @api.model
+    def assign_package(self, vals):
+        result_package_id = vals.get('result_package_id', False)
+
+        move_ids = vals.get('move_line_ids', False)
+        move_line_ids = self.browse(move_ids)
+        move_ids = move_line_ids.mapped('move_id')
+        return move_ids.assign_package(result_package_id)
+
+
+
+
