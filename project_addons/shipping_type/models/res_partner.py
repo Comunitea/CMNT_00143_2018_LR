@@ -47,11 +47,12 @@ class InfoRouteMixin(models.AbstractModel):
     def update_info_route_vals(self):
         route_vals = {'shipping_type': self.shipping_type,
                       'delivery_route_path_id': self.delivery_route_path_id.id,
+                      'info_route_str': self.info_route_str,
                       'urgent': self.urgent}
         if 'carrier_id' in self.fields_get_keys():
-            route_vals['carrier_id'] = self.carrier_id and self.carrier_id.id
+            route_vals['carrier_id'] = self.carrier_id and self.carrier_id.id or False
         if 'campaign_id' in self.fields_get_keys():
-            route_vals['campaign_id'] = self.campaign_id and self.campaign_id.id
+            route_vals['campaign_id'] = self.campaign_id and self.campaign_id.id or False
         return route_vals
 
     @api.multi
