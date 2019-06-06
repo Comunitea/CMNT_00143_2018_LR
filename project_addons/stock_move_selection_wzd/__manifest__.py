@@ -20,6 +20,7 @@
         'views/stock_picking.xml',
         'views/stock_quant_package.xml',
         'wizard/batch_picking_wzd_view.xml',
+        'wizard/move_change_quant_wzd.xml',
 
     ],
     'installable': True,
