@@ -156,7 +156,6 @@ class StockMoveLine(models.Model):
             return partner_list
 
     @api.model
-<<<<<<< HEAD
     def assign_package(self, vals):
         result_package_id = vals.get('result_package_id', False)
 
@@ -165,10 +164,6 @@ class StockMoveLine(models.Model):
         move_ids = move_line_ids.mapped('move_id')
         return move_ids.assign_package(result_package_id)
 
-
-
-
-=======
     def toggle_urgent_option(self, vals):
         move_id = vals.get('id', False)
         urgent = vals.get('urgent', False)
@@ -194,8 +189,7 @@ class StockMoveLine(models.Model):
         if create:
             vals_0 = self.update_info_route_vals()
             new_result_package_id = self.env['stock.quant.package'].create(vals_0)
-            pprint(self.move_id)
             self.move_id.write({'result_package_id': new_result_package_id.id})
             new_package_ids += new_result_package_id
         return new_package_ids
->>>>>>> 7b40728e71594242e1697ad8075e38dbdd03ec1f
+

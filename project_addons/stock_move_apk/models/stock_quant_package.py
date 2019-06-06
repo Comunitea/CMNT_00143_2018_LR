@@ -138,6 +138,12 @@ class StockQuantPackage(models.Model):
             for line in move_line_ids:
                 package_ids = line.with_context(ctx).update_to_new_package(package_ids)
 
+        elif action == "new_partner_pack":
+            partner_id = self.env['res.partner'].browse[(values.get('partner_id'))]
+            vals_0 = partner_id.update_info_route_vals()
+            new_result_package_id = self.env['stock.quant.package'].create(vals_0)
+            package_ids += new_result_package_id
+
         elif action == 'unlink':
             move_line_ids.mapped('move_id').with_context(ctx).write({'result_package_id': False})
 
