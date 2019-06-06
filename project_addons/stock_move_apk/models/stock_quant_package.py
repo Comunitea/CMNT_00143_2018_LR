@@ -8,33 +8,34 @@ class StockQuantPackage(models.Model):
 
     _inherit = "stock.quant.package"
 
+    def get_apk_info(self):
+        fields = ['id', 'name']
+
+        vals = {}
+        for f in fields:
+            vals[f] = self[f]
+
+        vals.update(self.update_info_route_vals())
+        return vals
+
     @api.model
     def get_lines_info_apk(self, vals):
+
         ##Cambio por rendimiento
-        domain = [('result_package_id', '=',  vals['package'])]
-        lines = self.env['stock.move.line'].search(domain)
-        
+
         package_id = vals['package']
         package_obj = self.env['stock.quant.package'].browse(package_id)
-        lines = self.env['stock.move'].search([('result_package_id', '=', package_id)]).mapped('move_line_ids')
+        lines = package_obj.move_line_ids
+
         move_lines_info = []
         for line in lines:
-            line_data = {
-                'id': line.id,
-                'name': line.product_id.name,
-                'ordered_qty': line.ordered_qty,
-                'urgent': line.urgent
-            }
-            move_lines_info.append(line_data)
+            move_lines_info.append(line.get_apk_info())
         
         data = {
             'move_lines_info': move_lines_info,
-            'package_info': {
-                'name': package_obj.name,
-                'info_str': package_obj.info_route_str or package_obj.shipping_type,
-                'urgent': package_obj.urgent
+            'package_info': package_obj.get_apk_info()
             }
-        }
+
         
         return data
     
@@ -128,39 +129,39 @@ class StockQuantPackage(models.Model):
 
     @api.model
     def update_to_new_package_from_apk(self, values):
-        
+
         ctx = self._context.copy()
         ctx.update(write_from_package=True)
-        move_line_ids = self.env['stock.move.line'].browse(values['move_line_ids'])
-        action = values.get('action')
-        package_ids = self.env['stock.quant.package']
+
+        package_id = self.browse(values['package_id'])
+        move_line_ids = self.env['stock.move_line'].browse(values['move_line_ids'])
+        action = values.get['action']
+
         if action == 'new':
-            for line in move_line_ids:
-                package_ids = line.with_context(ctx).update_to_new_package(package_ids)
-        
-        elif action == "new_partner_pack":
-            partner_id = self.env['res.partner'].browse(values.get('partner_id'))
-            vals_0 = partner_id.update_info_route_vals()
-            new_result_package_id = self.env['stock.quant.package'].create(vals_0)
-            package_ids += new_result_package_id
+            move_line = self.env['stock.move.line'].search([('package_id', '=', self.id)])
+            if move_line:
+                result_package_id = self.create(move_line[0].update_info_route_vals())
+                move_line.with_context(ctx).write({'result_package_id': result_package_id.id})
 
         elif action == 'unlink':
-            move_line_ids.mapped('move_id').with_context(ctx).write({'result_package_id': False})
+            move_line = self.env['stock.move.line'].search([('package_id', '=', self.id)])
+            if move_line:
+                move_line_ids.with_context(ctx).write({'result_package_id': False})
 
         else:
-            package_ids = self.env['stock.quant.package'].browse(values['result_package_id'])
-            ##Si ya tienen movimientos, entonces todos lo movimientos pasan a tener info ruta del pack
-            if not package_ids or len(package_ids)!=1:
-                raise ValueError ('No se ha encontrado el paquete id={}, o se ha encontrado más de uno'.format(values['result_package_id']))
+            result_package_id = self.env['stock.quant.package'].browse(values['result_package_id'])
+            ##Si ya tienen moviemintos, entonces todos lo movimeitneos pasana tener info ruta del pack
+            move_line = self.env['stock.move.line'].search([('package_id', '=', self.id)])
+            if move_line:
+                move_line_ids.with_context(ctx).write({'result_package_id': result_package_id})
 
-            move_vals = {'result_package_id': package_ids.id}
-            if package_ids.move_line_ids:
-                move_vals.update(package_ids.update_info_route_vals())
-            else:
-                ctx.update(no_propagate_route_vals=False)
-                package_ids.with_context(ctx).write(move_line_ids[0].update_info_route_vals())
-
-            move_line_ids.mapped('move_id').with_context(ctx).write(move_vals)
+        package_id.result_package_id = result_package_id
+        return result_package_id.ids
 
 
-        return package_ids.ids
+    def update_to_new_package(self):
+        move_line = self.env['stock.move.line'].search([('package_id', '=', self.id)])
+        if move_line:
+            new_pack = self.create(move_line[0].update_info_route_vals())
+            move_line.write({'result_package_id': new_pack.id})
+        return new_pack

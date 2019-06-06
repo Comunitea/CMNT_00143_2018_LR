@@ -79,60 +79,53 @@ class StockMoveLine(models.Model):
 
         return domain
 
+    def get_apk_info(self):
+        fields = ['id', 'name', 'origin', 'product_qty']
+
+        vals ={}
+        for f in fields:
+            vals[f] = self[f]
+
+        vals.update(self.update_info_route_vals())
+        vals['isChecked'] = False
+
+        if self.package_id:
+            vals['package_id'] = self.package_id.get_apk_info()
+        if self.result_package_id:
+            vals['result_package_id'] = self.result_package_id.get_apk_info()
+
+        return vals
+
+
+
     @api.model
     def get_stock_move_lines_list_apk(self, vals):
 
         domain = self.get_domain_for_apk_list(vals)
         move_lines = self.env['stock.move.line'].search(domain)
-        pkg_list = move_lines.mapped('result_package_id')
 
         full_stock_moves = []
         current_partner_pkg_list = []
         current_partner_arrival_pkgs_list = []
+
         for move_line in move_lines:
-            move_line_obj = {
-                'id': move_line.id,
-                'name': move_line.name,
-                'origin': move_line.origin,
-                'product_qty': move_line.product_qty,
-                'shipping_type': move_line.shipping_type,
-                'urgent': move_line.urgent,
-                'isChecked': False
-            }
+            full_stock_moves.append(move_line.get_apk_info())
 
-            move_id = move_line.move_id
 
-            if move_id.package_id and move_id.package_id.id:
-                move_line_obj['package_id'] = {
-                    'id': move_id.package_id.id,
-                    'name': move_id.package_id.name
-                }
-                if move_line_obj['package_id'] not in current_partner_arrival_pkgs_list:
-                    current_partner_arrival_pkgs_list.append(move_line_obj['package_id'])
-            else:
-                move_line_obj['package_id'] = False
-            
-            if move_id.result_package_id.id:
-                move_line_obj['result_package_id'] = {
-                    'id': move_id.result_package_id.id,
-                    'name': move_id.result_package_id.name,
-                    'shipping_type': move_id.result_package_id.shipping_type,
-                    'urgent': move_id.result_package_id.urgent
-                }
-                if move_line_obj['result_package_id'] not in current_partner_pkg_list:
-                    current_partner_pkg_list.append(move_line_obj['result_package_id'])
-            else:
-                move_line_obj['result_package_id'] = False
+        package_ids = move_lines.mapped('package_id')
+        for pack in package_ids:
+            current_partner_arrival_pkgs_list.append(pack.get_apk_info())
 
-            full_stock_moves.append(move_line_obj)
-        
-        package_obj = self.env['stock.quant.package']
-        
+        result_package_ids = move_lines.mapped('result_package_id')
+        for pack in result_package_ids:
+            current_partner_pkg_list.append(pack.get_apk_info())
+
         res = {
             'move_lines': full_stock_moves,
             'result_package_ids': current_partner_pkg_list,
             'arrival_package_ids': current_partner_arrival_pkgs_list
         }
+        pprint (res)
         
         return res
 
@@ -205,14 +198,11 @@ class StockMoveLine(models.Model):
             ok = pack.update_info_route_vals() == self.update_info_route_vals()
             if ok:
                 self.move_id.write({'result_package_id': pack.id})
-                pprint(self.move_id)
                 create = False
                 break
-
         if create:
             vals_0 = self.update_info_route_vals()
-            new_result_package_id = self.env['stock.quant.package'].create(vals_0)
+            new_result_package_id = pack.create(vals_0)
             self.move_id.write({'result_package_id': new_result_package_id.id})
             new_package_ids += new_result_package_id
         return new_package_ids
-
