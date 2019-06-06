@@ -19,6 +19,8 @@ class StockQuantPackage(models.Model):
     partner_shipping_type = fields.Char('')#Selection(related="dest_partner_id.shipping_type")
     count_move_line = fields.Integer(compute=_count_move_line_ids)
     picking_id = fields.Many2one('stock.picking')
+    carrier_id = fields.Many2one("delivery.carrier", string="Carrier")
+    campaign_id = fields.Many2one('campaign', 'Campaign')
 
 
     def propagate_route_vals(self, vals):

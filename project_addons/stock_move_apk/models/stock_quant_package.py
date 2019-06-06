@@ -3,7 +3,6 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import models, fields, api, _
-from pprint import pprint
 
 class StockQuantPackage(models.Model):
 
@@ -50,16 +49,7 @@ class StockQuantPackage(models.Model):
                 'result_package_id': None
             })
         return package_obj.unlink()
-    
-    @api.model
-    def get_partner_empty_packages(self, vals):
-        partner_id = vals['partner_id']
-        domain = [
-            ('dest_partner_id', '=', partner_id),
-            ('move_line_ids', '=', False)]
-        partner_empty_packages = self.env['stock.quant.package'].search(domain)
-        return partner_empty_packages
-        
+            
 
     def get_package_vals(self, package_id):
         vals = {'shipping_type': self.shipping_type,
@@ -67,16 +57,21 @@ class StockQuantPackage(models.Model):
         return vals
 
 
-
     @api.model
     def change_shipping_type(self, vals):
-        package_id = vals['package']
-        shipping_type = vals['shipping_type']
+        package_id = vals.get('package', False)
+        shipping_type = vals.get('shipping_type', False)
+        carrier_id = vals.get('carrier_id', False)
+        delivery_route_path_id = vals.get('delivery_route_path_id', False)
+
+        vals = {
+            'shipping_type': shipping_type,
+            'carrier_id': carrier_id,
+            'delivery_route_path_id': delivery_route_path_id
+        }
 
         package_obj = self.env['stock.quant.package'].browse(package_id)
-        package_obj.update({
-            'shipping_type': shipping_type
-        })
+        package_obj.update(vals)
 
         domain = [('result_package_id', '=', package_id)]
         move_line_ids = self.env['stock.move.line'].search(domain)
@@ -92,7 +87,6 @@ class StockQuantPackage(models.Model):
 
     @api.model
     def create_new_package_from_move(self, vals):
-
         move_line_id = vals['move_line_id']
         line_id = self.env['stock.move.line'].browse(move_line_id)
         new_package = self.env['stock.quant.package'].create({
@@ -143,9 +137,9 @@ class StockQuantPackage(models.Model):
         if action == 'new':
             for line in move_line_ids:
                 package_ids = line.with_context(ctx).update_to_new_package(package_ids)
-
+        
         elif action == "new_partner_pack":
-            partner_id = self.env['res.partner'].browse[(values.get('partner_id'))]
+            partner_id = self.env['res.partner'].browse(values.get('partner_id'))
             vals_0 = partner_id.update_info_route_vals()
             new_result_package_id = self.env['stock.quant.package'].create(vals_0)
             package_ids += new_result_package_id

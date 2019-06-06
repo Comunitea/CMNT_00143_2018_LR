@@ -15,6 +15,7 @@ class StockMoveLine(models.Model):
     partner_shipping_type = fields.Selection(related="move_id.partner_id.shipping_type")
     result_package_shipping_type = fields.Selection(related="result_package_id.shipping_type")
 
+
     @api.model
     def update_to_new_package_from_apk(self, values):
 
@@ -49,6 +50,7 @@ class StockMoveLine(models.Model):
                     line.write({'result_package_id': package_ids.ids})
 
         return package_ids.ids
+
 
     def update_to_new_package(self, new_package_ids):
         create = True
@@ -125,16 +127,6 @@ class StockMoveLine(models.Model):
             full_stock_moves.append(move_line_obj)
         
         package_obj = self.env['stock.quant.package']
-        empty_pkgs = package_obj.get_partner_empty_packages(vals)
-
-        for pkg in empty_pkgs:
-            pkg_data = {
-                'id': pkg.id,
-                'name': pkg.name,
-                'shipping_type': pkg.shipping_type,
-                'urgent': pkg.urgent
-            }
-            current_partner_pkg_list.append(pkg_data)
         
         res = {
             'move_lines': full_stock_moves,
