@@ -43,10 +43,10 @@ class StockQuantPackage(models.Model):
         package_id = vals['package']
         package_obj = self.env['stock.quant.package'].browse(package_id)
         domain = [('result_package_id', '=', package_id)]
-        move_line_ids = self.env['stock.move.line'].search(domain)
-        for move_line in move_line_ids:
-            move_line.update({
-                'result_package_id': None
+        moves = self.env['stock.move'].search(domain)
+        for move in moves:
+            move.move_line_ids.update({
+                'result_package_id': False
             })
         return package_obj.unlink()
             

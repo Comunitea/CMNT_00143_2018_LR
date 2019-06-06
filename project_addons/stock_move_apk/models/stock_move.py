@@ -154,6 +154,29 @@ class StockMoveLine(models.Model):
         else:
             partner_list = []
             return partner_list
+    
+    @api.model
+    def get_users_list_for_apk_from_search_box(self, vals):
+
+        domain = self.env['stock.move.line'].get_domain_for_apk_list({})
+        name = vals.get('name', False)
+        if name:
+            domain +=[('partner_id.name', 'ilike', name)]
+
+        if len(self.env['stock.move'].search(domain)) > 0:
+            partner_ids = self.env['stock.move'].search(domain).mapped('partner_id')
+            partner_list = []
+            for partner in partner_ids:
+                partner_obj = {
+                    'id': partner.id,
+                    'name': partner.name,
+                    'shipping_type': partner.shipping_type
+                }
+                partner_list.append(partner_obj)
+            return partner_list
+        else:
+            partner_list = []
+            return partner_list
 
     @api.model
     def assign_package(self, vals):
