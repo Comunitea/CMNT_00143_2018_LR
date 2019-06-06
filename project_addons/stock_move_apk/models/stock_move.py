@@ -3,6 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import models, fields, api, _
+from pprint import pprint
 
 class StockMoveLine(models.Model):
     _inherit = 'stock.move.line'
@@ -85,24 +86,28 @@ class StockMoveLine(models.Model):
                 'origin': move_line.origin,
                 'product_qty': move_line.product_qty,
                 'shipping_type': move_line.shipping_type,
+                'urgent': move_line.urgent,
                 'isChecked': False
             }
 
-            if move_line.package_id and move_line.package_id.id:
+            move_id = move_line.move_id
+
+            if move_id.package_id and move_id.package_id.id:
                 move_line_obj['package_id'] = {
-                    'id': move_line.package_id.id,
-                    'name': move_line.package_id.name
+                    'id': move_id.package_id.id,
+                    'name': move_id.package_id.name
                 }
                 if move_line_obj['package_id'] not in current_partner_arrival_pkgs_list:
                     current_partner_arrival_pkgs_list.append(move_line_obj['package_id'])
             else:
                 move_line_obj['package_id'] = False
             
-            if move_line.result_package_id.id:
+            if move_id.result_package_id.id:
                 move_line_obj['result_package_id'] = {
-                    'id': move_line.result_package_id.id,
-                    'name': move_line.result_package_id.name,
-                    'shipping_type': move_line.result_package_id.shipping_type
+                    'id': move_id.result_package_id.id,
+                    'name': move_id.result_package_id.name,
+                    'shipping_type': move_id.result_package_id.shipping_type,
+                    'urgent': move_id.result_package_id.urgent
                 }
                 if move_line_obj['result_package_id'] not in current_partner_pkg_list:
                     current_partner_pkg_list.append(move_line_obj['result_package_id'])
@@ -118,7 +123,8 @@ class StockMoveLine(models.Model):
             pkg_data = {
                 'id': pkg.id,
                 'name': pkg.name,
-                'shipping_type': pkg.shipping_type
+                'shipping_type': pkg.shipping_type,
+                'urgent': pkg.urgent
             }
             current_partner_pkg_list.append(pkg_data)
         
@@ -150,6 +156,7 @@ class StockMoveLine(models.Model):
             return partner_list
 
     @api.model
+<<<<<<< HEAD
     def assign_package(self, vals):
         result_package_id = vals.get('result_package_id', False)
 
@@ -161,3 +168,34 @@ class StockMoveLine(models.Model):
 
 
 
+=======
+    def toggle_urgent_option(self, vals):
+        move_id = vals.get('id', False)
+        urgent = vals.get('urgent', False)
+        move_obj = self.browse(move_id)
+        move_obj.update({
+            'urgent': urgent
+        })
+        if move_obj.urgent == urgent:
+            return True
+        else:
+            return False
+
+    def update_to_new_package(self, new_package_ids):
+        create = True
+        for pack in new_package_ids:
+            ok = pack.update_info_route_vals() == self.update_info_route_vals()
+            if ok:
+                self.move_id.write({'result_package_id': pack.id})
+                pprint(self.move_id)
+                create = False
+                break
+
+        if create:
+            vals_0 = self.update_info_route_vals()
+            new_result_package_id = self.env['stock.quant.package'].create(vals_0)
+            pprint(self.move_id)
+            self.move_id.write({'result_package_id': new_result_package_id.id})
+            new_package_ids += new_result_package_id
+        return new_package_ids
+>>>>>>> 7b40728e71594242e1697ad8075e38dbdd03ec1f

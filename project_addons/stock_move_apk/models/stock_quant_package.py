@@ -3,6 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import models, fields, api, _
+from pprint import pprint
 
 class StockQuantPackage(models.Model):
 
@@ -16,13 +17,14 @@ class StockQuantPackage(models.Model):
         
         package_id = vals['package']
         package_obj = self.env['stock.quant.package'].browse(package_id)
-        lines = package_obj.move_line_ids
+        lines = self.env['stock.move'].search([('result_package_id', '=', package_id)]).mapped('move_line_ids')
         move_lines_info = []
         for line in lines:
             line_data = {
                 'id': line.id,
                 'name': line.product_id.name,
-                'ordered_qty': line.ordered_qty
+                'ordered_qty': line.ordered_qty,
+                'urgent': line.urgent
             }
             move_lines_info.append(line_data)
         
@@ -30,7 +32,8 @@ class StockQuantPackage(models.Model):
             'move_lines_info': move_lines_info,
             'package_info': {
                 'name': package_obj.name,
-                'info_str': package_obj.info_route_str or package_obj.shipping_type
+                'info_str': package_obj.info_route_str or package_obj.shipping_type,
+                'urgent': package_obj.urgent
             }
         }
         
@@ -101,3 +104,52 @@ class StockQuantPackage(models.Model):
                 'result_package_id': new_package.id
             })
         return new_package.id
+    
+    @api.model
+    def toggle_urgent_option(self, vals):
+        pkg_id = vals.get('id', False)
+        urgent = vals.get('urgent', False)
+        pkg_obj = self.browse(pkg_id)
+        pkg_obj.update({
+            'urgent': urgent
+        })
+        lines = self.env['stock.move'].search([('result_package_id', '=', pkg_id)]).mapped('move_line_ids')
+        for line in lines:
+            vals = {'id': line.id, 'urgent': urgent}
+            result = self.env['stock.move.line'].toggle_urgent_option(vals)
+        if pkg_obj.urgent == urgent:
+            return True
+        else:
+            return False
+
+
+    @api.multi
+    def write(self, vals):
+        return super().write(vals)
+
+    @api.model
+    def update_to_new_package_from_apk(self, values):
+        ctx = self._context.copy()
+        ctx.update(write_from_package=True)
+        move_line_ids = self.env['stock.move.line'].browse(values['move_line_ids'])
+        action = values.get('action')
+        package_ids = self.env['stock.quant.package']
+        if action == 'new':
+            for line in move_line_ids:
+                package_ids = line.with_context(ctx).update_to_new_package(package_ids)
+
+        elif action == 'unlink':
+            move_line_ids.mapped('move_id').with_context(ctx).write({'result_package_id': False})
+
+        else:
+            package_ids = self.env['stock.quant.package'].browse(values['result_package_id'])
+            ##Si ya tienen movimientos, entonces todos lo movimientos pasan a tener info ruta del pack
+            if package_ids.move_line_ids:
+                move_vals = {'result_package_id': package_ids.id}
+                move_vals.update(package_ids.update_info_route_vals())
+                move_line_ids.mapped('move_id').with_context(ctx).write(move_vals)
+            else:
+                for line in move_line_ids:
+                    line.write({'result_package_id': package_ids.id})
+
+        return package_ids.ids
