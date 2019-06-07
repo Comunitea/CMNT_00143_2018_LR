@@ -14,6 +14,7 @@
         'base',
         'account',
         'account_due_list',
+        'account_netting',
         'email_template_qweb'
     ],
     'data': [
