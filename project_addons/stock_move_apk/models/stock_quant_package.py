@@ -128,15 +128,15 @@ class StockQuantPackage(models.Model):
             pack.write(vals)
 
     @api.model
-    def update_to_new_package_from_apk(self, values):
+    def update_object_from_apk(self, values):
 
         ctx = self._context.copy()
         ctx.update(write_from_package=True)
-
-        package_id = self.browse(values['package_id'])
-        move_line_ids = self.env['stock.move_line'].browse(values['move_line_ids'])
-        action = values.get['action']
-
+        print (values)
+        package_id = self.browse(values.get('package_id', False))
+        move_line_ids = self.env['stock.move.line'].browse(values.get('move_line_ids', False))
+        action = values.get('action')
+        move_line = self.env['stock.move.line'].search([('package_id', '=', self.id)])
         if action == 'new':
             move_line = self.env['stock.move.line'].search([('package_id', '=', self.id)])
             if move_line:
