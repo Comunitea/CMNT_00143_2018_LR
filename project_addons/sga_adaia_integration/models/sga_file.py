@@ -5,7 +5,6 @@
 from odoo import fields, models, tools, api, _
 from odoo.exceptions import AccessError, UserError, ValidationError
 from datetime import datetime, timedelta
-from pprint import pprint
 
 import os
 
@@ -117,6 +116,20 @@ class AdaiaFile(models.Model):
                 var.en = en
         return True
 
+    @api.one
+    @api.returns('self', lambda value: value.id)
+    def copy(self, default=None):
+        default = dict(default or {})
+        default.update({
+            'version': int(self.version)+1
+        })
+        res = super(AdaiaFile, self).copy(default) 
+        for var in self.sga_file_var_ids:
+            var.copy({
+                'sga_file_id': res.id
+            })
+        return res
+
 class AdaiaFileHeader(models.Model):
 
     #Historico de ficheros donde guardar
@@ -137,14 +150,14 @@ class AdaiaFileHeader(models.Model):
     log_name = fields.Char("Fichero log asociado")
 
     @api.model
-    def set_file_name(self, file_type=False, version=False, file_date=False):
+    def set_file_name(self, file_type=False, version=False, file_date=False, prefix=False):
 
         if file_type and version and datetime == False:
             return False
         else:
             version = int(version)
-            filename = u'%s%02d%04d%02d%02d%02d%02d%02d' %(file_type, version,
-                                                           file_date.year,
+            filename = u'%s%02d%02d%02d%02d%02d%02d' %(prefix,
+                                                           file_date.year-2000,
                                                            file_date.month,
                                                            file_date.day,
                                                            file_date.hour,
@@ -205,26 +218,35 @@ class AdaiaFileHeader(models.Model):
     @api.model
     def get_sga_type(self, sga_filename):
         if sga_filename:
-            return sga_filename[0:3]
+            file_prefix = sga_filename.rsplit('.', 1)[0]
+            if file_prefix == 'TREXP':
+                return 'OUT'
+            elif file_prefix == 'TRARPR':
+                return 'PRT'
         else:
             return False
 
     @api.model
-    def get_sga_version(self, sga_filename):
-        if sga_filename:
-            return sga_filename[3, 5]
+    def get_sga_version(self, sga_filename, version=False):
+        if version:
+            return version
+        elif sga_filename:
+            file_prefix = sga_filename.rsplit('.', 1)[0]
+            if file_prefix == 'TREXP':
+                return 0
         else:
             return False
 
     @api.model
     def get_file_time(self, sga_filename):
         try:
-            return datetime(int(sga_filename[5:9]),
-                            int(sga_filename[9:11]),
-                            int(sga_filename[11:13]),
-                            int(sga_filename[13:15]),
-                            int(sga_filename[15:17]),
-                            max(59, int(sga_filename[17:19])),
+            sga_filename = sga_filename[sga_filename.find('.')+1:]
+            return datetime(2000+ int(sga_filename[0:2]),
+                            int(sga_filename[2:4]),
+                            int(sga_filename[4:6]),
+                            int(sga_filename[6:8]),
+                            int(sga_filename[8:10]),
+                            max(59, int(sga_filename[10:12])),
                             )
         except:
             return False
@@ -346,11 +368,14 @@ class AdaiaFileHeader(models.Model):
     def create_new_sga_file(self, sga_filename, dest_path=ODOO_READ_FOLDER, create=True, version = 0):
 
         if create:
-            sga_filename = '%s%02d' % (sga_filename[0:17], version)
+            prefix = sga_filename[:sga_filename.find('.')]
+            sga_filename = sga_filename[sga_filename.find('.')+1:]
+            sga_filename = prefix+'.%s%02d' % (sga_filename[0:17], version)
             domain = [('name', '=', sga_filename)]
             if self.env['sga.file'].search(domain):
                 version += 1
-                sga_filename = '%s%02d'%(sga_filename[0:17], version)
+                sga_filename = sga_filename[sga_filename.find('.')+1:]
+                sga_filename = prefix+'.%s%02d'%(sga_filename[0:17], version)
                 return self.create_new_sga_file(sga_filename, dest_path, create, version)
 
         path = self.get_global_path()
@@ -437,7 +462,6 @@ class AdaiaFileHeader(models.Model):
         return sga_file
 
     def import_file_from_adaia(self, file_code = False):
-
         process = []
         proc_error = False
         try:
@@ -475,16 +499,16 @@ class AdaiaFileHeader(models.Model):
         pool_ids = []
         for path, directories, files in os.walk(global_path, topdown=False):
             for name in files:
-                file_code = name[0:3]
+                file_prefix = name.rsplit('.', 1)[0]
                 if file_type:
                     if file_code != file_type:
                         continue
 
                 sga_file = self.check_sga_name(name, path)
                 if sga_file:
-                    str = "\n-------- Importando fichero: {} de tipo {}\n".format(sga_file.name, file_code)
+                    str = "\n-------- Importando fichero: {} de tipo {}\n".format(sga_file.name, file_prefix)
                     self.write_log(str)
-                    pool_id = sga_file.import_file_from_adaia(file_code=file_code)
+                    pool_id = sga_file.import_file_from_adaia(file_code=file_prefix)
                 if file_type:
                     pool_ids.append(pool_id)
 
@@ -630,7 +654,8 @@ class AdaiaFileHeader(models.Model):
             raise ValidationError("No se ha encontrado ningun registro de %s" % model)
 
         data_file = datetime.now()
-        sga_file_name = self.set_file_name(sgavar.code, sgavar.version, data_file)
+        prefix = self._context.get('PREFIX', False)
+        sga_file_name = self.set_file_name(sgavar.code, sgavar.version, data_file, prefix)
         if not sga_file_name:
             raise ValidationError("Error en el nombre del fichero")
 

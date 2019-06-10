@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_res_partner_adaia_integration_form" model="ir.ui.view">
+        <field name="name">res.partner.adaia.integration.form</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <notebook position="inside">
+                <page string="Integración Adaia">
+                    <group>
+                        <field name="sga_state"/>
+                        <button name="create_new_adaia_file_button" context="{'file_type': 'adaia_partner_code', 'mod_type': 'AG', 'version': 0}" string="Adaia New file" type="object" class="oe_stat_button"
+                         icon="fa-shopping-cart" attrs="{'invisible': [('sga_state','in',('EE','NE','PE'))]}"/>
+                        <button name="create_new_adaia_file_button" context="{'file_type': 'adaia_partner_code', 'mod_type': 'MO', 'version': 0}" string="Adaia Modification file" type="object" class="oe_stat_button"
+                         icon="fa-shopping-cart" attrs="{'invisible': [('sga_state','in',('NI'))]}"/>
+                        <button name="create_new_adaia_file_button" context="{'file_type': 'adaia_partner_code', 'mod_type': 'DE', 'version': 0}" string="Adaia remove file" type="object" class="oe_stat_button"
+                         icon="fa-shopping-cart" attrs="{'invisible': [('sga_state','in',('NI'))]}"/>
+                    </group>
+                </page>
+            </notebook>
+        </field>
+    </record>
+</odoo>

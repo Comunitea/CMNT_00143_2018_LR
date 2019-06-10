@@ -7,8 +7,26 @@
         <field name="arch" type="xml">
             <xpath expr="//h2[@id='schedule_info']" position="before">
                 <h2>Adaia files exchange</h2>
-                <div class="row mt16 o_settings_container">
-                    <field name="path_files"/>
+                <div class="o_settings_container">
+                    <group>
+                        <field name="path_files"/>
+                        <group>
+                            <field name="adaia_partner_code"/>
+                            <field name="adaia_product_code"/>
+                            <field name="adaia_product_template_code"/>
+                            <field name="adaia_barcode_code"/>
+                            <field name="adaia_stock_code"/>
+                            <field name="adaia_stock_picking_in"/>
+                            <field name="adaia_stock_picking_out"/>
+                        </group>
+                        <group>
+                            <field name="adaia_partner_prefix"/>
+                            <field name="adaia_product_prefix"/>
+                            <field name="adaia_product_template_prefix"/>
+                            <field name="adaia_barcode_prefix"/>
+                            <field name="adaia_stock_prefix"/>
+                        </group>
+                    </group>
                 </div>
             </xpath>
         </field>

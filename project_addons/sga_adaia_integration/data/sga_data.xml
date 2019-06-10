@@ -32,5 +32,70 @@
             <field name="code">model.process_sga_files()</field>
         </record>
 
+        <record id="adaia_basic_config_path_files" model="ir.config_parameter">
+            <field name="key">sga_adaia_integration.path_files</field>
+            <field name="value">../../project_addons/sga_adaia_integration/sgafolder</field>
+        </record>
+
+        <record id="adaia_basic_config_adaia_partner_code" model="ir.config_parameter">
+            <field name="key">sga_adaia_integration.adaia_partner_code</field>
+            <field name="value">TE0</field>
+        </record>
+
+        <record id="adaia_basic_config_adaia_product_code" model="ir.config_parameter">
+            <field name="key">sga_adaia_integration.adaia_product_code</field>
+            <field name="value">AR0</field>
+        </record>
+
+        <record id="adaia_basic_config_adaia_product_template_code" model="ir.config_parameter">
+            <field name="key">sga_adaia_integration.adaia_product_template_code</field>
+            <field name="value">PTR0</field>
+        </record>
+
+        <record id="adaia_basic_config_adaia_barcode_code" model="ir.config_parameter">
+            <field name="key">sga_adaia_integration.adaia_barcode_code</field>
+            <field name="value">TRA0</field>
+        </record>
+
+        <record id="adaia_basic_config_adaia_stock_code" model="ir.config_parameter">
+            <field name="key">sga_adaia_integration.adaia_stock_code</field>
+            <field name="value">TUB0</field>
+        </record>
+
+        <record id="adaia_basic_config_adaia_stock_picking_in" model="ir.config_parameter">
+            <field name="key">sga_adaia_integration.adaia_stock_picking_in</field>
+            <field name="value">INR0</field>
+        </record>
+
+        <record id="adaia_basic_config_adaia_stock_picking_out" model="ir.config_parameter">
+            <field name="key">sga_adaia_integration.adaia_stock_picking_out</field>
+            <field name="value">OUT0</field>
+        </record>
+        
+        <record id="adaia_basic_config_adaia_partner_prefix" model="ir.config_parameter">
+            <field name="key">sga_adaia_integration.adaia_partner_prefix</field>
+            <field name="value">TRTER.</field>
+        </record>
+
+        <record id="adaia_basic_config_adaia_product_prefix" model="ir.config_parameter">
+            <field name="key">sga_adaia_integration.adaia_product_prefix</field>
+            <field name="value">TRART.</field>
+        </record>
+
+        <record id="adaia_basic_config_adaia_product_template_prefix" model="ir.config_parameter">
+            <field name="key">sga_adaia_integration.adaia_product_template_prefix</field>
+            <field name="value">TRARPR.</field>
+        </record>
+
+        <record id="adaia_basic_config_adaia_barcode_prefix" model="ir.config_parameter">
+            <field name="key">sga_adaia_integration.adaia_barcode_prefix</field>
+            <field name="value">TRAREA.</field>
+        </record>
+
+        <record id="adaia_basic_config_adaia_stock_prefix" model="ir.config_parameter">
+            <field name="key">sga_adaia_integration.adaia_stock_prefix</field>
+            <field name="value">TRARUB.</field>
+        </record>
+
     </data>
 </odoo>
