@@ -4,6 +4,8 @@
 
 from odoo import fields, models, tools, api, _
 from odoo.exceptions import AccessError, UserError, ValidationError
+from .res_config import SGA_STATES
+from pprint import pprint
 
 class StockPickingSGA(models.Model):
 
@@ -24,13 +26,7 @@ class StockPickingSGA(models.Model):
     sga_priority = fields.Integer("Priority", default=100)
 
     sga_company = fields.Char(related="partner_id.name")
-    sga_state = fields.Selection ([('NI', 'Sin integracion'),
-                                   ('NE', 'No exportado'),
-                                   ('PM', 'Pendiente Adaia'),
-                                   ('EE', 'Error en exportacion'),
-                                   ('EI', 'Error en importacion'),
-                                   ('SR', 'Realizado'),
-                                   ('SC', 'Cancelado')], 'Estado Adaia', default="NI", track_visibility='onchange', copy=False)
+    sga_state = fields.Selection(SGA_STATES)
 
     do_backorder = fields.Selection([('default', 'Por defecto'), ('yes', 'Si'), ('no', 'No')], "Crea entrega parcial", default='default')
     sga_integrated = fields.Boolean(related="picking_type_id.sga_integrated")
@@ -61,7 +57,7 @@ class StockPickingSGA(models.Model):
                            'recompute_pack_op')
 
         fields_list = sorted(list(set(vals).intersection(set(fields_to_check))))
-        if len(self.filtered(lambda x: x.sga_state == 'PM')) and fields_list:
+        if len(self.filtered(lambda x: x.sga_state == 'PS')) and fields_list:
             return True
         return False
 
@@ -91,26 +87,38 @@ class StockPickingSGA(models.Model):
 
     @api.multi
     def move_to_NE(self):
-        sga_states_to_NE = ('PM', 'EI', 'EE', 'SR', 'SC', False)
+        sga_states_to_NE = ('PS', 'EI', 'EE', 'SR', 'SC', False)
         picks = self.filtered(lambda x: x.sga_integrated and x.sga_state in sga_states_to_NE)
         picks.write({'sga_state': 'NE'})
 
     def button_new_adaia_file(self, ctx):
-
         return self.with_context(ctx).new_adaia_file()
 
-    def new_adaia_file(self, operation=False, force=False):
-
+    @api.multi
+    def create_new_adaia_file_button(self):
         ctx = dict(self.env.context)
+        pprint(ctx['file_type'])
+        file_type_stng = 'sga_adaia_integration.' + ctx['file_type']
+        file_type = self.env['ir.config_parameter'].get_param(file_type_stng)
+        for pick in self:
+            pick.new_adaia_file(file_type, ctx['mod_type'], ctx['version'])
+            if ctx['mod_type'] == 'DE':
+                self.env['stock.picking'].browse(pick.id).write({'sga_state': 'NI'})
+
+    @api.multi    
+    def new_adaia_file(self, sga_file_type='INR0', operation=False, code_type=0):
+        ctx = dict(self.env.context)
+        
         if operation:
-            ctx['operation'] = operation
-        if 'operation' not in ctx:
-            ctx['operation'] = 'A'
+            ctx['ACCION'] = operation
+        if 'ACCION' not in ctx:
+            ctx['ACCION'] = 'AG'
+
         self = self.filtered(lambda x: x.sga_state == 'NE')
         states_to_check = ('confirmed', 'partially_available')
         states_to_send = 'assigned'
         picks = []
-        pick_to_check = self.filtered(lambda x: x.state in states_to_check and not force)
+        pick_to_check = self.filtered(lambda x: x.state in states_to_check)
         if pick_to_check and pick_to_check[0]:
             view = self.env.ref('sga_file.stock_adaia_confirm_wizard')
             wiz = self.env['stock.adaia.confirm'].create({'pick_id': pick_to_check.id})
@@ -127,7 +135,8 @@ class StockPickingSGA(models.Model):
                 'context': self.env.context,
             }
 
-        for pick in self.filtered(lambda x: x.state in states_to_send or force):
+        for pick in self.filtered(lambda x: x.state in states_to_send):
+            ctx['PREFIX'] = pick.picking_type_id.sga_prefix
             if not pick.partner_id:
                 raise UserError("No puedes enviar un albarán sin asociarlo a una empresa")
 
@@ -137,7 +146,7 @@ class StockPickingSGA(models.Model):
                 picks.append(pick.id)
 
         if picks:
-            self.env['stock.picking'].browse(picks).write({'sga_state': 'PM'})
+            self.env['stock.picking'].browse(picks).write({'sga_state': 'PS'})
         else:
             raise ValidationError("No hay albaranes para enviar a Adaia")
         return True
@@ -201,7 +210,7 @@ class StockPickingSGA(models.Model):
             if TIPEREG == 'CRCA':                    
 
                 actual_pick = self.env['stock.picking'].search([('name', '=', EXPORDREF), ('state', 'in', ['assigned', 'waiting', 'confirmed']),
-                 ('sga_state', 'in', ['PM'])])
+                 ('sga_state', 'in', ['PS'])])
 
                 if not actual_pick:
                     bool_error = False
@@ -266,7 +275,7 @@ class StockPickingSGA(models.Model):
         str_error = ''
         bool_error = True
         n_line = 0
-        sgavar = self.env['sgavar.file'].search([('code', '=', 'OUT'), ('version', '=', 0)])
+        sgavar = self.env['sgavar.file'].search([('code', '=', 'OUT'), ('version', '=', 1)])
         pick = False
         if not sgavar:
             raise ValidationError("Modelo no encontrado")
@@ -277,13 +286,19 @@ class StockPickingSGA(models.Model):
         actual_pick = False
         pick_pool = []
         for line in sga_file_lines:
+            if '|' in line:
+                file_data = line.rsplit('|')
+                TIPEREG = file_data[0]
+                EXPORDREF = file_data[2]
+            else:
+                TIPEREG = line[0:4]
+                EXPORDREF = line[6:20].replace(" ","")
             n_line += 1
-            TIPEREG = line[0:4]
-            EXPORDREF = line[6:20].replace(" ","")
+            
             if TIPEREG == 'CECA':                    
 
                 actual_pick = self.env['stock.picking'].search([('name', '=', EXPORDREF), ('state', 'in', ['assigned', 'waiting', 'confirmed']),
-                 ('sga_state', 'in', ['PM'])])
+                 ('sga_state', 'in', ['PS'])])
 
                 if not actual_pick:
                     bool_error = False
@@ -300,8 +315,13 @@ class StockPickingSGA(models.Model):
             
             else:
                 if actual_pick is not False and TIPEREG == 'CELI':
-                    EXPORDLIN = line[21:30]
-                    CANSER = line[55:64]
+                    if '|' in line:
+                        file_data = line.rsplit('|')
+                        EXPORDLIN = file_data[3]
+                        CANSER = file_data[6]
+                    else:
+                        EXPORDLIN = line[21:30]
+                        CANSER = line[55:64]
                     actual_line = self.env['stock.move.line'].search([('id', '=', EXPORDLIN)])
                     if not actual_line:
                         error_message = u'Op %s no encontrada en el albarán %s' % (EXPORDLIN, actual_pick.name)
@@ -335,8 +355,6 @@ class StockPickingSGA(models.Model):
                     'sga_state': 'SR'
                 })
                 pick_id.button_validate()
-
-        #Aquí me quedé
 
         return pick_pool
 

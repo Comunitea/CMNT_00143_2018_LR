@@ -1,0 +1,16 @@
+<odoo noupdate="1">
+
+        <record id="charge_financed_payment_order_reconcile_ir_cron" forcecreate="True" model="ir.cron">
+            <field name="name">charge.financed.payment.order.reconcile.ir.cron</field>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="doall" eval="False"/>
+            <field name="active" eval="True"/>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="model_id" ref="model_account_payment_mode"/>
+            <field name="state">code</field>
+            <field name="code">model.cron_check_charge_financed_payments()</field>
+        </record>
+
+</odoo>

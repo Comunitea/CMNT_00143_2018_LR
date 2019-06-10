@@ -10,3 +10,6 @@ from . import res_config
 from . import sga_file
 from . import sga_error
 from . import stock_batch_picking
+from . import res_partner
+from . import product_product
+from . import product_template

@@ -8,6 +8,7 @@
             <xpath expr="//field[@name='warehouse_id']" position="after" >
                 <field name="sga_integrated"/>
                 <field name="sgavar_file_id"/>
+                <field name="sga_prefix"/>
             </xpath>
         </field>
     </record>
@@ -20,23 +21,30 @@
             <notebook position="inside">
                 <page string="Integración Adaia" attrs="{'invisible':[('sga_integrated','=','False')]}">
                     <group>
-                        <field name="sga_state" widget="statusbar" statusbar_visible="NE,PS,MT"
+                        <h4>IN</h4>
+                        <field name="sga_state" widget="statusbar" statusbar_visible="NE,SC,SR,PS"
                             attrs="{'invisible': [('sga_state', '=', 'NI')], 'readonly': 1}"
-                            statusbar_colors='{"EE":"red", "EI":"red", "PM":"red", "MT":"green"}'/>
+                            statusbar_colors='{"EE":"red", "EI":"red", "SC":"red", "SR":"green"}'/>
                         <field name="sga_integrated" invisible="1"/>
-                        <button name="button_new_adaia_file" string="Mover a Adaia" type="object"
-                            class="oe_stat_button" icon="fa-shopping-cart"/>
+                        <button name="create_new_adaia_file_button" context="{'file_type': 'adaia_stock_picking_in', 'mod_type': 'AG', 'version': 0}" string="Adaia stock IN" type="object" class="oe_stat_button" icon="fa-shopping-cart"  attrs="{'invisible': [('sga_state','in',('EE','EI','SR','PS'))]}"/>
+                        <button name="create_new_adaia_file_button" context="{'file_type': 'adaia_stock_picking_in', 'mod_type': 'MO', 'version': 0}" string="Adaia stock edit IN" type="object" class="oe_stat_button" icon="fa-shopping-cart"  attrs="{'invisible': [('sga_state','in',('EE','EI','PS'))]}"/>
+                        <button name="create_new_adaia_file_button" context="{'file_type': 'adaia_stock_picking_in', 'mod_type': 'DE', 'version': 0}" string="Adaia stock del IN" type="object" class="oe_stat_button" icon="fa-shopping-cart"  attrs="{'invisible': [('sga_state','in',('EE','EI'))]}"/>
                         <button name="move_to_NE" string="Mover a 'No enviado'" type="object"
                             class="oe_stat_button" icon="fa-reply-all"
-                            attrs="{'invisible': [('sga_state','in',('NE','NI', 'MT','EE','EI'))]}"/>
+                            attrs="{'invisible': [('sga_state','in',('NE','NI', 'EE','EI'))]}"/>
                         <button name="move_to_done" string="Mover a 'Realizado'" type="object"
                             class="oe_stat_button" icon="fa-check-square"
-                            attrs="{'invisible': [('sga_state','in',('MT','NI'))]}"/>
+                            attrs="{'invisible': [('sga_state','in',('NI'))]}"/>
+                        <br/>
+                        <h4>OUT</h4>
+                        <button name="create_new_adaia_file_button" context="{'file_type': 'adaia_stock_picking_out', 'mod_type': 'AG', 'version': 1}" string="Adaia stock OUT" type="object" class="oe_stat_button" icon="fa-shopping-cart"  attrs="{'invisible': [('sga_state','in',('EE','EI','SR','PS'))]}"/>
+                        <button name="create_new_adaia_file_button" context="{'file_type': 'adaia_stock_picking_out', 'mod_type': 'MO', 'version': 1}" string="Adaia stock edit OUT" type="object" class="oe_stat_button" icon="fa-shopping-cart"  attrs="{'invisible': [('sga_state','in',('EE','EI','PS'))]}"/>
+                        <button name="create_new_adaia_file_button" context="{'file_type': 'adaia_stock_picking_out', 'mod_type': 'DE', 'version': 1}" string="Adaia stock del OUT" type="object" class="oe_stat_button" icon="fa-shopping-cart"  attrs="{'invisible': [('sga_state','in',('EE','EI'))]}"/>
                     </group>
                 </page>
             </notebook>
             <xpath expr="//field[@name='move_line_ids']" position="replace">
-                <field name="move_line_ids" attrs="{'readonly': ['|', ('sga_state', 'in', ['PM', 'MT', 'MC']), '|', ('show_operations', '=', False), '&amp;', ('state', '=', 'done'), ('is_locked', '=', True)]}" context="{'default_picking_id': id, 'default_location_id': location_id, 'default_location_dest_id': location_dest_id}">
+                <field name="move_line_ids" attrs="{'readonly': ['|', ('sga_state', 'in', ['PM',  'MC']), '|', ('show_operations', '=', False), '&amp;', ('state', '=', 'done'), ('is_locked', '=', True)]}" context="{'default_picking_id': id, 'default_location_id': location_id, 'default_location_dest_id': location_dest_id}">
                     <tree editable="bottom" decoration-muted="(state == 'done' and is_locked == True)" decoration-danger="qty_done&gt;product_uom_qty and state!='done'" decoration-success="qty_done==product_uom_qty and state!='done' and not result_package_id">
                         <field name="product_id" required="1" attrs="{'readonly': ['|', ('state', '=', 'done'), ('move_id', '!=', False)]}"/>
                         <field name="move_id" invisible="1"/>
@@ -59,7 +67,7 @@
                 </field>
             </xpath>
             <xpath expr="//field[@name='move_lines']" position="replace">
-                <field name="move_lines" attrs="{'readonly': ['|', ('sga_state', 'in', ['PM', 'MT', 'MC']), '|', '&amp;', ('show_operations', '=', True), '|', ('is_locked', '=', True), ('state', '=', 'done'), '&amp;', ('state', '=', 'done'), ('is_locked', '=', True)]}" context="{'picking_type_code': picking_type_code, 'default_picking_id': id, 'form_view_ref':'stock.view_move_picking_form', 'address_in_id': partner_id, 'default_picking_type_id': picking_type_id, 'default_location_id': location_id, 'default_location_dest_id': location_dest_id}">
+                <field name="move_lines" attrs="{'readonly': ['|', ('sga_state', 'in', ['PS',  'MC']), '|', '&amp;', ('show_operations', '=', True), '|', ('is_locked', '=', True), ('state', '=', 'done'), '&amp;', ('state', '=', 'done'), ('is_locked', '=', True)]}" context="{'picking_type_code': picking_type_code, 'default_picking_id': id, 'form_view_ref':'stock.view_move_picking_form', 'address_in_id': partner_id, 'default_picking_type_id': picking_type_id, 'default_location_id': location_id, 'default_location_dest_id': location_dest_id}">
                     <tree decoration-danger="state != 'done' and quantity_done > reserved_availability and show_reserved_availability" decoration-muted="scrapped == True or state == 'cancel' or (state == 'done' and is_locked == True)" string="Stock Moves" editable="bottom">
                         <field name="name" invisible="1"/>
                         <field name="date_expected" invisible="1"/>
@@ -105,10 +113,10 @@
                             class="oe_stat_button" icon="fa-shopping-cart"/>
                         <button name="move_to_NE" string="Mover a 'No enviado'" type="object"
                             class="oe_stat_button" icon="fa-reply-all"
-                            attrs="{'invisible': [('sga_state','in',('NE','NI', 'MT','EE','EI'))]}"/>
+                            attrs="{'invisible': [('sga_state','in',('NE','NI', 'EE','EI'))]}"/>
                         <button name="move_to_done" string="Mover a 'Realizado'" type="object"
                             class="oe_stat_button" icon="fa-check-square"
-                            attrs="{'invisible': [('sga_state','in',('MT','NI'))]}"/>
+                            attrs="{'invisible': [('sga_state','in',('NI'))]}"/>
                     </group>
                 </page>
             </notebook>
