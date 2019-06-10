@@ -25696,33 +25696,35 @@ ion-navbar.toolbar {
   min-height: 46px;
 }
 
-.actionSheetButton {
-  max-width: 33%;
-  min-height: 30%;
+/* .actionSheetButton {
+    max-width: 33%;
+    min-height: 30%;
 }
 
 .actionSheetButton span {
-  padding: 25px;
-  text-align: center;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(lightgrey), color-stop(lightgrey), to(grey));
-  background-image: linear-gradient(lightgrey, lightgrey, grey);
-  border: outset 3px black;
-}
-
+    padding: 25px;
+    text-align: center;
+    background-image: linear-gradient(lightgrey, lightgrey, grey);
+    border: outset 3px black;
+}*/
 .actionSheetButton.selected {
   color: red;
 }
 
-.actionSheetButton.default {
-  color: blue;
-}
-
-.actionSheetButton.default.selected {
-  color: purple;
-}
-
 .actionSheetButton span:hover {
-  border: inset 3px black;
+  color: #7C7BAD;
+}
+
+.actionSheetButton.pasaran-type {
+  background-color: #fafaeb;
+}
+
+.actionSheetButton.route-type {
+  background-color: #faefef;
+}
+
+.actionSheetButton.agency-type {
+  background-color: #cef0ef;
 }
 
 .actionSheetContainer div.action-sheet-wrapper {
@@ -25822,7 +25824,7 @@ stock-move-list .fat-col.red-background {
   color: white;
 }
 
-stock-move-list .red-icon {
+stock-move-list .active-icon {
   color: #3e00a1 !important;
 }
 
@@ -25935,4 +25937,8 @@ stock-move-list .row-button {
 
 stock-move-list .button-color-first {
   color: #7C7BAD;
+}
+
+stock-move-list .urgent-type {
+  color: red;
 }

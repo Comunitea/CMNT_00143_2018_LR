@@ -107,21 +107,30 @@ class StockMove(models.Model):
     def get_domain_moves_to_asign(self):
         return self.filtered(lambda x: not x.picking_id and x.state not in ('done', 'cancel', 'draft'))
 
-
     @api.multi
     def move_sel_assign_picking(self):
-        for move in self.get_domain_moves_to_asign():
+        moves = self.get_domain_moves_to_asign()
+        for move in moves:
             move.action_force_assign_picking()
+
+        if moves:
+            res = self.env['stock.move']._return_action_show_moves()
+            res['context'] = {'search_default_without_pick': 0}
+            res['domain'] = [('id', 'in', moves.ids)]
+            return res
 
     def get_domain_moves_to_deasign(self):
         return self.filtered(lambda x: x.picking_id and x.state not in ('done', 'cancel', 'draft'))
 
+
     @api.multi
     def move_de_sel_assign_picking(self):
-
         self.write({'picking_id': False})
         self.mapped('move_line_ids').write({'picking_id': False})
-
+        res = self._return_action_show_moves()
+        res['context'] = {'search_default_without_pick': 1}
+        res['domain'] = [('id', 'in', self.ids)]
+        return res
 
     @api.multi
     def write(self, vals):

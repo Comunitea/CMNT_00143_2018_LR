@@ -165,7 +165,7 @@ class PickingType(models.Model):
             'count_move_done': context_domain + [('state', '=', 'done'), ('date', '>', yesterday)],
             'count_move_draft': context_domain + [('state', '=', 'draft')],
             'count_move_waiting': context_domain + to_do_state,
-            'count_move_unpacked': context_domain + ready_state + with_out_pick + [('result_package_id', '=', False)],
+            'count_move_unpacked': context_domain + ready_state + with_out_pick + [('picking_type_id.group_code', '=', 'outgoing'), ('result_package_id', '=', False)],
             'count_move_ready': context_domain + ready_state + with_pick + before_tomorrow,
             'count_move': context_domain + to_do_state,
             'count_move_to_pick': context_domain + ready_state + with_out_pick + before_tomorrow,
@@ -173,7 +173,7 @@ class PickingType(models.Model):
             'count_move_backorders': context_domain + to_do_state + [('origin_returned_move_id', '!=', False)],
         }
 
-        context_domain = self.get_context_domain()
+        context_domain = self.get_context_domain('scheduled_date')
 
         picking_domains = {
             'count_picking_draft': context_domain + [('state', '=', 'draft')],
@@ -304,8 +304,8 @@ class PickingType(models.Model):
         if self.group_code == 'picking':
             context.update({
                 'search_default_by_shipping_type': True,
-                'search_default_by_delivery_path_route_id': True,
-                'search_default_by_carrier_id': True
+                #'search_default_by_delivery_path_route_id': True,
+                #'search_default_by_carrier_id': True
 
             })
 
@@ -318,7 +318,7 @@ class PickingType(models.Model):
             })
         elif self.group_code=='incoming':
             context.update({
-                'search_default_partner_id':1,
+                'search_default_partner_id': 1,
 
             })
         elif self.group_code == 'location':
@@ -390,7 +390,6 @@ class PickingType(models.Model):
 
 
     def get_action_move_tree_waiting(self):
-
         move_domains, picking_domains = self.get_moves_domain()
         domain = move_domains['count_move_waiting']
         context = {
@@ -409,9 +408,6 @@ class PickingType(models.Model):
 
     def get_action_move_tree_all_done(self):
         move_domains, picking_domains = self.get_moves_domain()
-
-
-
         context = {
             'search_default_picking_type_id': self.id,
             'search_default_done': 1}
@@ -420,7 +416,6 @@ class PickingType(models.Model):
 
     def get_action_move_tree_all_not_done(self):
         move_domains, picking_domains = self.get_moves_domain()
-
         context = {
             'search_default_picking_type_id': self.id,
             'search_default_not_done': 1}
