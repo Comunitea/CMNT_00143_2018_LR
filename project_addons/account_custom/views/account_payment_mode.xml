@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_payment_mode_form_add_charge_financed" model="ir.ui.view">
+        <field name="name">account.payment.mode.inherit.view.form</field>
+        <field name="model">account.payment.mode</field>
+        <field name="inherit_id" ref="l10n_es_account_banking_sepa_fsdd.view_payment_mode_form_add_charge_financed"/>
+        <field name="arch" type="xml">
+            <field name="charge_financed" position="after">
+                <field name="charge_financed_account_id" attrs="{'invisible': [('charge_financed', '!=', True)], 'required': [('charge_financed', '=', True)]}"/>
+                <field name="charge_financed_journal_id" attrs="{'invisible': [('charge_financed', '!=', True)], 'required': [('charge_financed', '=', True)]}"/>
+            </field>
+
+        </field>
+    </record>
+</odoo>

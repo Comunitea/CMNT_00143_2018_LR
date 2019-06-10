@@ -14,12 +14,17 @@
         'base',
         'account',
         'account_due_list',
-        'email_template_qweb'
+        'email_template_qweb',
+        'account_netting',
+        'account_payment_order',
+        'l10n_es_account_banking_sepa_fsdd'
     ],
     'data': [
         'data/invoice_mailing_template.xml',
         'wizard/invoice_mailing_wzd_view.xml',
         'views/account_move_line.xml',
-        'data/netting_template.xml'
+        'views/account_payment_mode.xml',
+        'data/netting_template.xml',
+        'data/ir_cron.xml'
     ]
 }
