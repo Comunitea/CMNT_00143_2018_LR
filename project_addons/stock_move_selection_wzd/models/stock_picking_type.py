@@ -131,18 +131,20 @@ class PickingType(models.Model):
 
 
     def get_type_domain(self, type=''):
-
+        return []
         if type=='moves':
         ## domain para movimientos de salida listos
-            type_domain = [('picking_type_id.group_code', '=', 'outgoing'), ('state', 'in', ('partially_available', 'assigned')), ('result_package_id', '!=', False)]
+            type_domain = [
+                '|', ('picking_type_id.group_code', '!=', 'outgoing'),
+                '&', '&', ('picking_type_id.group_code', '=', 'outgoing'), ('state', 'in', ('partially_available', 'assigned')), ('result_package_id', '!=', False)]
         else:
             type_domain=[]
 
         return type_domain
 
     def get_moves_domain(self):
-        context_domain = self.get_type_domain('moves')
-        c_dom = self.get_context_domain()
+        c_dom = self.get_type_domain('moves')
+        context_domain = self.get_context_domain()
         if c_dom:
             context_domain = expression.AND([c_dom, context_domain])
 
@@ -170,11 +172,8 @@ class PickingType(models.Model):
             'count_move_late': context_domain + to_do_state + late,
             'count_move_backorders': context_domain + to_do_state + [('origin_returned_move_id', '!=', False)],
         }
-        context_domain = self.get_type_domain('picks')
-        c_dom = self.get_context_domain()
-        if c_dom:
-            context_domain = expression.AND([c_dom, context_domain])
 
+        context_domain = self.get_context_domain()
 
         picking_domains = {
             'count_picking_draft': context_domain + [('state', '=', 'draft')],

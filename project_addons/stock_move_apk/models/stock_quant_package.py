@@ -9,13 +9,25 @@ class StockQuantPackage(models.Model):
     _inherit = "stock.quant.package"
 
     def get_apk_info(self):
-        fields = ['id', 'name']
+        fields = ['id', 'name', 'info_route_str']
 
         vals = {}
         for f in fields:
             vals[f] = self[f]
 
-        vals.update(self.update_info_route_vals())
+        vals['shipping_type'] = self._fields['shipping_type'].convert_to_export(self.shipping_type, self)
+
+        if self.delivery_route_path_id:
+            vals['delivery_route_id'] = {'id': self.delivery_route_path_id.id,
+                                         'name': self.delivery_route_path_id.name}
+        else:
+            vals['delivery_route_id'] = {'id': False, 'name': ''}
+        if self.carrier_id:
+            vals['carrier_id'] = {'id': self.carrier_id.id,
+                                  'name': self.carrier_id.name}
+        else:
+            vals['carrier_id'] = {'id': False, 'name': ''}
+
         return vals
 
     @api.model
@@ -61,29 +73,17 @@ class StockQuantPackage(models.Model):
     @api.model
     def change_shipping_type(self, vals):
         package_id = vals.get('package', False)
-        shipping_type = vals.get('shipping_type', False)
-        carrier_id = vals.get('carrier_id', False)
-        delivery_route_path_id = vals.get('delivery_route_path_id', False)
+        values = {
+            'shipping_type': vals.get('shipping_type', False),
+            'delivery_route_path_id': vals.get('delivery_route_path_id', False),
+            'carrier_id': vals.get('carrier_id', False)
 
-        vals = {
-            'shipping_type': shipping_type,
-            'carrier_id': carrier_id,
-            'delivery_route_path_id': delivery_route_path_id
         }
 
+        ctx = self._context.copy()
+        ctx.update(write_from_package=True)
         package_obj = self.env['stock.quant.package'].browse(package_id)
-        package_obj.update(vals)
-
-        domain = [('result_package_id', '=', package_id)]
-        move_line_ids = self.env['stock.move.line'].search(domain)
-
-        ##saco vals de la función por claridad
-        vals = package_obj.get_package_vals(package_id)
-        move_line_ids.write(vals)
-        #necesito escribir en los move.line y en los move para porder filtrar despues
-        move_line_ids.mapped('move_id').write(vals)
-
-
+        package_obj.write(values)
         return True
 
     @api.model

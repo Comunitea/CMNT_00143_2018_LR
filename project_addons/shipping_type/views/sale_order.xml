@@ -8,7 +8,7 @@
             <field name="warehouse_id" position="before">
                 <field name="shipping_type"/>
                 <field name="delivery_route_path_id"/>
-                <field name="urgent"/>
+                 <!--field name="urgent" invisible="1"/-->
             </field>
         </field>
     </record>

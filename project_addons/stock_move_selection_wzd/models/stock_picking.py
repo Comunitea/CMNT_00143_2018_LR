@@ -32,10 +32,12 @@ class StockPicking(models.Model):
 
     @api.multi
     def action_done(self):
+        ctx = self._context.copy()
+        ctx.update(write_from_picking=True)
         for pick in self:
             if pick.state == 'packaging':
                 raise ValidationError ('No puedes validar el albarán {} porque está en empaquetado'.format(pick.name))
-        return super().action_done()
+        return super(StockPicking, self.with_context(ctx)).action_done()
 
     @api.model
     def create(self, vals):

@@ -37,6 +37,10 @@
                 <field name="shipping_type"/>
                 <field name="delivery_route_path_id"/>
                 <separator/>
+
+                <filter string="Urgente" name="filter_urgent" domain="[('shipping_type','=','urgent')]"/>
+                <filter string="Ruta" name="filter_ruta" domain="[('shipping_type','=','route')]"/>
+                <filter string="Pasarán" name="filter_pasaran" domain="[('shipping_type','=','pasaran')]"/>
                 <!--filter name="sga_package" string="SGA" domain="[('sga_state','!=', False)]"/>
                 <filter name="waiting" string="SGA Enviado" domain="[('sga_state','=', 'PS')]"/>
                 <filter name="error" string="SGA Error" domain="[('sga_state','in', ('EI', 'EE')]"/>
@@ -63,7 +67,7 @@
                         <field name="picking_id" context="{'write_from_picking': True}"/>
                         <field name="shipping_type" context="{'write_from_package': True}"/>
                         <field name="delivery_route_path_id" context="{'write_from_package': True}"/>
-                        <field name="urgent" context="{'write_from_package': True}"/>
+                        <!--field name="urgent" context="{'write_from_package': True}"/-->
                     </group>
                 </group>
             </xpath>

@@ -126,6 +126,7 @@ class StockMove(models.Model):
     @api.multi
     def write(self, vals):
 
+
         if 'picking_id' in vals:
             self.mapped('move_line_ids').write({'picking_id': vals['picking_id']})
         return super().write(vals)

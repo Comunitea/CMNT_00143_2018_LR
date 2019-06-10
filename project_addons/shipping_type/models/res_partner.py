@@ -3,14 +3,15 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import models, fields, api, _
-
+from odoo.exceptions import ValidationError
 
 DEFAULT_SHIPPING_TYPE = ''
 STRING_SHIPPING_TYPE = 'Transporte'
 HELP_SHIPPING_TYPE = 'Tipo de envío: Pasaran, Agencia o en Ruta'
-SHIPPING_TYPE_SEL =  [('pasaran', 'Pasarán'),
-         ('agency', 'Agencia'),
-         ('route', 'Ruta')]
+SHIPPING_TYPE_SEL =  [
+    ('urgent', 'Urgente'),
+    ('pasaran', 'Pasarán'),
+    ('route', 'Ruta')]
 
 
 class InfoRouteMixin(models.AbstractModel):
@@ -20,11 +21,23 @@ class InfoRouteMixin(models.AbstractModel):
                                      help=HELP_SHIPPING_TYPE)
     delivery_route_path_id = fields.Many2one('delivery.route.path', string="Route path")
     info_route_str = fields.Char('Info route', compute='get_info_route')
-    urgent = fields.Boolean('Urgent', help='Default urgent for partner orders\nPlus 3.20%')
+    urgent = fields.Boolean('Urgent', help='Default urgent for partner orders\nPlus 3.20%', compute='_partner_urgent')
 
+    @api.onchange('shipping_type')
+    def check_if_urgent(self):
+        if self.urgent != True and self.shipping_type == 'urgent':
+            raise  ValidationError ('Este cliente no permite envíos urgentes')
+
+
+    @api.multi
+    def _partner_urgent(self):
+        if 'partner_id' in self.fields_get_keys():
+            for obj in self:
+                obj.urgent = obj.partner_id.urgent
 
     def _onchange_associate(self):
         super()._onchange_associate()
+        return
         if not self.associate:
             self.urgent = False
 
@@ -35,20 +48,22 @@ class InfoRouteMixin(models.AbstractModel):
             child_vals.update(shipping_type=vals['shipping_type'])
         if 'delivery_route_path_id' in vals:
             child_vals.update(delivery_route_path_id=vals['delivery_route_path_id'])
-        if 'urgent' in vals:
-            child_vals.update(urgent=vals['urgent'])
+        #if 'urgent' in vals:
+        #    child_vals.update(urgent=vals['urgent'])
 
         if 'carrier_id' in vals and 'carrier_id' in self.fields_get_keys():
             child_vals.update(carrier_id=vals['carrier_id'])
         if 'campaign_id' in vals and 'campaign_id' in self.fields_get_keys():
             child_vals.update(campaign_id=vals['campaign_id'])
+
         return child_vals
 
     def update_info_route_vals(self):
         route_vals = {'shipping_type': self.shipping_type,
                       'delivery_route_path_id': self.delivery_route_path_id.id,
                       'info_route_str': self.info_route_str,
-                      'urgent': self.urgent}
+                      }
+
         if 'carrier_id' in self.fields_get_keys():
             route_vals['carrier_id'] = self.carrier_id and self.carrier_id.id or False
         if 'campaign_id' in self.fields_get_keys():
@@ -68,8 +83,6 @@ class InfoRouteMixin(models.AbstractModel):
                 name2 = '{} {}'.format(obj.delivery_route_path_id.name or 'Sin ruta', carrier_id)
                 shipping_type = obj._fields['shipping_type'].convert_to_export(obj.shipping_type, obj) if obj.shipping_type else 'Sin envío'
                 obj.info_route_str = '{}: {}'.format(shipping_type, name2)
-                if obj.urgent:
-                    obj.info_route_str = obj.info_route_str + ' (*)'
             else:
                 obj.info_route_str = False
 

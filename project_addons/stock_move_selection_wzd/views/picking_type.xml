@@ -42,7 +42,7 @@
                     <field name="context_domain"/>
 
                     <field name="shipping_type"/>
-                    <field name="urgent"/>
+
                     <field name="delivery_route_path_id"/>
 
                     <field name="kanban_dashboard_graph"/>
@@ -266,7 +266,7 @@
 
                 <field name="shipping_type" widget="selection" context="{'search1_shipping_type': self}"/>
                 <field name="delivery_route_path_id" widget="selection" context="{'search1_delivery_route_path_id': self}"/>
-                <field name="urgent" widget="selection" context="{'search1_urgent': self}"/>
+                <!--field name="urgent" widget="selection" context="{'search1_urgent': self}"/-->
             </field>
             <field name="warehouse_id" position="after">
                 <field name="group_code"/>
@@ -276,6 +276,12 @@
 
             </field>
             <xpath expr="//filter[@name='inactive']" position="after">
+
+                <separator/>
+                <filter string="Urgente" name="filter_urgent" domain="[('shipping_type','=','urgent')]"/>
+                <filter string="Ruta" name="filter_ruta" domain="[('shipping_type','=','route')]"/>
+                <filter string="Pasarán" name="filter_pasaran" domain="[('shipping_type','=','pasaran')]"/>
+                <separator/>
                 <filter string="Ver todos" name="ver_todos" context="{'search1_all': True}" domain="[('active','=',True)]"/>
                 <separator/>
                 <filter string="Hoy" name="filter_today" context="{'filter_day': 'today'}"/>

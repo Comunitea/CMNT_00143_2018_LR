@@ -29,7 +29,7 @@
                         <field name="shipping_type"/>
                         <field name="delivery_route_path_id"/>
                         <field name="carrier_id"/>
-                        <field name="urgent"/>
+                        <!--field name="urgent" invisible="1"/-->
                     </group>
             </xpath>
         </field>
@@ -49,7 +49,7 @@
                         <field name="shipping_type"/>
                         <field name="delivery_route_path_id"/>
                         <field name="carrier_id"/>
-                        <field name="urgent"/>
+                         <!--field name="urgent" invisible="1"/-->
                     </group>
                 </group>
             </xpath>
@@ -80,7 +80,7 @@
                 <field name="campaign_id"/>
                  <field name="shipping_type" />
                  <field name="delivery_route_path_id"/>
-                <field name="urgent"/>
+                 <!--field name="urgent" invisible="1"/-->
             </field>
         </field>
     </record>
@@ -92,7 +92,7 @@
             <xpath expr="//group/field[@name='picking_type_id']" position="after">
                 <field name="shipping_type"/>
                 <field name="delivery_route_path_id"/>
-                <field name="urgent"/>
+                 <!--field name="urgent" invisible="1"/-->
             </xpath>
         </field>
     </record>
@@ -114,7 +114,7 @@
                     </group>
                     <group>
                        <field name="carrier_id"/>
-                        <field name="urgent"/>
+                        <!--field name="urgent" invisible="1"/-->
                     </group>
                 </group>
 
@@ -133,7 +133,7 @@
                 <field name="shipping_type"/>
                 <field name="delivery_route_path_id"/>
                 <field name="carrier_id"/>
-                <field name="urgent"/>
+                 <!--field name="urgent" invisible="1"/-->
 
             </field>
 

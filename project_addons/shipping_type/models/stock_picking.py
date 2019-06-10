@@ -38,11 +38,6 @@ class StockBatchPicking(models.Model):
         for batch in self:
             batch.picking_ids.write({'delivery_route_path_id': batch.delivery_route_path_id.id})
 
-    @api.onchange('urgent')
-    def onchange_urgent(self):
-        for batch in self:
-            batch.picking_ids.write({'urgent': batch.urgent})
-
     @api.multi
     def write(self, vals):
         child_vals = self.get_child_vals(vals)

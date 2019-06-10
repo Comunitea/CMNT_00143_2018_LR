@@ -41,7 +41,7 @@
                 <field name="shipping_type" invisible="context.get('incoming', False)"/>
                 <field name="delivery_route_path_id" invisible="context.get('incoming', False)"/>
                 <field name="carrier_id" invisible="context.get('incoming', False)"/>
-                <field name="urgent" invisible="context.get('incoming', False)"/>
+                <!--field name="urgent" invisible="context.get('incoming', False)"/-->
                 <field name="picking_id"/>
                 <field name="sale_id" invisible="context.get('incoming', False)"/>
                 <field name="purchase_id" invisible="context.get('outgoing', False)"/>
@@ -88,7 +88,6 @@
                 <field name="picking_type_id" string="Type"/>
                 <field name="shipping_type" />
                 <field name="delivery_route_path_id"/>
-                <field name="urgent"/>
                 <field name="sale_id" groups="stock.group_stock_multi_locations"/>
                 <field name="package_id"/>
                 <field name="result_package_id"/>
@@ -113,7 +112,7 @@
                 <separator/>
                 <filter string="SGA" name="sga_integrated" domain="[('sga_integrated','=', True)]"/>
                 <separator/>
-                <filter string="Urgente" name="urgent" domain="[('urgent','=', True)]"/>
+                <!--filter string="Urgente" name="urgent" domain="[('urgent','=', True)]"/-->
                 <filter string="With pick" name="with_pick" domain="[('picking_id','!=', False)]"/>
                 <filter string="To pick" name="without_pick" domain="[('picking_id','=', False)]"/>
                 <separator/>
@@ -133,7 +132,7 @@
                 <filter string="With no package" name="with_no_package" domain="[('result_package_id','=', False)]"/>
                 <separator/>
                 <filter string="Pasarán" name="pasaran_route" domain="[('shipping_type','=', 'pasaran')]"/>
-                <filter string="Agencia" name="agency_route" domain="[('shipping_type','=', 'agency')]"/>
+                <filter string="Urgente" name="urgent_route" domain="[('shipping_type','=', 'urgent')]"/>
                 <filter string="Ruta" name="route_route" domain="[('shipping_type','=', 'route')]"/>
                 <separator/>
                 <filter name="sga_integrated" string="SGA" domain="[('sga_integrated','=', True)]"/>
@@ -177,7 +176,7 @@
                     <field name="shipping_type"/>
                 <field name="delivery_route_path_id" />
                 <field name="carrier_id" />
-                <field name="urgent" />
+
                     <field name="sga_integrated" />
 
                     <templates>

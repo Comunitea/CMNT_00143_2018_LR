@@ -18,7 +18,6 @@ class StockMoveLine(models.Model):
 
     @api.model
     def update_object_from_apk(self, values):
-
         ctx = self._context.copy()
         ctx.update(write_from_package=True)
         move_line_ids = self.env['stock.move.line'].browse(values['move_line_ids'])
@@ -47,7 +46,7 @@ class StockMoveLine(models.Model):
                 move_line_ids.mapped('move_id').with_context(ctx).write(move_vals)
             else:
                 for line in move_line_ids:
-                    line.write({'result_package_id': package_ids.ids})
+                    line.write({'result_package_id': package_ids.id})
 
         return package_ids.ids
 
@@ -59,31 +58,40 @@ class StockMoveLine(models.Model):
                   ('state', 'in', ['assigned', 'partially_available']),
                   ('picking_id', '=', False)]
         if partner_id:
-            domain +=[('move_id.partner_id', '=', partner_id)]
+            domain += [('move_id.partner_id', '=', partner_id)]
 
         return domain
 
     def get_apk_info(self):
-        fields = ['id', 'name', 'origin', 'product_qty']
+        fields = ['id', 'name', 'origin', 'product_qty', 'info_route_str']
 
         vals ={}
         for f in fields:
             vals[f] = self[f]
 
-        vals.update(self.update_info_route_vals())
         vals['isChecked'] = False
-
         if self.package_id:
             vals['package_id'] = self.package_id.get_apk_info()
         if self.result_package_id:
             vals['result_package_id'] = self.result_package_id.get_apk_info()
 
+        vals['shipping_type'] = self._fields['shipping_type'].convert_to_export(self.shipping_type, self)
+        if self.delivery_route_path_id:
+            vals['delivery_route_id'] = {'id': self.delivery_route_path_id.id,
+                                        'name': self.delivery_route_path_id.name}
+        else:
+            vals['delivery_route_id'] = {'id': False, 'name': ''}
+        if self.carrier_id:
+            vals['carrier_id'] = {'id': self.carrier_id.id,
+                                     'name': self.carrier_id.name}
+        else:
+            vals['carrier_id'] = {'id': False, 'name': ''}
+
         return vals
 
-
-
     @api.model
-    def get_stock_move_lines_list_apk(self, vals):
+    def get_apk_info_full(self, vals):
+
 
         domain = self.get_domain_for_apk_list(vals)
         move_lines = self.env['stock.move.line'].search(domain)
@@ -110,7 +118,7 @@ class StockMoveLine(models.Model):
             'arrival_package_ids': current_partner_arrival_pkgs_list
         }
         pprint (res)
-        
+
         return res
 
 
@@ -190,3 +198,18 @@ class StockMoveLine(models.Model):
             self.move_id.write({'result_package_id': new_result_package_id.id})
             new_package_ids += new_result_package_id
         return new_package_ids
+
+    def change_shipping_type(self, vals):
+
+        move_id = vals.get('package', False)
+        values = {
+            'shipping_type': vals.get('shipping_type', False),
+            'delivery_route_path_id': vals.get('delivery_route_path_id', False),
+            'carrier_id': vals.get('carrier_id', False)
+        }
+        move_line = self.browse(move_id)
+        ctx = self._context.copy()
+        ctx.update(write_from_package=True)
+        move_line.move_id.write(vals)
+        print (values)
+        return True

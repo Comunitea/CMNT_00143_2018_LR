@@ -24,7 +24,9 @@ class StockMoveLine(models.Model):
 
     @api.multi
     def write(self, vals):
-        if 'result_package_id' in vals and not self._context.get('write_from_package') and not self._context.get('write_from_pick'):
+        if self._context.get('write_from_move') and 'result_package_id' in vals:
+            vals.pop('result_package_id')
+        if False and 'result_package_id' in vals and not self._context.get('write_from_package') and not self._context.get('write_from_pick') :
             if self.mapped('picking_id'):
                 raise ValidationError('No puedes cambiar el empaquetado de un movimiento con albarán')
         return super().write(vals)
@@ -62,7 +64,7 @@ class StockMove(models.Model):
                 domain += [('carrier_id', '=', self.carrier_id.id)]
             if self.picking_type_id.bool_campaign_id and self.campaign_id:
                 domain += [('campaign_id', '=', self.campaign_id.id)]
-            domain += [('urgent', '=', self.urgent)]
+            #domain += [('urgent', '=', self.urgent)]
         print('Get new picking domain {}'.format(domain))
         return domain
 
@@ -97,7 +99,6 @@ class StockMove(models.Model):
         return res
 
     def propagate_route_vals(self, vals):
-
         child_vals = self.get_child_vals(vals)
         if child_vals:
             ctx = self._context.copy()
