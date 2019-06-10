@@ -35,9 +35,13 @@ class StockMove(models.Model):
     _inherit = 'stock.move'
 
     ##NEcesito traer estos campos de stock_move_line
-    package_id = fields.Many2one('stock.quant.package', 'Paquete origen', ondelete='restrict')
-    result_package_id = fields.Many2one('stock.quant.package', 'Paquete origen', ondelete='restrict',
-                                 inverse='set_package_id_to_lines', compute="get_package_id_from_line", store=True)
+    package_id = fields.Many2one('stock.quant.package', 'Paquete origen', inverse='set_package_id_to_lines',
+                                 compute="get_package_id_from_line", store=True)
+
+    result_package_id = fields.Many2one('stock.quant.package', 'Paquete origen',
+                                        inverse='set_result_package_id_to_lines',
+                                        compute="get_result_package_id_from_line", store=True)
+
     lot_id = fields.Many2one('stock.production.lot', 'Lote')
 
     dunmy_picking_id = fields.Many2one('stock.picking', 'Transfer Reference', store=False)
@@ -71,6 +75,13 @@ class StockMove(models.Model):
         domain += [('state', 'not in', ['draft', 'cancel', 'done'])]
         print(domain)
         return domain
+
+
+    @api.multi
+    def button_batch_picking_wzd_act_window(self):
+        action = self.env.ref(
+            'stock_move_selection_wzd.act_view_move_change_quant_wzd').read()[0]
+        return action
 
     @api.multi
     def _return_action_show_moves(self, group_code=''):
@@ -120,17 +131,24 @@ class StockMove(models.Model):
         return super().write(vals)
 
 
-    def set_package_id_to_lines(self):
 
+    def set_package_id_to_lines(self):
+        for move in self:
+            move.mapped('move_line_ids').write({'result_package_id': move.package_id.id})
+
+    @api.depends('move_line_ids.package_id')
+    def get_package_id_from_line(self):
+        for move in self:
+            move.package_id = move.move_line_ids.mapped('package_id')
+
+    def set_result_package_id_to_lines(self):
         for move in self:
             move.mapped('move_line_ids').write({'result_package_id': move.result_package_id.id})
 
     @api.depends('move_line_ids.result_package_id')
-    def get_package_id_from_line(self):
-
+    def get_result_package_id_from_line(self):
         for move in self:
             move.result_package_id = move.move_line_ids.mapped('result_package_id')
-
 
 class StockMoveLine(models.Model):
     _inherit = 'stock.move.line'

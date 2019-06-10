@@ -14,7 +14,18 @@
         </field>
     </record>
 
-
+    <record id="view_move_form_wzd_change_quant" model="ir.ui.view">
+        <field name="name">stock.move.change_quant_wzd</field>
+        <field name="inherit_id" ref="stock.view_move_form"/>
+        <field name="model">stock.move</field>
+        <field name="arch" type="xml">
+            <field name="state" position="before">
+                    <button name="button_batch_picking_wzd_act_window"
+                            attrs="{'invisible': [('state', 'not in', ('confirmed', 'assigned', 'partially_available'))]}"
+                            string="(RE) Asignar origen" type="object" class="oe_highlight" groups="base.group_user"/>
+            </field>
+        </field>
+    </record>
 
      <record id="view_move_line_tree_sel" model="ir.ui.view">
         <field name="name">stock.move.tree.sel</field>

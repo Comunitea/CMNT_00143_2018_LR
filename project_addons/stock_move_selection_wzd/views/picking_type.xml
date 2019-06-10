@@ -118,6 +118,16 @@
                                                     </div>
                                                 </div>
                                                 <div name="moves">
+                                                    <div t-if="record.count_move_unpacked.raw_value &gt; 0" class="row">
+                                                        <div class="col-xs-9 text-info" title="Para empaquetar">
+                                                            <a class="oe_kanban_stock_picking_type_list" name="get_action_move_tree_no_package" type="object">
+                                                                Para empaquetar
+                                                            </a>
+                                                        </div>
+                                                        <div class="col-xs-3">
+                                                            <field name="count_move_unpacked"/>
+                                                        </div>
+                                                    </div>
                                                     <div t-if="record.count_move_to_pick.raw_value &gt; 0" class="row">
                                                         <div class="col-xs-9 text-primary" title="Movimientos que no han sido asignados a un albarán">
                                                             <a name="get_action_move_to_picking_ready" type="object"
@@ -173,6 +183,7 @@
                                                             <field name="count_move_backorders"/>
                                                         </div>
                                                     </div>
+
                                                 </div>
                                             </div>
 

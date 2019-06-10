@@ -17,12 +17,12 @@ class StockMoveLine(models.Model):
 
 
     @api.model
-    def update_to_new_package_from_apk(self, values):
+    def update_object_from_apk(self, values):
 
         ctx = self._context.copy()
         ctx.update(write_from_package=True)
-        move_line_ids = self.env['stock.move_line'].browse(values['move_line_ids'])
-        action = values.get['action']
+        move_line_ids = self.env['stock.move.line'].browse(values['move_line_ids'])
+        action = values.get('action', '')
         package_ids = self.env['stock.quant.package']
 
         if action == 'new':
@@ -50,22 +50,6 @@ class StockMoveLine(models.Model):
                     line.write({'result_package_id': package_ids.ids})
 
         return package_ids.ids
-
-
-    def update_to_new_package(self, new_package_ids):
-        create = True
-        for pack in new_package_ids:
-            ok = pack.update_info_route_vals() == self.update_info_route_vals()
-            if ok:
-                self.move_id.write({'result_package_id': pack.id})
-                create = False
-                break
-        if create:
-            vals_0 = self.update_info_route_vals()
-            new_result_package_id = pack.create(vals_0)
-            self.move_id.write({'result_package_id': new_result_package_id.id})
-            new_package_ids += new_result_package_id
-        return new_package_ids
 
 
     def get_domain_for_apk_list(self, vals):
@@ -202,7 +186,7 @@ class StockMoveLine(models.Model):
                 break
         if create:
             vals_0 = self.update_info_route_vals()
-            new_result_package_id = pack.create(vals_0)
+            new_result_package_id = self.env['stock.quant.package'].create(vals_0)
             self.move_id.write({'result_package_id': new_result_package_id.id})
             new_package_ids += new_result_package_id
         return new_package_ids

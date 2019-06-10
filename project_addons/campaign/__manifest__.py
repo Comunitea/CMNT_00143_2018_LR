@@ -14,7 +14,8 @@
         'base',
         'account',
         'sale',
-        'purchase'
+        'purchase',
+        'purchase_allowed_product'
     ],
     'data': [
         'security/ir.model.access.csv',

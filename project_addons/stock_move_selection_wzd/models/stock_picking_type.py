@@ -49,6 +49,7 @@ class PickingType(models.Model):
     count_move_late = fields.Integer(compute='_compute_picking_count')
     count_move_backorders = fields.Integer(compute='_compute_picking_count')
     count_move_to_pick = fields.Integer(compute='_compute_picking_count')
+    count_move_unpacked= fields.Integer(compute='_compute_picking_count')
     rate_move_late = fields.Integer(compute='_compute_picking_count', string="Ratio")
     rate_move_backorders = fields.Integer(compute='_compute_picking_count')
     rate_done = fields.Integer(compute='_compute_picking_count', string="Ratio")
@@ -130,19 +131,20 @@ class PickingType(models.Model):
 
 
     def get_type_domain(self, type=''):
-        return []
+
         if type=='moves':
         ## domain para movimientos de salida listos
-            type_domain = ['&', '&', ('picking_type_id.group_code', '=', 'outgoing'), ('state', 'in', ('partially_available', 'assigned')), ('result_package_id', '!=', False)]
+            type_domain = [('picking_type_id.group_code', '=', 'outgoing'), ('state', 'in', ('partially_available', 'assigned')), ('result_package_id', '!=', False)]
         else:
             type_domain=[]
 
         return type_domain
 
     def get_moves_domain(self):
-        type_domain = self.get_type_domain('moves')
+        context_domain = self.get_type_domain('moves')
         c_dom = self.get_context_domain()
-        context_domain = expression.AND([type_domain, c_dom])
+        if c_dom:
+            context_domain = expression.AND([c_dom, context_domain])
 
         today = datetime.now().strftime(DEFAULT_SERVER_DATE_FORMAT)
         tomorrow = (datetime.now() + timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT)
@@ -152,31 +154,37 @@ class PickingType(models.Model):
         hide_state = [('state', 'not in', ('draft', 'done', 'cancel'))]
         to_do_state = [('state', 'in', ('partially_available', 'assigned', 'waiting', 'confirmed'))]
         ready_state = [('state', 'in', ('partially_available', 'assigned')), ('sga_state', 'in', ('NI', 'NE'))]
-
+        with_pick = [('picking_id', '!=', False)]
+        with_out_pick = [('picking_id', '=', False)]
+        before_tomorrow =  [('date_expected', '<', tomorrow)]
+        late = [('date_expected', '<', yesterday)]
         move_domains = {
-            'count_move_todo_today': context_domain + to_do_state + [('date_expected', '<', today)],
+            'count_move_todo_today': context_domain + to_do_state + before_tomorrow,
             'count_move_done': context_domain + [('state', '=', 'done'), ('date', '>', yesterday)],
             'count_move_draft': context_domain + [('state', '=', 'draft')],
             'count_move_waiting': context_domain + to_do_state,
-            'count_move_ready': context_domain + ready_state + [('picking_id', '!=', False), ('date_expected', '<', tomorrow)],
-            'count_move': context_domain + [('state', 'in', ('partially_available', 'assigned', 'waiting', 'confirmed'))],
-            'count_move_to_pick': context_domain + ready_state + [('picking_id', '=', False), ('date_expected', '<', tomorrow)] ,
-            'count_move_late': context_domain + to_do_state + [('date_expected', '<', yesterday)],
+            'count_move_unpacked': context_domain + ready_state + with_out_pick + [('result_package_id', '=', False)],
+            'count_move_ready': context_domain + ready_state + with_pick + before_tomorrow,
+            'count_move': context_domain + to_do_state,
+            'count_move_to_pick': context_domain + ready_state + with_out_pick + before_tomorrow,
+            'count_move_late': context_domain + to_do_state + late,
             'count_move_backorders': context_domain + to_do_state + [('origin_returned_move_id', '!=', False)],
         }
-        type_domain = self.get_type_domain('picks')
-        c_dom = self.get_context_domain('scheduled_date')
-        context_domain = expression.AND([type_domain, c_dom])
+        context_domain = self.get_type_domain('picks')
+        c_dom = self.get_context_domain()
+        if c_dom:
+            context_domain = expression.AND([c_dom, context_domain])
+
+
         picking_domains = {
             'count_picking_draft': context_domain + [('state', '=', 'draft')],
             'count_picking_waiting': context_domain + [('state', 'in', ('confirmed', 'waiting'))],
-            'count_picking_ready': context_domain + [('state', '=', 'assigned'), ('sga_state', 'in', ('NI', 'NE'))],
-            'count_picking': context_domain + [('state', 'in', ('assigned', 'waiting', 'confirmed'))],
-            'count_picking_late': context_domain + [
-                ('scheduled_date', '<', datetime.now().strftime(DEFAULT_SERVER_DATETIME_FORMAT)),
-                ('state', 'in', ('assigned', 'waiting', 'confirmed'))],
-            'count_picking_backorders': context_domain + [('backorder_id', '!=', False),
-                                                          ('state', 'in', ('confirmed', 'assigned', 'waiting'))],
+            'count_picking_ready': context_domain + ready_state,
+            'count_picking': context_domain + to_do_state,
+            'count_picking_late': context_domain +
+                [('scheduled_date', '<', datetime.now().strftime(DEFAULT_SERVER_DATETIME_FORMAT))] +
+                to_do_state,
+            'count_picking_backorders': context_domain + [('backorder_id', '!=', False)] + to_do_state,
         }
 
         print ('{}\n{}'.format(move_domains, picking_domains))
@@ -459,11 +467,10 @@ class PickingType(models.Model):
         return self.return_action_show_moves(domain, context)
 
     def get_action_move_tree_no_package(self):
-        domain = self.get_context_domain()
+        move_domains, picking_domains = self.get_moves_domain()
+        domain = move_domains['count_move_unpacked']
         context = {
             'search_default_picking_type_id': self.id,
-            'search_default_todo': 1,
-            'search_default_with_no_package': 1
             }
         return self.return_action_show_moves(domain, context)
 
