@@ -20,7 +20,7 @@ class ProductProduct(models.Model):
         file_type = self.env['ir.config_parameter'].get_param(file_type_stng)
         for pick in self:
             if ctx['file_type'] == 'adaia_stock_code':
-                ctx['ALMREF'] = product.property_stock_inventory.id
+                ctx['ALMREF'] = pick.property_stock_inventory.id
             pick.new_adaia_file(file_type, ctx['mod_type'], ctx['version'])
             if ctx['mod_type'] == 'DE':
                 self.env['product.product'].browse(pick.id).write({'sga_state': 'NI'})
@@ -47,7 +47,7 @@ class ProductProduct(models.Model):
                 product_ids.append(product.id)
 
         if product_ids and operation is not 'DE':
-            self.env['product.product'].browse(product_ids).write({'sga_state': 'PS'})
+            self.env['product.product'].browse(product_ids).write({'sga_state': 'SR'})
         elif not product_ids:
             raise ValidationError("No hay partners para enviar a Adaia")
         return True

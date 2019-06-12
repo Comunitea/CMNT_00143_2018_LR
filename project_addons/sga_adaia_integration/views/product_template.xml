@@ -13,7 +13,7 @@
                          icon="fa-shopping-cart" attrs="{'invisible': [('sga_state','in',('EE','NE','PE'))]}"/>
                         <button name="create_new_adaia_file_button" context="{'file_type': 'adaia_product_template_code', 'mod_type': 'MO', 'version': 0}" string="Adaia Modification file" type="object" class="oe_stat_button"
                          icon="fa-shopping-cart" attrs="{'invisible': [('sga_state','in',('NI'))]}"/>
-                        <button name="create_new_adaia_file_button" context="{'file_type': 'adaia_product_template_code', 'mod_type': 'DE', 'version': 0}" name="create_new_adaia_del_file" string="Adaia remove file" type="object" class="oe_stat_button"
+                        <button name="create_new_adaia_file_button" context="{'file_type': 'adaia_product_template_code', 'mod_type': 'DE', 'version': 0}" string="Adaia remove file" type="object" class="oe_stat_button"
                          icon="fa-shopping-cart" attrs="{'invisible': [('sga_state','in',('NI'))]}"/>
                     </group>
                 </page>

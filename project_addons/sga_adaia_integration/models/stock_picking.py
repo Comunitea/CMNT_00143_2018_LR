@@ -97,7 +97,6 @@ class StockPickingSGA(models.Model):
     @api.multi
     def create_new_adaia_file_button(self):
         ctx = dict(self.env.context)
-        pprint(ctx['file_type'])
         file_type_stng = 'sga_adaia_integration.' + ctx['file_type']
         file_type = self.env['ir.config_parameter'].get_param(file_type_stng)
         for pick in self:
@@ -182,88 +181,6 @@ class StockPickingSGA(models.Model):
                 val[var.name] = quantity_int + quantity_dec
                 st = en
         return val
-    
-    def import_adaia_INR(self, file_id):
-        res = False
-        pick_obj = self.env['stock.picking']
-        sga_file_obj = self.env['sga.file'].browse(file_id)
-        sga_file = open(sga_file_obj.sga_file, 'r')
-        sga_file_lines = sga_file.readlines()
-        sga_file.close()
-        str_error = ''
-        bool_error = True
-        n_line = 0
-        sgavar = self.env['sgavar.file'].search([('code', '=', 'INR'), ('version', '=', 0)])
-        pick = False
-        if not sgavar:
-            raise ValidationError("Modelo no encontrado")
-        create = False
-        sga_ops_exists = []
-        do_pick = False
-        pool_ids = []
-        actual_pick = False
-        pick_pool = []
-        for line in sga_file_lines:
-            n_line += 1
-            TIPEREG = line[0:4]
-            EXPORDREF = line[17:33].replace(" ","")
-            if TIPEREG == 'CRCA':                    
-
-                actual_pick = self.env['stock.picking'].search([('name', '=', EXPORDREF), ('state', 'in', ['assigned', 'waiting', 'confirmed']),
-                 ('sga_state', 'in', ['PS'])])
-
-                if not actual_pick:
-                    bool_error = False
-                    str_error += "Codigo de albaran %s no encontrado o estado incorrecto en linea ...%s " % (EXPORDREF, n_line)
-                    error_message =  u'Albarán %s no encontrado o en estado incorrecto.' % (
-                                      EXPORDREF)
-                    self.create_sga_file_error(sga_file_obj, n_line, 'INR', actual_pick, 'Pick no válido', error_message)
-
-                    sga_file_obj.write_log(str_error)
-                    continue
-                
-                else:
-                    pick_pool.append(actual_pick)
-            
-            else:
-                if actual_pick is not False and TIPEREG == 'CRLI':
-                    EXPORDLIN = line[78:87]
-                    CANSER = line[38:47]
-                    actual_line = self.env['stock.move.line'].search([('id', '=', EXPORDLIN)])
-                    if not actual_line:
-                        error_message = u'Op %s no encontrada en el albarán %s' % (EXPORDLIN, actual_pick.name)
-                        self.create_sga_file_error(sga_file_obj, n_line,'INR',actual_pick,'Op no encontrada', error_message)
-                        bool_error = False
-                        continue
-                    else:
-                        if actual_line.qty_done == CANSER:
-                            actual_line.write({
-                                'qty_done': CANSER
-                            })
-                        else:
-                            actual_line.write({
-                                'qty_done': CANSER,
-                                'sga_changed': 1
-                            })
-                        sga_ops_exists.append(actual_line.id)
-                else:
-                    bool_error = False
-                    str_error += "Codigo de albaran no encontrado o estado incorrecto. Revisa el formato del archivo ..."
-                    error_message =  u'Albarán no encontrado o en estado incorrecto. Revisa el formato del archivo.'
-                    self.create_sga_file_error(sga_file_obj, n_line, 'OUT', actual_pick, 'Pick no válido', error_message)
-
-                    sga_file_obj.write_log(str_error)
-                    continue
-
-        if pick_pool:
-            for pick in pick_pool:
-                pick_id = self.env['stock.picking'].browse(pick.id)
-                pick_id.write({
-                    'sga_state': 'SR'
-                })
-                pick_id.button_validate()
-
-        return pick_pool
 
     def import_adaia_OUT(self, file_id):
         res = False
@@ -290,9 +207,6 @@ class StockPickingSGA(models.Model):
                 file_data = line.rsplit('|')
                 TIPEREG = file_data[0]
                 EXPORDREF = file_data[2]
-            else:
-                TIPEREG = line[0:4]
-                EXPORDREF = line[6:20].replace(" ","")
             n_line += 1
             
             if TIPEREG == 'CECA':                    
@@ -319,9 +233,6 @@ class StockPickingSGA(models.Model):
                         file_data = line.rsplit('|')
                         EXPORDLIN = file_data[3]
                         CANSER = file_data[6]
-                    else:
-                        EXPORDLIN = line[21:30]
-                        CANSER = line[55:64]
                     actual_line = self.env['stock.move.line'].search([('id', '=', EXPORDLIN)])
                     if not actual_line:
                         error_message = u'Op %s no encontrada en el albarán %s' % (EXPORDLIN, actual_pick.name)
@@ -329,16 +240,51 @@ class StockPickingSGA(models.Model):
                         bool_error = False
                         continue
                     else:
-                        if actual_line.qty_done == CANSER:
-                            actual_line.write({
-                                'qty_done': CANSER
-                            })
+                        if actual_line.ordered_qty == CANSER:
+                            if actual_line.qty_done != CANSER:
+                                #actual_line.write({
+                                #    'qty_done': CANSER
+                                #})
+                                actual_line._set_quantity_done(CANSER)
+                            else:
+                                actual_move = self.env['stock.move'].search([('origin_returned_move_id', '=', EXPORDLIN)])
+                                actual_move._prepare_move_line_vals(CANSER)
+
                         else:
+                            diference = actual_line.ordered_qty - CANSER
+                            actual_line.move_id._split(diference)
+                            actual_line._set_quantity_done(CANSER)
                             actual_line.write({
-                                'qty_done': CANSER,
                                 'sga_changed': 1
                             })
                         sga_ops_exists.append(actual_line.id)
+
+                elif actual_pick is not False and TIPEREG == 'CECN':
+                    if '|' in line:
+                        file_data = line.rsplit('|')
+                        EXPORDLIN = file_data[19]
+                        CNTDORREF = file_data[4]
+                        CAN = file_data[8]
+                    
+                    actual_line = self.env['stock.move.line'].search([('id', '=', EXPORDLIN)])
+                    if not actual_line:
+                        error_message = u'Op %s no encontrada en el albarán %s' % (EXPORDLIN, actual_pick.name)
+                        self.create_sga_file_error(sga_file_obj, n_line,'OUT',actual_pick,'Op no encontrada', error_message)
+                        bool_error = False
+                        continue
+                    else:
+                        package = self.env['stock.quant.package'].search([('name', '=', CNTDORREF)])
+                        if not package:
+                            package = self.env['stock.quant.package'].create({
+                                'name': CNTDORREF,
+                                'shipping_type': line_id.move_id.shipping_type
+                            })
+                            
+                        actual_line.update({
+                            'product_qty': CAN,
+                            'result_package_id': package.id
+                        })
+
                 else:
                     bool_error = False
                     str_error += "Codigo de albaran no encontrado o estado incorrecto. Revisa el formato del archivo ..."
