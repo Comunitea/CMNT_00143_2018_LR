@@ -110,7 +110,7 @@ class StockPicking(models.Model):
                         else:
                             diference = pick.move_line_ids[index].ordered_qty - ulma_move.mmmcanuni
                             pick.move_line_ids[index].move_id._split(diference)
-                            pick.move_line_ids[index]._set_quantity_done(CANSER)
+                            pick.move_line_ids[index]._set_quantity_done(ulma_move.mmmcanuni)
                             pick.move_line_ids[index].write({
                                 'sga_state': 'P'
                             })
