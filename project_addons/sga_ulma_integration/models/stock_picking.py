@@ -100,10 +100,21 @@ class StockPicking(models.Model):
                     for ulma_move in moves_ids:
                         index = int(ulma_move.mmmcod)
                         move_line = self.env['stock.move.line'].browse(index)
-                        pick.move_line_ids[index].write({
-                            'qty_done': ulma_move.mmmcanuni,
-                            'sga_state': 'P'
-                        })
+                        if pick.move_line_ids[index] == ulma_move.mmmcanuni:
+                            if pick.move_line_ids[index] != ulma_move.mmmcanuni:
+                                pick.move_line_ids[index]._set_quantity_done(ulma_move.mmmcanuni)
+                            else:
+                                actual_move = self.env['stock.move'].search([('origin_returned_move_id', '=', move_line_ids[index].move_id.id)])
+                                actual_move._prepare_move_line_vals(ulma_move.mmmcanuni)
+                        
+                        else:
+                            diference = pick.move_line_ids[index].ordered_qty - ulma_move.mmmcanuni
+                            pick.move_line_ids[index].move_id._split(diference)
+                            pick.move_line_ids[index]._set_quantity_done(ulma_move.mmmcanuni)
+                            pick.move_line_ids[index].write({
+                                'sga_state': 'P'
+                            })
+
                     pick.write({
                         'sga_state': 'P'
                     })

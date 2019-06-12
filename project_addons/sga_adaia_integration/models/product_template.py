@@ -40,7 +40,7 @@ class ProductProduct(models.Model):
                 product_ids.append(product.id)
 
         if product_ids and operation is not 'DE':
-            self.env['product.template'].browse(product_ids).write({'sga_state': 'PS'})
+            self.env['product.template'].browse(product_ids).write({'sga_state': 'SR'})
         elif not product_ids:
             raise ValidationError("No hay partners para enviar a Adaia")
         return True

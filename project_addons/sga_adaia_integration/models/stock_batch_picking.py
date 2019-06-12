@@ -77,7 +77,7 @@ class StockBatchPickingSGA(models.Model):
 
         if picks:
             self.write({'sga_state': 'PS'})
-            self.env['stock.picking'].browse(picks).write({'sga_state': 'PS'})
+            self.env['stock.picking'].browse(picks).write({'sga_state': 'SR'})
         else:
             raise ValidationError("No hay albaranes para enviar a Adaia")
         return True

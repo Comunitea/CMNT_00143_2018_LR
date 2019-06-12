@@ -38,6 +38,7 @@
                     <field name="mmmacccolcod" string="Contenedor"/>
                     <field name="mmmartref"/>
                     <field name="momcre"/>
+                    <field name="mmmexpordref" string="Picking"/>
                 </search>
             </field>
     </record>
@@ -48,6 +49,7 @@
         <field name="arch" type="xml">
             <tree string="Ulma mmminp">
                 <field name="id" />
+                <field name="mmmexpordref" string="Picking"/>
                 <field name="mmmartref" string="Referencia"/>
                 <field name="mmmres" string="Estado"/>
                 <field name="mmmacccolcod" string="Contenedor"/>
