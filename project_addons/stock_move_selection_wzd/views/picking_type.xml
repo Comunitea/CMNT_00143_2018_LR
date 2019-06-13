@@ -13,7 +13,7 @@
             </field>
             <field name="warehouse_id" position="after">
                 <field name="sga_integrated"/>
-
+                <field name="sga_integration_type" attrs="{'invisible': [('sga_integrated','=',False)]}" />
             </field>
         </field>
     </record>
