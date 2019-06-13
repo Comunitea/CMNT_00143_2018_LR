@@ -8,24 +8,20 @@ class StockPickingTypeSGA(models.Model):
 
     _inherit = "stock.picking.type"
 
-    ulma_integrated = fields.Boolean('Integrado con Ulma',
-                                    help="If checked, odoo export this pick type to Adaia")
     ulma_type = fields.Selection([('SUBPAL', 'Palets'), ('SUBUNI', 'Cajas')], 'Typo de almacén')
 
     def get_sga_integrated(self):
-        return self.ulma_integrated or super().get_sga_integrated()
+        return self.sga_integrated or super().get_sga_integrated()
 
     def get_ulma_vals(self, type=''):
 
         if self.group_code=='picking':
             mmmCMDREF = 'SAL'
-
-        if self.group_code=='location':
+        else:
             mmmCMDREF = 'ENT'
 
         vals = {'mmmdisref': self.ulma_type,
                 'mmmsesid': 1 if self.ulma_type == 'SUBUNI' else 2,
-                'mmmcod': 1,
                 'mmmcmdref': mmmCMDREF,
                 'mmmartean': 'ean13',
                 'mmmges': 'ULMA',
@@ -50,7 +46,6 @@ class StockPickingTypeSGA(models.Model):
                 'mmmmonlot': 1,
                 'mmmrecref': 0,
                 'mmmartapi': 0,
-                'mmmcod': ''
             })
 
         if type == "caja":
@@ -60,8 +55,6 @@ class StockPickingTypeSGA(models.Model):
                 'mmmartean': '',
                 'mmmmonlot': '',
                 'mmmrecref': 0,
-                'mmmartapi': 0,
-                'mmmcod': ''
-
+                'mmmartapi': 0
             })
         return vals

@@ -5,17 +5,12 @@
 from odoo import fields, models, tools, api, _
 import datetime, time
 from odoo.exceptions import UserError
-from pprint import pprint
-
-
-
-
 
 class StockMoveLine(models.Model):
 
     _inherit = "stock.move.line"
 
-    ulma_integrated = fields.Boolean('Ulma integrated')
+    sga_integrated = fields.Boolean('Ulma integrated')
 
     def get_move_line_ulma_vals(self, cont=0, sale_id=False):
 
@@ -50,7 +45,7 @@ class StockMove(models.Model):
 
     _inherit = "stock.move"
 
-    ulma_integrated = fields.Boolean('Ulma integrated')
+    sga_integrated = fields.Boolean('Ulma integrated')
 
     def get_new_vals(self):
         return super().get_new_vals()
