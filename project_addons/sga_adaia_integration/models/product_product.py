@@ -51,3 +51,8 @@ class ProductProduct(models.Model):
         elif not product_ids:
             raise ValidationError("No hay partners para enviar a Adaia")
         return True
+
+    @api.onchange('barcode', 'name')
+    def onchange_barcode_or_name(self):
+        for product in self:
+            product.write({'sga_state': 'NE'})

@@ -55,3 +55,8 @@ class ResPartner(models.Model):
         elif not partner_ids:
             raise ValidationError("No hay partners para enviar a Adaia")
         return True
+
+    @api.onchange('name', 'display_name', 'partner_type', 'street', 'city', 'state', 'country', 'zip', 'mobile', 'fax', 'email')
+    def onchange_info(self):
+        for partner in self:
+            partner.write({'sga_state': 'NE'})

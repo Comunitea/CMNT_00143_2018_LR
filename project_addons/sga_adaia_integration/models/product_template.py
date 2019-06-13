@@ -44,3 +44,8 @@ class ProductProduct(models.Model):
         elif not product_ids:
             raise ValidationError("No hay partners para enviar a Adaia")
         return True
+
+    @api.onchange('volume')
+    def onchange_volume(self):
+        for template in self:
+            template.write({'sga_state': 'NE'})

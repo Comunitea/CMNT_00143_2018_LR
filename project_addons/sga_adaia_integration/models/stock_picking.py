@@ -30,6 +30,11 @@ class StockPickingSGA(models.Model):
 
     do_backorder = fields.Selection([('default', 'Por defecto'), ('yes', 'Si'), ('no', 'No')], "Crea entrega parcial", default='default')
     sga_integrated = fields.Boolean(related="picking_type_id.sga_integrated")
+    sga_integration_type = fields.Selection(related="picking_type_id.sga_integration_type")
+
+    def force_button_validate(self):
+        self.sga_state = 'SR'
+        return self.button_validate()
 
     @api.onchange('picking_type_id', 'partner_id')
     def onchange_picking_type(self):
