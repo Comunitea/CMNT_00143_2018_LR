@@ -3,7 +3,6 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import models, fields, api, _
-from pprint import pprint
 
 class StockMoveLine(models.Model):
     _inherit = 'stock.move.line'
@@ -75,7 +74,8 @@ class StockMoveLine(models.Model):
         if self.result_package_id:
             vals['result_package_id'] = self.result_package_id.get_apk_info()
 
-        vals['shipping_type'] = self._fields['shipping_type'].convert_to_export(self.shipping_type, self)
+        #vals['shipping_type'] = self._fields['shipping_type'].convert_to_export(self.shipping_type, self)
+        vals['shipping_type'] = self.shipping_type
         if self.delivery_route_path_id:
             vals['delivery_route_id'] = {'id': self.delivery_route_path_id.id,
                                         'name': self.delivery_route_path_id.name}
@@ -117,7 +117,6 @@ class StockMoveLine(models.Model):
             'result_package_ids': current_partner_pkg_list,
             'arrival_package_ids': current_partner_arrival_pkgs_list
         }
-        pprint (res)
 
         return res
 
@@ -172,18 +171,6 @@ class StockMoveLine(models.Model):
         move_ids = move_line_ids.mapped('move_id')
         return move_ids.assign_package(result_package_id)
 
-    def toggle_urgent_option(self, vals):
-        move_id = vals.get('id', False)
-        urgent = vals.get('urgent', False)
-        move_obj = self.browse(move_id)
-        move_obj.update({
-            'urgent': urgent
-        })
-        if move_obj.urgent == urgent:
-            return True
-        else:
-            return False
-
     def update_to_new_package(self, new_package_ids):
         create = True
         for pack in new_package_ids:
@@ -201,15 +188,14 @@ class StockMoveLine(models.Model):
 
     def change_shipping_type(self, vals):
 
-        move_id = vals.get('package', False)
+        move_line_id = vals.get('move_line', False)
         values = {
             'shipping_type': vals.get('shipping_type', False),
             'delivery_route_path_id': vals.get('delivery_route_path_id', False),
             'carrier_id': vals.get('carrier_id', False)
         }
-        move_line = self.browse(move_id)
+        move_line = self.browse(move_line_id)
         ctx = self._context.copy()
         ctx.update(write_from_package=True)
         move_line.move_id.write(vals)
-        print (values)
         return True

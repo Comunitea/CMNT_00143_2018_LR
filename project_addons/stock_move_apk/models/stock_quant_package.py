@@ -15,7 +15,8 @@ class StockQuantPackage(models.Model):
         for f in fields:
             vals[f] = self[f]
 
-        vals['shipping_type'] = self._fields['shipping_type'].convert_to_export(self.shipping_type, self)
+        #vals['shipping_type'] = self._fields['shipping_type'].convert_to_export(self.shipping_type, self)
+        vals['shipping_type'] = self.shipping_type
 
         if self.delivery_route_path_id:
             vals['delivery_route_id'] = {'id': self.delivery_route_path_id.id,
@@ -77,7 +78,6 @@ class StockQuantPackage(models.Model):
             'shipping_type': vals.get('shipping_type', False),
             'delivery_route_path_id': vals.get('delivery_route_path_id', False),
             'carrier_id': vals.get('carrier_id', False)
-
         }
 
         ctx = self._context.copy()
@@ -100,24 +100,6 @@ class StockQuantPackage(models.Model):
             })
         return new_package.id
     
-    @api.model
-    def toggle_urgent_option(self, vals):
-        pkg_id = vals.get('id', False)
-        urgent = vals.get('urgent', False)
-        pkg_obj = self.browse(pkg_id)
-        pkg_obj.update({
-            'urgent': urgent
-        })
-        lines = self.env['stock.move'].search([('result_package_id', '=', pkg_id)]).mapped('move_line_ids')
-        for line in lines:
-            vals = {'id': line.id, 'urgent': urgent}
-            result = self.env['stock.move.line'].toggle_urgent_option(vals)
-        if pkg_obj.urgent == urgent:
-            return True
-        else:
-            return False
-
-
     @api.multi
     def write(self, vals):
         return super().write(vals)
