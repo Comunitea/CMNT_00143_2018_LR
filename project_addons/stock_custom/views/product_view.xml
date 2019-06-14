@@ -1,36 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- product.template inherit form view -->
-    <record id="product_template_form_view_abc" model="ir.ui.view">
-        <field name="name">product_template_form_view_abc</field>
-        <field name="model">product.template</field>
-        <field name="inherit_id" ref="product.product_template_form_view"/>
-        <field name="arch" type="xml">
-            <field name="categ_id" position="after">
-                <field name="abc_classification"/>
-            </field>
-        </field>
-    </record>
-
-
 
     <!-- product.product inherit form view -->
-    <!-- <record id="view_id" model="ir.ui.view">
+    <record id="view_id" model="ir.ui.view">
         <field name="name">product.template.aecoc.view.form</field>
         <field name="model">product.product</field>
         <field name="inherit_id" ref="product.product_normal_form_view"/>
         <field name="arch" type="xml">
             <field name="categ_id" position="after">
                 <field name="abc_classification"/>
+                <div>
+                    <field name="force_abc" class="oe_inline"/>
+                    <label for="force_abc"/>
+                    <button name='compute_abc_classification' string="Compute ABC" type="object" class="oe_link oe_inline"/>
+                </div>
             </field>
         </field>
-    </record> -->
+    </record>
 
     <!-- product.template inherit search view -->
-    <record id="product_template_search_view_aecoc" model="ir.ui.view">
-        <field name="name">product.template.inherit.view.search</field>
-        <field name="model">product.template</field>
-        <field name="inherit_id" ref="product.product_template_search_view"/>
+    <record id="product_search_view_aecoc" model="ir.ui.view">
+        <field name="name">product.inherit.view.search</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_search_form_view"/>
         <field name="arch" type="xml">
             <field name="categ_id" position="after">
                 <field name="abc_classification"/>
