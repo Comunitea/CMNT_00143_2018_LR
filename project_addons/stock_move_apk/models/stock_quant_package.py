@@ -85,20 +85,6 @@ class StockQuantPackage(models.Model):
         package_obj = self.env['stock.quant.package'].browse(package_id)
         package_obj.write(values)
         return True
-
-    @api.model
-    def create_new_package_from_move(self, vals):
-        move_line_id = vals['move_line_id']
-        line_id = self.env['stock.move.line'].browse(move_line_id)
-        new_package = self.env['stock.quant.package'].create({
-            'dest_partner_id': vals['dest_partner_id'],
-            'shipping_type': line_id.move_id.shipping_type
-        })
-        if new_package.id:
-            line_id.update({
-                'result_package_id': new_package.id
-            })
-        return new_package.id
     
     @api.multi
     def write(self, vals):

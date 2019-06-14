@@ -11,9 +11,6 @@ class StockMoveLine(models.Model):
     origin = fields.Char(related="move_id.origin")
     partner_id = fields.Many2one(related="move_id.partner_id")
     name = fields.Char(related="product_id.product_tmpl_id.name")
-    partner_shipping_type = fields.Selection(related="move_id.partner_id.shipping_type")
-    result_package_shipping_type = fields.Selection(related="result_package_id.shipping_type")
-
 
     @api.model
     def update_object_from_apk(self, values):
