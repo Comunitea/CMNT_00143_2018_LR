@@ -6,6 +6,8 @@ from odoo import fields, models, tools, api, _
 import datetime, time
 from odoo.exceptions import UserError
 from .res_config import SGA_STATES
+
+
 class StockQuantPackage(models.Model):
     _inherit = "stock.quant.package"
 

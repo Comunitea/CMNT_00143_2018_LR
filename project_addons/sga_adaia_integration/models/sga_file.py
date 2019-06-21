@@ -221,8 +221,6 @@ class AdaiaFileHeader(models.Model):
             file_prefix = sga_filename.rsplit('.', 1)[0]
             if file_prefix == 'TREXP':
                 return 'OUT'
-            elif file_prefix == 'TRARPR':
-                return 'PRT'
         else:
             return False
 
@@ -465,11 +463,7 @@ class AdaiaFileHeader(models.Model):
         process = []
         proc_error = False
         try:
-            if self.file_code == "INR":
-                self.write_log("Desde adaia picking INR ...")
-                process = self.env['stock.picking'].import_adaia_INR(self.id)
-
-            elif self.file_code == "OUT":
+            if self.file_code == "OUT":
                 self.write_log("Desde adaia picking OUT ...")
                 process = self.env['stock.picking'].import_adaia_OUT(self.id)
 
@@ -629,7 +623,9 @@ class AdaiaFileHeader(models.Model):
                         var_str = self.odoo_to_adaia(value, length, val.adaia_type, val.default, val.fillchar)
                         line_ids = True
 
-                    model_str += var_str
+                    model_str += var_str.strip()+'|'
+                    # Esta es para el formato seguido sin separador.
+                    #model_str += var_str 
                 res += model_str + '\n'
 
                 if line_ids:

@@ -32,6 +32,9 @@ SGA_STATES = [('NI', 'Sin integracion'),
               ('SR', 'Realizado'),
               ('SC', 'Cancelado')]
 
+SGA_INTEGRATION_TYPES = [('sga_ulma', 'SGA ULMA'),
+                         ('sga_adaia', 'SGA ADAIA')]
+
 
 class PickingType(models.Model):
     _inherit = "stock.picking.type"
@@ -54,6 +57,7 @@ class PickingType(models.Model):
     rate_move_backorders = fields.Integer(compute='_compute_picking_count')
     rate_done = fields.Integer(compute='_compute_picking_count', string="Ratio")
     sga_integrated = fields.Boolean('Sga', help='Marcar si tiene un tipo de integración con el sga')
+    sga_integration_type = fields.Selection(SGA_INTEGRATION_TYPES, string="SGA Integration type")
 
     shipping_type = fields.Selection(SHIPPING_TYPE_SEL, default=DEFAULT_SHIPPING_TYPE, string=STRING_SHIPPING_TYPE,
                                      help=HELP_SHIPPING_TYPE, store=False)

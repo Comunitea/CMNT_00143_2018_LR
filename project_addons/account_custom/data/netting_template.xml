@@ -3,59 +3,6 @@
     <template id="netting_adviser_body_template">
         <html>
             <head>
-                <style>table.TablaCompensaciones {
-                      width: 100%;
-                      text-align: center;
-                      border-collapse: collapse;
-                    }
-                    table.TablaCompensaciones td, table.TablaCompensaciones th {
-                      padding: 5px 7px;
-                    }
-                    table.TablaCompensaciones tbody td {
-                      font-size: 13px;
-                    }
-                    table.TablaCompensaciones thead {
-                      background: #875A7B;
-                      background: -moz-linear-gradient(top, #a5839c 0%, #936a88 66%, #875A7B 100%);
-                      background: -webkit-linear-gradient(top, #a5839c 0%, #936a88 66%, #875A7B 100%);
-                      background: linear-gradient(to bottom, #a5839c 0%, #936a88 66%, #875A7B 100%);
-                    }
-                    table.TablaCompensaciones thead th {
-                      font-size: 15px;
-                      font-weight: normal;
-                      color: #FFFFFF;
-                      text-align: center;
-                      border-left: 2px solid #E0E0E0;
-                    }
-
-                    table.TablaCompensaciones .td_fondo {
-                      font-size: 15px;
-                      font-weight: normal;
-                      color: #FFFFFF;
-                      text-align: center;
-                      border-left: 2px solid #E0E0E0;
-                      background: #875A7B;
-                      background: -moz-linear-gradient(top, #a5839c 0%, #936a88 66%, #875A7B 100%);
-                      background: -webkit-linear-gradient(top, #a5839c 0%, #936a88 66%, #875A7B 100%);
-                      background: linear-gradient(to bottom, #a5839c 0%, #936a88 66%, #875A7B 100%);
-                    }
-                    table.TablaCompensaciones thead th:first-child {
-                      border-left: none;
-                    }
-
-                    table.TablaCompensaciones tfoot td {
-                      font-size: 14px;
-                    }
-                    table.TablaCompensaciones tfoot .links {
-                      text-align: right;
-                    }
-                    table.TablaCompensaciones tfoot .links a{
-                      display: inline-block;
-                      background: #1C6EA4;
-                      color: #FFFFFF;
-                      padding: 2px 8px;
-                      border-radius: 5px;
-                    }</style>
             </head>
             <t t-set="partner" t-value="email_template._context.get('obj')" />
             <t t-set="company" t-debug='ipdb' t-value="partner and partner.company_id or email_template.env.user.company_id or email_template._context.get('company')" />
@@ -91,32 +38,32 @@
                                     <tbody>
                                         <td valign="top" style="font-family:Arial,Helvetica,sans-serif; color: #555; font-size: 14px;">
                                             Se han compensado las siguientes facturas:
-                                            <table class="TablaCompensaciones">
+                                            <table style="width: 100%; text-align: center; border-collapse: collapse; border: 1px solid black">
                                                 <thead>
                                                     <tr>
-                                                        <th>Fecha factura</th>
-                                                        <th>Número de factura</th>
-                                                        <th>Importe factura</th>
-                                                        <th>Fecha vencimiento</th>
+                                                        <th style="padding: 5px 7px;font-size: 15px; font-weight: normal;border: 1px solid black">Fecha factura</th>
+                                                        <th style="padding: 5px 7px;font-size: 15px; font-weight: normal;border: 1px solid black">Número de factura</th>
+                                                        <th style="padding: 5px 7px;font-size: 15px; font-weight: normal;border: 1px solid black">Importe factura</th>
+                                                        <th style="padding: 5px 7px;font-size: 15px; font-weight: normal;border: 1px solid black">Fecha vencimiento</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     <tr t-foreach="email_template._context.get('moves')" t-as="move_line">
-                                                        <td><span t-field="move_line.invoice_id.date_invoice"/></td>
+                                                        <td style="padding: 5px 7px;font-size: 13px;border: 1px solid black"><span t-field="move_line.invoice_id.date_invoice"/></td>
                                                         <t t-if="move_line.invoice_id.type == 'out_invoice'">
-                                                            <td><span t-field="move_line.invoice_id.number"/></td>
+                                                            <td style="padding: 5px 7px;font-size: 13px;border: 1px solid black"><span t-field="move_line.invoice_id.number"/></td>
                                                         </t>
                                                         <t t-if="move_line.invoice_id.type == 'in_invoice'">
-                                                            <td><span t-field="move_line.invoice_id.reference"/></td>
+                                                            <td style="padding: 5px 7px;font-size: 13px;border: 1px solid black"><span t-field="move_line.invoice_id.reference"/></td>
                                                         </t>
-                                                        <td><span t-field="move_line.invoice_id.amount_total"/></td>
-                                                        <td><span t-field="move_line.invoice_id.date_due"/></td>
+                                                        <td style="padding: 5px 7px;font-size: 13px;border: 1px solid black"><span t-field="move_line.invoice_id.amount_total"/></td>
+                                                        <td style="padding: 5px 7px;font-size: 13px;border: 1px solid black"><span t-field="move_line.invoice_id.date_due"/></td>
                                                     </tr>
                                                 </tbody>
                                                 <tfoot>
                                                     <tr>
-                                                        <td colspan="3" class="td_fondo">Saldo a su favor</td>
-                                                        <td><span t-esc="sum([x.invoice_id.residual for x in email_template._context.get('moves')])"
+                                                        <td colspan="2" style="font-size: 15px; font-weight: normal; text-align: center;border: 1px solid black">Saldo a su favor</td>
+                                                        <td style="font-size: 14px;border: 1px solid black"><span t-esc="sum([x.invoice_id.residual for x in email_template._context.get('moves')])"
                                                             t-options='{"widget": "monetary", "display_currency": invoice.currency_id}'/></td>
                                                     </tr>
                                                 </tfoot>

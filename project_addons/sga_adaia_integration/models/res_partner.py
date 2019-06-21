@@ -51,7 +51,12 @@ class ResPartner(models.Model):
                 partner_ids.append(partner.id)
 
         if partner_ids and operation is not 'DE':
-            self.env['res.partner'].browse(partner_ids).write({'sga_state': 'PS'})
+            self.env['res.partner'].browse(partner_ids).write({'sga_state': 'SR'})
         elif not partner_ids:
             raise ValidationError("No hay partners para enviar a Adaia")
         return True
+
+    @api.onchange('name', 'display_name', 'partner_type', 'street', 'city', 'state', 'country', 'zip', 'mobile', 'fax', 'email')
+    def onchange_info(self):
+        for partner in self:
+            partner.write({'sga_state': 'NE'})

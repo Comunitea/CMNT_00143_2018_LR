@@ -24,7 +24,7 @@ class SaleOrder(models.Model):
             'mmmentdir2': partner_id.city,
             'mmmentdir3': partner_id.state_id.name,
             'mmmentdir4': partner_id.zip,
-            'mmmbatch': pick.name,
+            'mmmbatch': pick.id,
             'mmmmomexp': date_expected,
             'mmmurgnte': '' if pick.urgent else 'N',
             'mmmtraref': str(pick.shipping_type) + '-N'

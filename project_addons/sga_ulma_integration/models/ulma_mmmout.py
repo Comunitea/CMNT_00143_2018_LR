@@ -4,7 +4,6 @@
 
 from odoo import api, fields, models, tools
 from odoo.exceptions import UserError
-from pprint import pprint
 
 class UlmaMmmout(models.Model):
     _name = "ulma.mmmout"

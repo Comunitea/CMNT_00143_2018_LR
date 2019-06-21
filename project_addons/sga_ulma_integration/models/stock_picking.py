@@ -5,14 +5,12 @@
 from odoo import fields, models, tools, api, _
 import datetime, time
 from odoo.exceptions import UserError
-from pprint import pprint
-
 
 class StockBatchPicking(models.Model):
 
     _inherit = "stock.batch.picking"
 
-    ulma_integrated = fields.Boolean(related='picking_type_id.ulma_integrated')
+    sga_integrated = fields.Boolean(related='picking_type_id.sga_integrated')
 
     def send_to_ulma(self):
         for batch in self:
@@ -32,7 +30,8 @@ class StockPicking(models.Model):
         return action
 
     ulma_error = fields.Text(default="", string="Error msg in case the Ulma integration failed")
-    ulma_integrated = fields.Boolean(related='picking_type_id.ulma_integrated')
+    sga_integrated = fields.Boolean(related='picking_type_id.sga_integrated')
+    sga_integration_type = fields.Selection(related="picking_type_id.sga_integration_type")
 
 
     def get_picking_ulma_vals(self):
@@ -48,9 +47,13 @@ class StockPicking(models.Model):
     def force_button_validate(self):
         self.sga_state = 'SR'
         return self.button_validate()
+    
+    def move_to_not_sent(self):
+        self.sga_state = 'NE'
+
     @api.multi
     def send_to_sga(self):
-        to_ulma = self.filtered(lambda x: x.picking_type_id.ulma_integrated and self.state == 'assigned')
+        to_ulma = self.filtered(lambda x: x.picking_type_id.sga_integrated and self.state == 'assigned')
         ulma_out = self.env['ulma.mmmout']
         for pick in to_ulma:
             ##ulma_out.search([('mmmbatch', '=', self.name)]).unlink()
@@ -98,12 +101,23 @@ class StockPicking(models.Model):
                 elif ulma_obj.mmmcmdref == 'SAL':
                     moves_ids = self.env['ulma.mmminp'].search([('mmmexpordref', '=', pick.name), ('mmmres', 'not in', ['FIN'])])
                     for ulma_move in moves_ids:
-                        index = int(ulma_move.mmmcod)
+                        index = int(ulma_move.id)
                         move_line = self.env['stock.move.line'].browse(index)
-                        pick.move_line_ids[index].write({
-                            'qty_done': ulma_move.mmmcanuni,
-                            'sga_state': 'P'
-                        })
+                        if pick.move_line_ids[index] == ulma_move.mmmcanuni:
+                            if pick.move_line_ids[index] != ulma_move.mmmcanuni:
+                                pick.move_line_ids[index]._set_quantity_done(ulma_move.mmmcanuni)
+                            else:
+                                actual_move = self.env['stock.move'].search([('origin_returned_move_id', '=', move_line_ids[index].move_id.id)])
+                                actual_move._prepare_move_line_vals(ulma_move.mmmcanuni)
+                        
+                        else:
+                            diference = pick.move_line_ids[index].ordered_qty - ulma_move.mmmcanuni
+                            pick.move_line_ids[index].move_id._split(diference)
+                            pick.move_line_ids[index]._set_quantity_done(ulma_move.mmmcanuni)
+                            pick.move_line_ids[index].write({
+                                'sga_state': 'P'
+                            })
+
                     pick.write({
                         'sga_state': 'P'
                     })
