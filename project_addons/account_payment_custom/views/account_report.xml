@@ -4,7 +4,7 @@
 
         <!-- QWeb Reports -->
 <!--
-        Factura normal
+        Confirming IBER las Rias
 -->
         <report
             id="confirming_iber"
@@ -36,6 +36,21 @@
         <record id="account_payment_custom.confirming_iber" model="ir.actions.report">
             <field name="paperformat_id" ref="account_payment_custom.paperformat_report_confirming_iber" />
         </record>
+
+<!--
+        Confirming IBER GEF
+-->
+
+                <report
+            id="confirming_iber_gef"
+            model="account.payment.order"
+            string="Confirming Ibercaja GEF"
+            report_type="qweb-pdf"
+            name="account_payment_custom.report_confirming_iber_GEF"
+            file="account_payment_custom.report_confirming_iber_GEF"
+            attachment=""
+            groups="account.group_account_invoice"
+        />
 
 
     </data>

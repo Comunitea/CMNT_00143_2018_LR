@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+        <template id="report_confirming_iber_GEF_document">
+            <t t-call="web.external_layout">
+                <div class="page">
+                    <div class="row">
+                        <div class="col-xs-5 col-xs-offset-8">
+                            <p>Ibercaja</p>
+                        </div>
+                        <div class="col-xs-5 col-xs-offset-8">
+                            Cambre a, <span t-esc="time.strftime('%d de %B de %Y', time.localtime(time.time()))"/>
+                        </div>
+                    </div>
+                    <br/>
+                    <div class="row">
+                        <strong>Asunto: Financiación de pagos nacionales.</strong>
+                    </div>
+                    <br/>
+                    <div class="row">
+                        Estimados Sres:
+                    </div>
+                    <br/>
+                    <div class="row">
+                        Les solicitamos que financien a 120 días el importe <span t-field="o.total_company_currency"/>Eur que se corresponde con
+                        el importe de <span t-esc="len(o.bank_line_ids)"/> transferencias para el pago de las facturas de los proveedores que se
+                        detallan a continuación:
+                    </div>
+                    <br/><br/>
+
+                    <!--TABLA-->
+
+
+                    <table class="table table-condensed" >
+                         <t t-foreach="o.bank_line_ids" t-as="b_line">
+
+                       <tbody>
+                            <tr style="font-weight:bold; font-size:13px;">
+                                <td><span t-field="b_line.partner_id"/></td>
+                                <td><span t-field="b_line.partner_bank_id.acc_number"/></td>
+                                <td><span t-field="b_line.amount_currency"/></td>
+                            </tr>
+                            <tr style="font-weight:bold; font-size:12px;">
+                                <td>Factura</td>
+                                <td>Fecha Fra</td>
+                                <td>Importe</td>
+                            </tr>
+                           <t t-foreach="b_line.payment_line_ids" t-as="p_line">
+
+                                <tr tyle="font-weight:bold; font-size:11px;">
+                                    <td><span t-field="p_line.move_line_id.invoice_id.reference"/></td>
+                                    <td><span t-field="p_line.date"/></td>
+                                    <td><span t-field="p_line.amount_currency"/></td>
+                                </tr>
+
+                           </t>
+                       </tbody>
+                       </t>
+                    </table>
+                    <div class="row" name="total">
+                        <table class="table table-condensed" style="min-width: 200px;max-width: 350px;">
+                             <tr class="border-black" style="border-bottom:1px solid #dddddd;">
+                                        <td><strong>TOTAL GENERAL</strong></td>
+                                        <td class="text-right">
+                                            <span t-field="o.total_company_currency"/>
+                                        </td>
+                                    </tr>
+                        </table>
+                    </div>
+
+                     <br/><br/>
+                    <div class="row">
+                        <div>Atentamente,</div>
+                        <div><strong>Grupo Empresarial de Ferretería, S.L.U.</strong></div>
+                    </div>
+                    <br/>
+                    <div class="row">
+                        <div>D. Rafael Martínez García</div>
+                        <div><strong>Gerente</strong></div>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+
+        <template id="report_confirming_iber_GEF">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="account_payment_custom.report_confirming_iber_GEF_document"/>
+                </t>
+            </t>
+        </template>
+
+</odoo>

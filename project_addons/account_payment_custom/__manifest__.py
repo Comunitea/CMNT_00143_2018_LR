@@ -22,6 +22,7 @@
         'views/account_payment_order.xml',
         'views/bank_payment_line.xml',
         'views/account_report.xml',
-        'views/confirming_iber.xml'
+        'views/confirming_iber.xml',
+        'views/confirming_iber_GEF.xml',
     ]
 }
