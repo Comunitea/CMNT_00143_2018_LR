@@ -18,6 +18,6 @@ class BankPaymentLine(models.Model):
     journal_id = fields.Many2one('account.journal', 'Journal',
                                  domain=domain_journal_id)
     payment_mode_id = fields.Many2one('account.payment.mode', 'Payment mode')
-
+    date = fields.Date(store=True)
     def get_group_key(self):
         return (self.journal_id.id, self.payment_mode_id.id)
