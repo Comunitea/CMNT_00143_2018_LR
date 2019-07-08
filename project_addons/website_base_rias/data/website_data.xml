@@ -4,7 +4,7 @@
 
             <!--Update Default Website-->
             <record id="website.default_website" model="website">
-                <field name="name">Las Rías webiste</field>
+                <field name="name">Las Rías website</field>
                 <field name="domain">localhost</field>
                 <field name="favicon" type="base64" file="website_base_rias/static/img/favicon.png"/>
             </record>
