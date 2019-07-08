@@ -4,48 +4,28 @@
     <template id="rias_website_footer_custom" inherit_id="website.footer_custom">
         <xpath expr="//div[@id='footer']//div[hasclass('row')]" position="replace">
             <div class="row">
-                <div class="col-md-4">
-                    <h4>Footer column</h4>
-                    <ul class="list-unstyled">
-                        <li><a href="#">menu line</a></li>
-                        <li><a href="#">menu line</a></li>
-                        <li><a href="#">menu line</a></li>
-                    </ul>
-                    <h2 class="mt4">
-                        <small>Follow us:</small>
-                        <a href="#" rel="nofollow" target="_blank"><i class="fa fa-facebook-square"/></a>
-                        <a href="#" rel="nofollow" target="_blank"><i class="fa fa-twitter"/></a>
-                        <a href="#" rel="nofollow" target="_blank"><i class="fa fa-linkedin"/></a>
-                        <a href="#" rel="nofollow" target="_blank"><i class="fa fa-google-plus-square"/></a>
-                    </h2>
-                </div>
-                <div class="col-md-4">
-                    <h4>Footer column</h4>
-                    <ul class="list-unstyled">
-                        <li><a href="#">second menu line</a></li>
-                        <li><a href="#">second menu line</a></li>
-                        <li><a href="#">second menu line</a></li>
-                        <li><a href="#">second menu line</a></li>
-                        <li><a href="#">second menu line</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-4">
-                    <h4>Footer column</h4>
-                    <ul class="list-unstyled">
-                        <li t-esc="res_company.name"/>
-                        <li>
-                            <i class="fa fa-map-marker"/>
-                            <a href="https://goo.gl/maps/GDHmgREq3oNuDYGs7" target="_blank" alt="Open en Google Maps" title="Open en Google Maps" rel="nofollow">
-                                <t t-esc="res_company.street"/>,
-                                <t t-esc="res_company.zip"/>,
-                                <t t-esc="res_company.city"/>,
-                            </a>
-                        </li>
-                        <li><i class="fa fa-phone"/><a t-field="res_company.phone" t-att-href="'tel:%s' %res_company.phone"/></li>
-                        <li><i class="fa fa-envelope"/><a t-field="res_company.email" t-att-href="'mailto:%s' %res_company.email"/></li>
-                    </ul>
-                </div>
+                <div class="col-md-12">
+                    <div class="text-center row mt32 mb16">
+                        <img t-att-src="'/theme_rias/static/img/logos/logo_transp.png'" alt="res_company.name"/>
+                    </div>
+                    <div class="text-center row mb16">
+                        <t t-esc="res_company.name"/>
+                    </div>
+                    <div class="text-center row mb32">
+                        <a href="https://goo.gl/maps/GDHmgREq3oNuDYGs7" target="_blank" alt="Open en Google Maps" title="Open en Google Maps" rel="nofollow">
+                            <t t-esc="res_company.street"/>,
+                            <t t-esc="res_company.zip"/>,
+                            <t t-esc="res_company.city"/>,
+                        </a>
+                    </div>
+                </div>                
             </div>
+        </xpath>
+    </template>
+
+    <template id="layout_footer_copyright_custom" inherit_id="website.layout_footer_copyright" name="Footer Copyright Custom">
+        <xpath expr="//footer//div[hasclass('pull-left')]" position="attributes">
+            <attribute name='class'>text-center text-muted</attribute>
         </xpath>
     </template>
 

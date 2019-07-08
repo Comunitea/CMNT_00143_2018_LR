@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <!-- Our Shops Template -->
+    <template id="las_template_our_shops" name="Our Shops Point Template">
+        <t t-call="website.layout">
+            <div id="wrap">
+                <div class="map-wrap">
+                    <span class="metadata-marker" data-region_tag="html-body"/>
+                    <div id="map" class="full-size"/>
+                    <script type="text/javascript" src="/theme_rias/static/js/our-shops-map.js"/>
+                    <script type="text/javascript" src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"/>
+                    <script type="text/javascript" async="async" defer="defer"
+                            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA_3Mma3hft3POI5f2LhzxSzie0dF1BtOs&amp;language=es&amp;callback=lasriasShopsInitMap"/>
+                </div>
+                <div class="container">
+                    <h1 class="text-center mb32">Buscador de tiendas</h1>
+                    <div class="row">
+                        <div class="col-md-12 mb32">
+                            <t t-call="theme_rias.las_search_our_shops"/>
+                        </div>
+                    </div>
+                    <h1 id="shops_container_title" class="text-center mt64 mb32">Resultados de búsqueda</h1>
+                    <div id="shops_container" class="row"></div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Our shop Page -->
+    <record id="las_page_our_shops" model="website.page">
+        <field name="name">Shops</field>
+        <field name="website_ids" eval="[(6, 0, [ref('website.default_website')])]"/>
+        <field name="website_published">True</field>
+        <field name="url">/page/our-shops</field>
+        <field name="view_id" ref="las_template_our_shops"/>
+    </record>
+
+    <!-- Search form-->
+    <template id="las_search_our_shops" name="Search Form Our Shops">
+        <div class="form-group form-field">
+            <label class="col-md-3 col-sm-4 control-label" for="shop_name">Shop name</label>
+            <div class="col-md-7 col-sm-8">
+                <input type="text" class="form-control o_website_form_input" name="shop_name" id="shop_name" required=""/>
+            </div>
+        </div>
+        <div class="form-group form-field">
+            <label class="col-md-3 col-sm-4 control-label" for="address">Address/Zip Code</label>
+            <div class="col-md-7 col-sm-8">
+                <input type="text" class="form-control o_website_form_input" name="address" id="address"/>
+            </div>
+        </div>
+        <div class="form-group form-field">
+            <label class="col-md-3 col-sm-4 control-label" for="location">Location</label>
+            <div class="col-md-7 col-sm-8">
+                <select class="form-control o_website_form_input" name="location" id="location"> 
+                    <option value="" selected="selected"></option>
+                    <option value="A CAÑIZA">A CAÑIZA</option> 
+                    <option value="A CORUÑA">A CORUÑA</option> 
+                    <option value="A ESTRADA">A ESTRADA</option> 
+                    <option value="A GUARDA">A GUARDA</option>
+                    <option value="AGUEDA">AGUEDA</option>
+                    <option value="AMES">AMES</option>
+                    <option value="AS PONTES">AS PONTES</option>
+                    <option value="AVANCA">AVANCA</option>
+                    <option value="BAIONA">BAIONA</option>
+                    <option value="BALTAR – PAREDES">BALTAR – PAREDES</option>
+                    <option value="BARALLA">BARALLA</option>
+                    <option value="BEMBIBRE">BEMBIBRE</option>
+                    <option value="BETANZOS">BETANZOS</option>
+                    <option value="BOIRO">BOIRO</option>
+                    <option value="BRAGA">BRAGA</option>
+                    <option value="BRAGANÇA">BRAGANÇA</option>
+                    <option value="BURELA">BURELA</option>
+                    <option value="CAMBADOS">CAMBADOS</option>
+                    <option value="CAMBRE">CAMBRE</option>
+                    <option value="CANGAS">CANGAS</option>
+                    <option value="CARBALLIÑO">CARBALLIÑO</option>
+                    <option value="CARBALLO">CARBALLO</option>
+                    <option value="CARIÑO">CARIÑO</option>
+                    <option value="CASTRO">CASTRO</option>
+                    <option value="RIBERAS DE LEA">RIBERAS DE LEA</option>
+                    <option value="CEE">CEE</option>
+                    <option value="CELANOVA">CELANOVA</option>
+                    <option value="CESANTES - REDONDELA">CESANTES - REDONDELA</option>
+                    <option value="CHANTADA">CHANTADA</option>
+                    <option value="COIA-VIGO">COIA-VIGO</option>
+                    <option value="CORTEGADA">CORTEGADA</option>
+                    <option value="CORUÑA">CORUÑA</option>
+                    <option value="DENA - MEAÑO">DENA - MEAÑO</option>
+                    <option value="FAFE">FAFE</option>
+                    <option value="FERROL">FERROL</option>
+                    <option value="FONSAGRADA">FONSAGRADA</option>
+                    <option value="FONTECULLER - CULLEREDO">FONTECULLER - CULLEREDO</option>
+                    <option value="FREIXEIRO - NARÓN">FREIXEIRO - NARÓN</option>
+                    <option value="FRIOL">FRIOL</option>
+                    <option value="GODIM-MAIA">GODIM-MAIA</option>
+                    <option value="GRIJÓ">GRIJÓ</option>
+                    <option value="GUIMARÃES">GUIMARÃES</option>
+                    <option value="LALÍN">LALÍN</option>
+                    <option value="LARACHA">LARACHA</option>
+                    <option value="LUGO">LUGO</option>
+                    <option value="MARÍN">MARÍN</option>
+                    <option value="MEIRA">MEIRA</option>
+                    <option value="MELIDE">MELIDE</option>
+                    <option value="MIÑO">MIÑO</option>
+                    <option value="MOAÑA">MOAÑA</option>
+                    <option value="MONFORTE DE LEMOS">MONFORTE DE LEMOS</option>
+                    <option value="MONTERROSO">MONTERROSO</option>
+                    <option value="MONÇAO">MONÇAO</option>
+                    <option value="MUROS">MUROS</option>
+                    <option value="NEGREIRA">NEGREIRA</option>
+                    <option value="NOIA">NOIA</option>
+                    <option value="O BARCO DE VALDEORRAS">O BARCO DE VALDEORRAS</option>
+                    <option value="ORDES">ORDES</option>
+                    <option value="OURENSE">OURENSE</option>
+                    <option value="PERLÍO - FENE">PERLÍO - FENE</option>
+                    <option value="PESADOIRA - NEGREIRA">PESADOIRA - NEGREIRA</option>
+                    <option value="POBRA DE TRIVES">POBRA DE TRIVES</option>
+                    <option value="POBRA DO CARAMIÑAL">POBRA DO CARAMIÑAL</option>
+                    <option value="PONTEAREAS">PONTEAREAS</option>
+                    <option value="PONTECALDELAS">PONTECALDELAS</option>
+                    <option value="PONTECESURES">PONTECESURES</option>
+                    <option value="PONTEDEUME">PONTEDEUME</option>
+                    <option value="PORRIÑO">PORRIÑO</option>
+                    <option value="PORRÁNS-BARRO">PORRÁNS-BARRO</option>
+                    <option value="PORTO DO SON RIANXO">PORTO DO SON RIANXO</option>
+                    <option value="RIBADAVIA">RIBADAVIA</option>
+                    <option value="RIBADEO">RIBADEO</option>
+                    <option value="RIVEIRA">RIVEIRA</option>
+                    <option value="SADA">SADA</option>
+                    <option value="SALVATERRA DE MIÑO">SALVATERRA DE MIÑO</option>
+                    <option value="SAN CLODIO">SAN CLODIO</option>
+                    <option value="SANTO TIRSO">SANTO TIRSO</option>
+                    <option value="SARRIA">SARRIA</option>
+                    <option value="SOUTELO DE MONTES">SOUTELO DE MONTES</option>
+                    <option value="STA. CRUZ - OLEIROS">STA. CRUZ - OLEIROS</option>
+                    <option value="STA. MARTA DE ORTIGUEIRA">STA. MARTA DE ORTIGUEIRA</option>
+                    <option value="TEIXEIRO">TEIXEIRO</option>
+                    <option value="TINES - VIMIANZO">TINES - VIMIANZO</option>
+                    <option value="TOMIÑO">TOMIÑO</option>
+                    <option value="TORENO">TORENO</option>
+                    <option value="TOURO">TOURO</option>
+                    <option value="TRAZO">TRAZO</option>
+                    <option value="TUY">TUY</option>
+                    <option value="VALPAÇOS">VALPAÇOS</option>
+                    <option value="VEGA DE ESPINAREDA">VEGA DE ESPINAREDA</option>
+                    <option value="VERÍN">VERÍN</option>
+                    <option value="VIANA DO CASTELO">VIANA DO CASTELO</option>
+                    <option value="VIGO">VIGO</option>
+                    <option value="VILA DE CRUCES">VILA DE CRUCES</option>
+                    <option value="VILA DO CONDE">VILA DO CONDE</option>
+                    <option value="VILA FRESCAINHA (SÃO PEDRO)-BA">VILA FRESCAINHA (SÃO PEDRO)-BA</option>
+                    <option value="VILAGARCÍA DE AROUSA">VILAGARCÍA DE AROUSA</option>
+                    <option value="VILALBA">VILALBA</option>
+                    <option value="VIVEIRO">VIVEIRO</option>
+                    <option value="XINZO DE LIMIA">XINZO DE LIMIA</option>
+                </select>   
+            </div>
+        </div>
+
+        <div class="form-group form-field">
+            <label class="col-md-3 col-sm-4 control-label" for="province">Province</label>
+            <div class="col-md-7 col-sm-8">
+                <select class="form-control o_website_form_input" name="province" id="province"> 
+                    <option value="" selected="selected"></option>
+                    <option value="coruna">A Coruña</option>
+                    <option value="Alicante">Alicante</option>
+                    <option value="Almería">Almería</option>
+                    <option value="Asturias">Asturias</option>
+                    <option value="Ávila">Ávila</option>
+                    <option value="Badajoz">Badajoz</option>
+                    <option value="Cáceres">Cáceres</option>
+                    <option value="Cádiz">Cádiz</option>
+                    <option value="Córdoba">Córdoba</option>
+                    <option value="Granada">Granada</option>
+                    <option value="Huelva">Huelva</option>
+                    <option value="Jaén">Jaén</option>
+                    <option value="Málaga">Málaga</option>
+                    <option value="Melilla">Melilla</option>
+                    <option value="Menorca">Menorca</option>
+                    <option value="Murcia">Murcia</option>
+                    <option value="Ourense">Ourense</option>
+                    <option value="Pontevedra">Pontevedra</option>
+                    <option value="Sevilla">Sevilla</option>
+                    <option value="Tenerife">Tenerife</option>
+                    <option value="Valencia">Valencia</option>
+                </select>   
+            </div>
+        </div>
+
+        <div class="form-group form-field">
+            <label class="col-md-3 col-sm-4 control-label" for="state">State</label>
+            <div class="col-md-7 col-sm-8">
+                <select class="form-control o_website_form_input" name="state" id="state"> 
+                    <option value="" selected="selected"></option>
+                    <option value="Portugal">Portugal</option>
+                    <option value="España">Spain</option>
+                </select>   
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-3 col-sm-offset-4 col-sm-8 col-md-7">
+                <span id="reset_filter" class="btn btn-primary btn-lg o_website_form_send mt32 mb32">Reset</span>
+                <span id="map_filter" class="btn btn-primary btn-lg o_website_form_send mt32 mb32">Send</span>
+                <span id="o_website_form_result"/>
+            </div>
+        </div>
+    </template>
+
+</odoo>

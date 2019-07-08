@@ -7,6 +7,10 @@
             <link href="/theme_rias/static/css/_general.less" rel="stylesheet" type="text/less"/>
             <link href="/theme_rias/static/css/header.less" rel="stylesheet" type="text/less"/>
             <link href="/theme_rias/static/css/footer.less" rel="stylesheet" type="text/less"/>
+            <link href="/theme_rias/static/css/snippets.less" rel="stylesheet" type="text/less"/>
+            <link href="/theme_rias/static/css/page_home.less" rel="stylesheet" type="text/less"/>
+            <link href="/theme_rias/static/css/map.less" rel="stylesheet" type="text/less"/>
+            <link href="/theme_rias/static/css/page_about_us.less" rel="stylesheet" type="text/less"/>
         </xpath>
     </template>
 

@@ -37,14 +37,20 @@
     'depends': [
         'website_base_rias',
         'breadcrumbs_base_tmp',
+        'website_slides'
     ],
     'data': [
         'data/menu_data.xml',
         'data/page_data.xml',
+        'data/slides_data.xml',
+        'templates/snippets.xml',
         'templates/head.xml',
         'templates/header.xml',
         'templates/footer.xml',
         'templates/page_home.xml',
+        'templates/page_our_shops.xml',
+        'templates/page_catalogues.xml',
+        'templates/page_about_us.xml'
     ],
     'images': [
         '/static/description/icon.png',

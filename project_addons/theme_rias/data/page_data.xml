@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <data noupdate="0">
+    <data noupdate="1">
 
         <!-- // Portal part -->
         <template id="rias_portal_my_home_view" name="My Portal Rías View" inherit_id="portal.portal_my_home"/>
@@ -100,18 +100,8 @@
             <field name="view_id" ref="rias_page_404_view"/>
         </record>
 
-        <!-- // About us page -->
-        <template id="rias_aboutus_page_view" name="Error 404 Rías View" inherit_id="website.aboutus"/>
-        <record id="rias_aboutus_page" model="website.page">
-            <field name="name">About us</field>
-            <field name="website_published">True</field>
-            <field name="website_ids" eval="[(6, 0, [ref('website.default_website')])]"/>
-            <field name="url">/aboutus</field>
-            <field name="view_id" ref="rias_aboutus_page_view"/>
-        </record>
-
         <!-- // Legal pages part -->
-        <template id="rias_advise_page_view" name="Error 404 Rías View" inherit_id="website_legal_page.advice"/>
+        <template id="rias_advise_page_view" name="Legal Advise Rías View" inherit_id="website_legal_page.advice"/>
         <record id="rias_advise_page" model="website.page">
             <field name="name">Legal Advise</field>
             <field name="website_published">True</field>

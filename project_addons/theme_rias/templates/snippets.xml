@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <template id="snippet_cover_lasrias" name="Cover Las Rías">
+        <section class="s_text_block_image_fw oe_img_bg oe_custom_bg" style="background-image: url('/theme_rias/static/img/covers/cover.jpg'); background-position: 50% 100%">
+            <div class="container">
+                <div class="container">
+                    <div class="hidden-xs col-md-offset-1 col-md-6 mt64 mb64 bg-black-25">
+                        <h1>Hablando de <b>FERRETERÍA</b> !Nos vamos a entender!</h1>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </template>
+
+    <template id="snippet_three_columns_lasrias" name="Three Columns Las Rías">
+        <section class="s_three_columns">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12 mt32 mb16">
+                        <h2 class="text-center">Catálogos y folletos</h2>
+                    </div>
+                    <div class="col-md-4 mt32 mb48">
+                        <a href="/theme_rias/static/pdf/catalogues/jardin2019es.pdf" target="_blank">
+                            <img class="img img-responsive" src="/theme_rias/static/img/catalogues/jardin.jpeg" alt="Catálogo Jardines 2019"/>
+                        </a>
+                        <h3 class="mt16 text-center">JARDINES 2019</h3>
+                        <div class="col-md-12 mt48 text-center">
+                            <a class="btn btn-primary" href="/theme_rias/static/pdf/catalogues/jardin2019es.pdf" target="_blank" role="button">
+                                PDF
+                            </a>
+                            <a class="btn btn-primary" href="/slides/slide/jardin-2019-3" role="button">
+                                CATÁLOGO INTERACTIVO
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mt32 mb48">
+                        <a href="/theme_rias/static/pdf/catalogues/reformas2019es.pdf" target="_blank">
+                            <img class="img img-responsive" src="/theme_rias/static/img/catalogues/reformas.jpeg" alt="Catálogo Reformas 2019"/>
+                        </a>
+                        <h3 class="mt16 text-center">REFORMAS 2019</h3>
+                        <div class="col-md-12 mt48 text-center">
+                            <a class="btn btn-primary" href="/theme_rias/static/pdf/catalogues/reformas2019es.pdf" target="_blank" role="button">
+                                PDF
+                            </a>
+                            <a class="btn btn-primary" href="/slides/slide/reformas-2019-1" role="button">
+                                CATÁLOGO INTERACTIVO
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mt32 mb48">
+                        <a href="/theme_rias/static/pdf/catalogues/piscinas2019es.pdf" target="_blank">
+                            <img class="img img-responsive" src="/theme_rias/static/img/catalogues/piscinas.jpeg" alt="Catálogo Piscinas 2019"/>
+                        </a>
+                        <h3 class="mt16 text-center">PISCINAS 2019</h3>
+                        <div class="col-md-12 mt48 text-center">
+                            <a class="btn btn-primary" href="/theme_rias/static/pdf/catalogues/piscinas2019es.pdf" target="_blank" role="button">
+                                PDF
+                            </a>
+                            <a class="btn btn-primary" href="/slides/slide/piscinas-2019-2" role="button">
+                                CATÁLOGO INTERACTIVO
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </template>
+
+    <template id="snippet_image_text_lasrias_piscinas" name="Piscinas Las Rías">
+        <section class="s_image_text">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6 mt32 mb32">
+                        <div class="media_iframe_video" data-oe-expression="//www.youtube.com/embed/mx6-6PLJQk4?autoplay=0&amp;rel=0&amp;modestbranding=1">
+                            <div class="css_editable_mode_display" data-original-title="" title=""></div>
+                            <div class="media_iframe_video_size"></div>
+                            <iframe src="//www.youtube.com/embed/mx6-6PLJQk4?autoplay=0&amp;rel=0&amp;modestbranding=1" frameborder="0"></iframe>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mt64 mb32 text-left">
+                        <h2>DISFRUTA EL BUEN TIEMPO</h2>
+                        <p>
+                            Os presentamos nuestro FOLLETO PISCINAS, un especial dedicado a una de las familias que más crecen año a año 
+                            en ventas en las ferreterías de las rías. 
+                        </p>
+                        <p>
+                            Animaros a visitar las ferreterías de las rías y podréis ver las novedades que tenemos este año en piscinas.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </template>
+
+    <template id="snippet_image_text_lasrias_reformas" name="Reformas Las Rías">
+        <section class="s_image_text">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6 mt64 mb32 text-right">
+                        <h2>REFORMAS 2019</h2>
+                        <p>
+                            Os animamos a que visitéis las tiendas y veáis los diferentes artículos que tenemos disponibles en vuestras 
+                            <b>ferreterías de confianza.</b>
+                        </p>
+                    </div>
+                    <div class="col-md-6 mt32 mb32">
+                        <div class="media_iframe_video" data-oe-expression="//www.youtube.com/embed/e4XLx1bSKCc?autoplay=0&amp;rel=0&amp;modestbranding=1">
+                            <div class="css_editable_mode_display"></div>
+                            <div class="media_iframe_video_size"></div>
+                            <iframe src="//www.youtube.com/embed/e4XLx1bSKCc?autoplay=0&amp;rel=0&amp;modestbranding=1" frameborder="0"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </template>
+
+    <template id="snippet_image_text_lasrias_jardines" name="Jardines Las Rías">
+        <section class="s_image_text">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6 mt32 mb32">
+                        <div class="media_iframe_video" data-oe-expression="//www.youtube.com/embed/OxKDWoDyGUo?autoplay=0&amp;rel=0&amp;modestbranding=1">
+                            <div class="css_editable_mode_display" data-original-title="" title=""></div>
+                            <div class="media_iframe_video_size"></div>
+                            <iframe src="//www.youtube.com/embed/OxKDWoDyGUo?autoplay=0&amp;rel=0&amp;modestbranding=1" frameborder="0"></iframe>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mt64 mb32 text-left">
+                        <h2>¿Hablamos de Jardines?</h2>
+                        <p>
+                            El Jardín es  un espacio en donde se cultivan plantas y flores ornamentales para hacer de él un lugar agradable. 
+                            Si echamos un vistazo rápido  a los Jardines más "bellos del mundo" nos encontramos con  Jardines de todo tipo, grandes, 
+                            como los de la Villa Borghese (Roma, Italia),o Jardín Keukenhof (Holanda). Jardines con mucha historia como los Jardines del 
+                            Generalife (Granada, España), emblemáticos como los del Taj Mahal (India)  o los Jardines de Kensington en Londres, (Inglaterra) 
+                            que forman parte del palacio  que  fue la residencia oficial de la princesa Diana. Todos maravillosos  e  inspiradores aunque, 
+                            por qué no decirlo el mejor, el más bonito de todos es siempre el que uno hace. Aunque sea en una terraza de ciudad, simplemente 
+                            con unas flores bien puestas,  con un toque personal .¡Ese es el mejor! 
+                        </p>
+                        <p>
+                            La llegada de la primavera  nos permite disfrutar más del aire libre y, con ello, podemos pasar más tiempo en nuestro jardín, 
+                            ya sea urbano o no. En cualquiera de nuestras ferreterías encontrarás el asesoramiento necesario para aconsejarte el producto 
+                            que más se adecúe a tus necesidades. Muchas veces no se trata de gastar más, sino de gastar bien y para eso los profesionales 
+                            te pueden ayudar.
+                        </p>
+                        <p>
+                            Cultiva, poda, arranca las malas hierbas con las herramientas adecuadas y ¡¡PRESUME DE JARDÍN!!
+                        </p>
+                        <p>
+                            Os animamos a hacer un Jardín sencillo, con un poco de color, iluminación y tradición. Fácil de mantener. 
+                            Para la decoración podéis usar piedras, flores, fuentes y todo tipo de elementos decorativos, pero sin recargarlo, 
+                            que le den la personalidad que queremos para hacerlo nuestro.
+                        </p>
+                        <p>
+                            Y como siempre, para cualquier cosa que necesitéis visitar a vuestra ferretería de confianza. 
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </template>
+
+    <template id="snippet_image_text_lasrias_map" name="Map Las Rías">
+        <section class="s_image_text">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12 mt32 mb16">
+                        <h2 class="text-center">Localizar una tienda Rías</h2>
+                    </div>
+                    <div class="col-md-6 mt32 mb32 text-center">
+                        <img class="img img-responsive center-block mb16" src="/theme_rias/static/img/map/map.png"  alt="Mapa España"/>
+                        <a class="btn btn-primary" href="/page/our-shops" role="button">Buscar Tiendas</a>
+                    </div>
+                    <div class="col-md-6 mt32 mb32">
+                        <h2 class="text-center mb16">Buscar por población</h2>
+                        <p>
+                            <a href="/page/our-shops?location=CANIZA">A CAÑIZA </a>  
+                            <a href="/page/our-shops?location=CORUNA">A CORUÑA </a> 
+                            <a href="/page/our-shops?location=ESTRADA">A ESTRADA </a> 
+                            <a href="/page/our-shops?location=GUARDA">A GUARDA </a>
+                            <a href="/page/our-shops?location=AGUEDA">AGUEDA </a>
+                            <a href="/page/our-shops?location=AMES"> AMES</a>
+                            <a href="/page/our-shops?location=AS PONTES"> AS PONTES</a>
+                            <a href="/page/our-shops?location=AVANCA">AVANCA </a>
+                            <a href="/page/our-shops?location=BAIONA">BAIONA </a>
+                            <a href="/page/our-shops?location=BALTAR – PAREDES">BALTAR – PAREDES </a>
+                            <a href="/page/our-shops?location=BARALLA">BARALLA </a>
+                            <a href="/page/our-shops?location=BEMBIBRE">BEMBIBRE </a>
+                            <a href="/page/our-shops?location=BETANZOS">BETANZOS </a>
+                            <a href="/page/our-shops?location=BOIRO">BOIRO </a>
+                            <a href="/page/our-shops?location=BRAGA">BRAGA </a>
+                            <a href="/page/our-shops?location=BRAGANÇA">BRAGANÇA </a>
+                            <a href="/page/our-shops?location=BURELA">BURELA </a>
+                            <a href="/page/our-shops?location=CAMBADOS">CAMBADOS </a>
+                            <a href="/page/our-shops?location=CAMBRE">CAMBRE </a>
+                            <a href="/page/our-shops?location=CANGAS">CANGAS </a>
+                            <a href="/page/our-shops?location=CARBALLIÑO">CARBALLIÑO </a>
+                            <a href="/page/our-shops?location=CARBALLO">CARBALLO </a>
+                            <a href="/page/our-shops?location=CARIÑO">CARIÑO </a>
+                            <a href="/page/our-shops?location=CASTRO">CASTRO </a>
+                            <a href="/page/our-shops?location=RIBERAS DE LEA">RIBERAS DE LEA </a>
+                            <a href="/page/our-shops?location=CEE">CEE </a>
+                            <a href="/page/our-shops?location=CELANOVA">CELANOVA </a>
+                            <a href="/page/our-shops?location=CESANTES - REDONDELA">CESANTES - REDONDELA </a>
+                            <a href="/page/our-shops?location=CHANTADA">CHANTADA </a>
+                            <a href="/page/our-shops?location=COIA-VIGO">COIA-VIGO </a>
+                            <a href="/page/our-shops?location=CORTEGADA">CORTEGADA </a>
+                            <a href="/page/our-shops?location=CORUNA">CORUÑA</a>
+                            <a href="/page/our-shops?location=DENA - MEAÑO">DENA - MEAÑO </a>
+                            <a href="/page/our-shops?location=FAFE">FAFE </a>
+                            <a href="/page/our-shops?location=FERROL">FERROL </a>
+                            <a href="/page/our-shops?location=FONSAGRADA">FONSAGRADA </a>
+                            <a href="/page/our-shops?location=FONTECULLER - CULLEREDO">FONTECULLER - CULLEREDO </a>
+                            <a href="/page/our-shops?location=FREIXEIRO - NARÓN">FREIXEIRO - NARÓN </a>
+                            <a href="/page/our-shops?location=FRIOL">FRIOL </a>
+                            <a href="/page/our-shops?location=GODIM-MAIA">GODIM-MAIA </a>
+                            <a href="/page/our-shops?location=GRIJÓ">GRIJÓ </a>
+                            <a href="/page/our-shops?location=GUIMARÃES">GUIMARÃES </a>
+                            <a href="/page/our-shops?location=LALÍN">LALÍN </a>
+                            <a href="/page/our-shops?location=LARACHA">LARACHA </a>
+                            <a href="/page/our-shops?location=LUGO">LUGO </a>
+                            <a href="/page/our-shops?location=MARÍN">MARÍN </a>
+                            <a href="/page/our-shops?location=MEIRA">MEIRA </a>
+                            <a href="/page/our-shops?location=MELIDE">MELIDE </a>
+                            <a href="/page/our-shops?location=MIÑO">MIÑO </a>
+                            <a href="/page/our-shops?location=MOAÑA">MOAÑA </a>
+                            <a href="/page/our-shops?location=MONFORTE DE LEMOS">MONFORTE DE LEMOS </a>
+                            <a href="/page/our-shops?location=MONTERROSO">MONTERROSO </a>
+                            <a href="/page/our-shops?location=MONÇAO">MONÇAO </a>
+                            <a href="/page/our-shops?location=MUROS">MUROS </a>
+                            <a href="/page/our-shops?location=NEGREIRA">NEGREIRA </a>
+                            <a href="/page/our-shops?location=NOIA">NOIA </a>
+                            <a href="/page/our-shops?location=O BARCO DE VALDEORRAS">O BARCO DE VALDEORRAS </a>
+                            <a href="/page/our-shops?location=ORDES">ORDES </a>
+                            <a href="/page/our-shops?location=OURENSE">OURENSE </a>
+                            <a href="/page/our-shops?location=PERLÍO - FENE">PERLÍO - FENE </a>
+                            <a href="/page/our-shops?location=PESADOIRA - NEGREIRA">PESADOIRA - NEGREIRA </a>
+                            <a href="/page/our-shops?location=POBRA DE TRIVES">POBRA DE TRIVES </a>
+                            <a href="/page/our-shops?location=POBRA DO CARAMIÑAL">POBRA DO CARAMIÑAL </a>
+                            <a href="/page/our-shops?location=PONTEAREAS">PONTEAREAS </a>
+                            <a href="/page/our-shops?location=PONTECALDELAS">PONTECALDELAS </a>
+                            <a href="/page/our-shops?location=PONTECESURES">PONTECESURES </a>
+                            <a href="/page/our-shops?location=PONTEDEUME">PONTEDEUME </a>
+                            <a href="/page/our-shops?location=PORRIÑO">PORRIÑO </a>
+                            <a href="/page/our-shops?location=PORRÁNS-BARRO">PORRÁNS-BARRO </a>
+                            <a href="/page/our-shops?location=PORTO DO SON RIANXO">PORTO DO SON RIANXO </a>
+                            <a href="/page/our-shops?location=RIBADAVIA">RIBADAVIA</a>
+                            <a href="/page/our-shops?location=RIBADEO">RIBADEO</a>
+                            <a href="/page/our-shops?location=RIVEIRA">RIVEIRA</a>
+                            <a href="/page/our-shops?location=SADA">SADA</a>
+                            <a href="/page/our-shops?location=SALVATERRA DE MIÑO">SALVATERRA DE MIÑO </a>
+                            <a href="/page/our-shops?location=SAN CLODIO">SAN CLODIO </a>
+                            <a href="/page/our-shops?location=SANTO TIRSO">SANTO TIRSO </a>
+                            <a href="/page/our-shops?location=SARRIA">SARRIA</a>
+                            <a href="/page/our-shops?location=SOUTELO DE MONTES">SOUTELO DE MONTES </a>
+                            <a href="/page/our-shops?location=STA. CRUZ - OLEIROS">STA. CRUZ - OLEIROS </a>
+                            <a href="/page/our-shops?location=STA. MARTA DE ORTIGUEIRA">STA. MARTA DE ORTIGUEIRA </a>
+                            <a href="/page/our-shops?location=TEIXEIRO">TEIXEIRO </a>
+                            <a href="/page/our-shops?location=TINES - VIMIANZO">TINES - VIMIANZO </a>
+                            <a href="/page/our-shops?location=TOMIÑO">TOMIÑO </a>
+                            <a href="/page/our-shops?location=TORENO">TORENO </a>
+                            <a href="/page/our-shops?location=TOURO">TOURO </a>
+                            <a href="/page/our-shops?location=TRAZO">TRAZO </a>
+                            <a href="/page/our-shops?location=TUY">TUY </a>
+                            <a href="/page/our-shops?location=VALPAÇOS">VALPAÇOS </a>
+                            <a href="/page/our-shops?location=VEGA DE ESPINAREDA">VEGA DE ESPINAREDA </a>
+                            <a href="/page/our-shops?location=VERÍN">VERÍN </a>
+                            <a href="/page/our-shops?location=VIANA DO CASTELO">VIANA DO CASTELO </a>
+                            <a href="/page/our-shops?location=VIGO">VIGO </a>
+                            <a href="/page/our-shops?location=VILA DE CRUCES">VILA DE CRUCES </a>
+                            <a href="/page/our-shops?location=VILA DO CONDE">VILA DO CONDE </a>
+                            <a href="/page/our-shops?location=VILA FRESCAINHA (SÃO PEDRO)-BA">VILA FRESCAINHA (SÃO PEDRO)-BA </a>
+                            <a href="/page/our-shops?location=VILAGARCÍA DE AROUSA">VILAGARCÍA DE AROUSA </a>
+                            <a href="/page/our-shops?location=VILALBA">VILALBA </a>
+                            <a href="/page/our-shops?location=VIVEIRO">VIVEIRO </a>
+                            <a href="/page/our-shops?location=XINZO DE LIMIA"> XINZO DE LIMIA</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </template>
+
+    <template id="snippet_image_text_lasrias_aboutus" name="Snippet About Us Las Rías">
+        <section class="s_image_text">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12 mt64 mb32">
+                        <h1>Sobre nosotros</h1>
+                    </div>
+                    <div class="col-md-6 mt32 mb32 text-right">
+                        <p>
+                            Somos la mayor red de tiendas de ferretería y bricolaje de Galicia y Portugal. 
+                            Disponemos de un moderno Centro Logístico de distribución de artículos de ferretería y bricolaje situado en la provincia de A Coruña, 
+                            para dar el mejor servicio a nuestros socios. La empresa nace en el año 1.974 como agrupación de tiendas de ferretería y 
+                            electrodomésticos, con el objetivo de disponer del mejor surtido posible de productos que les permitiera prestar un servicio 
+                            adecuado a sus clientes.  
+                        </p>
+                    </div>
+                    <div class="col-md-6 mt32 mb32">
+                        <img src="/theme_rias/static/img/about/instalacionesrias.jpg" class="img img-responsive shadow" alt="Nuestras instalaciones"/>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </template>
+
+    <template id="snippet_image_text_lasrias_aboutus_socios" name="Snippet Socios About Us Las Rías">
+        <section class="s_image_text">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6 mt32 mb32">
+                        <img src="/theme_rias/static/img/about/handshake.jpg" class="img img-responsive shadow" alt="Nuestra equipo"/>
+                    </div>
+                    <div class="col-md-6 mt64 mb32 text-right">
+                        <p>
+                            Inicialmente, la Cooperativa busca obtener el mejor precio de compra de productos para sus socios, así como mantener un stock permanente. 
+                            Con el tiempo, las actividades se han orientado hacia la prestación de servicios como la facturación y pagos centralizados para obtener 
+                            una mayor eficiencia, el asesoramiento técnico y comercial, y una fuerte orientación hacia la comercialización y el marketing.
+                        </p>
+                        <p>
+                            Un equipo de profesionales se encarga de dar soporte a las gestiones de compras, administrativas, financieras, logísticas e 
+                            informáticas para que nuestros socios dispongan del mejor servicio, y se centren en la venta a sus clientes.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </template>
+
+    <template id="snippet_image_text_lasrias_aboutus_contact" name="Snippet Contact About Us Las Rías">
+        <section class="s_image_text">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12 mt64 mb16">
+                        <h2>Contacto</h2>
+                    </div>
+                    <div class="col-md-12 mt16 mb32">
+                        <h3>Donde estamos</h3>
+                    </div>
+                    <div class="col-md-12 mt48 mb32 iframe-container">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d5806.788184157562!2d-8.299227!3d43.306009!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0xf8c6847d8100398d!2zTGFzIFLDrWFz!5e0!3m2!1ses!2sus!4v1562162861345!5m2!1ses!2sus" frameborder="0" style="border:0" allowfullscreen="true"></iframe>
+                    </div>
+                    <div class="col-md-12 mt32 mb32">
+                        <t t-esc="res_company.name"/><br/>
+                        <t t-esc="res_company.street"/><br/>
+                        <t t-esc="res_company.zip"/><br/>
+                        <t t-esc="res_company.city"/><br/>
+                        <p>
+                            Phone: <t t-esc="res_company.phone"/>
+                        </p>
+                        <p>
+                            E-mail: <t t-esc="res_company.email"/>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </template>
+
+</odoo>
