@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <template id="snippet_features_lasrias_menu" name="Menú Las Rías">
+        <section class="s_features">
+            <div class="container">
+                <div class="row mt64 mb16">
+                    <t t-foreach="website.menu_id.child_id" t-as="menu">
+                        <div t-attf-class="hidden-xs hidden-sm col-md-2 text-center {{ 'col-md-offset-1' if menu_first else '' }}">
+                            <div class="row"> 
+                                <a t-att-id="menu['id']"
+                                    t-attf-href="{{ menu['url'] if menu['url'] else ''}}">
+                                    <span t-attf-class="fa {{ menu['menu_icon'] if menu['menu_icon'] else '' }} fa-4x"></span>
+                                    <div>
+                                        <h4 class="mt16 text-muted">
+                                            <t t-esc="menu['name']" />
+                                        </h4>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </section>
+    </template>
+</odoo>
