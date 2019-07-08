@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <data noupdate="0">
+    <data noupdate="1">
 
         <!-- Home Menu -->
         <record id="menu_aboutus" model="website.menu">
@@ -9,6 +9,16 @@
             <field name="parent_id" ref="website.main_menu"/>
             <field name="sequence" type="int">20</field>
             <field name="website_id" ref="website.default_website"/>
+        </record>
+
+        <record id="las_menu_our_shops" model="website.menu">
+            <field name="name">Shops</field>
+            <field name="url">/page/our-shops</field>
+            <field name="parent_id" ref="website.main_menu"/>
+            <field name="sequence" type="int">20</field>
+            <field name="website_ids" eval="[(6, 0, [ref('website.default_website')])]"/>
+            <field name="not_portal">False</field>
+            <field name="website_published">True</field>
         </record>
 
     </data>

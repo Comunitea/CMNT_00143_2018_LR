@@ -1,0 +1,89 @@
+main {
+    & div {
+        & section.s_text_block_image_fw {
+            & div.container > div.container > div.col-md-6 {
+                & h1 {
+                    font-size: 30px;
+                    font-weight: 600;
+                    & b {
+                        color: @color-dark;
+                    }
+                }
+            } 
+        }
+    }
+
+    & div#wrap > div.container > div {
+        & section.s_three_columns {
+            & div.container > div.row {
+                & div.col-md-4 > h3.mt16 {
+                    color: @color-hv;
+                    font-weight: 600;
+                }
+                & div.col-md-12 {
+                    & h2.text-center {
+                        font-size: 5.0rem;
+                        color: @color-text;
+                        border-bottom: 1px solid @color-text;
+                    }
+                }
+                & a.btn.btn-primary {
+                    background-color: @color-hv;
+                    color: @white;
+                    border-color: @white;
+                    border-radius: 26px;
+                }
+                & a.btn.btn-primary:hover {
+                    background-color: @color-light;
+                    border-color: @color-light;
+                    color: @white;
+                }
+                & a > img.img-responsive {
+                    margin: 0 auto;
+                }            }
+        }
+        
+        & section.s_image_text {
+            & div.container > div.row {
+                & div.col-md-6 {
+                    & h3 {
+                        font-size: 4.2rem;
+                        color: @color-text;
+                    }
+                    & p {
+                        & a:nth-child(odd) {
+                            font-size: 1rem;
+                            color: @color-light;
+                        }
+                        & a:nth-child(even) {
+                            font-size: 1rem;
+                            color: @color-dark;
+                        }
+                        & a:hover {
+                            color: @color-hv;
+                        }
+                    }
+                    & a.btn.btn-primary {
+                        background-color: @color-hv;
+                        color: @white;
+                        border-color: @white;
+                        border-radius: 26px;
+                    }
+                    & a.btn.btn-primary:hover {
+                        background-color: @color-light;
+                        border-color: @color-light;
+                        color: @white;
+                    }
+                }
+                & div.col-md-12 {
+                    & h2.text-center {
+                        font-size: 5.0rem;
+                        color: @color-text;
+                        border-bottom: 1px solid @color-text;
+                    }
+                }
+            } 
+        }
+    }
+
+}

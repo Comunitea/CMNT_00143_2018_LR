@@ -1,0 +1,11 @@
+<!-- <?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <template id="website_sale_option_collapse_categories_recursive" name="Recursive categories Las Rías" inherit_id="website_sale.option_collapse_categories_recursive">
+        <xpath expr="//a" position="attributes">
+            <attribute name="t-att-href">'/category/%s' % categ.slug if categ.slug else keep('/shop/category/' + slug(categ), category=0)</attribute>
+        </xpath>
+        <xpath expr="//div[@id='products_grid_before']/ul" position="before">
+
+        </xpath>
+    </template>
+</odoo> -->

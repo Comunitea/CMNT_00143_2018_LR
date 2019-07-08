@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Slide category -->
+        <record id="category_catalogues" model="slide.category">
+            <field name="name">Catálogos</field>
+            <field name="channel_id">1</field>
+            <field name="parent_id" ref="website.main_menu"/>
+            <field name="sequence" type="int">10</field>
+        </record>
+
+        <!-- Slide Slides -->
+        <record id="slide_reformas_2019" model="slide.slide">
+            <field name="name">Reformas 2019</field>
+            <field name="datas" type="base64" file="theme_rias/static/pdf/catalogues/reformas2019es.pdf"/>
+            <field name="image" type="base64" file="theme_rias/static/img/catalogues/reformas.jpeg"/>
+            <field name="slide_type">presentation</field>
+            <field name="channel_id">1</field>
+            <field name="category_id">1</field>
+            <field name="website_published" eval="True"/>
+            <field name="index_content">Indexed content, automatically generated.</field>
+        </record>
+
+        <record id="slide_piscinas_2019" model="slide.slide">
+            <field name="name">Piscinas 2019</field>
+            <field name="datas" type="base64" file="theme_rias/static/pdf/catalogues/piscinas2019es.pdf"/>
+            <field name="image" type="base64" file="theme_rias/static/img/catalogues/piscinas.jpeg"/>
+            <field name="slide_type">presentation</field>
+            <field name="channel_id">1</field>
+            <field name="category_id">1</field>
+            <field name="website_published" eval="True"/>
+            <field name="index_content">Indexed content, automatically generated.</field>
+        </record>
+
+        <record id="slide_jardin_2019" model="slide.slide">
+            <field name="name">Jardín 2019</field>
+            <field name="datas" type="base64" file="theme_rias/static/pdf/catalogues/jardin2019es.pdf"/>
+            <field name="image" type="base64" file="theme_rias/static/img/catalogues/jardin.jpeg"/>
+            <field name="slide_type">presentation</field>
+            <field name="channel_id">1</field>
+            <field name="category_id">1</field>
+            <field name="website_published" eval="True"/>
+            <field name="index_content">Indexed content, automatically generated.</field>
+        </record>
+
+    </data>
+</odoo>
