@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-        <data noupdate="0">
+        <data>
 
             <!--Update Default Website-->
             <record id="website.default_website" model="website">
-                <field name="name">Las Rías webiste</field>
-                <field name="domain">localhost</field>
+                <field name="name">Las Rías</field>
+                <field name="domain">lasrias</field>
                 <field name="favicon" type="base64" file="website_base_rias/static/img/favicon.png"/>
             </record>
 
