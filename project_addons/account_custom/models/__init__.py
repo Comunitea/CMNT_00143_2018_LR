@@ -3,3 +3,4 @@
 
 from . import account_move_line  # noqa
 from . import account_payment_mode
+from . import account_bank_statement
