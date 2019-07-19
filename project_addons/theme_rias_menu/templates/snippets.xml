@@ -5,18 +5,18 @@
             <div class="container">
                 <div class="row mt64 mb16">
                     <t t-foreach="website.menu_id.child_id" t-as="menu">
-                        <div t-attf-class="hidden-xs hidden-sm col-md-2 text-center {{ 'col-md-offset-1' if menu_first else '' }}">
-                            <div class="row"> 
-                                <a t-att-id="menu['id']"
+                        <div t-if="menu['active']" t-attf-class="hidden-xs hidden-sm col-md-2 text-center {{ 'col-md-offset-1' if menu_first else '' }}">
+                            <a t-att-id="menu['id']"
                                     t-attf-href="{{ menu['url'] if menu['url'] else ''}}">
+                                <div class="row"> 
                                     <span t-attf-class="fa {{ menu['menu_icon'] if menu['menu_icon'] else '' }} fa-4x"></span>
                                     <div>
                                         <h4 class="mt16 text-muted">
                                             <t t-esc="menu['name']" />
                                         </h4>
                                     </div>
-                                </a>
-                            </div>
+                                </div>
+                            </a>
                         </div>
                     </t>
                 </div>

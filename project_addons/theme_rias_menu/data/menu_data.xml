@@ -10,6 +10,7 @@
             <field name="sequence" type="int">1</field>
             <field name="menu_icon">fa-home</field>
             <field name="website_id" ref="website.default_website"/>
+            <field name="active">True</field>
         </record>
 
         <record id="menu_catalogues" model="website.menu">
@@ -19,6 +20,7 @@
             <field name="sequence" type="int">2</field>
             <field name="menu_icon">fa-map</field>
             <field name="website_id" ref="website.default_website"/>
+            <field name="active">True</field>
         </record>
 
         <record id="menu_ourshops" model="website.menu">
@@ -28,6 +30,7 @@
             <field name="sequence" type="int">3</field>
             <field name="menu_icon">fa-map-marker</field>
             <field name="website_id" ref="website.default_website"/>
+            <field name="active">True</field>
         </record>
 
         <record id="menu_shop" model="website.menu">
@@ -37,6 +40,7 @@
             <field name="sequence" type="int">4</field>
             <field name="menu_icon">fa-th</field>
             <field name="website_id" ref="website.default_website"/>
+            <field name="active">True</field>
         </record>
 
         <record id="menu_aboutus" model="website.menu">
@@ -46,6 +50,7 @@
             <field name="sequence" type="int">20</field>
             <field name="menu_icon">fa-question-circle-o</field>
             <field name="website_id" ref="website.default_website"/>
+            <field name="active">True</field>
         </record>
 
     </data>
