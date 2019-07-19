@@ -50,7 +50,7 @@
         'templates/page_home.xml',
         'templates/page_our_shops.xml',
         'templates/page_catalogues.xml',
-        'templates/page_about_us.xml'
+        'templates/page_about_us.xml',
     ],
     'images': [
         '/static/description/icon.png',

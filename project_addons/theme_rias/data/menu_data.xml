@@ -11,7 +11,7 @@
             <field name="website_id" ref="website.default_website"/>
         </record>
 
-        <record id="las_menu_our_shops" model="website.menu">
+        <record id="menu_our_shops" model="website.menu">
             <field name="name">Shops</field>
             <field name="url">/page/our-shops</field>
             <field name="parent_id" ref="website.main_menu"/>
