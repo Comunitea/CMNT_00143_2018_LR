@@ -7,7 +7,6 @@
 var shopEventManager = Class.extend({
 
     start: function () {
-        console.log("START HOSTIA");
         return this._super.apply(this, arguments);
     },
 
@@ -296,6 +295,12 @@ odoo.define('website_sale.website_sale', function (require) {
                 }
           });
         }, 500);
+
+        if (value > 0) {
+            $dom.find('.js_delete_product').removeClass('hidden');
+        } else {
+            $dom.find('.js_delete_product').addClass('hidden');
+        }
     });
 
     $(".oe_website_sale").on('click', '.js_delete_product', function(e) {
