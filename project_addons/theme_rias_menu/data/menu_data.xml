@@ -3,6 +3,16 @@
     <data noupdate="1">
 
         <!-- Home Menu -->
+        <record id="website.main_menu" model="website.menu">
+            <field name="name">Top Menu</field>
+            <field name="url"></field>
+            <field name="parent_id" ref=""/>
+            <field name="sequence" type="int">0</field>
+            <field name="menu_icon"></field>
+            <field name="website_id" ref="website.default_website"/>
+            <field name="active">True</field>
+        </record>
+
         <record id="menu_home" model="website.menu">
             <field name="name">Home</field>
             <field name="url">/</field>
@@ -23,7 +33,7 @@
             <field name="active">True</field>
         </record>
 
-        <record id="menu_ourshops" model="website.menu">
+        <record id="theme_rias.menu_ourshops" model="website.menu">
             <field name="name">Our shops</field>
             <field name="url">/page/our-shops</field>
             <field name="parent_id" ref="website.main_menu"/>
@@ -43,7 +53,7 @@
             <field name="active">True</field>
         </record>
 
-        <record id="menu_aboutus" model="website.menu">
+        <record id="theme_rias.menu_aboutus" model="website.menu">
             <field name="name">About us</field>
             <field name="url">/aboutus</field>
             <field name="parent_id" ref="website.main_menu"/>
@@ -51,6 +61,14 @@
             <field name="menu_icon">fa-question-circle-o</field>
             <field name="website_id" ref="website.default_website"/>
             <field name="active">True</field>
+        </record>
+
+        <record id="website_slides.website_menu_slides" model="website.menu">
+            <field name="name">Presentations</field>
+            <field name="url">/slides</field>
+            <field name="parent_id" ref="website.main_menu"/>
+            <field name="sequence" type="int">50</field>
+            <field name="active">False</field>
         </record>
 
     </data>

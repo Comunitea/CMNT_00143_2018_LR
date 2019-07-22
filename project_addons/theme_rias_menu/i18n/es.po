@@ -1,0 +1,87 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* theme_rias_menu
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 11.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-07-22 13:17+0000\n"
+"PO-Revision-Date: 2019-07-22 13:17+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: theme_rias_menu
+#: model:ir.model.fields,field_description:theme_rias_menu.field_website_menu_active
+msgid "Active"
+msgstr "Activo"
+
+#. module: theme_rias_menu
+#: model:website.menu,name:theme_rias_menu.menu_catalogues
+msgid "Catalogues"
+msgstr "Catálogos"
+
+#. module: theme_rias_menu
+#: model:ir.model.fields,help:theme_rias_menu.field_website_menu_active
+msgid "Defines if the menu should be active or not."
+msgstr "Define si el menú debe ser visible o no."
+
+#. module: theme_rias_menu
+#: model:website.menu,name:theme_rias_menu.menu_home
+msgid "Home"
+msgstr "Inicio"
+
+#. module: theme_rias_menu
+#: model:ir.model.fields,field_description:theme_rias_menu.field_website_menu_menu_icon
+msgid "Icon"
+msgstr "Icono"
+
+#. module: theme_rias_menu
+#: model:ir.ui.view,name:theme_rias_menu.snippet_features_lasrias_menu
+msgid "Menú Las Rías"
+msgstr "Menú Las Rías"
+
+#. module: theme_rias_menu
+#: model:website.menu,name:theme_rias_menu.menu_shop
+msgid "Products"
+msgstr "Productos"
+
+#. module: theme_rias
+#: model:website.menu,name:theme_rias.menu_ourshops
+msgid "Our shops"
+msgstr "Tiendas"
+
+#. module: theme_rias
+#: model:website.menu,name:theme_rias.menu_aboutus
+msgid "About us"
+msgstr "Quiénes somos"
+
+#. module: theme_rias_menu
+#: model:ir.ui.view,name:theme_rias_menu.snippet_cover_lasrias_menu
+msgid "Snippet LasRias Menu"
+msgstr "Snippet LasRias Menu"
+
+#. module: theme_rias_menu
+#: model:ir.model,name:theme_rias_menu.model_website_menu
+msgid "Website Menu"
+msgstr "Menú del sitio web"
+
+#. module: theme_rias_menu
+#: model:ir.model.fields,help:theme_rias_menu.field_website_menu_menu_icon
+msgid "You can check the full list of icons at https://fontawesome.com/cheatsheet?from=io"
+msgstr "Puedes la lista completa de iconos aquí: https://fontawesome.com/cheatsheet?from=io"
+
+#. module: theme_rias_menu
+#: model:ir.ui.view,name:theme_rias_menu.rias_website_assets_frontend
+msgid "rias_website_assets_frontend"
+msgstr "rias_website_assets_frontend"
+
+#. module: theme_rias_menu
+#: model:ir.ui.view,name:theme_rias_menu.website_menu_lasrias_menu_tree
+msgid "website_menu_lasrias_menu_tree"
+msgstr "website_menu_lasrias_menu_tree"
+
