@@ -84,8 +84,7 @@
                                             <span t-field="product.list_price" style="white-space: nowrap;" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}" groups="sale.group_show_price_subtotal" />
                                         </td>
                                         <td class="text-right">
-                                            <!-- <span t-field="product.qty_available"/> -->
-                                            <span>T.B.D.</span>
+                                            <span t-field="product.qty_available"/>
                                         </td>
                                         <td class="text-right td-img">
                                             <a t-if="product.image" href="#" class="image-call">
@@ -128,8 +127,7 @@
                                             <span t-field="variant_id.list_price" style="white-space: nowrap;" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}" groups="sale.group_show_price_subtotal" />
                                         </td>
                                         <td class="text-right">
-                                            <!-- <span t-field="variant_id.qty_available"/> -->
-                                            <span>T.B.D.</span>
+                                            <span t-field="variant_id.qty_available"/>
                                         </td>
                                         <td class="text-right td-img">
                                             <a t-if="variant_id.image or product.image" href="#" class="image-call">
@@ -154,24 +152,5 @@
             <div id="rpc_modal"></div>
         </xpath>
     </template>
-
-    <!-- Test  -->
-    <!-- <template id="product_grid_group_control" name="Shop Group Control Las Rías" inherit_id="website_sale.products">
-        <xpath expr="//div[@id='products_grid']" position="inside">
-            <t t-set="user_group_access" t-value="website.check_user_group()"/>
-            <t t-if="user_group_access == True">
-                <t t-call="theme_rias_multi_cart.product_grid_las"/>
-            </t>
-        </xpath>
-    </template>
-
-    <template id="las_template_multi_cart_menu_view_group_control" inherit_id="breadcrumbs_base.bcb_main_wrap">
-        <xpath expr="//div[hasclass('wp_breadcrumbs_base')]" position="inside">
-            <t t-set="user_group_access" t-value="website.check_user_group()"/>
-            <t t-if="user_group_access == True">
-                <t t-call="theme_rias_multi_cart.las_template_multi_cart_menu_view"/>
-            </t>
-        </xpath>
-    </template> -->
 
 </odoo>

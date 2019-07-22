@@ -132,10 +132,3 @@ class Website(models.Model):
         products_ids = website_sale_order.website_order_line.mapped('product_id').ids
         product_tmpl_ids = self.env['product.product'].browse(products_ids).mapped('product_tmpl_id').ids        
         return product_tmpl_ids
-
-    @api.multi
-    def check_user_group(self):
-        if self.env.user.has_group('sale.group_show_price_subtotal'):
-            return True
-        else:
-            return False
