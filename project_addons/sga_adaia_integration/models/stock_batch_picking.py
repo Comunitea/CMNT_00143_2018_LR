@@ -4,19 +4,13 @@
 
 from odoo import fields, models, tools, api, _
 from odoo.exceptions import AccessError, UserError, ValidationError
-from pprint import pprint
+from .res_config import SGA_STATES
 
 class StockBatchPickingSGA(models.Model):
 
     _inherit = "stock.batch.picking"
 
-    sga_state = fields.Selection ([('NI', 'Sin integracion'),
-                                   ('NE', 'No exportado'),
-                                   ('PM', 'Pendiente Adaia'),
-                                   ('EE', 'Error en exportacion'),
-                                   ('EI', 'Error en importacion'),
-                                   ('MT', 'Realizado'),
-                                   ('MC', 'Cancelado')], 'Estado Adaia', default="NE", track_visibility='onchange', copy=False)
+    sga_state = fields.Selection(SGA_STATES)
 
     def button_move_to_done(self):
         return self.move_to_done
@@ -25,8 +19,8 @@ class StockBatchPickingSGA(models.Model):
     def move_to_done(self):
         pickings = self.mapped('picking_ids')
         picks = pickings.filtered(lambda x: x.sga_state != 'NI')
-        picks.write({'sga_state': 'MT'})
-        self.write({'sga_state': 'MT'})
+        picks.write({'sga_state': 'SR'})
+        self.write({'sga_state': 'SR'})
 
 
     def button_move_to_NE(self):
@@ -34,7 +28,7 @@ class StockBatchPickingSGA(models.Model):
 
     @api.multi
     def move_to_NE(self):
-        sga_states_to_NE = ('PM', 'EI', 'EE', 'MT', 'MC', False)
+        sga_states_to_NE = ('PS', 'EI', 'EE', 'SR', 'SC', False)
         pickings = self.mapped('picking_ids')
         picks = pickings.filtered(lambda x: x.sga_integrated and x.sga_state in sga_states_to_NE)
         self.write({'sga_state': 'NE'})
@@ -82,8 +76,8 @@ class StockBatchPickingSGA(models.Model):
                 picks.append(pick.id)
 
         if picks:
-            self.write({'sga_state': 'PM'})
-            self.env['stock.picking'].browse(picks).write({'sga_state': 'PM'})
+            self.write({'sga_state': 'PS'})
+            self.env['stock.picking'].browse(picks).write({'sga_state': 'SR'})
         else:
             raise ValidationError("No hay albaranes para enviar a Adaia")
         return True

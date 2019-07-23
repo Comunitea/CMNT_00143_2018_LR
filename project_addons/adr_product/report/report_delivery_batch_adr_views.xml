@@ -33,9 +33,9 @@
                     <div class="col-xs-4">
                         <div class="panel panel-info break-word" style="border: none;">
                             <div class="panel-body">
-                                <img t-if="company_data" t-att-src="'data:image/png;base64,%s' % to_text(company_id['logo_web'])"/>
+                                <img t-if="company_id" t-att-src="'data:image/png;base64,%s' % to_text(company_id['logo_web'])"/>
                                 <div class='o_div_text_overflow' t-field="company_id.partner_id" t-options="{'widget': 'contact','fields': ['name', 'address'], 'no_marker': True}" />
-                                <t t-if="company_data"  t-esc="company_id['vat']"/><br/>
+                                <t t-if="company_id"  t-esc="company_id['vat']"/><br/>
                             </div>
                         </div>
                     </div>
@@ -73,12 +73,12 @@
                     </div>
                     <div class="col-xs-5 col-xs-offset-2" style="border: solid 1px black;  margin-bottom: 5px;">
                         <div class="panel panel-info break-word" style="border: none;">
-                            <div t-if="doc.carrier_partner_id" class="panel-body">
-                                <div class='o_div_text_overflow' t-field="doc.carrier_partner_id" t-options="{'widget': 'contact','fields': ['name', 'address', 'vat', 'vehicle'], 'no_marker': True}"/>
-                                <t t-if="delivery_carrier_data"  t-esc="delivery_carrier_data['vat']"/><br/>
-                                Matrícula: <t t-if="delivery_carrier_data"  t-esc="delivery_carrier_data['vehicle']"/><br/>
+                            <div t-if="doc.route_driver_id" class="panel-body">
+                                <div class='o_div_text_overflow' t-field="doc.route_driver_id" t-options="{'widget': 'contact','fields': ['name', 'address', 'vat', 'vehicle'], 'no_marker': True}"/>
+                                <t t-if="doc.route_driver_id"  t-esc="doc.route_driver_id['vat']"/><br/>
+                                Matrícula: <t t-if="doc.route_plate_id"  t-esc="doc.route_plate_id.name"/><br/>
                             </div>
-                            <div t-if="not doc.carrier_partner_id" class="panel-body">
+                            <div t-if="not doc.route_driver_id" class="panel-body">
                                 <p>No se ha seleccionado un transportista para este envío.</p>
                             </div>
                         </div>

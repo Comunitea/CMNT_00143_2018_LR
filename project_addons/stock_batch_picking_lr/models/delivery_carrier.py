@@ -8,4 +8,4 @@ from odoo import fields, models
 class DeliveryCarrier(models.Model):
     _inherit = 'delivery.carrier'
     
-    partner_ids = fields.One2many('res.partner', 'delivery_id', string="Carrier Drivers", copy=True)
+    route_ids = fields.Many2many('delivery.route.path', string="Routes")

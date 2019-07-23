@@ -13,6 +13,7 @@
         'stock'
     ],
     'data': [
+        'data/cron.xml',
         'views/product_view.xml',
         'views/sale.xml',
         'wizard/sale_invoice_on_date.xml',

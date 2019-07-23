@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_ulma_form" model="ir.ui.view">
+        <field name="name">res.config.settings.ulma.form</field>
+        <field name="inherit_id" ref="stock.res_config_settings_view_form"/>
+        <field name="model">res.config.settings</field>
+        <field name="arch" type="xml">
+            <xpath expr="//h2[@id='schedule_info']" position="before">
+                <h2>Ulma database configuration</h2>
+                <div class="o_settings_container">
+                    <group>
+                        <group>
+                            <field name="ulma_user"/>
+                            <field name="ulma_pass"/>
+                            <field name="ulma_host"/>
+                            <field name="ulma_sid"/>
+                            <field name="fdw"/>
+                        </group>
+                        <group>
+                            <field name="ulma_port" widget="number"/>
+                            <field name="ulma_database"/>
+                            <field name="mmmout_table"/>
+                            <field name="mmminp_table"/>
+                            <field name="packing_table"/>
+                        </group>
+                    </group>
+                    <group>
+                        <h4>Init Oracle Extension</h4><br/>
+                        <group>
+                            <button name="check_extension" string="Check Ext." type="object"/>
+                            <field name="oracle_extension" readonly="1"/>
+                            <button name="init_extension" string="Init ext." class="oe_highlight" type="object" attrs="{'invisible': [('oracle_extension', '=', True)]}"/>
+                            <field name="oracle_server" readonly="1"/>
+                            <button name="link_to_server" string="Link to server" class="oe_highlight" type="object" attrs="{'invisible': [('oracle_server', '=', True)]}"/>
+                        </group>
+                        <group>
+                            <button name="create_tables" string="Create tables" class="oe_highlight" type="object" attrs="{'invisible': [('oracle_mmmout', '=', True),('oracle_mmminp', '=', True),('oracle_packing', '=', True)]}"/>
+                            <field name="oracle_mmmout" readonly="1"/>
+                            <button name="create_table_mmmout" string="Create table MMMOUT" class="oe_highlight" type="object" attrs="{'invisible': [('oracle_mmmout', '=', True)]}"/>
+                            <field name="oracle_mmminp" readonly="1"/>
+                            <button name="create_table_mmminp" string="Create table MMMINP" class="oe_highlight" type="object" attrs="{'invisible': [('oracle_mmminp', '=', True)]}"/>
+                            <field name="oracle_packing" readonly="1"/>
+                            <button name="create_table_packing" string="Create table packing" class="oe_highlight" type="object" attrs="{'invisible': [('oracle_packing', '=', True)]}"/>
+                        </group>
+                        <group>
+                            <button name="drop_tables" string="Drop tables" class="oe_highlight" type="object" attrs="{'invisible': [('oracle_mmmout', '=', False),('oracle_mmminp', '=', False),('oracle_packing', '=', False)]}"/>
+                            <button name="drop_mmmout" string="Drop mmmout table" class="oe_highlight" type="object" attrs="{'invisible': [('oracle_mmmout', '=', False)]}"/>
+                            <button name="drop_mmminp" string="Drop mmminp table" class="oe_highlight" type="object" attrs="{'invisible': [('oracle_mmminp', '=', False)]}"/>
+                            <button name="drop_packinglist" string="Drop packinglist table" class="oe_highlight" type="object" attrs="{'invisible': [('oracle_packing', '=', False)]}"/>
+                        </group>
+                    </group>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+     <menuitem id="menu_sga_ulma" name="SGA ULMA" parent="stock.menu_stock_config_settings" groups="stock.group_stock_manager"
+        sequence="26" />
+</odoo>

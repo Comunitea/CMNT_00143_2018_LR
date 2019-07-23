@@ -1,0 +1,326 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* stock_move_selection_wzd
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 11.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-05-20 11:39+0000\n"
+"PO-Revision-Date: 2019-05-20 11:39+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: stock_move_selection_wzd
+#: model:ir.ui.menu,name:stock_move_selection_wzd.menu_stock_move_sel_all
+msgid "All moves"
+msgstr "Todos los movimientos"
+
+#. module: stock_move_selection_wzd
+#: model:ir.actions.server,name:stock_move_selection_wzd.action_assign_picking
+msgid "Asignar albarán"
+msgstr "Asignar albarán"
+
+#. module: stock_move_selection_wzd
+#: model:ir.ui.view,arch_db:stock_move_selection_wzd.view_move_sel_kanban
+msgid "Assign picking"
+msgstr "Asignar albarán"
+
+#. module: stock_move_selection_wzd
+#: model:ir.model.fields,field_description:stock_move_selection_wzd.field_stock_picking_type_group_code
+msgid "Code group"
+msgstr "Código"
+
+#. module: stock_move_selection_wzd
+#: model:ir.ui.view,arch_db:stock_move_selection_wzd.stock_move_view_sel_search
+msgid "Company"
+msgstr "Compañía"
+
+#. module: stock_move_selection_wzd
+#: model:ir.actions.server,name:stock_move_selection_wzd.action_deassign_picking
+msgid "Desasignar albarán"
+msgstr "Desasignar albarán"
+
+#. module: stock_move_selection_wzd
+#: model:ir.ui.view,arch_db:stock_move_selection_wzd.stock_move_view_sel_search
+msgid "Dest"
+msgstr "Destino"
+
+#. module: stock_move_selection_wzd
+#: model:ir.ui.view,arch_db:stock_move_selection_wzd.view_pickingtype_filter
+msgid "Destino"
+msgstr "Destino"
+
+#. module: stock_move_selection_wzd
+#: model:ir.ui.view,arch_db:stock_move_selection_wzd.stock_move_view_sel_search
+msgid "Done"
+msgstr "Realizada"
+
+#. module: stock_move_selection_wzd
+#: model:ir.ui.view,arch_db:stock_move_selection_wzd.stock_move_view_sel_search
+#: model:ir.ui.view,arch_db:stock_move_selection_wzd.view_pickingtype_filter
+msgid "Group By"
+msgstr "Agrupar por"
+
+#. module: stock_move_selection_wzd
+#: model:ir.ui.view,arch_db:stock_move_selection_wzd.view_pickingtype_filter
+msgid "Group code"
+msgstr "Código"
+
+#. module: stock_move_selection_wzd
+#: model:ir.ui.view,arch_db:stock_move_selection_wzd.stock_move_view_sel_search
+#: model:ir.ui.view,arch_db:stock_move_selection_wzd.view_pickingtype_filter
+#: selection:stock.picking.type,group_code:0
+msgid "Incoming"
+msgstr "Recepción"
+
+#. module: stock_move_selection_wzd
+#: model:ir.actions.server,name:stock_move_selection_wzd.stock_move_sel_action_incoming
+msgid "Incoming Moves"
+msgstr "Recepciones"
+
+#. module: stock_move_selection_wzd
+#: model:ir.ui.menu,name:stock_move_selection_wzd.menu_stock_move_sel_incoming
+msgid "Incoming moves"
+msgstr "Recepciones"
+
+#. module: stock_move_selection_wzd
+#: model:ir.ui.view,arch_db:stock_move_selection_wzd.stock_move_view_sel_search
+#: model:ir.ui.view,arch_db:stock_move_selection_wzd.view_pickingtype_filter
+#: selection:stock.picking.type,group_code:0
+msgid "Internal"
+msgstr "Interno"
+
+#. module: stock_move_selection_wzd
+#: model:ir.actions.server,name:stock_move_selection_wzd.stock_move_sel_action_internal
+msgid "Internal Moves"
+msgstr "Internos"
+
+#. module: stock_move_selection_wzd
+#: model:ir.ui.menu,name:stock_move_selection_wzd.stock_move_sel_menu_internal
+msgid "Internal moves"
+msgstr "Internos"
+
+#. module: stock_move_selection_wzd
+#: model:ir.ui.view,arch_db:stock_move_selection_wzd.stock_move_view_sel_search
+#: model:ir.ui.view,arch_db:stock_move_selection_wzd.view_pickingtype_filter
+#: selection:stock.picking.type,group_code:0
+msgid "Location"
+msgstr "Entrada"
+
+#. module: stock_move_selection_wzd
+#: model:ir.actions.server,name:stock_move_selection_wzd.stock_move_sel_action_location
+msgid "Location Moves"
+msgstr "Entradas"
+
+#. module: stock_move_selection_wzd
+#: model:ir.ui.menu,name:stock_move_selection_wzd.stock_move_sel_menu_location
+msgid "Location moves"
+msgstr "Entradas"
+
+#. module: stock_move_selection_wzd
+#: code:addons/stock_move_selection_wzd/models/stock_picking.py:36
+#, python-format
+msgid "More than 1 pick for '%s'"
+msgstr "Mas de un tipo de albarán'%s'"
+
+#. module: stock_move_selection_wzd
+#: model:ir.ui.view,arch_db:stock_move_selection_wzd.view_move_line_tree_sel
+msgid "Move Lines"
+msgstr "Apuntes contables"
+
+#. module: stock_move_selection_wzd
+#: model:ir.ui.menu,name:stock_move_selection_wzd.stock_move_sel_menu
+msgid "Moves panel"
+msgstr "Movimientos"
+
+#. module: stock_move_selection_wzd
+#: code:addons/stock_move_selection_wzd/models/stock_picking.py:34
+#, python-format
+msgid "Not pick for '%s'"
+msgstr "No hay albarán para '%s'"
+
+#. module: stock_move_selection_wzd
+#: model:ir.ui.view,arch_db:stock_move_selection_wzd.stock_move_view_sel_search
+#: model:ir.ui.view,arch_db:stock_move_selection_wzd.view_pickingtype_filter
+msgid "Origin"
+msgstr "Origen"
+
+#. module: stock_move_selection_wzd
+#: model:ir.ui.view,arch_db:stock_move_selection_wzd.stock_move_view_sel_search
+#: model:ir.ui.view,arch_db:stock_move_selection_wzd.view_pickingtype_filter
+#: selection:stock.picking.type,group_code:0
+msgid "Other"
+msgstr "Otro"
+
+#. module: stock_move_selection_wzd
+#: model:ir.actions.server,name:stock_move_selection_wzd.stock_move_sel_action_other
+msgid "Other Moves"
+msgstr "Otros ..."
+
+#. module: stock_move_selection_wzd
+#: model:ir.ui.menu,name:stock_move_selection_wzd.stock_move_sel_menu_other
+msgid "Other moves"
+msgstr "Otros ..."
+
+#. module: stock_move_selection_wzd
+#: model:ir.ui.view,arch_db:stock_move_selection_wzd.stock_move_view_sel_search
+#: model:ir.ui.view,arch_db:stock_move_selection_wzd.view_pickingtype_filter
+#: selection:stock.picking.type,group_code:0
+msgid "Outgoing"
+msgstr "Salida"
+
+#. module: stock_move_selection_wzd
+#: model:ir.actions.server,name:stock_move_selection_wzd.stock_move_sel_action_outgoing
+msgid "Outgoing Moves"
+msgstr "Salidas"
+
+#. module: stock_move_selection_wzd
+#: model:ir.ui.menu,name:stock_move_selection_wzd.stock_move_sel_menu_outgoing
+msgid "Outgoing moves"
+msgstr "Salidas"
+
+#. module: stock_move_selection_wzd
+#: model:ir.model,name:stock_move_selection_wzd.model_stock_move_line
+msgid "Packing Operation"
+msgstr "Operación de empaquetado"
+
+#. module: stock_move_selection_wzd
+#: model:ir.ui.view,arch_db:stock_move_selection_wzd.stock_move_view_sel_search
+msgid "Partner"
+msgstr "Empresa"
+
+#. module: stock_move_selection_wzd
+#: model:ir.ui.view,arch_db:stock_move_selection_wzd.stock_move_view_sel_search
+#: model:ir.ui.view,arch_db:stock_move_selection_wzd.view_pickingtype_filter
+#: selection:stock.picking.type,group_code:0
+msgid "Picking"
+msgstr "Albarán"
+
+#. module: stock_move_selection_wzd
+#: model:ir.actions.server,name:stock_move_selection_wzd.stock_move_sel_action_picking
+msgid "Picking Moves"
+msgstr "Picking"
+
+#. module: stock_move_selection_wzd
+#: model:ir.ui.menu,name:stock_move_selection_wzd.stock_move_sel_menu_picking
+msgid "Picking moves"
+msgstr "Picking"
+
+#. module: stock_move_selection_wzd
+#: model:ir.actions.act_window,name:stock_move_selection_wzd.stock_move_sel_action2
+#: model:ir.actions.server,name:stock_move_selection_wzd.stock_move_sel_action_all
+msgid "Product Moves"
+msgstr "Movimientos de producto"
+
+#. module: stock_move_selection_wzd
+#: model:ir.ui.view,arch_db:stock_move_selection_wzd.stock_move_view_sel_search
+msgid "Purchase order"
+msgstr "Compra"
+
+#. module: stock_move_selection_wzd
+#: model:ir.ui.view,arch_db:stock_move_selection_wzd.view_move_line_tree_sel
+msgid "Quantity Ordered"
+msgstr "Cant. ordenada"
+
+#. module: stock_move_selection_wzd
+#: model:ir.ui.view,arch_db:stock_move_selection_wzd.stock_move_view_sel_search
+msgid "Reference"
+msgstr "Referencia"
+
+#. module: stock_move_selection_wzd
+#: model:ir.ui.view,arch_db:stock_move_selection_wzd.view_move_sel_kanban
+msgid "Register lots, packs, location"
+msgstr "Registrar lotes, paquetes, ubicación"
+
+#. module: stock_move_selection_wzd
+#: model:ir.ui.view,arch_db:stock_move_selection_wzd.stock_move_view_sel_search
+#: model:ir.ui.view,arch_db:stock_move_selection_wzd.view_pickingtype_filter
+#: selection:stock.picking.type,group_code:0
+msgid "Reposition"
+msgstr "Reposition"
+
+#. module: stock_move_selection_wzd
+#: model:ir.actions.server,name:stock_move_selection_wzd.stock_move_sel_action_reposition
+msgid "Reposition Moves"
+msgstr "Reposiciones"
+
+#. module: stock_move_selection_wzd
+#: model:ir.ui.menu,name:stock_move_selection_wzd.stock_move_sel_menu_reposition
+msgid "Reposition moves"
+msgstr "Reposiciones"
+
+#. module: stock_move_selection_wzd
+#: model:ir.ui.view,arch_db:stock_move_selection_wzd.stock_move_view_sel_search
+msgid "Sale order"
+msgstr "Venta"
+
+#. module: stock_move_selection_wzd
+#: model:ir.ui.view,arch_db:stock_move_selection_wzd.stock_move_view_sel_search
+msgid "Status"
+msgstr "Estado"
+
+#. module: stock_move_selection_wzd
+#: model:ir.model,name:stock_move_selection_wzd.model_stock_move
+msgid "Stock Move"
+msgstr "Movimiento de Stock"
+
+#. module: stock_move_selection_wzd
+#: model:ir.ui.view,arch_db:stock_move_selection_wzd.stock_move_view_sel_search
+msgid "Stock Moves"
+msgstr "Movimientos de Stock"
+
+#. module: stock_move_selection_wzd
+#: model:ir.ui.view,arch_db:stock_move_selection_wzd.view_pickingtype_filter
+msgid "Supplier"
+msgstr "Proveedor"
+
+#. module: stock_move_selection_wzd
+#: model:ir.model,name:stock_move_selection_wzd.model_stock_picking_type
+msgid "The operation type determines the picking view"
+msgstr "El tipo de operación determina la vista de la operación"
+
+#. module: stock_move_selection_wzd
+#: model:ir.ui.view,arch_db:stock_move_selection_wzd.stock_move_view_sel_search
+msgid "To assign ref."
+msgstr "Para asignar."
+
+#. module: stock_move_selection_wzd
+#: model:ir.ui.view,arch_db:stock_move_selection_wzd.stock_move_view_sel_search
+msgid "To pick"
+msgstr "Sin albarán"
+
+#. module: stock_move_selection_wzd
+#: model:ir.model,name:stock_move_selection_wzd.model_stock_picking
+msgid "Transfer"
+msgstr "Transferir"
+
+#. module: stock_move_selection_wzd
+#: model:ir.model.fields,field_description:stock_move_selection_wzd.field_stock_move_dunmy_picking_id
+msgid "Transfer Reference"
+msgstr "Referencia de transferencia"
+
+#. module: stock_move_selection_wzd
+#: model:ir.ui.view,arch_db:stock_move_selection_wzd.stock_move_view_sel_search
+msgid "Type"
+msgstr "Tipo"
+
+#. module: stock_move_selection_wzd
+#: model:ir.ui.view,arch_db:stock_move_selection_wzd.view_move_sel_kanban
+msgid "Unlink picking"
+msgstr "Desalbaranar"
+
+#. module: stock_move_selection_wzd
+#: model:ir.ui.view,arch_db:stock_move_selection_wzd.stock_move_view_sel_search
+msgid "Waiting"
+msgstr "En espera"
+
+#. module: stock_move_selection_wzd
+#: model:ir.ui.view,arch_db:stock_move_selection_wzd.stock_move_view_sel_search
+msgid "With pick"
+msgstr "Con albarán"
+

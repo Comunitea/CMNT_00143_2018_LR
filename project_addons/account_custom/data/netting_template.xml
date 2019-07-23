@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="0">
+    <template id="netting_adviser_body_template">
+        <html>
+            <head>
+            </head>
+            <t t-set="partner" t-value="email_template._context.get('obj')" />
+            <t t-set="company" t-debug='ipdb' t-value="partner and partner.company_id or email_template.env.user.company_id or email_template._context.get('company')" />
+            <t t-set="invoice" t-value="email_template._context.get('moves')[0].invoice_id" />
+            <body style="margin: 0; padding: 0;">
+                <table border="0" width="100%" cellpadding="0" bgcolor="#ededed" style="padding: 20px; background-color: #ededed; border-collapse:separate;" summary="o_mail_notification">
+                    <tbody>
+                        <!-- HEADER -->
+                        <tr>
+                            <td align="center" style="min-width: 590px;">
+                                <table width="590" border="0" cellpadding="0" bgcolor="#875A7B" style="min-width: 590px; background-color: rgb(135,90,123); padding: 20px; border-collapse:separate;">
+                                    <tbody>
+                                        <tr>
+                                            <td valign="middle">
+                                                <span style="font-size:20px; color:white; font-weight: bold;">
+                                                    Hola
+                                                    <span t-field="partner.name" />
+                                                </span>
+                                            </td>
+                                            <td valign="middle" align="right">
+                                                <img t-att-src="'/logo.png?company=' + str(company.id)" style="padding: 0px; margin: 0px; height: auto; width: 80px;" t-att-alt="company.name" />
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                        <!-- CONTENT -->
+                        <tr>
+                            <td align="center" style="min-width: 590px;">
+                                <table width="590" border="0" cellpadding="0" bgcolor="#ffffff" style="min-width: 590px; background-color: rgb(255, 255, 255); padding: 20px; border-collapse:separate;">
+
+                                    <tbody>
+                                        <td valign="top" style="font-family:Arial,Helvetica,sans-serif; color: #555; font-size: 14px;">
+                                            Se han compensado las siguientes facturas:
+                                            <table style="width: 100%; text-align: center; border-collapse: collapse; border: 1px solid black">
+                                                <thead>
+                                                    <tr>
+                                                        <th style="padding: 5px 7px;font-size: 15px; font-weight: normal;border: 1px solid black">Fecha factura</th>
+                                                        <th style="padding: 5px 7px;font-size: 15px; font-weight: normal;border: 1px solid black">Número de factura</th>
+                                                        <th style="padding: 5px 7px;font-size: 15px; font-weight: normal;border: 1px solid black">Importe factura</th>
+                                                        <th style="padding: 5px 7px;font-size: 15px; font-weight: normal;border: 1px solid black">Fecha vencimiento</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr t-foreach="email_template._context.get('moves')" t-as="move_line">
+                                                        <td style="padding: 5px 7px;font-size: 13px;border: 1px solid black"><span t-field="move_line.invoice_id.date_invoice"/></td>
+                                                        <t t-if="move_line.invoice_id.type == 'out_invoice'">
+                                                            <td style="padding: 5px 7px;font-size: 13px;border: 1px solid black"><span t-field="move_line.invoice_id.number"/></td>
+                                                        </t>
+                                                        <t t-if="move_line.invoice_id.type == 'in_invoice'">
+                                                            <td style="padding: 5px 7px;font-size: 13px;border: 1px solid black"><span t-field="move_line.invoice_id.reference"/></td>
+                                                        </t>
+                                                        <td style="padding: 5px 7px;font-size: 13px;border: 1px solid black"><span t-field="move_line.invoice_id.amount_total"/></td>
+                                                        <td style="padding: 5px 7px;font-size: 13px;border: 1px solid black"><span t-field="move_line.invoice_id.date_due"/></td>
+                                                    </tr>
+                                                </tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        <td colspan="2" style="font-size: 15px; font-weight: normal; text-align: center;border: 1px solid black">Saldo a su favor</td>
+                                                        <td style="font-size: 14px;border: 1px solid black"><span t-esc="sum([x.invoice_id.residual for x in email_template._context.get('moves')])"
+                                                            t-options='{"widget": "monetary", "display_currency": invoice.currency_id}'/></td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        </td>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                        <!-- FOOTER -->
+                        <tr>
+                            <td align="center" style="min-width: 590px;">
+                                <table width="590" border="0" cellpadding="0" bgcolor="#875A7B" style="min-width: 590px; background-color: rgb(135,90,123); padding: 20px; border-collapse:separate;">
+                                    <tr>
+                                        <td valign="middle" align="left" style="color: #fff; padding-top: 10px; padding-bottom: 10px; font-size: 12px;">
+                                            <span t-field="company.name" />
+                                            <br />
+                                            <span t-field="company.phone" />
+                                        </td>
+                                        <td valign="middle" align="right" style="color: #fff; padding-top: 10px; padding-bottom: 10px; font-size: 12px;">
+                                            <t t-if="company.email">
+                                                <a t-att-href="'mailto:' + company.email" style="text-decoration:none; color: white;">
+                                                    <span t-field="company.email" />
+                                                </a>
+                                                <br />
+                                            </t>
+                                            <t t-if="company.website">
+                                                <a t-att-href="company.website" style="text-decoration:none; color: white;">
+                                                    <span t-field="company.website" />
+                                                </a>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="center">
+                                Powered by
+                                <a target="_blank" href="https://www.odoo.com">Odoo</a>
+                                .
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </body>
+        </html>
+    </template>
+    <record id="netting_advice_mailing_template" model="mail.template">
+        <field name="name">Notify move netting</field>
+        <field name="email_from">"${user.company_id.name|safe}" &lt;${(user.company_id.email)|safe}&gt;</field>
+        <field name="subject">Compensación entre facturas</field>
+        <field name="partner_to">${object.id}</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="auto_delete" eval="False"/>
+        <field name="lang">${object.lang}</field>
+        <field name="body_type">qweb</field>
+        <field name="body_view_id" ref="netting_adviser_body_template" />
+    </record>
+</odoo>

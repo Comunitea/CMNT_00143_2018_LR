@@ -1,6 +1,6 @@
 # © 2018 Comunitea
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
-from odoo import models, api
+from odoo import api, fields, models, _
 
 
 class AccountPaymentOrder(models.Model):
@@ -54,6 +54,13 @@ class AccountPaymentOrder(models.Model):
         action['domain'] = [('id', 'in', orders._ids)]
         return action
 
+    @api.model
+    def _prepare_bank_payment_line(self, paylines):
+        vals = super(AccountPaymentOrder, self).\
+            _prepare_bank_payment_line(paylines)
+        vals.update({'payment_mode_id': paylines[
+            0].order_id.payment_mode_id.id})
+        return vals
 
 class AccountPaymentLine(models.Model):
     _inherit = 'account.payment.line'

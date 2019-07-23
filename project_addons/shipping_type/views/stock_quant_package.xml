@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- stock.quant.package kanban ulma status view -->
+    <record model="ir.ui.view" id="view_quant_package_kanban_shipping_type">
+        <field name="name">view.quant.package.kanban.shipping_type</field>
+        <field name="model">stock.quant.package</field>
+        <field name="inherit_id" ref="stock.view_quant_package_kanban"/>
+        <field name="arch" type="xml">
+            <field name="name" position="after">
+               <field name="info_route_str"/>
+                <field name="count_move_line"/>
+            </field>
+            <xpath expr="//div[contains(@class, 'o_kanban_record_top')]" position="after">
+                <div class="o_secondary o_kanban_primary_right">
+                    <span t-if="record.count_move_line.raw_value &gt; 0" class="badge">
+                        <i class="fa fa-fw fa-rss-square"/>
+                            <span>
+                                <t t-esc="record.count_move_line.value"/>
+                            </span>
+                    </span>
+                    <span  t-if="record.info_route_str">
+                        <field class="o_secondary" name="info_route_str"/>
+                    </span>
+                 </div>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- stock.quant.package ulma status search view -->
+    <record id="quant_package_search_view_shipping_type" model="ir.ui.view">
+        <field name="name">quant.package.search.view.shipping.type</field>
+        <field name="model">stock.quant.package</field>
+        <field name="inherit_id" ref="stock.quant_package_search_view"/>
+        <field name="arch" type="xml">
+            <field name="packaging_id" position="after">
+                <field name="shipping_type"/>
+                <field name="delivery_route_path_id"/>
+                <separator/>
+
+                <filter string="Urgente" name="filter_urgent" domain="[('shipping_type','=','urgent')]"/>
+                <filter string="Ruta" name="filter_ruta" domain="[('shipping_type','=','route')]"/>
+                <filter string="Pasarán" name="filter_pasaran" domain="[('shipping_type','=','pasaran')]"/>
+                <!--filter name="sga_package" string="SGA" domain="[('sga_state','!=', False)]"/>
+                <filter name="waiting" string="SGA Enviado" domain="[('sga_state','=', 'PS')]"/>
+                <filter name="error" string="SGA Error" domain="[('sga_state','in', ('EI', 'EE')]"/>
+                <filter name="processed" string="SGA Realizado" domain="[('sga_state','=', 'SD')]"/>
+                <separator/-->
+
+            </field>
+            <xpath expr="//group" position="inside">
+                <filter name="shipping_type" context="{'group_by': 'shipping_type'}"/>
+                <filter name="delivery_route_path_id"  context="{'group_by': 'delivery_route_path_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- stock.quant.package ulma status form view -->
+    <record id="view_quant_package_form_shipping_type" model="ir.ui.view">
+        <field name="name">view.quant.package.form.shipping.type</field>
+        <field name="model">stock.quant.package</field>
+        <field name="inherit_id" ref="stock.view_quant_package_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//separator" position="before">
+                <group string="Tipo de envío" attr="{'invisible': [('move_line_ids[0].picking_type_id.code','=', 'outgoing')]}">
+                    <group>
+                        <field name="picking_id" context="{'write_from_picking': True}"/>
+                        <field name="shipping_type" context="{'write_from_package': True}"/>
+                        <field name="delivery_route_path_id" context="{'write_from_package': True}"/>
+                        <!--field name="urgent" context="{'write_from_package': True}"/-->
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

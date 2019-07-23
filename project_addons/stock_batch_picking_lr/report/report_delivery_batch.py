@@ -25,8 +25,8 @@ class DeliveryBatchReport(models.AbstractModel):
         company_id = self.env.user.company_id
 
         delivery_carrier_data = {
-            'vat': objects[0].carrier_partner_id.vat,
-            'vehicle': objects[0].carrier_partner_id.vehicle_plates
+            'vat': objects[0].route_driver_id.vat,
+            'vehicle': objects[0].route_plate_id
         }
 
         elements = []

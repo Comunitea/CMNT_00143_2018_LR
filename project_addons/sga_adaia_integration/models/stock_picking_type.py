@@ -11,6 +11,7 @@ class StockPickingTypeSGA(models.Model):
     sga_integrated = fields.Boolean('Integrado con Adaia',
                                     help="If checked, odoo export this pick type to Adaia")
     sgavar_file_id = fields.Many2one('sgavar.file', 'SGA Type')
+    sga_prefix = fields.Char("Prefijo del archivo")
 
 class StockPickingSGAType(models.Model):
 

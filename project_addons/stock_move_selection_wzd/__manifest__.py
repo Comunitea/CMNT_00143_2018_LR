@@ -10,13 +10,17 @@
     'depends': [
         'sale_stock',
         'stock_picking_imp',
-        'stock_picking_group'
+        'stock_picking_group',
+        'shipping_type'
 
     ],
     'data': [
-        #'views/product_view.xml',
+        'views/picking_type.xml',
         'views/stock_move.xml',
-        #'wizard/stock_move_selection_wzd.xml',
+        'views/stock_picking.xml',
+        'views/stock_quant_package.xml',
+        'wizard/batch_picking_wzd_view.xml',
+        'wizard/move_change_quant_wzd.xml',
 
     ],
     'installable': True,

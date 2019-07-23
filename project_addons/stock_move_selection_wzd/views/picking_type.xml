@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_picking_type_kanaban_form" model="ir.ui.view">
+        <field name="name">stock.picking.type.form.selection</field>
+        <field name="model">stock.picking.type</field>
+        <field name="inherit_id" ref="stock.view_picking_type_form"/>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <field name="show_reserved" position="after">
+
+                <field name="num_error_day"/>
+
+            </field>
+            <field name="warehouse_id" position="after">
+                <field name="sga_integrated"/>
+                <field name="sga_integration_type" attrs="{'invisible': [('sga_integrated','=',False)]}" />
+            </field>
+        </field>
+    </record>
+    <record id="stock_picking_type_kanban_moves" model="ir.ui.view">
+            <field name="name">stock.picking.type.kanban.moves</field>
+            <field name="model">stock.picking.type</field>
+            <field name="arch" type="xml">
+                <kanban class="oe_background_grey o_kanban_dashboard o_emphasize_colors o_account_kanban" create="0">
+                    <field name="color"/>
+                    <field name="code"/>
+                    <field name="count_move_ready"/>
+                    <field name="count_move_draft"/>
+                    <field name="count_move_waiting"/>
+                    <field name="count_move_late"/>
+                    <field name="count_move_backorders"/>
+                    <field name="count_move_to_pick"/>
+
+                    <field name="count_picking_ready"/>
+                    <field name="count_picking_waiting"/>
+                    <field name="count_picking_late"/>
+                    <field name="count_picking_backorders"/>
+
+                    <field name="sga_integrated"/>
+                    <field name="group_code"/>
+                    <field name="grouped"/>
+                    <field name="context_domain"/>
+
+                    <field name="shipping_type"/>
+
+                    <field name="delivery_route_path_id"/>
+
+                    <field name="kanban_dashboard_graph"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-if="['incoming', 'outgoing', 'internal'].indexOf(record.code.raw_value) &gt; -1" t-attf-class="#{kanban_color(record.color.raw_value)}" name="stock_picking">
+                                <div>
+                                    <div t-attf-class="o_kanban_card_header">
+                                        <div class="o_kanban_card_header_title">
+                                            <div class="o_primary">
+                                                <span t-if="record.sga_integrated.raw_value" class="badge">
+                                                    <i class="fa fa-fw fa-rss-square"/>
+                                                </span>
+
+                                                <a type="object" name="get_stock_move_action_move_type">
+                                                    <field name="name"/>
+                                                </a>
+
+                                            </div>
+                                            <div class="o_secondary"><field class="o_secondary" name="warehouse_id"/></div>
+                                        </div>
+                                        <div class="o_kanban_manage_button_section">
+                                            <a class="o_kanban_manage_toggle_button" href="#"><i class="fa fa-ellipsis-v"/></a>
+                                        </div>
+                                    </div>
+                                    <div class="container o_kanban_card_content">
+                                        <div class="row">
+                                            <div class="col-xs-6 o_kanban_primary_left">
+                                                <div name='sga'>
+                                                    <div class="row col-xs-9" title="Albaranes No SGA: Preparados (Retrasados)">
+                                                        <button t-if="record.sga_integrated.raw_value == false"
+                                                                class="btn btn-primary" name="get_action_picking_tree_ready" type="object"
+                                                                >
+                                                                <span><t t-esc="record.count_picking_ready.value"/></span>
+                                                                <span t-if="record.count_picking_late.raw_value &gt; 0">(<t t-esc="record.count_picking_late.value"/>)</span>
+
+                                                                <span t-if="record.group_code.raw_value =='incoming'">Recepciones</span>
+                                                                <span t-if="record.group_code.raw_value =='outgoing'">Envíos</span>
+                                                                <span t-if="record.group_code.raw_value =='picking'">Picking</span>
+                                                                <span t-if="record.group_code.raw_value =='internal'">Internos </span>
+                                                                <span t-if="record.group_code.raw_value =='location'">Ubicaciones </span>
+                                                                <span t-if="record.group_code.raw_value =='reposition'">Reposiciones </span>
+                                                                <span t-if="record.group_code.raw_value =='other'">Albaranes </span>
+
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div name='not_sga'>
+                                                    <div class="row col-xs-9" title="Albaranes integrados con SGA: Preparados (Retrasados)">
+                                                        <button t-if="record.sga_integrated.raw_value == true and record.count_picking_ready.value" class="btn btn-success" name="get_action_picking_tree_ready" type="object"
+                                                        >
+
+                                                            <span><t t-esc="record.count_picking_ready.value"/></span>
+                                                            <span t-if="record.count_picking_late.raw_value &gt; 0">(<t t-esc="record.count_picking_late.value"/>)</span>
+                                                            <span>Para SGA</span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div name="sga_and_not">
+                                                     <div class="row col-xs-9" title="Albaranes pendientes de otros movimientos o sin reserva">
+                                                        <button t-if="record.count_picking_waiting.raw_value" class="btn btn-warning" name="get_action_picking_tree_late" type="object"
+                                                        >
+
+                                                            <span><t t-esc="record.count_picking_waiting.value"/> En espera</span>
+                                                        </button>
+                                                    </div>
+
+                                                    <div class="row col-xs-9" title="Albaranes de retorno">
+                                                        <button t-if="record.count_picking_backorders.raw_value" class="btn btn-info" name="get_action_picking_tree_backorder" type="object"
+                                                        >
+                                                            <span><t t-esc="record.count_picking_backorders.value"/> Backorder</span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div name="moves">
+                                                    <div t-if="record.count_move_unpacked.raw_value &gt; 0" class="row">
+                                                        <div class="col-xs-9 text-info" title="Para empaquetar">
+                                                            <a class="oe_kanban_stock_picking_type_list" name="get_action_move_tree_no_package" type="object">
+                                                                Para empaquetar
+                                                            </a>
+                                                        </div>
+                                                        <div class="col-xs-3">
+                                                            <field name="count_move_unpacked"/>
+                                                        </div>
+                                                    </div>
+                                                    <div t-if="record.count_move_to_pick.raw_value &gt; 0" class="row">
+                                                        <div class="col-xs-9 text-primary" title="Movimientos que no han sido asignados a un albarán">
+                                                            <a name="get_action_move_to_picking_ready" type="object"
+                                                            >
+                                                                Para albaranar
+                                                            </a>
+                                                        </div>
+                                                        <div class="col-xs-3">
+                                                            <field name="count_move_to_pick"/>
+                                                        </div>
+                                                    </div>
+
+                                                    <div t-if="record.count_move_ready.raw_value &gt; 0" class="row">
+                                                        <div class="col-xs-9 text-primary" title="Movimientos que ya tienen reserva total o parcial y pueden ser procesados">
+                                                            <a class="text-primary" name="get_action_move_tree_ready" type="object">
+                                                                Preparados
+                                                            </a>
+                                                        </div>
+                                                        <div class="col-xs-3">
+                                                            <field name="count_move_ready"/>
+                                                        </div>
+                                                    </div>
+
+                                                    <div t-if="record.count_move_waiting.raw_value &gt; 0" class="row">
+                                                        <div class="col-xs-9 text-warning" title="Movimientos sin reserva o pendientes de otro movimiento">
+                                                            <a name="get_action_move_tree_waiting" type="object">
+                                                                En espera
+                                                            </a>
+                                                        </div>
+                                                        <div class="col-xs-3">
+                                                            <field name="count_move_waiting"/>
+                                                        </div>
+                                                    </div>
+
+                                                    <div t-if="record.count_move_late.raw_value &gt; 0" class="row">
+                                                        <div class="col-xs-9 text-danger" title="Movimientos retrasados. Fecha programada anterior a hoy">
+                                                            <a class="text-danger" name="get_action_move_tree_late" type="object">
+                                                                Retrasados
+                                                            </a>
+                                                        </div>
+                                                        <div class="col-xs-3">
+                                                            <field name="count_move_late"/>
+                                                        </div>
+                                                    </div>
+
+                                                    <div t-if="record.count_move_backorders.raw_value &gt; 0" class="row">
+                                                        <div class="col-xs-9 text-info" title="Movimientos de retorno">
+                                                            <a class="oe_kanban_stock_picking_type_list" name="get_action_move_tree_backorder" type="object">
+                                                                Back Orders
+                                                            </a>
+                                                        </div>
+                                                        <div class="col-xs-3">
+                                                            <field name="count_move_backorders"/>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+                                            <div class="row col-xs-6 text-center">
+                                                <span >
+                                                  <a type="object" name="get_stock_move_action_move_type_today" title="Movimientos programados para hoy o realizados hoy">
+                                                    <field name="count_move_todo_today"/>
+                                                  </a>
+                                                </span>
+                                                <span class="o_label">Hoy: </span>
+                                                <span class="o_label">
+                                                    <field name="rate_done" widget="gauge" style="cursor: pointer;"/>
+                                                </span>
+                                            </div>
+
+
+                                        </div>
+
+
+
+
+                                        <div class="row">
+                                             <field name="kanban_dashboard_graph" t-att-graph_type="'bar'" widget="dashboard_graph"/>
+                                        </div>
+                                    </div>
+                                    <div class="container o_kanban_card_manage_pane">
+                                        <div class="row">
+                                            <div class="col-xs-6 o_kanban_card_manage_section o_kanban_manage_view">
+                                                <div class="o_kanban_card_manage_title">
+                                                    <span>View</span>
+                                                </div>
+                                                <div title="Todos los moviemintos de este tipo de albarán">
+                                                    <a name="get_stock_move_action_move_type" type="object">Todos</a>
+                                                </div>
+                                                <div title="Todos los movimientos realizados">
+                                                    <a name="get_action_move_tree_all_done" type="object">Hechos</a>
+                                                </div>
+                                                <div title="Todos los movimientos no realizados">
+                                                    <a name="get_action_move_tree_all_not_done" type="object">No hechos</a>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-6 o_kanban_card_manage_section o_kanban_manage_new">
+
+                                                <div title="Todos los movimientos sin albarán asignado">
+                                                    <a name="get_action_move_tree_no_pick" type="object">Sin albaranar</a>
+                                                </div>
+                                                <div title="Todos los movimientos para recoger">
+                                                    <a name="get_action_move_tree_pasaran" type="object">Pasarán</a>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div t-if="widget.editable" class="o_kanban_card_manage_settings row">
+                                            <div class="col-xs-8">
+                                                <ul class="oe_kanban_colorpicker" data-field="color"/>
+                                            </div>
+                                            <div class="col-xs-4 text-right">
+                                                <a type="edit">Settings</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </t>
+
+                    </templates>
+
+                </kanban>
+            </field>
+   </record>
+     <record id="view_pickingtype_filter" model="ir.ui.view">
+        <field name="name">stock.picking.type.filter</field>
+        <field name="model">stock.picking.type</field>
+        <field name="inherit_id" ref="stock.view_pickingtype_filter"/>
+        <field name="arch" type="xml">
+
+            <field name="name" position="after">
+
+                <field name="shipping_type" widget="selection" context="{'search1_shipping_type': self}"/>
+                <field name="delivery_route_path_id" widget="selection" context="{'search1_delivery_route_path_id': self}"/>
+                <!--field name="urgent" widget="selection" context="{'search1_urgent': self}"/-->
+            </field>
+            <field name="warehouse_id" position="after">
+                <field name="group_code"/>
+                <field name="default_location_src_id"/>
+                <field name="default_location_dest_id"/>
+                <field name="group_code"/>
+
+            </field>
+            <xpath expr="//filter[@name='inactive']" position="after">
+
+                <separator/>
+                <filter string="Urgente" name="filter_urgent" domain="[('shipping_type','=','urgent')]"/>
+                <filter string="Ruta" name="filter_ruta" domain="[('shipping_type','=','route')]"/>
+                <filter string="Pasarán" name="filter_pasaran" domain="[('shipping_type','=','pasaran')]"/>
+                <separator/>
+                <filter string="Ver todos" name="ver_todos" context="{'search1_all': True}" domain="[('active','=',True)]"/>
+                <separator/>
+                <filter string="Hoy" name="filter_today" context="{'filter_day': 'today'}"/>
+                <filter string="A Futuro" name="filter_futuro" context="{'filter_day': 'tomorrow'}"/>
+                <filter string="Retrasado" name="filter_yesterday" context="{'filter_day': 'yesterday'}"/>
+                <separator/>
+                <filter string="Picking" name="picking" domain="[('group_code','=','picking')]"/>
+                <filter string="Internal" name="internal" domain="[('group_code','=','internal')]"/>
+                <filter string="Incoming" name="incoming" domain="[('group_code','=','incoming')]"/>
+                <filter string="Outgoing" name="outgoing" domain="[('group_code','=','outgoing')]"/>
+                <filter string="Location" name="location" domain="[('group_code','=','location')]"/>
+                <filter string="Reposition" name="reposition" domain="[('group_code','=','reposition')]"/>
+                <filter string="Other" name="other" domain="[('group_code','=','other')]"/>
+
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter name="group_by_group_code" string="Group code" context="{'group_by': 'group_code'}"/>
+                    <filter name="group_by_code" string="Supplier" context="{'group_by': 'code'}"/>
+                    <filter name="group_by_location_id" string="Origin" context="{'group_by': 'default_location_src_id'}"/>
+                    <filter name="group_by_location_dest_id" string="Destino" context="{'group_by': 'default_location_dest_id'}"/>
+                </group>
+            </xpath>
+
+            </field>
+        </record>
+
+    <record id="stock_move_kanban_view" model="ir.actions.act_window">
+            <field name="name">Monitor de almacén</field>
+            <field name="res_model">stock.picking.type</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">kanban</field>
+            <field name="view_id" ref="stock_picking_type_kanban_moves"/>
+
+    </record>
+     <menuitem
+        action="stock_move_kanban_view"
+        parent="stock_move_selection_wzd.stock_move_sel_menu"
+        id="stock_move_selection_wzd.menu_stock_move_kanban"
+        sequence="0" name="Monitor de almacén"/>
+</odoo>

@@ -41,6 +41,20 @@ class SaleOrderLine(models.Model):
 
     _inherit = 'sale.order.line'
 
+    campaign_id = fields.Many2one('campaign', 'Campaign')
+
+    @api.onchange('product_id')
+    def product_id_change(self):
+        """
+        If default sales secondary unit set on product, put on secondary
+        quantity 1 for being the default quantity. We override this method,
+        that is the one that sets by default 1 on the other quantity with that
+        purpose.
+        """
+        res = super(SaleOrderLine, self).product_id_change()
+        self.campaign_id = self.order_id.campaign_id
+        return res
+
     @api.multi
     def get_article_line(self):
         self.ensure_one()

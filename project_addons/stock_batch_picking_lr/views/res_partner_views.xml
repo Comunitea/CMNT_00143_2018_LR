@@ -5,10 +5,43 @@
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
-            <field name="category_id" position="after">
-                <field name="delivery_id"/>
-                <field name="vehicle_plates" attrs="{'invisible': [('delivery_id', '=', False)]}"/>
+            <field name="industry_id" position="after">
+                <field name="route_driver"/>
             </field>
         </field>
+    </record>
+
+    <record id="view_partner_form_driver" model="ir.ui.view">
+            <field name="name">res.partner.form</field>
+            <field name="model">res.partner</field>
+            <field name="priority" eval="99999"/>
+            <field name="arch" type="xml">
+                <form string="Drivers">
+                <sheet>
+                <group>
+                                        <group>
+                                            <field name="name"/>
+                                            <field name="vat"/>
+                                            <field name="phone"/>
+                                            <field name="mobile"/>
+                                        </group>
+                                        <group>
+                                            <field name="route_driver"/>
+                                            <field name="street"/>
+                                            <field name="street2"/>
+                                            <field name="zip_id"
+                                                   options="{'create_name_field': 'city', 'no_open': True, 'no_create': True}"
+                                                   placeholder="City completion"/>
+                                            <field name="city_id" invisible="1"/>
+                                            <field name="city" invisible="1"/>
+                                            <field name="state_id" invisible="1"/>
+                                            <field name="zip" invisible="1"/>
+                                            <field name="country_id" invisible="1"/>
+                                        </group>
+                                    </group>
+
+                </sheet>
+                </form>
+            </field>
     </record>
 </odoo>

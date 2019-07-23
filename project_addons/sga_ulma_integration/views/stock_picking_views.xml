@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="stock_picking_type_sga_form" model="ir.ui.view">
+        <field name="name">stock.picking.type.sga.form</field>
+        <field name="inherit_id" ref="stock.view_picking_type_form"/>
+        <field name="model">stock.picking.type</field>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='sga_integration_type']" position="after">
+                <field name="ulma_type" string="ULMA file type" attrs="{'invisible': [('sga_integration_type','!=','sga_ulma')]}" />
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_picking_form_ulma" model="ir.ui.view">
+        <field name="name">view.picking.form.ulma</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock_move_selection_wzd.view_picking_form_sga"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='buttons']" position="before" >
+                <group  attrs="{'invisible': [('sga_integration_type','!=','sga_ulma')]}">
+                    <button name="force_button_validate" string="Forzar validación" type="object"
+                        class="oe_stat_button" icon="fa-shopping-cart" attrs="{'invisible': [('sga_state', 'in', ['SR', 'EE', 'NI', 'SC'])]}"/>
+
+                    <button name="send_to_sga" string="Mover a ULMA" type="object"
+                        class="oe_stat_button" icon="fa-shopping-cart" attrs="{'invisible': [('sga_state', 'in', ['SR', 'NI', 'SC'])]}"/>
+                    <button name="get_from_ulma" string="Recibir de ULMA" type="object"
+                        class="oe_stat_button" icon="fa-shopping-cart" attrs="{'invisible': [('sga_state', 'in', ['SR', 'EE', 'NI', 'NE', 'SC'])]}"/>
+                    <button name="create_packages_for_ulma" string="Create packages" type="object"
+                        class="oe_stat_button" icon="fa-shopping-cart" attrs="{'invisible': [('sga_state', 'in', ['PS', 'SR'])]}"/>
+                    <button name="show_ulma_mmmout" string="Mostrar registros en ulma" type="object"
+                        class="oe_stat_button" icon="fa-shopping-cart" attrs="{'invisible': [('sga_state', 'in', ['EE', 'NI', 'SC', 'NE'])]}"/>
+                    <button name="move_to_not_sent" string="Mover a no enviado" type="object"
+                        class="oe_stat_button" icon="fa-shopping-cart"  attrs="{'invisible': [('sga_state', 'in', ['SR'])]}"/>   
+                </group>
+            </xpath>
+            <!-- <xpath expr="//button[@name='button_validate']" position="attributes">
+                <attribute name="attrs">{'invisible': ['|', ('sga_state', '=', 'PS'), ('show_validate', '=', False)]}</attribute>
+            </xpath> -->
+
+        </field>
+    </record>
+
+
+</odoo>

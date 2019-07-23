@@ -17,7 +17,6 @@
         'stock',
         'shipping_type',
         'stock_batch_picking',
-        'stock_manual_picking_creation',
         'stock_batch_picking_lr'
     ],
     'data': [
@@ -26,6 +25,9 @@
         'views/stock_warehouse.xml',
         'views/sga_file.xml',
         'views/sga_error.xml',
+        'views/res_partner.xml',
+        'views/product_product.xml',
+        'views/product_template.xml',
         'wizard/check_adaia_stock.xml',
         'wizard/stock_picking_adaia_confirm.xml',
         'data/sga_data.xml'
