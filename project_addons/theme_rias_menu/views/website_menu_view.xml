@@ -7,10 +7,14 @@
             <field name="inherit_id" ref="website.menu_tree"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='sequence']" position="before">
-                    <field name="active"/>
+                    <field name="website_published"/>
                 </xpath>
                 <xpath expr="//field[@name='url']" position="after">
                     <field name="menu_icon"/>
+                    <field name="for_retailers"/>
+                    <field name="for_customers"/>
+                    <field name="dynamic_cat_menu"/>
+                    <field name="top_menu_retailers"/>
                 </xpath>
             </field>
         </record>

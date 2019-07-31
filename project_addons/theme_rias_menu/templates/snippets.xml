@@ -4,8 +4,9 @@
         <section class="s_features">
             <div class="container">
                 <div class="row mt64 mb16">
-                    <t t-foreach="website.menu_id.child_id" t-as="menu">
-                        <div t-if="menu['active']" t-attf-class="hidden-xs hidden-sm col-md-2 text-center {{ 'col-md-offset-1' if menu_first else '' }}">
+                    <t t-set="menus" t-value="website.allowed_menus(website.menu_id.child_id)"/>
+                    <t t-foreach="menus" t-as="menu">
+                        <div t-attf-class="hidden-xs hidden-sm col-md-2 text-center #{ website.calculate_offset(menus) if menu_first and len(menus) &lt; 6 else '' }">
                             <a t-att-id="menu['id']"
                                     t-attf-href="{{ menu['url'] if menu['url'] else ''}}">
                                 <div class="row"> 

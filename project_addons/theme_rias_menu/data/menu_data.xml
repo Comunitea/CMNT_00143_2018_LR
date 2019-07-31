@@ -10,7 +10,9 @@
             <field name="sequence" type="int">0</field>
             <field name="menu_icon"></field>
             <field name="website_id" ref="website.default_website"/>
-            <field name="active">True</field>
+            <field name="website_published">True</field>
+            <field name="for_retailers">True</field>
+            <field name="for_customers">True</field>
         </record>
 
         <record id="menu_home" model="website.menu">
@@ -20,7 +22,48 @@
             <field name="sequence" type="int">1</field>
             <field name="menu_icon">fa-home</field>
             <field name="website_id" ref="website.default_website"/>
-            <field name="active">True</field>
+            <field name="website_published">False</field>
+            <field name="for_retailers">True</field>
+            <field name="for_customers">True</field>
+        </record>
+
+        <record id="menu_tarifas" model="website.menu">
+            <field name="name">Pricelists</field>
+            <field name="url">/Pricelist</field>
+            <field name="parent_id" ref="website.main_menu"/>
+            <field name="sequence" type="int">1</field>
+            <field name="menu_icon">fa-list-ul</field>
+            <field name="website_id" ref="website.default_website"/>
+            <field name="website_published">True</field>
+            <field name="for_retailers">True</field>
+            <field name="for_customers">False</field>
+            <field name="top_menu_retailers">True</field>
+        </record>
+
+        <record id="menu_tarifas_list" model="website.menu">
+            <field name="name">See Pricelists</field>
+            <field name="url">/Pricelist/list</field>
+            <field name="parent_id" ref="theme_rias_menu.menu_tarifas"/>
+            <field name="sequence" type="int">1</field>
+            <field name="menu_icon">fa-list-ul</field>
+            <field name="website_id" ref="website.default_website"/>
+            <field name="website_published">True</field>
+            <field name="for_retailers">True</field>
+            <field name="for_customers">False</field>
+            <field name="top_menu_retailers">True</field>
+        </record>
+
+        <record id="menu_tarifas_form" model="website.menu">
+            <field name="name">Submit Pricelist</field>
+            <field name="url">/Pricelist/form</field>
+            <field name="parent_id" ref="theme_rias_menu.menu_tarifas"/>
+            <field name="sequence" type="int">2</field>
+            <field name="menu_icon">fa-list-ul</field>
+            <field name="website_id" ref="website.default_website"/>
+            <field name="website_published">True</field>
+            <field name="for_retailers">True</field>
+            <field name="for_customers">False</field>
+            <field name="top_menu_retailers">True</field>
         </record>
 
         <record id="menu_catalogues" model="website.menu">
@@ -30,7 +73,9 @@
             <field name="sequence" type="int">2</field>
             <field name="menu_icon">fa-map</field>
             <field name="website_id" ref="website.default_website"/>
-            <field name="active">True</field>
+            <field name="website_published">True</field>
+            <field name="for_retailers">True</field>
+            <field name="for_customers">True</field>
         </record>
 
         <record id="theme_rias.menu_ourshops" model="website.menu">
@@ -40,7 +85,9 @@
             <field name="sequence" type="int">3</field>
             <field name="menu_icon">fa-map-marker</field>
             <field name="website_id" ref="website.default_website"/>
-            <field name="active">True</field>
+            <field name="website_published">True</field>
+            <field name="for_retailers">True</field>
+            <field name="for_customers">True</field>
         </record>
 
         <record id="menu_shop" model="website.menu">
@@ -50,7 +97,10 @@
             <field name="sequence" type="int">4</field>
             <field name="menu_icon">fa-th</field>
             <field name="website_id" ref="website.default_website"/>
-            <field name="active">True</field>
+            <field name="website_published">True</field>
+            <field name="for_retailers">True</field>
+            <field name="for_customers">False</field>
+            <field name="top_menu_retailers">True</field>
         </record>
 
         <record id="theme_rias.menu_aboutus" model="website.menu">
@@ -60,7 +110,9 @@
             <field name="sequence" type="int">20</field>
             <field name="menu_icon">fa-question-circle-o</field>
             <field name="website_id" ref="website.default_website"/>
-            <field name="active">True</field>
+            <field name="website_published">True</field>
+            <field name="for_retailers">True</field>
+            <field name="for_customers">True</field>
         </record>
 
         <record id="website_slides.website_menu_slides" model="website.menu">
@@ -68,7 +120,20 @@
             <field name="url">/slides</field>
             <field name="parent_id" ref="website.main_menu"/>
             <field name="sequence" type="int">50</field>
-            <field name="active">False</field>
+            <field name="website_published">False</field>
+            <field name="for_retailers">True</field>
+            <field name="for_customers">True</field>
+        </record>
+
+        <record id="menu_products" model="website.menu">
+            <field name="name">Products</field>
+            <field name="url">/catalogue</field>
+            <field name="parent_id" ref="website.main_menu"/>
+            <field name="sequence" type="int">9</field>
+            <field name="menu_icon">fa-th</field>
+            <field name="website_id" ref="website.default_website"/>
+            <field name="website_published">True</field>
+            <field name="dynamic_cat_menu">True</field>
         </record>
 
     </data>

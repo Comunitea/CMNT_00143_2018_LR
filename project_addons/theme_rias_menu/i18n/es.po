@@ -50,6 +50,11 @@ msgstr "Menú Las Rías"
 msgid "Products"
 msgstr "Productos"
 
+#. module: theme_rias_menu
+#: model:website.menu,name:theme_rias_menu.menu_products
+msgid "Products"
+msgstr "Productos"
+
 #. module: theme_rias
 #: model:website.menu,name:theme_rias.menu_ourshops
 msgid "Our shops"
