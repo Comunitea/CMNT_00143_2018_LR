@@ -37,6 +37,7 @@ class AccountPaymentMode(models.Model):
                         'ref': payment_order.name,
                         'journal_id': payment_mode.charge_financed_journal_id.id,
                         'company_id': payment_mode.company_id.id,
+                        'date': move_line.date_maturity
                     })
 
                     move_lines = []
@@ -45,6 +46,7 @@ class AccountPaymentMode(models.Model):
                             'credit': move_line.debit,
                             'account_id': move_line.account_id.id,
                             'partner_id': move_line.partner_id.id,
+                            'name': payment_order.name,
                         }))
                     move_lines.append((
                         0, 0, {
@@ -52,6 +54,7 @@ class AccountPaymentMode(models.Model):
                             'account_id':
                             payment_mode.charge_financed_account_id.id,
                             'partner_id': move_line.partner_id.id,
+                            'name': payment_order.name,
                         }))
                     new_move.write({'line_ids': move_lines})
                     reconcile_move = new_move.mapped('line_ids').filtered(
