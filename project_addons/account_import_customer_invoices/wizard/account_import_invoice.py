@@ -78,9 +78,15 @@ class AccountInvoiceImportWizard(models.TransientModel):
                 if line.get('id',False):
                     product_id = self.env.ref(line.attrib['id']).id
                     if line.get('analytic_tag',False):
-                        analytic_tags = self.env['account.analytic.tag']\
-                            .search([('name', "=", line.attrib[
-                            'analytic_tag'])])
+                        analytic_tags = self.env['account.analytic.tag']
+                        analytic_tag_str = line.attrib[
+                            'analytic_tag'].split(","
+                                                  )
+                        for analytic_tag in analytic_tag_str:
+                            analytic_tag_obj = self.env[
+                                'account.analytic.tag']\
+                                .search([('name', "=", analytic_tag)])
+                            analytic_tags += analytic_tag_obj
                     else:
                         analytic_tags = False
                     line_vals = {
