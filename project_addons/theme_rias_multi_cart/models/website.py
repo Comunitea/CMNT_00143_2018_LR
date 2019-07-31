@@ -3,6 +3,7 @@
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 from odoo import models, fields, api
 from odoo.http import request
+from datetime import datetime
 from pprint import pprint
 
 class Website(models.Model):
@@ -30,7 +31,7 @@ class Website(models.Model):
         self.ensure_one()
         user_id = self.env.user.partner_id.id
         if user_id:
-            sale_orders = self.env['sale.order'].search([('partner_id', '=', user_id), ('state', '=', 'draft')])
+            sale_orders = self.env['sale.order'].sudo().search([('partner_id', '=', user_id), ('state', '=', 'draft')])
         else:
             raise ValueError(
                     'We found a problem with your user, '
@@ -38,8 +39,8 @@ class Website(models.Model):
         return sale_orders
 
     @api.multi
-    def get_new_cart(self):
-        partner = request.website.partner_id
+    def get_new_cart(self, campaign_id=False):
+        partner = self.env.user.partner_id
         pricelist_id = request.session.get('website_sale_current_pl') or self.get_current_pricelist().id
         if not self._context.get('pricelist'):
             self = self.with_context(pricelist=pricelist_id)
@@ -107,6 +108,12 @@ class Website(models.Model):
                 recent_fiscal_position = sale_order.fiscal_position_id.id
                 if flag_pricelist or recent_fiscal_position != fiscal_position:
                     update_pricelist = True
+
+            if campaign_id:
+                sale_order.write({
+                    'campaign_id': campaign_id
+                })
+
             return sale_order
         else:
             request.session['sale_order_id'] = None
@@ -132,3 +139,25 @@ class Website(models.Model):
         products_ids = website_sale_order.website_order_line.mapped('product_id').ids
         product_tmpl_ids = self.env['product.product'].browse(products_ids).mapped('product_tmpl_id').ids        
         return product_tmpl_ids
+
+    @api.multi
+    def get_active_campaigns(self):
+        today = datetime.today().strftime('%Y-%m-%d')
+        campaigns = self.env['campaign'].sudo().search([('purchases_start_date', '<=', today), ('purchases_end_date', '>=', today)])
+        return campaigns
+
+    @api.multi
+    def get_campaign_cart(self, campaign_id):
+        self.ensure_one()
+        user_id = self.env.user.partner_id.id
+        if user_id:
+            sale_order = self.env['sale.order'].sudo().search([('partner_id', '=', user_id), ('state', '=', 'draft'), ('campaign_id', '=', campaign_id)],limit=1)
+        else:
+            raise ValueError(
+                    'We found a problem with your user, '
+                    'try login again or contact an admin.')
+        
+        if sale_order:
+            return self.get_selected_cart(sale_order.id)
+        else:
+            return self.get_new_cart(campaign_id)

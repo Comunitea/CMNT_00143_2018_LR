@@ -172,4 +172,3 @@ msgstr "rias_website_assets_editor"
 #: model:ir.ui.view,name:theme_rias_multi_cart.rias_website_assets_frontend
 msgid "rias_website_assets_frontend"
 msgstr "rias_website_assets_frontend"
-

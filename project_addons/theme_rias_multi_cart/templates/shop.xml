@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
 
-    <template id="las_template_multi_cart_menu_view" inherit_id="breadcrumbs_base.bcb_main_wrap">
+    <!-- <template id="las_template_multi_cart_menu_view" inherit_id="breadcrumbs_base.bcb_main_wrap">
         <xpath expr="//div[hasclass('wp_breadcrumbs_base')]//ol[hasclass('breadcrumb')]"  position="after" groups="sale.group_show_price_subtotal">
             <t t-if="pageName == 'shoppage'">
                 <t t-call="theme_rias_multi_cart.rias_multi_cart_horizontal_menu"/>
@@ -31,7 +31,7 @@
                 <a href="/my/invoices">My Invoices</a>
             </li>
         </ol>
-    </template>
+    </template> -->
     
     <template id="product_grid_las" name="Products grid Las Rías" inherit_id="website_sale.products">
         <xpath expr="//div[@id='products_grid']//table" position="replace">
@@ -89,7 +89,7 @@
                                             <span t-field="product.list_price" style="white-space: nowrap;" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}" groups="sale.group_show_price_subtotal" />
                                         </td>
                                         <td class="text-right">
-                                            <span t-field="product.qty_available"/>
+                                            <!-- <span t-field="product.qty_available"/> -->
                                         </td>
                                         <td class="text-right td-img">
                                             <a t-if="product.image" href="#" class="image-call">
@@ -137,7 +137,7 @@
                                             <span t-field="variant_id.list_price" style="white-space: nowrap;" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}" groups="sale.group_show_price_subtotal" />
                                         </td>
                                         <td class="text-right">
-                                            <span t-field="variant_id.qty_available"/>
+                                            <!-- <span t-field="variant_id.qty_available"/> -->
                                         </td>
                                         <td class="text-right td-img">
                                             <a t-if="variant_id.image or product.image" href="#" class="image-call">

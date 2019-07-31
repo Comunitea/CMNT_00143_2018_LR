@@ -8,10 +8,13 @@
     'license': 'AGPL-3',
     'author': "Comunitea, ",
     'depends': [
-        'theme_rias'
+        'theme_rias',
+        'sale_variant_configurator',
+        'campaign',
     ],
     'data': [
         'data/page_data.xml',
+        'data/menu_data.xml',
         'templates/head.xml',
         'templates/shop.xml',
         ],
