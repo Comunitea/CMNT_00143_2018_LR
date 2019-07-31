@@ -35,14 +35,17 @@
         'Rubén Seijas <ruben@comunitea.com>',
     ],
     'depends': [
-        'website_base_rias',
-        'breadcrumbs_base_tmp',
-        'website_slides'
+        'website_slides',
+        'website_blog_base',
+        'website_form',
+        'seo_base',
     ],
     'data': [
         'data/menu_data.xml',
         'data/page_data.xml',
         'data/slides_data.xml',
+        'data/post_data.xml',
+        'data/category_data.xml',
         'templates/snippets.xml',
         'templates/head.xml',
         'templates/header.xml',
@@ -51,6 +54,11 @@
         'templates/page_our_shops.xml',
         'templates/page_catalogues.xml',
         'templates/page_about_us.xml',
+        'templates/catalogue.xml',
+        'templates/blog_post.xml',
+        'templates/forms.xml',
+        'templates/page_pricelist.xml',
+        'views/category.xml',
     ],
     'images': [
         '/static/description/icon.png',

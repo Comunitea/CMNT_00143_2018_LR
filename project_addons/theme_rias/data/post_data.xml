@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Blog data -->
+
+        <record id="blog_blog_retailers" model="blog.blog">
+            <field name="name">Blog for retailers</field>
+            <field name="subtitle">News for retailers</field>
+            <field name="for_retailers">True</field>
+            <field name="for_customers">False</field>
+        </record>
+        
+        <!-- Blog Post -->
+        <record id="post_verano" model="blog.post">
+            <field name="name">¡LLEGÓ EL VERANO A LAS FERRETERÍAS DE LAS RÍAS!</field>
+            <field name="website_meta_title">¡LLEGÓ EL VERANO A LAS FERRETERÍAS DE LAS RÍAS!</field>
+            <field name="introduction">Ya están disponibles en las ferreterías, nuestros catálogos de VERANO, PISCINAS ,JARDIN y REFORMAS  con todas las propuestas para este Verano del  2019.</field>
+            <field name="website_meta_description">Ya están disponibles en las ferreterías, nuestros catálogos de VERANO, PISCINAS ,JARDIN y REFORMAS  con todas las propuestas para este Verano del  2019.</field>
+            <field name="website_published">TRUE</field>
+            <field name="cover_properties">{"background-image": "none", "background-color": "oe_black", "opacity": "0.2", "resize_class": ""}</field>
+            <field name="blog_id">1</field>
+            <field name="content"><![CDATA[Ya están disponibles en las ferreterías, nuestros catálogos de VERANO, PISCINAS ,JARDIN y REFORMAS  con todas las propuestas para este Verano del  2019]]></field>
+            <field name="youtube_link">https://www.youtube.com/watch?v=PduP2NvyFKI</field>
+            <field name="image" type="base64" file="theme_rias/static/img/catalogues/verano2019rias.png"/>
+        </record>
+
+        <record id="post_piscinas" model="blog.post">
+            <field name="name">DISFRUTA EL BUEN TIEMPO</field>
+            <field name="website_meta_title">DISFRUTA EL BUEN TIEMPO</field>
+            <field name="introduction">Os presentamos nuestro FOLLETO PISCINAS, un especial dedicado a una de las familias que más crecen año a año en ventas en las ferreterías de las rías.</field>
+            <field name="website_meta_description">Os presentamos nuestro FOLLETO PISCINAS, un especial dedicado a una de las familias que más crecen año a año en ventas en las ferreterías de las rías.</field>
+            <field name="website_published">TRUE</field>
+            <field name="cover_properties">{"background-image": "none", "background-color": "oe_black", "opacity": "0.2", "resize_class": ""}</field>
+            <field name="blog_id">1</field>
+            <field name="content"><![CDATA[Os presentamos nuestro FOLLETO PISCINAS, un especial dedicado a una de las familias que más crecen año a año en ventas en las ferreterías de las rías.
+
+Animaros a visitar las ferreterías de las rías y podréis ver las novedades que tenemos este año en piscinas.]]></field>
+            <field name="youtube_link">https://www.youtube.com/watch?v=mx6-6PLJQk4</field>
+            <field name="image" type="base64" file="theme_rias/static/img/catalogues/piscinas2019rias.png"/>
+        </record>
+
+        <record id="post_jardin" model="blog.post">
+            <field name="name">¿HABLAMOS DE JARDINES?</field>
+            <field name="website_meta_title">¿HABLAMOS DE JARDINES?</field>
+            <field name="introduction">Cultiva, poda, arranca las malas hierbas con las herramientas adecuadas y ¡¡PRESUME DE JARDÍN!!</field>
+            <field name="website_meta_description">Cultiva, poda, arranca las malas hierbas con las herramientas adecuadas y ¡¡PRESUME DE JARDÍN!!</field>
+            <field name="website_published">TRUE</field>
+            <field name="cover_properties">{"background-image": "none", "background-color": "oe_black", "opacity": "0.2", "resize_class": ""}</field>
+            <field name="blog_id">1</field>
+            <field name="content"><![CDATA[El Jardín es  un espacio en donde se cultivan plantas y flores ornamentales para hacer de él un lugar agradable. Si echamos un vistazo rápido  a los Jardines más "bellos del mundo" nos encontramos con  Jardines de todo tipo, grandes, como los de la Villa Borghese (Roma, Italia),o Jardín Keukenhof (Holanda). Jardines con mucha historia como los Jardines del Generalife (Granada, España), emblemáticos como los del Taj Mahal (India)  o los Jardines de Kensington en Londres, (Inglaterra) que forman parte del palacio  que  fue la residencia oficial de la princesa Diana. Todos maravillosos  e  inspiradores aunque, por qué no decirlo el mejor, el más bonito de todos es siempre el que uno hace. Aunque sea en una terraza de ciudad, simplemente con unas flores bien puestas,  con un toque personal .¡Ese es el mejor!
+
+La llegada de la primavera  nos permite disfrutar más del aire libre y, con ello, podemos pasar más tiempo en nuestro jardín, ya sea urbano o no. En cualquiera de nuestras ferreterías encontrarás el asesoramiento necesario para aconsejarte el producto que más se adecúe a tus necesidades. Muchas veces no se trata de gastar más, sino de gastar bien y para eso los profesionales te pueden ayudar.
+
+Cultiva, poda, arranca las malas hierbas con las herramientas adecuadas y ¡¡PRESUME DE JARDÍN!!
+
+Os animamos a hacer un Jardín sencillo, con un poco de color, iluminación y tradición. Fácil de mantener. Para la decoración podéis usar piedras, flores, fuentes y todo tipo de elementos decorativos, pero sin recargarlo, que le den la personalidad que queremos para hacerlo nuestro.
+
+Y como siempre, para cualquier cosa que necesitéis visitar a vuestra ferretería de confianza.]]></field>
+            <field name="youtube_link">https://www.youtube.com/watch?v=OxKDWoDyGUo</field>
+            <field name="image" type="base64" file="theme_rias/static/img/catalogues/jardin2019rias.png"/>
+        </record>
+
+        <!-- post cover -->
+
+        <record id="blog_post_retailer_img" model="ir.attachment">
+            <field name="public" eval="True"/>
+            <field name="name">Spot Las Rías en TVG</field>
+            <field name="datas_fname">Spot_Las_Rías_en_TVG.png</field>
+            <field name="res_model">ir.ui.view</field>
+            <field name="datas" type="base64" file="theme_rias/static/img/posts/spot-tvg.png"></field>
+        </record>
+
+
+         <!-- POSTS retailer -->
+        <record id="blog_post_retailer" model="blog.post">
+            <field name="name">Spot de las rías en Televisión Gallega</field>
+            <field name="blog_id" ref="blog_blog_retailers"/>
+            <field name="introduction">Con motivo de la festividad del día 25 de Julio, DIA DE GALICIA, la Televisión Gallega llevará a cabo una programación especial y vamos a anunciarnos con un SPOT en prime time.</field>
+            <field name="website_published" eval="True"/>
+            <field name="published_date" eval="time.strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="attachment_ids" eval="[(6, 0, [ref('blog_post_retailer_img')])]"/>
+            <field name="image" type="base64" file="theme_rias/static/img/posts/spot-tvg.png"></field>
+            <field name="cover_properties">{"background-image": "url(/web/image/theme_rias.blog_post_retailer_img)", "resize_class": "cover container-fluid cover_full", "background-color": "oe_black", "opacity": "0.0"}</field>
+            <field name="content"><![CDATA[
+<section class="s_text_block">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2 mb16 mt16">
+                <p>
+                    Con motivo de la festividad del <strong>día 25 de Julio, DIA DE GALICIA</strong>, la Televisión Gallega llevará a cabo una programación especial y vamos a anunciarnos con un SPOT en prime time.
+                </p><p>
+                    Está previsto que se emita nuestro SPOT, el día 24 desde durante el programa de los <strong>fuegos del Apóstol </strong> y el día 25  en el <strong>programa especial que presentará Xosé Ramón Gayoso</strong>. Se emitirá 5 veces cada día, desde las 21:45 a 24:30. considerando que serán los momentos de máxima audiencia.
+                </p><p>
+                    Podéis "pinchar" en el <a href="https://youtu.be/BsA1-eg6FRo">enlace</a> para ver el SPOT.
+                </p>
+                <iframe width="100%" height="250" src="http://www.youtube.com/embed/BsA1-eg6FRo" frameborder="0" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+</section>
+]]>
+            </field>
+        </record>
+
+    </data>
+</odoo>

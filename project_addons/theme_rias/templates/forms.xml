@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <!-- Pricelist form -->
+    <template id="pricelist_form" name="Pricelist form">
+        <form action="/website_pricelist_form/" method="post" data-model_name="crm.lead" data-success_page="/pricelist/list" class="s_website_form form-horizontal container-fluid mt32" enctype="multipart/form-data" data-editable-form="false">
+            <input type="hidden" name="name" value="Nueva tarifa" />
+            <t t-call="theme_rias.pricelist_hidden_fields_forms"/>
+            <t t-call="theme_rias.default_file_forms"/>
+            <t t-call="theme_rias.default_send_forms"/>
+        </form>
+    </template>
+
+    <!-- Google recaptcha -->
+    <template id="google_recaptcha_contact_form" name="Recaptcha Rías Snippet">
+        <div class="form-group form-field o_website_form_required_custom">
+            <label class="col-md-3 col-sm-4 control-label" for="g-recaptcha-response">Is human?</label>
+            <div class="col-md-7 col-sm-8">
+                <span class="o_website_form_recaptcha" />
+            </div>
+        </div>
+    </template>
+
+    <!-- Pricelist fields form -->
+    <template id="pricelist_hidden_fields_forms" name="Pricelist Form Hidden Fields Rías Snippet">
+       <div class="form-group form-field o_website_form_required_custom">
+            <input type="hidden" class="form-control o_website_form_input" name="contact_name" t-att-value="request.env.user.name" required=""/>
+            <input type="hidden" class="form-control o_website_form_input" name="partner_id" t-att-value="request.env.user.partner_id.id" required=""/>
+            <input type="hidden" class="form-control o_website_form_input" name="partner_name" t-att-value="request.env.user.partner_id.name" required=""/>
+            <input type="hidden" class="form-control o_website_form_input" name="email_from" t-att-value="request.env.user.email" required=""/>
+            <input type="hidden" class="form-control o_website_form_input" name="name" t-att-value="request.env.user.company_id.name" required=""/>
+       </div>        
+    </template>
+
+    <!-- Pricelist file forms -->
+    <template id="default_file_forms" name="Pricelist Document Form Rías Snippet">
+        <div class="form-group form-field o_website_form_custom">
+            <div class="col-md-3 col-sm-4 text-right-not-xs">
+                <label class="control-label" for="a_document">Attach Pricelist</label>
+            </div>
+            <div class="col-md-7 col-sm-8">
+                <input type="file" class="form-control o_website_form_input" name="a_document" required=""/>
+            </div>
+        </div>
+    </template>
+
+    <!-- Default send form -->
+
+    <template id="default_send_forms" name="Default Send Form Rías Snippet">
+        <div class="form-group">
+            <div class="col-md-offset-3 col-sm-offset-4 col-sm-8 col-md-7">
+                <span class="btn btn-primary btn-lg o_website_form_send">Send</span>
+                <span id="o_website_form_result"/>
+            </div>
+        </div>
+    </template>
+</odoo>

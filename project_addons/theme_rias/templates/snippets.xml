@@ -358,4 +358,10 @@
         </section>
     </template>
 
+    <template id="s_latest_post_limit_subtitle" inherit_id="website_blog_base.s_latest_post" name="Latest Post">
+        <xpath expr="//p[@t-esc='post.introduction']" position="replace">
+            <p class="o_default_snippet_text" t-esc="post.introduction[:-60]+'...' if post.introduction else ''"/>
+        </xpath>
+    </template>
+
 </odoo>

@@ -6,11 +6,7 @@
             <div id="wrap">
                 <div class="container">
                     <section class="oe_structure oe_empty"/>
-                    <t t-snippet="theme_rias.snippet_image_text_lasrias_piscinas" t-thumbnail="/theme_rias/static/src/img/ui/snippet_image_text_thumb_piscinas.jpg"/>
-                    <section class="oe_structure oe_empty"/>
-                    <t t-snippet="theme_rias.snippet_image_text_lasrias_reformas" t-thumbnail="/theme_rias/static/src/img/ui/snippet_image_text_thumb_reformas.jpg"/>
-                    <section class="oe_structure oe_empty"/>
-                    <t t-snippet="theme_rias.snippet_image_text_lasrias_jardines" t-thumbnail="/theme_rias/static/src/img/ui/snippet_image_text_thumb_reformas.jpg"/>
+                    <t t-snippet="website_blog_base.s_latest_post" t-thumbnail="/website/static/src/img/blocks/block_three_columns.png"/>
                     <section class="oe_structure oe_empty"/>
                     <t t-snippet="theme_rias.snippet_image_text_lasrias_map" t-thumbnail="/theme_rias/static/src/img/ui/snippet_image_text_thumb_reformas.jpg"/>
                     <section class="oe_structure oe_empty"/>

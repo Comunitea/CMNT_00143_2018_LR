@@ -1,0 +1,580 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="search_catalogue" name="Search Box">
+        <form t-att-action="keep('/catalogue'+ ('/category/'+slug(category)) if category else None, search=0)" method="get" t-att-class="search_class">
+            <t t-if="attrib_values">
+                <t t-foreach="attrib_values" t-as="a">
+                    <input type="hidden" name="attrib" t-att-value="'%s-%s' % (a[0], a[1])" />
+                </t>
+            </t>
+            <t t-call="website.website_search_box" />
+        </form>
+    </template>
+
+    <template id="search count_catalogue" inherit_id="website.website_search_box" active="False" customize_show="True" name="Show # found Catalogue">
+        <xpath expr="//button[hasclass('oe_search_button')]" position="inside">
+            <span t-if='search and search_count' class='oe_search_found'> <small>(<t t-esc="search_count"/> found)</small></span>
+        </xpath>
+    </template>
+
+    <template id="404_catalogue">
+        <t t-call="website.layout">
+            <div id="wrap">
+                <div class="oe_structure oe_empty">
+                    <div class="container">
+                        <h1 class="mt32">Product not found!</h1>
+                        <p>Sorry, this product is not available anymore.</p>
+                        <p>
+                            <a t-attf-href="/catalogue">Return to the product list.</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Product item used by /shop and /shop/cart -->
+    <template id="products_item_catalogue" name="Products item Catalogue">
+        <div>
+            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
+            <div itemscope="itemscope" itemtype="http://schema.org/Product">
+                <div class="ribbon-wrapper">
+                    <div class="ribbon btn btn-danger">Sale</div>
+                </div>
+                <div class="oe_product_image">
+                    <a itemprop="url" t-att-href="keep('/catalogue/product/%s' % slug(product), page=(pager['page']['num'] if pager['page']['num']&gt;1 else None))">
+                        <span itemprop="image" t-attf-content="{{request.httprequest.url_root}}web/image/product.template/{{product.id}}/image" t-field="product.image" t-options="{'widget': 'image', 'resize': None if product_image_big else '300x300', 'zoom': 'image'}" t-att-alt="product.name" />
+                    </a>
+                </div>
+                <t t-if="show_publish">
+                    <div id="website_published_button" class="" groups="sales_team.group_sale_manager">
+                        <t t-call="website.publish_management">
+                            <t t-set="object" t-value="product" />
+                            <t t-set="publish_edit" t-value="True" />
+                            <t t-set="action" t-value="'product.product_template_action'" />
+                        </t>
+                    </div>
+                </t>
+                <section class="text-center">
+                    <h5>
+                        <strong>
+                            <a itemprop="name" t-att-href="keep('/catalogue/product/%s' % slug(product), page=(pager['page']['num'] if pager['page']['num']&gt;1 else None))" t-att-content="product.name" t-field="product.name" />
+                        </strong>
+                    </h5>
+                    <p t-field="product.description_short" />
+                </section>
+            </div>
+        </div>
+    </template>
+
+    <!-- /shop product listing -->
+    <template id="products_catalogue" name="Products Catalogue">
+        <div id="rpc_modal"></div>
+        <t t-set="pageName" t-value="'cataloguepage'"/>
+        <t t-call="website.layout">
+            <t t-set="additional_title">Shop</t>
+            <div id="wrap" class="js_sale">
+                <div class="oe_structure" />
+                <div class="container oe_website_sale">
+                    <div class="products_pager">
+                        <div class="row" style="width: 100%;">
+                            <t t-call="theme_rias.search_catalogue">
+                                <t t-set="search_class" t-value="'pagination form-inline o_website_sale_search'"/>
+                            </t>
+                            <t t-call="website.pager" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="hidden" id="products_grid_before"></div>
+                        <div class="col-md-12" id="products_grid">
+                            <table width="100%">
+                                <tbody>
+                                    <tr t-ignore="true">
+                                        <td t-foreach="range(0,rows)" t-as="row" t-attf-width="#{100/rows}%"></td>
+                                    </tr>
+                                    <tr t-foreach="bins" t-as="tr_product">
+                                        <t t-foreach="tr_product" t-as="td_product">
+                                            <t t-if="td_product">
+                                                <t t-set="product" t-value="td_product['product']" />
+                                                <td t-att-colspan="td_product['x'] != 1 and td_product['x']" t-att-rowspan="td_product['y'] != 1 and td_product['y']" t-attf-class="oe_product oe_grid oe-height-#{td_product['y']*2} #{ td_product['class'] }">
+                                                    <div class="oe_product_cart" t-att-data-publish="product.website_published and 'on' or 'off'">
+                                                        <t t-set="product_image_big" t-value="td_product['x']+td_product['y'] &gt; 2" />
+                                                        <t t-call="theme_rias.products_item_catalogue" />
+                                                    </div>
+                                                </td>
+                                            </t>
+                                            <td t-if="not td_product" class="oe-height-2" />
+                                        </t>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <t t-if="not bins">
+                                <div class="text-center text-muted oe_product">
+                                    <h3 class="css_editable_display">No product defined.</h3>
+                                    <p groups="sales_team.group_sale_manager">Click <i>'New'</i> in the top-right corner to create your first product.</p>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                    <div class="products_pager">
+                        <t t-call="website.pager" />
+                    </div>
+                </div>
+                <div class="oe_structure mb32" />
+            </div>
+        </t>
+    </template>
+
+    <template id="sort_catalogue" inherit_id="theme_rias.products_catalogue" active="True" customize_show="True" name="Catalogue Show Sort by">
+        <xpath expr="//div[hasclass('products_pager')]/div/t[@t-call][last()]" position="after">
+            <t t-set="name_asc_label">Name - A to Z</t>
+            <t t-set="name_desc_label">Name - Z to A</t>
+            <t t-set="website_sale_sortable" t-value="[
+                (name_asc_label, 'name asc'),
+                (name_desc_label, 'name desc')
+            ]"/>
+            <t t-set="website_sale_sortable_current" t-value="[sort for sort in website_sale_sortable if sort[1]==request.params.get('order', '')]"/>
+            <div class="dropdown btn-group dropdown_sorty_by">
+                <a href="#" class="dropdown-toggle btn btn-default" data-toggle="dropdown">
+                    <t t-if='len(website_sale_sortable_current)'>
+                        <span>Sorting by : <t t-raw='website_sale_sortable_current[0][0]'/></span>
+                    </t>
+                    <t t-else='1'>
+                        <span>Sort by</span>
+                        <span class="caret"></span>
+                    </t>
+                </a>
+                <ul class="dropdown-menu" role="menu">
+                    <li t-foreach="website_sale_sortable" t-as="sortby">
+                        <a t-att-href="keep('/catalogue', order=sortby[1])">
+                            <span t-raw="sortby[0]"/>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </xpath>
+    </template>
+
+
+    <!-- Add to cart button-->
+    <template id="categories_recursive_catalogue" name="Category list Catalogue">
+        <li t-att-class="'active' if c.id == int(category or 0) else None">
+            <a t-att-href="keep('/catalogue/category/' + slug(c), category=0)" t-field="c.name"></a>
+            <ul t-if="c.child_id" class="nav nav-pills nav-stacked nav-hierarchy">
+                <t t-foreach="c.child_id" t-as="c">
+                    <t t-call="theme_rias.categories_recursive_catalogue" />
+                </t>
+            </ul>
+        </li>
+    </template>
+
+    <template id="products_categories_catalogue" inherit_id="theme_rias.products_catalogue" active="True" customize_show="True" name="eCommerce Categories Catalogue">
+        <xpath expr="//div[@id='products_grid_before']" position="inside">
+            <ul class="nav nav-pills nav-stacked mt16">
+                <li t-att-class=" '' if category else 'active' ">
+                    <a t-att-href="keep('/catalogue',category=0)" class="o_not_editable">All Products</a>
+                </li>
+                <t t-set="categories" t-value="website.get_child_category(category)" />
+                <t t-foreach="categories" t-as="c">
+                    <t t-call="theme_rias.categories_recursive_catalogue" />
+                </t>
+            </ul>
+        </xpath>
+        <xpath expr="//div[@id='products_grid_before']" position="attributes">
+            <attribute name="class">col-md-3 col-sm-4 col-xs-12</attribute>
+        </xpath>
+        <xpath expr="//div[@id='products_grid']" position="attributes">
+            <attribute name="class">col-md-9 col-sm-8</attribute>
+        </xpath>
+    </template>
+
+    <template id="option_collapse_categories_recursive_catalogue" name="Collapse Category Recursive Catalogue">
+        <li t-att-class="'active' if categ.id == int(category or 0) else None">
+            <i t-if="categ.child_id" t-attf-class="text-primary fa #{'fa-chevron-down' if categ.id in parent_category_ids else 'fa-chevron-right'}" />
+            <a t-att-href="keep('/catalogue/category/' + slug(categ), category=0)" t-field="categ.name"></a>
+            <ul t-if="categ.child_id" class="nav nav-pills nav-stacked nav-hierarchy" t-att-style="'display:block;' if categ.id in parent_category_ids else 'display:none;'">
+                <t t-foreach="categ.child_id" t-as="categ">
+                    <t t-call="theme_rias.option_collapse_categories_recursive_catalogue" />
+                </t>
+            </ul>
+        </li>
+    </template>
+
+    <template id="option_collapse_products_categories_catalogue" name="Collapsible Category List Catalogue" inherit_id="theme_rias.products_categories_catalogue" active="False" customize_show="True">
+        <xpath expr="//div[@id='products_grid_before']/ul" position="replace">
+            <ul class="nav nav-pills nav-stacked mt16" id="o_shop_collapse_category">
+                <li t-att-class=" '' if category else 'active' ">
+                    <a t-att-href="keep('/catalogue',category=0)" class="o_not_editable">All Products</a>
+                </li>
+                <t t-foreach="categories" t-as="categ">
+                    <t t-call="theme_rias.option_collapse_categories_recursive_catalogue" />
+                </t>
+            </ul>
+        </xpath>
+    </template>
+
+    <template id="products_attributes_catalogue" inherit_id="theme_rias.products_catalogue" active="True" customize_show="True" name="Catalogue Product Attribute's Filters">
+        <xpath expr="//div[@id='products_grid_before']" position="inside">
+            <form class="js_attributes" method="get">
+                <input type="hidden" name="search" t-att-value="search" />
+                <ul class="nav nav-pills nav-stacked mt16">
+                    <t t-foreach="attributes" t-as="a">
+                        <li t-if="a.value_ids and len(a.value_ids) &gt; 1">
+                            <div>
+                                <strong t-field="a.name" />
+                            </div>
+                            <t t-if="a.type == 'select'">
+                                <select class="form-control" name="attrib">
+                                    <option value="" />
+                                    <t t-foreach="a.value_ids" t-as="v">
+                                        <option t-att-value="'%s-%s' % (a.id,v.id)" t-esc="v.name" t-att-selected="v.id in attrib_set" />
+                                    </t>
+                                </select>
+                            </t>
+                            <t t-if="a.type == 'radio'">
+                                <ul class="nav nav-pills nav-stacked">
+                                    <t t-foreach="a.value_ids" t-as="v">
+                                        <li t-att-class="'active' if v.id in attrib_set else None">
+                                            <label style="margin: 0 20px;">
+                                                <input type="checkbox" name="attrib" t-att-value="'%s-%s' % (a.id,v.id)" t-att-checked="'checked' if v.id in attrib_set else None" />
+                                                <span style="font-weight: normal" t-field="v.name" />
+                                            </label>
+                                        </li>
+                                    </t>
+                                </ul>
+                            </t>
+                            <t t-if="a.type == 'color'">
+                                <t t-foreach="a.value_ids" t-as="v">
+                                    <label t-attf-style="background-color:#{v.html_color or v.name}" t-attf-class="css_attribute_color #{'active' if v.id in attrib_set else ''}">
+                                        <input type="checkbox" name="attrib" t-att-value="'%s-%s' % (a.id,v.id)" t-att-checked="'checked' if v.id in attrib_set else None" t-att-title="v.name" />
+                                    </label>
+                                </t>
+                            </t>
+                        </li>
+                    </t>
+                </ul>
+            </form>
+        </xpath>
+        <xpath expr="//div[@id='products_grid_before']" position="attributes">
+            <attribute name="class">col-md-3 hidden-xs</attribute>
+        </xpath>
+        <xpath expr="//div[@id='products_grid']" position="attributes">
+            <attribute name="class">col-md-9</attribute>
+        </xpath>
+    </template>
+
+    <template id="products_list_view_catalogue" inherit_id="theme_rias.products_catalogue" active="False" customize_show="True" name="Catalogue List View">
+        <xpath expr="//div[@id='products_grid']//table" position="replace">
+            <t t-foreach="products" t-as="product">
+                <div class="oe_product oe_list oe_product_cart" t-att-data-publish="product.website_published and 'on' or 'off'">
+                    <t t-call="theme_rias.products_item_catalogue">
+                        <t t-set="show_publish" t-value="True" />
+                    </t>
+                </div>
+            </t>
+        </xpath>
+    </template>
+
+    <!-- /shop/product product page -->
+    <template id="product_edit_options_catalogue" inherit_id="website.user_navbar" name="Catalogue Edit Product Options">
+        <xpath expr="//li[@id='edit-page-menu']" position="after">
+            <t t-if="main_object._name == 'product.template'" t-set="action" t-value="'product.product_template_action'" />
+        </xpath>
+    </template>
+
+    <template id="products_description_catalogue" inherit_id="theme_rias.products_item_catalogue" active="False" customize_show="True" name="Catalogue Product Description">
+        <xpath expr="//div[hasclass('product_price')]" position="before">
+            <div class="text-info oe_subdescription" contenteditable="false">
+                <div itemprop="description" t-field="product.description_sale"></div>
+            </div>
+        </xpath>
+    </template>
+
+    <template id="variants_catalogue">
+      <t t-set="attribute_value_ids" t-value="get_attribute_value_ids(product)"/>
+      <ul t-attf-class="list-unstyled js_add_cart_variants #{ul_class}" t-att-data-attribute_value_ids="json.dumps(attribute_value_ids)">
+        <t t-foreach="product.attribute_line_ids.sorted(key=lambda x: x.attribute_id.sequence)" t-as="variant_id">
+          <li t-if="len(variant_id.value_ids) > 1">
+
+            <strong t-field="variant_id.attribute_id.name"/>
+
+            <t t-if="variant_id.attribute_id.type == 'select'">
+              <select t-attf-class="form-control #{'js_variant_change' if variant_id.attribute_id.create_variant else ''}" t-att-name="'attribute-%s-%s' % (product.id, variant_id.attribute_id.id)">
+                <t t-foreach="variant_id.value_ids" t-as="value_id">
+                  <option t-att-value="value_id.id">
+                      <span t-field="value_id.name"/>
+                  </option>
+                </t>
+              </select>
+            </t>
+
+            <t t-if="variant_id.attribute_id.type == 'radio'">
+              <ul class="list-unstyled">
+                  <t t-set="inc" t-value="0"/>
+                  <t t-foreach="variant_id.value_ids" t-as="value_id">
+                      <li class="form-group js_attribute_value" style="margin: 0;">
+                          <label class="control-label" style="margin: 0 20px;">
+                              <input type="radio" t-att-class="'js_variant_change' if variant_id.attribute_id.create_variant else None" t-att-checked="'checked' if not inc else None" t-att-name="'attribute-%s-%s' % (product.id, variant_id.attribute_id.id)" t-att-value="value_id.id" style="vertical-align: top; margin-right: 10px;"/>
+                              <span t-field="value_id.name"/>
+                          </label>
+                      </li>
+                      <t t-set="inc" t-value="inc+1"/>
+                  </t>
+              </ul>
+            </t>
+
+            <t t-if="variant_id.attribute_id.type == 'color'">
+              <ul class="list-inline">
+                  <t t-set="inc" t-value="0"/>
+                  <li t-foreach="variant_id.value_ids" t-as="value_id">
+                      <label t-attf-style="background-color:#{value_id.html_color or value_id.name}"
+                          t-attf-class="css_attribute_color #{'active' if not inc else ''}">
+                        <input type="radio" t-att-class="'js_variant_change' if variant_id.attribute_id.create_variant else None"
+                          t-att-checked="'checked' if not inc else None"
+                          t-att-name="'attribute-%s-%s' % (product.id, variant_id.attribute_id.id)"
+                          t-att-value="value_id.id"
+                          t-att-title="value_id.name"/>
+                      </label>
+                      <t t-set="inc" t-value="inc+1"/>
+                  </li>
+              </ul>
+            </t>
+
+          </li>
+        </t>
+      </ul>
+    </template>
+
+    <!-- User Navbar -->
+    <template id="content_new_product_catalogue" inherit_id="website.user_navbar">
+        <xpath expr="//div[@id='o_new_content_menu_choices']//ul" position="inside">
+            <li groups="sales_team.group_sale_manager">
+                <a id="create-new-product" href="#" data-action="new_product">
+                    <i class="fa fa-shopping-cart" />
+                    <p>New Product</p>
+                </a>
+            </li>
+        </xpath>
+    </template>
+
+    <template id="portal_order_page_products_links_catalogue" name=" Catalogue Orders Followup Products Links" inherit_id="sale.portal_order_page">
+        <xpath expr="//div[@id='product_name']/*" position="replace">
+            <a t-if="ol.product_id.website_published" t-att-href="ol.product_id.website_url">
+                <span t-esc="ol.name" />
+            </a>
+            <t t-if="not ol.product_id.website_published">
+                <span t-esc="ol.name" />
+            </t>
+        </xpath>
+    </template>
+
+
+    <!-- Tags -->
+    <template id="categories_top_catalogue" name="Catalogue Categories Top">
+        <div class="row mb8 ml8 mr8 mt8">
+            <a href="#" class="product-tag btn btn-primary btn-xs to-toggle-menu hidden-sm hidden-md hidden-lg">
+                <span data-oe-model="website.menu" data-oe-id="37" data-oe-field="name" data-oe-type="char" data-oe-expression="submenu.name">Categories</span>
+            </a>
+            <t t-set="cats" t-value="website.get_child_category(False)" />
+            <t t-if="len(cats) &gt; 0">
+            <t t-foreach="cats" t-as="cat">
+                <div class="col-12 col-sm-4 col-md-2 mt8 mb8 hidden-xs">
+                    <a class="" t-att-title="cat.name"
+                        t-att-href="'/catalogue/category/%s' % cat.slug if cat.slug else '/catalogue/category/%s' % slug(cat)">
+                        <img class="img-responsive cat-image" t-attf-alt="cat.name" t-attf-src="/web/image/product.public.category/#{cat.id}/image"/>
+                    </a>
+                </div>
+            </t>
+            </t>
+        </div>
+        <div class="row container cat-dynamic-menu-div">
+            <t t-call="theme_rias.dynamic_category"/>
+        </div>
+    </template>
+
+    <template id="dynamic_category">
+		<ul class="custom-menu-inside-div custom-menu-inside-div-nth dropdown-menu hidden-sm hidden-md hidden-lg">
+            <div class="custom-menu-inside-maxW">
+                <div class="fisrt_li">
+                    <t t-set="category_fetch" t-value="website.category_check()"></t>
+                    <t t-foreach="category_fetch" t-as="category_individual">
+                        <t t-if="not category_individual.parent_id">
+                            <li class="first-level-category-li dropdown-submenu" t-att-id="'genrate_categ_id-%s' % category_individual.id">
+                                <div class="first-level-left-div">
+                                    <div class="first-level-category-image" itemprop="image"
+                                        t-field="category_individual.image" t-options='{"widget": "image", "alt-field": "name"}' />
+                                    <a class="first-level-category-a " t-att-href="'/catalogue/category/%s' %slug(category_individual)"
+                                        t-field="category_individual.display_name" ></a>
+                                </div>
+                                <span tabindex="-1" class="submenu-a first-level-category-caret fa fa-chevron-right" />
+                                <div class="toggel_div toggel-div-effect" t-att-id="category_individual.id">
+                                    <div class="toggel-inside-div">
+                                        <div class="menu_expand menu_1_div">
+                                            <div class="menu_expand_overflow menu_1_column_div">
+                                                <ul class="submenu_expand second_level-ul sub_menu dropdown-menu">
+                                                    <t t-if="category_individual.child_id">
+                                                        <t t-foreach="category_individual.child_id" t-as="c">
+                                                            <li class="dropdown-submenu sub-menu-ul-heading">
+                                                                <a class="second-level-a menu_heading " t-att-href="'/catalogue/category/%s' %slug(c)"
+                                                                    t-field="c.name" ></a>
+                                                                <span tabindex="-1" class="submenu-a second-level-category-caret fa fa-chevron-right" />
+                                                                <ul class="third-level-ul dropdown-menu">
+                                                                    <t t-foreach="c.child_id" t-as="child">
+                                                                        <li class="third-level-li">
+                                                                            <a class="sub_menu_list" t-att-href="'/catalogue/category/%s' %slug(child)"
+                                                                                t-field="child.name" />
+                                                                        </li>
+                                                                    </t>
+                                                                </ul>
+                                                            </li>
+                                                        </t>
+                                                    </t>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </t>
+                    </t>
+                </div>
+            </div>
+        </ul>
+	</template>
+
+    <template id="dynamic_category_menu" inherit_id="theme_rias.dynamic_category" name="Category dynamic menu">
+        <xpath expr="//a[@class='first-level-category-a ']" position="attributes">
+            <attribute name="t-att-href">'/catalogue/category/%s' %category_individual.slug if category_individual.slug else '/catalogue/category/%s' %slug(category_individual)</attribute>
+        </xpath>
+        <xpath expr="//li[@class='first-level-category-li dropdown-submenu']/span" position="attributes">
+            <attribute name="t-if">category_individual.child_id</attribute>
+        </xpath>
+        <xpath expr="//a[@class='second-level-a menu_heading ']" position="attributes">
+            <attribute name="t-att-href">'/catalogue/category/%s' %c.slug if c.slug else '/catalogue/category/%s' %slug(c)</attribute>
+        </xpath>
+        <xpath expr="//a[@class='sub_menu_list']" position="attributes">
+            <attribute name="t-att-href">'/catalogue/category/%s' %child.slug if child.slug else '/catalogue/category/%s' %slug(child)</attribute>
+        </xpath>
+        <xpath expr="//div[@class='first-level-category-image']" position="replace">
+            <div class="first-level-category-image">
+                <img t-att-alt="category_individual.name" t-att-title="category_individual.name"
+                     t-attf-src="/web/image/product.public.category/{{category_individual.id}}/image/200x64"/>
+            </div>
+        </xpath>
+        <xpath expr="//li[@class='dropdown-submenu sub-menu-ul-heading']/span" position="attributes">
+            <attribute name="t-if">c.child_id</attribute>
+        </xpath>
+    </template>
+
+    <template id="las_template_catalogue_tags" inherit_id="breadcrumbs_base.bcb_main_wrap">
+        <xpath expr="//div[hasclass('wp_breadcrumbs_base')]"  position="replace">
+            <t t-if="pageName == 'cataloguepage'">
+                <t t-call="theme_rias.categories_top_catalogue"/>
+            </t>
+        </xpath>
+    </template>
+
+
+    <template id="product_catalogue" name="Catalogue Product">
+        <t t-call="website.layout">
+            <t t-set="additional_title" t-value="product.name" />
+            <div itemscope="itemscope" itemtype="http://schema.org/Product" id="wrap" class="js_sale">
+                <section t-attf-class="container mt8 oe_website_sale #{(compute_currency(product.lst_price) - product.website_price) &gt; 0.01 and website.get_current_pricelist().discount_policy == 'without_discount'  and 'discount'}" id="product_detail">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <ol class="breadcrumb">
+                                <li>
+                                    <a t-att-href="keep(category=0)">Products</a>
+                                </li>
+                                <li t-if="category">
+                                    <a t-att-href="keep('/catalogue/category/%s' % slug(category), category=0)" t-field="category.name" />
+                                </li>
+                                <li class="active">
+                                    <span t-field="product.name" />
+                                </li>
+                            </ol>
+                        </div>
+                        <div class="col-sm-3 mb8">
+                            <t t-call="website_sale.search" />
+                        </div>
+                        <div id="website_published_button" class="col-sm-3">
+                        </div>
+                        <div class="col-sm-2 text-right">
+                            <t t-call="website_sale.pricelist_list" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-7">
+                            <span itemprop="image" t-attf-content="{{request.httprequest.url_root}}web/image/product.template/{{product.id}}/image" t-field="product.image" t-options="{'widget': 'image', 'class': 'product_detail_img', 'alt-field': 'name', 'zoom': 'image'}" groups="!website_sale.group_website_multi_image"/>
+                            <t groups="website_sale.group_website_multi_image">
+                                <t t-set="variant_img" t-value="any(product.mapped('product_variant_ids.image_variant'))"/>
+                                <t t-set="image_ids"  t-value="product.product_image_ids"/>
+                                <div id="o-carousel-product" class="carousel slide" data-ride="carousel" data-interval="0">
+                                  <div class="carousel-outer">
+                                    <div class="carousel-inner">
+                                        <div t-if="variant_img" class="item active" itemprop="image" t-field="product[:1].product_variant_id.image" t-options="{'widget': 'image', 'class': 'product_detail_img js_variant_img', 'alt-field': 'name', 'zoom': 'image', 'unique': product['__last_update'] + (product.product_variant_id['__last_update'] or '')}"/>
+                                        <div t-attf-class="item#{'' if variant_img else ' active'}" itemprop="image" t-field="product.image" t-options="{'widget': 'image', 'class': 'product_detail_img', 'alt-field': 'name', 'zoom': 'image', 'unique': product['__last_update']}"/>
+                                        <t t-if="len(image_ids)" t-foreach="image_ids" t-as="pimg">
+                                            <div class="item" t-field="pimg.image" t-options='{"widget": "image", "class": "product_detail_img", "alt-field": "name", "zoom": "image" }'/>
+                                        </t>
+                                    </div>
+
+                                    <t t-if="len(image_ids) or variant_img">
+                                        <a class="carousel-control left" href="#o-carousel-product" role="button" data-slide="prev" >
+                                            <span class="fa fa-chevron-left" aria-hidden="true"/>
+                                            <span class="sr-only">Previous</span>
+                                        </a>
+                                        <a class="carousel-control right" href="#o-carousel-product" role="button" data-slide="next">
+                                            <span class="fa fa-chevron-right" aria-hidden="true"/>
+                                            <span class="sr-only">Next</span>
+                                        </a>
+                                    </t>
+                                  </div>
+
+                                  <ol class="carousel-indicators" t-if="len(image_ids) or variant_img">
+                                    <li t-if="variant_img" data-target="#o-carousel-product" data-slide-to="0" class="active">
+                                        <img class="img img-responsive js_variant_img_small" t-attf-src="/website/image/product.product/{{product.product_variant_id.id}}/image/90x90" t-att-alt="product.name"/>
+                                    </li>
+                                    <li data-target="#o-carousel-product" t-att-data-slide-to="1 if variant_img else '0'" t-att-class="'' if variant_img else 'active'">
+                                        <img class="img img-responsive" t-attf-src="/website/image/product.template/{{product.id}}/image/90x90" t-att-alt="product.name"/>
+                                    </li>
+                                    <t t-if="len(image_ids)" t-foreach="image_ids" t-as="pimg">
+                                        <li data-target="#o-carousel-product" t-att-data-slide-to="pimg_index + (variant_img and 2 or 1)">
+                                            <img class="img img-responsive" t-attf-src="/website/image/product.image/{{pimg.id}}/image/90x90" t-att-alt="pimg.name"/>
+                                        </li>
+                                    </t>
+                                  </ol>
+                                </div>
+                            </t>
+                        </div>
+                        <div class="col-sm-5 col-lg-4 col-lg-offset-1" id="product_details">
+                            <h1 itemprop="name" t-field="product.name">Product Name</h1>
+                            <span itemprop="url" style="display:none;" t-esc="'%scatalogue/product/%s' % (request.httprequest.url_root, slug(product))"/>
+                            <hr t-if="product.description_sale" />
+                            <div class="o_not_editable">
+                                <p t-field="product.description_sale" class="text-muted" />
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <div itemprop="description" t-field="product.website_description" class="oe_structure mt16" id="product_full_description" />
+                <t t-set="head">
+                    <!-- Facebook and linkedin sharing data -->
+                    <meta property="og:type" content="website" />
+                    <meta property="og:url" t-att-content="request.httprequest.url" />
+                    <meta property="og:image" t-attf-content="#{request.httprequest.url_root}web/image/product.template/#{product.id}/image" />
+                    <meta property="og:description" t-att-content="product.description_sale" />
+                    <!--  Twitter sharing data -->
+                    <meta name="twitter:card" content="summary_large_image" />
+                    <meta name="twitter:site" t-attf-content="@#{res_company.name}" />
+                    <meta name="twitter:title" t-att-content="product.name" />
+                    <meta name="twitter:description" t-att-content="product.description_sale" />
+                    <meta name="twitter:image" t-attf-content="#{request.httprequest.url_root}web/image/product.template/#{product.id}/image" />
+                </t>
+            </div>
+        </t>
+    </template>
+
+    
+</odoo>

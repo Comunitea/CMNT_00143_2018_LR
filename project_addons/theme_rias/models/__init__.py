@@ -21,38 +21,6 @@
 #
 ##############################################################################
 
-{
-    'name': 'Las Rias website base module',
-    'version': '1.0',
-    'summary': 'Back-end customization for Las Rias website eCommerce',
-    'description': '',
-    'category': 'Website',
-    'author': 'Comunitea',
-    'website': 'http://www.comunitea.com',
-    'license': 'AGPL-3',
-    'contributors': [
-        'Pavel Smirnov <pavel@comunitea.com>',
-        'Rubén Seijas <ruben@comunitea.com>',
-    ],
-    'depends': [
-        'ecommerce_base',
-        'seo_base',
-        'breadcrumbs_base',
-        'purchase',
-        'website_blog_base',
-        'theme_rias',
-        'theme_rias_menu',
-        'theme_rias_multi_cart',
-    ],
-    'data': [
-        'data/website_data.xml',
-        'data/page_data.xml',
-    ],
-    'images': [
-        '/static/description/icon.png',
-    ],
-    'qweb': [
-    ],
-    'installable': True,
-    'application': False,
-}
+from . import website
+from . import blog_post
+from . import product_public_category

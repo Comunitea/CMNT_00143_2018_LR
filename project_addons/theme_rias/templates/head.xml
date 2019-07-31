@@ -11,11 +11,11 @@
             <link href="/theme_rias/static/css/page_home.less" rel="stylesheet" type="text/less"/>
             <link href="/theme_rias/static/css/map.less" rel="stylesheet" type="text/less"/>
             <link href="/theme_rias/static/css/page_about_us.less" rel="stylesheet" type="text/less"/>
+            <link href="/theme_rias/static/css/catalogue.less" rel="stylesheet" type="text/less"/>
+            <link href="/theme_rias/static/css/blog.less" rel="stylesheet" type="text/less"/>
         </xpath>
-    </template>
 
-    <!--Add custom scripts-->
-    <template id="rias_website_assets_editor" inherit_id="website.assets_editor">
+        <!--Add custom scripts-->
         <xpath expr="script[last()]" position="after">
             <script type="text/javascript" src="/theme_rias/static/js/main.js" />
         </xpath>

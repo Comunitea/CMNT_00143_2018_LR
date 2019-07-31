@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <record id="wbb_view_blog_post_form" model="ir.ui.view">
+        <field name="name">Add content and image fields to the blog.post view</field>
+        <field name="model">blog.post</field>
+        <field name="inherit_id" ref="website_blog.view_blog_post_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='tag_ids']" position="after">
+                <field name="youtube_link"/>
+            </xpath>
+        </field>
+    </record>
+
+    <template id="s_latest_post_youtube" inherit_id="website_blog_base.s_latest_post" name="Blog Snippets Template Youtube">
+        <xpath expr="//div[hasclass('container')][last()]" position="replace">
+            <div class="container">
+                <div class="row">
+                    <t t-foreach="latest_posts['posts']" t-as="post">
+                        <div t-attf-class="col-md-#{col_md} mt32 mb48">
+                            <t t-if="post.youtube_id">
+                                <div class="embed-responsive embed-responsive-16by9">
+                                    <iframe class="embed-responsive-item" t-attf-src="https://www.youtube.com/embed/#{post.youtube_id}" allowfullscreen="true"></iframe>
+                                </div>
+                            </t>
+                            <t t-else="">
+                                <a t-attf-href="/blog/#{slug(post.blog_id)}/post/#{slug(post)}" title="Read more" alt="Read more" rel="nofollow">
+                                    <div class="mb8 latest_posts-img" t-attf-style="background: url(/web/image/blog.post/#{post.id}/image/500x500) center / cover; width: 100%; height: 200px;"/>
+                                </a>
+                            </t>
+                            <h4 class="mt16 o_default_snippet_text" t-esc="post.name"/>
+                            <h6 class="o_default_snippet_text" t-esc="post.subtitle"/>
+                            <p class="o_default_snippet_text" t-esc="post.introduction"/>
+                            <a class="btn btn-primary" t-attf-href="/blog/#{slug(post.blog_id)}/post/#{slug(post)}" title="Read more" alt="Read more" rel="nofollow">Read more</a>
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </xpath>
+    </template>
+
+    <template id="wbb_website_blog_blog_post_complete_youtube" inherit_id="website_blog_base.wbb_website_blog_blog_post_complete" name="Blog Post with Right Column Youtube">
+        <xpath expr="//div[@id='blog_content']" position="before">
+            <t t-set="pageName" t-value="'blogpage'"/>
+            <t t-if="blog_post.youtube_id">
+                <div class="embed-responsive embed-responsive-16by9">
+                    <iframe class="embed-responsive-item" t-attf-src="https://www.youtube.com/embed/#{blog_post.youtube_id}" allowfullscreen="true"></iframe>
+                </div>
+            </t>
+        </xpath>
+    </template>
+
+    <template id="blog_post_short_extended" inherit_id="website_blog.blog_post_short" name="Extended Blog Posts View">
+        <xpath expr="//div[@id='main_column']" position="before">
+            <t t-set="pageName" t-value="'blogpage'"/>
+        </xpath>
+    </template>
+
+</odoo>

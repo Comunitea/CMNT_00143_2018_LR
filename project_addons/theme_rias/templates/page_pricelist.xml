@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <template id="rias_pricelist_list_template" name="Pricelist list template" inherit_id="theme_rias.rias_pricelist_list">
+
+        <xpath expr="//div[hasclass('container')]" position="inside">
+            <section class="oe_structure oe_empty"/>
+            <section id="work_section" class="oe_structure">
+                <div class="col-md-12">
+                    <h3>Submitted pricelists
+                        <t t-call="portal.portal_searchbar"/>
+                    </h3>
+                    <t t-set="data" t-value="website.get_submitted_pricelists(request.env.user.email)"/>
+                    <t t-set="pricelist_list" t-value="data['pricelist_list']"/>
+                    <t t-set="attachments" t-value="data['attachments']"/>
+                    <t t-if="not pricelist_list">
+                        <p>There are currently no pricelists submitted by you.</p>
+                    </t>
+                    <div t-if="pricelist_list" class="panel panel-default">
+                        <div class="table-responsive">
+                            <table class="table table-hover o_portal_my_doc_table">
+                                <thead>
+                                    <tr class="active">
+                                        <th>Pricelist Date</th>
+                                        <th>Download</th>
+                                    </tr>
+                                </thead>
+                                <t t-foreach="pricelist_list" t-as="pricelist">
+                                    <tr>
+                                        <td>
+                                            <span t-esc="pricelist.create_date"/>
+                                        </td>
+                                        <td>
+                                            <t t-foreach="attachments.filtered(lambda a: a.res_id == pricelist.id)" t-as="attach">
+                                                <a t-att-href="'/web/content/%i?download=true' % attach.id" target="_blank">
+                                                    <span t-esc="attach.name" class="fa fa-download"/>
+                                                </a>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </table>
+                        </div>
+                        <div t-if="pager" class="o_portal_pager text-center">
+                            <t t-call="portal.pager"/>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="oe_structure oe_empty"/>
+        </xpath>
+    </template>
+
+
+    <template id="rias_pricelist_form_template" name="Pricelist form template" inherit_id="theme_rias.rias_pricelist_form">
+
+        <xpath expr="//div[hasclass('container')]" position="inside">
+            <section class="oe_structure oe_empty"/>
+            <section id="form_section" class="oe_structure">
+                <div class="col-md-12">
+                    <h3>Submit new pricelist</h3>
+                    <p>Select your pricelist file and push the send button.</p>
+                    <br/>
+                </div>
+            </section>
+            <section id="request_section_form" class="mt32">
+                <t t-call="theme_rias.pricelist_form"/>
+            </section>
+            <section class="oe_structure oe_empty"/>
+        </xpath>
+    </template>
+
+</odoo>
