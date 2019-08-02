@@ -14,10 +14,12 @@ class AccountBankStatementLine(models.Model):
 
     def process_reconciliation(self, counterpart_aml_dicts=None,
                                payment_aml_rec=None, new_aml_dicts=None):
-        for aml_dict in counterpart_aml_dicts:
-            if aml_dict['move_line'].ref:
-                aml_dict['name'] = aml_dict['name'] + " : " \
-                                   + aml_dict['move_line'].ref
+        if counterpart_aml_dicts:
+            for aml_dict in counterpart_aml_dicts:
+                if aml_dict['move_line'].ref:
+                    aml_dict['name'] = aml_dict['name'] + " : " \
+                                       + aml_dict['move_line'].ref
+
         return super().process_reconciliation(
                                 counterpart_aml_dicts=counterpart_aml_dicts,
                                 payment_aml_rec=payment_aml_rec,
