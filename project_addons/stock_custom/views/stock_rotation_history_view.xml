@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+    <record id="view_stock_history_tree" model="ir.ui.view">
+        <field name="name">stock.history.tree</field>
+        <field name="model">stock.rotation.history</field>
+        <field name="arch" type="xml">
+            <tree string="Stock Rotation History" editable="top">
+                <field name="product_id"/>
+                <field name="date"/>
+                <field name="month_1"/>
+                <field name="month_2"/>
+                <field name="month_3"/>
+                <field name="month_4"/>
+                <field name="month_5"/>
+                <field name="month_6"/>
+                <field name="month_7"/>
+                <field name="month_8"/>
+                <field name="month_9"/>
+                <field name="month_10"/>
+                <field name="month_11"/>
+                <field name="month_12"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="stock_history_action" model="ir.actions.act_window">
+        <field name="name">Stock Rotation History</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">stock.rotation.history</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Click to define a new history line
+            </p>
+        </field>
+    </record>
+    
+    <menuitem id="menu_stock_history" name="Stock History" action="stock_history_action"
+        parent="stock.menu_stock_inventory_control" sequence="99"/>
+</odoo>
