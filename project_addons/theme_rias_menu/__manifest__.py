@@ -8,7 +8,7 @@
     'license': 'AGPL-3',
     'author': "Comunitea, ",
     'depends': [
-        'theme_rias'
+        'theme_rias',
     ],
     'data': [
         'data/menu_data.xml',

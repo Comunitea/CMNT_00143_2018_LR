@@ -40,9 +40,6 @@
         'breadcrumbs_base',
         'purchase',
         'website_blog_base',
-        'theme_rias',
-        'theme_rias_menu',
-        'theme_rias_multi_cart',
     ],
     'data': [
         'data/website_data.xml',

@@ -36,9 +36,8 @@
     ],
     'depends': [
         'website_slides',
-        'website_blog_base',
         'website_form',
-        'seo_base',
+        'website_base_rias',
     ],
     'data': [
         'data/menu_data.xml',
