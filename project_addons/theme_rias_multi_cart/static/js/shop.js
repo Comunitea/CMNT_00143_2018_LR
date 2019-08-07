@@ -328,4 +328,96 @@ odoo.define('website_sale.website_sale', function (require) {
         }).val(new_qty).change();
         return false;
     });
+
+
+    // Checking if the product is allowed in the cart
+
+    $(document).ready(function() {
+
+        /* if ($('#wrapwrap').hasClass('shoppage')) {
+            $(".oe_website_sale").on('click', 'a.campaign-call', function (event) {
+                event.preventDefault();
+                var campaign_id = parseInt($(event.target).parent().attr('data-campaign-id'));
+                console.log($(event.target).parent().attr('data-campaign-id'));
+                console.log($(event.target).closest('a').attr('data-campaign-id'));
+                console.log($(event.target).attr('data-campaign-id'));
+                console.log(campaign_id);
+                var variant_id = parseInt($(event.target).closest('tr').attr('variant-id'));
+
+                if (variant_id == true) {
+                    product_id = variant_id;
+                }
+                var $input = $(event.target).closest('tr').find("input");
+                ajax.jsonRpc("/shop/cart/add_to_campaign_json", 'call', {
+                    'campaign_id': campaign_id,
+                    'product_id': parseInt($input.data('product-id'), 10),
+                    'set_qty': 1
+                }).then(function (data) {
+                    console.log(data);
+                });
+            });
+        } */
+
+        if ($('#wrapwrap').hasClass('productpage')) {
+            var is_allowed = $('#allowed_purchase').text();
+            if (is_allowed == 'denied') {
+                $('#add_to_cart').remove();
+                $('.css_quantity').remove();
+                $('#purchase_msg').html('<div class="alert alert-danger" role="alert">'+
+                'Este producto no pertenece a la campaña del pedido actual.</div>');
+            } else if (is_allowed == 'warning') {
+                $('#purchase_msg').html('<div class="alert alert-warning" role="alert">'+
+                'Este producto pertenece a una campaña activa, te recomendamos añadirlo a un pedido de campaña.'+
+                '</div>');
+            }
+
+            function calculate_if_allowed() {
+                var prod_id = parseInt($('input[name="product_id"]').attr('value'));
+                ajax.jsonRpc("/shop/cart/is_allowed_purchase_json", 'call', {
+                    'product_id': prod_id,
+                }).then(function (data) {
+                    if (data['status'] == 'denied') {
+                        $('#add_to_cart').addClass('hidden');
+                        $('.css_quantity').addClass('hidden');
+                        $('#purchase_msg').html('<div class="alert alert-danger" role="alert">'+
+                        'Este producto no pertenece a la campaña del pedido actual.</div>');
+                    } else if (data['status'] == 'warning') {
+                        $('#add_to_cart').removeClass('hidden');
+                        $('.css_quantity').removeClass('hidden');
+                        $('#purchase_msg').html('<div class="alert alert-warning" role="alert">'+
+                        'Este producto pertenece a una campaña activa, te recomendamos añadirlo a un pedido de campaña.</div>');
+                    } else if (data['status'] == 'allowed') {
+                        $('#add_to_cart').removeClass('hidden');
+                        $('.css_quantity').removeClass('hidden');
+                        $('#purchase_msg').html('');
+                    }
+                });
+            }
+
+            $(".oe_website_sale").on('change', 'input[name="product_id"]', function() {
+                calculate_if_allowed();
+            });
+
+            $(".oe_website_sale").on('change', '.js_variant_change', function(e) {
+                $('input[name="product_id"]').trigger('change');
+            });
+            
+        }
+
+        if ($('#wrapwrap').hasClass('wishlistpage')) {
+            
+            $('tr').each(function() {
+                var is_allowed = $(this).find('td:nth-child(2)').find('.allowed_purchase').text();
+                if (is_allowed == 'denied') {
+                    $(this).find('td:last()').find('input').remove();
+                    $(this).find('td:last()').find('a').remove();
+                    $(this).find('td:nth-child(2)').find('.purchase_msg').html('<div class="alert alert-danger" role="alert">Este producto no pertenece a la campaña del pedido actual.</div>');
+                } else if (is_allowed == 'warning') {
+                    $(this).find('td:nth-child(2)').find('.purchase_msg').html('<div class="alert alert-warning" role="alert">Este producto pertenece a una campaña activa, te recomendamos añadirlo a un pedido de campaña.</div>');
+                }
+            });
+
+        }
+
+    });
 });

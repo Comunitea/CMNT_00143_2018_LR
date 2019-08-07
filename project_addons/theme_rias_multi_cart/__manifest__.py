@@ -17,6 +17,7 @@
         'data/menu_data.xml',
         'templates/head.xml',
         'templates/shop.xml',
+        'templates/portal.xml',
         ],
     'images': [
         '/static/description/icon.png',

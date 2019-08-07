@@ -13,7 +13,7 @@ from odoo.addons.sale.controllers.portal import CustomerPortal
 from odoo.addons.website_sale.controllers.main import WebsiteSale
 from pprint import pprint
 
-def my_carts_control_access():
+def my_carts_control_access(order_id=False):
     
     user = request.env.user
     rules = 'b2b'
@@ -22,6 +22,11 @@ def my_carts_control_access():
     is_b2c = user.has_group('sale.group_show_price_total')
     is_portal = user.has_group('base.group_portal')
     is_admin = user.has_group('website.group_website_publisher') or user.has_group('base.group_user')
+
+    if order_id:
+        order = request.env['sale.order'].sudo().browse([order_id])
+        if order.partner_id.id != user.partner_id.id:
+            return request.redirect('/my')
 
     if not is_admin:
         # If the user is not logged in --> to login
@@ -88,16 +93,14 @@ class CustomerPortalCarts(CustomerPortal):
 
         # Call to the user access control function
         if request.website:
-            result = my_carts_control_access()
+            result = my_carts_control_access(order)
             if result:
                 return result
 
-        try:
-            order_sudo = self._order_check_access(order, access_token=access_token)
-        except AccessError:
-            return request.redirect('/my')
+        order = request.env['sale.order'].browse([order])
+        order_sudo = order.sudo()
 
-        values = self._order_get_page_view_values(order_sudo, access_token, **kw)
+        values = self._order_get_page_view_values(order_sudo, access_token, **post)
         return request.render("sale.portal_order_page", values)
 
     @http.route([
@@ -107,7 +110,7 @@ class CustomerPortalCarts(CustomerPortal):
 
         # Call to the user access control function
         if request.website:
-            result = my_carts_control_access()
+            result = my_carts_control_access(order)
             if result:
                 return result
 
@@ -130,14 +133,38 @@ class CustomerPortalCarts(CustomerPortal):
         if sale_order:
             return request.redirect('/shop')
 
+    @http.route(['/shop/cart/is_allowed_purchase_json'], type='json', auth="public", methods=['POST'], website=True, csrf=False)
+    def is_allowed_purchase_json(self, product_id):
+        res = request.website.is_allowed_purchase(product_id)
+        return res
+
+    #@http.route(['/shop/cart/add_to_campaign_json'], type='json', auth="public", methods=['POST'], website=True, csrf=False)
+    #def add_to_campaign_json(self, product_id, campaign_id, line_id=None, add_qty=None, set_qty=None, display=True):
+    #    pprint(campaign_id)
+    #    pprint(product_id)
+    #    order = request.website.sudo().get_campaign_cart(campaign_id)
+    #    pprint(order)
+    #    if order.state != 'draft':
+    #        pprint("reset")
+    #        request.website.sale_reset()
+    #        return request.redirect('/shop')
+    #    value = order._cart_update(product_id=product_id, line_id=line_id, add_qty=add_qty, set_qty=set_qty)
+    #
+    #    if not order.cart_quantity:
+    #        request.website.sale_reset()
+    #        return request.redirect('/shop')
+    #    
+    #    return request.redirect('/shop')
+
 class WebsiteSaleContext(WebsiteSale):
 
-    def _get_search_domain(self, search, category, attrib_values):
+    def _get_search_domain(self, search, category, attrib_values, check_campaign=True):
 
         res = super(WebsiteSaleContext, self)._get_search_domain(search=search, category=category, attrib_values=attrib_values)
-        cart = request.website.sale_get_order()
-        if cart.campaign_id:
-            campaign_products = cart.campaign_id.article_ids.mapped('product_id').ids
-            campaign_products_tmpl = request.env['product.template'].browse(campaign_products).ids
-            res += [('id', 'in', campaign_products)]
+        if check_campaign:
+            cart = request.website.sale_get_order()
+            if cart.campaign_id:
+                campaign_products = cart.campaign_id.article_ids.mapped('product_id').ids
+                campaign_products_tmpl = cart.campaign_id.article_ids.mapped('product_id').mapped('product_tmpl_id').ids
+                res += ['|',('id', 'in', campaign_products_tmpl),('product_variant_ids', 'in', campaign_products)]
         return res

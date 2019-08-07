@@ -39,6 +39,14 @@ class Website(models.Model):
         return sale_orders
 
     @api.multi
+    def count_user_draft_carts(self):
+        self.ensure_one()
+        user_id = self.env.user.partner_id.id
+        if user_id:
+            sale_orders = self.env['sale.order'].sudo().search([('partner_id', '=', user_id), ('state', '=', 'draft')])
+        return len(sale_orders)
+
+    @api.multi
     def get_new_cart(self, campaign_id=False):
         partner = self.env.user.partner_id
         pricelist_id = request.session.get('website_sale_current_pl') or self.get_current_pricelist().id
@@ -120,12 +128,9 @@ class Website(models.Model):
             return self.env['sale.order']
 
     @api.multi
-    def get_current_cart_qty(self, website_sale_order, product_id, variant=False):
+    def get_current_cart_qty(self, website_sale_order, product_id):
 
-        if variant == False:
-            line = website_sale_order.website_order_line.search([('product_tmpl_id', '=', product_id), ('order_id', '=', website_sale_order.id)])
-        else:
-            line = website_sale_order.website_order_line.search([('product_id', '=', product_id), ('order_id', '=', website_sale_order.id)])
+        line = website_sale_order.website_order_line.search([('product_id', '=', product_id), ('order_id', '=', website_sale_order.id)])
         
         product_line_data = {
             'line_id': line.id,
@@ -136,9 +141,8 @@ class Website(models.Model):
 
     @api.multi
     def get_products_in_cart(self, website_sale_order):
-        products_ids = website_sale_order.website_order_line.mapped('product_id').ids
-        product_tmpl_ids = self.env['product.product'].browse(products_ids).mapped('product_tmpl_id').ids        
-        return product_tmpl_ids
+        products_ids = website_sale_order.website_order_line.mapped('product_id').ids     
+        return products_ids
 
     @api.multi
     def get_active_campaigns(self):
@@ -147,17 +151,72 @@ class Website(models.Model):
         return campaigns
 
     @api.multi
+    def count_active_campaigns(self):
+        today = datetime.today().strftime('%Y-%m-%d')
+        campaigns = self.env['campaign'].sudo().search([('purchases_start_date', '<=', today), ('purchases_end_date', '>=', today)])
+        return len(campaigns)
+
+    @api.multi
+    def check_if_campaign_is_active(self, campaign_id):
+        today = datetime.today().strftime('%Y-%m-%d')
+        campaign = self.env['campaign'].sudo().search([('purchases_start_date', '<=', today), ('purchases_end_date', '>=', today), ('id', '=', campaign_id)])
+        if campaign:
+            return True
+        else:
+            return False
+
+    @api.multi
     def get_campaign_cart(self, campaign_id):
         self.ensure_one()
         user_id = self.env.user.partner_id.id
-        if user_id:
-            sale_order = self.env['sale.order'].sudo().search([('partner_id', '=', user_id), ('state', '=', 'draft'), ('campaign_id', '=', campaign_id)],limit=1)
+        campaing_check = self.check_if_campaign_is_active(campaign_id)
+        if campaing_check:
+            if user_id:
+                sale_order = self.env['sale.order'].sudo().search([('partner_id', '=', user_id), ('state', '=', 'draft'), ('campaign_id', '=', campaign_id)],limit=1)
+            else:
+                raise ValueError(
+                        'We found a problem with your user, '
+                        'try login again or contact an admin.')
+            
+            if sale_order:
+                return self.get_selected_cart(sale_order.id)
+            else:
+                return self.get_new_cart(campaign_id)
         else:
-            raise ValueError(
-                    'We found a problem with your user, '
-                    'try login again or contact an admin.')
+            return request.redirect('/my/campaigns')
+
+    @api.multi
+    def product_in_active_campaigns(self, product_id):
+        today = datetime.today().strftime('%Y-%m-%d')
+        active_campaigns = self.env['campaign'].sudo().search([('purchases_start_date', '<=', today), ('purchases_end_date', '>=', today)])
+        in_campaign = self.env['campaign.article.line'].sudo().search([('campaign_id', 'in', active_campaigns.ids), ('product_id', '=', product_id)])
+
+        if in_campaign:
+            return in_campaign[0].campaign_id.id
+        else:
+            return False
+
+    @api.multi
+    def is_allowed_purchase(self, product_id):
+        order = self.sale_get_order()
         
-        if sale_order:
-            return self.get_selected_cart(sale_order.id)
-        else:
-            return self.get_new_cart(campaign_id)
+        product_in_act_campaigns = self.product_in_active_campaigns(product_id)
+
+        if (not order or not order.campaign_id) and not product_in_act_campaigns:
+            status = 'allowed'
+        elif (not order or not order.campaign_id) and product_in_act_campaigns:
+            status = 'warning'
+        elif (order and order.campaign_id) and not product_in_act_campaigns:
+            status = 'denied'
+        elif (order and order.campaign_id) and product_in_act_campaigns:
+            campaign_products = order.campaign_id.article_ids.mapped('product_id').ids   
+            
+            if product_id in campaign_products:
+                status = 'allowed'
+            else:
+                status = 'denied'
+        
+        return {
+            'status': status,
+            'campaign_id': product_in_act_campaigns
+        }

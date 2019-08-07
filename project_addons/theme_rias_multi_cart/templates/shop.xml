@@ -1,38 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
 
-    <!-- <template id="las_template_multi_cart_menu_view" inherit_id="breadcrumbs_base.bcb_main_wrap">
-        <xpath expr="//div[hasclass('wp_breadcrumbs_base')]//ol[hasclass('breadcrumb')]"  position="after" groups="sale.group_show_price_subtotal">
-            <t t-if="pageName == 'shoppage'">
-                <t t-call="theme_rias_multi_cart.rias_multi_cart_horizontal_menu"/>
-            </t>
-        </xpath>
-    </template>
-
-    <template id="rias_multi_cart_horizontal_menu" name="Las Rías multi cart horizontal menu">
-        <ol class="breadcrumb">
-            <li>
-                <a href="/">
-                    <i class="fa fa-home"/>
-                </a>
-            </li>
-            <li class="active">
-                <a href="/shop">
-                    Products
-                </a>
-            </li>
-            <li>
-                <a href="/my/carts">My Carts</a>
-            </li>
-            <li>
-                <a href="/my/orders">My Orders</a>
-            </li>
-            <li>
-                <a href="/my/invoices">My Invoices</a>
-            </li>
-        </ol>
-    </template> -->
-    
     <template id="product_grid_las" name="Products grid Las Rías" inherit_id="website_sale.products">
         <xpath expr="//div[@id='products_grid']//table" position="replace">
             <t t-set="pageName" t-value="'shoppage'"/>
@@ -46,6 +14,7 @@
                         <th class="text-right">Stock</th>
                         <th class="text-right">Image</th>
                         <th class="text-right">Barcode</th>
+                        <th class="text-right">Options</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -56,7 +25,8 @@
                             <t t-if="td_product">
                                 <t t-set="product" t-value="td_product['product']" />
                                 <t t-if="len(product.product_variant_ids) == 1">
-                                    <tr t-att-product-id="product['id']" t-att-variant-id="false">
+                                    <t t-set="class_allowed" t-value="website.is_allowed_purchase(product.product_variant_id.id)" />
+                                    <tr t-att-product-id="product['id']" t-att-variant-id="false" t-att-class="class_allowed['status']">
                                         <td class='td-product_name'>
                                             <span t-field="product.default_code" />
                                         </td>
@@ -65,8 +35,12 @@
                                                 <a t-attf-href="/shop/product/#{ slug(product) }">
                                                     <strong t-esc="product.with_context(display_default_code=False).display_name" />
                                                 </a>
+                                                <t t-if="class_allowed['status'] == 'warning'">
+                                                    <i class="fa fa-info-circle info-button-campaign" aria-hidden="true" data-toggle="tooltip" data-placement="top"
+                                                     data-trigger="click" title="Este producto pertenece a una campaña activa, te recomendamos añadirlo a un pedido de campaña"></i>
+                                                </t>
                                             </div>
-                                            <t t-if="product.id in products_in_cart">
+                                            <t t-if="product.product_variant_id.id in products_in_cart">
                                                 <a href='#' class='js_delete_product hidden-xs no-decoration'> <small><i class='fa fa-trash-o'></i> Remove</small></a>
                                             </t>
                                             <t t-else="">
@@ -78,7 +52,7 @@
                                                 <a t-attf-href="#" class="mb8 input-group-addon js_add_cart_json hidden-xs">
                                                     <i class="fa fa-minus"></i>
                                                 </a>
-                                                <t t-set="current_qty" t-value="website.get_current_cart_qty(website_sale_order, product.id) if product.id in products_in_cart else {'line_id': False, 'product_uom_qty': 0}" />                                            
+                                                <t t-set="current_qty" t-value="website.get_current_cart_qty(website_sale_order, product.product_variant_id.id) if product.product_variant_id.id in products_in_cart else {'line_id': False, 'product_uom_qty': 0}" />                                            
                                                 <input type="number" class="js_quantity form-control quantity" t-att-line-id="current_qty['line_id']" t-att-data-product-id="product.product_variant_id.id" t-att-value="current_qty['product_uom_qty']" placeholder="0"/>
                                                 <a t-attf-href="#" class="mb8 input-group-addon float_left js_add_cart_json hidden-xs">
                                                     <i class="fa fa-plus"></i>
@@ -101,55 +75,85 @@
                                                 <img src="/theme_rias_multi_cart/static/img/ui/barcode-icon.jpg"/>
                                             </a>
                                         </td>
+                                        <td class="text-right">
+                                            <div class="col-md-6">
+                                                <a title="Ir o crear pedido de campaña." t-if="class_allowed['status'] == 'warning' and class_allowed['campaign_id']" t-attf-href="/my/campaigns/select/#{ class_allowed['campaign_id'] }" class="btn btn-primary">
+                                                    <i class="fa fa-shopping-cart"></i>
+                                                </a>
+                                            </div>
+                                            <!-- <div class="col-md-6">
+                                                <a title="Añadir a pedido de campaña." t-if="class_allowed['status'] == 'warning' and class_allowed['campaign_id']" t-att-data-campaign-id="class_allowed['campaign_id']" href="#" class="btn btn-primary campaign-call">
+                                                    <i class="fa fa-plus"></i>
+                                                </a>
+                                            </div> -->
+                                        </td>
                                     </tr>
                                 </t>
                                 <t t-if="len(product.product_variant_ids) &gt; 1">
-                                    <tr t-att-product-id="product['id']" t-att-variant-id="variant_id['id']" t-foreach="product.product_variant_ids" t-as="variant_id">
-                                        <t t-set="current_qty" t-value="website.get_current_cart_qty(website_sale_order, variant_id.id, True) if product.id in products_in_cart else {'line_id': False, 'product_uom_qty': 0}" />
-                                        <td class='td-product_name'>
-                                            <span t-field="variant_id.default_code"/>
-                                        </td>
-                                        <td class='td-product_name'>
-                                            <div>
-                                                <a t-attf-href="/shop/product/#{ slug(product) }">
-                                                    <strong class="oe_inline" name="attr_name" t-esc="variant_id.name_get()[0][1]"/>
+                                    <t t-foreach="product.product_variant_ids" t-as="variant_id">
+                                        <t t-set="class_allowed" t-value="website.is_allowed_purchase(variant_id.id)" />
+                                        <tr t-att-product-id="product['id']" t-att-variant-id="variant_id.id" t-att-class="class_allowed['status']">
+                                            <t t-set="current_qty" t-value="website.get_current_cart_qty(website_sale_order, variant_id.id) if variant_id.id in products_in_cart else {'line_id': False, 'product_uom_qty': 0}" />
+                                            <td class='td-product_name'>
+                                                <span t-field="variant_id.default_code"/>
+                                            </td>
+                                            <td class='td-product_name'>
+                                                <div>
+                                                    <a t-attf-href="/shop/product/#{ slug(product) }">
+                                                        <strong class="oe_inline" name="attr_name" t-esc="variant_id.name_get()[0][1]"/>
+                                                    </a>
+                                                    <t t-if="class_allowed['status'] == 'warning'">
+                                                        <i class="fa fa-info-circle info-button-campaign" aria-hidden="true" data-toggle="tooltip" data-placement="top" data-trigger="click" title="Este producto pertenece a una campaña activa, te recomendamos añadirlo a un pedido de campaña"></i>
+                                                    </t>
+                                                </div>
+                                                <t t-if="current_qty['product_uom_qty'] &gt; 0">
+                                                    <a href='#' class='js_delete_product hidden-xs no-decoration'> <small><i class='fa fa-trash-o'></i> Remove</small></a>
+                                                </t>
+                                                <t t-else="">
+                                                    <a href='#' class='js_delete_product hidden-xs no-decoration hidden'> <small><i class='fa fa-trash-o'></i> Remove</small></a>
+                                                </t>
+                                            </td>
+                                            <td class="text-right td-qty">
+                                                <div class="css_quantity input-group oe_website_spinner">
+                                                    <a t-attf-href="#" class="mb8 input-group-addon js_add_cart_json hidden-xs">
+                                                        <i class="fa fa-minus"></i>
+                                                    </a>
+                                                    <input type="number" class="js_quantity form-control quantity" t-att-line-id="current_qty['line_id']" t-att-data-product-id="variant_id.id" t-att-value="current_qty['product_uom_qty']" placeholder="0"/>
+                                                    <a t-attf-href="#" class="mb8 input-group-addon float_left js_add_cart_json hidden-xs">
+                                                        <i class="fa fa-plus"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                            <td class="text-right td-price" name="price">
+                                                <span t-field="variant_id.list_price" style="white-space: nowrap;" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}" groups="sale.group_show_price_subtotal" />
+                                            </td>
+                                            <td class="text-right">
+                                                <!-- <span t-field="variant_id.qty_available"/> -->
+                                            </td>
+                                            <td class="text-right td-img">
+                                                <a t-if="variant_id.image or product.image" href="#" class="image-call">
+                                                    <img src="/theme_rias_multi_cart/static/img/ui/image-icon.gif"/>
                                                 </a>
-                                            </div>
-                                            <t t-if="current_qty['product_uom_qty'] &gt; 0">
-                                                <a href='#' class='js_delete_product hidden-xs no-decoration'> <small><i class='fa fa-trash-o'></i> Remove</small></a>
-                                            </t>
-                                            <t t-else="">
-                                                <a href='#' class='js_delete_product hidden-xs no-decoration hidden'> <small><i class='fa fa-trash-o'></i> Remove</small></a>
-                                            </t>
-                                        </td>
-                                        <td class="text-right td-qty">
-                                            <div class="css_quantity input-group oe_website_spinner">
-                                                <a t-attf-href="#" class="mb8 input-group-addon js_add_cart_json hidden-xs">
-                                                    <i class="fa fa-minus"></i>
+                                            </td>
+                                            <td class="text-right">
+                                                <a t-if="variant_id.barcode or product.barcode" href="#" class="barcode-call">
+                                                    <img src="/theme_rias_multi_cart/static/img/ui/barcode-icon.jpg"/>
                                                 </a>
-                                                <input type="number" class="js_quantity form-control quantity" t-att-line-id="current_qty['line_id']" t-att-data-product-id="variant_id.id" t-att-value="current_qty['product_uom_qty']" placeholder="0"/>
-                                                <a t-attf-href="#" class="mb8 input-group-addon float_left js_add_cart_json hidden-xs">
-                                                    <i class="fa fa-plus"></i>
-                                                </a>
-                                            </div>
-                                        </td>
-                                        <td class="text-right td-price" name="price">
-                                            <span t-field="variant_id.list_price" style="white-space: nowrap;" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}" groups="sale.group_show_price_subtotal" />
-                                        </td>
-                                        <td class="text-right">
-                                            <!-- <span t-field="variant_id.qty_available"/> -->
-                                        </td>
-                                        <td class="text-right td-img">
-                                            <a t-if="variant_id.image or product.image" href="#" class="image-call">
-                                                <img src="/theme_rias_multi_cart/static/img/ui/image-icon.gif"/>
-                                            </a>
-                                        </td>
-                                        <td class="text-right">
-                                            <a t-if="variant_id.barcode or product.barcode" href="#" class="barcode-call">
-                                                <img src="/theme_rias_multi_cart/static/img/ui/barcode-icon.jpg"/>
-                                            </a>
-                                        </td>
-                                    </tr>
+                                            </td>
+                                            <td class="text-right">
+                                                <div class="col-md-6">
+                                                    <a title="Ir o crear pedido de campaña." t-if="class_allowed['status'] == 'warning' and class_allowed['campaign_id']" t-attf-href="/my/campaigns/select/#{ class_allowed['campaign_id'] }" class="btn btn-primary">
+                                                        <i class="fa fa-shopping-cart"></i>
+                                                    </a>
+                                                </div>
+                                                <!-- <div class="col-md-6">
+                                                    <a title="Añadir a pedido de campaña." t-if="class_allowed['status'] == 'warning' and class_allowed['campaign_id']" t-att-data-campaign-id="class_allowed['campaign_id']" href="#" class="btn btn-primary campaign-call">
+                                                        <i class="fa fa-plus"></i>
+                                                    </a>
+                                                </div> -->
+                                            </td>
+                                        </tr>
+                                    </t>
                                 </t>
                             </t>
                         </t>
@@ -161,6 +165,34 @@
         <xpath expr="//div[@id='wrap']/div[hasclass('oe_website_sale')]" position="inside">
             <div id="rpc_modal"></div>
         </xpath>
+    </template>
+
+    <template id="las_shop_product_page" name="Shop Product Page Las Rías" inherit_id="website_sale.product">
+        <xpath expr="//div[@id='wrap']" position="inside">
+            <t t-set="pageName" t-value="'productpage'"/>
+            <t t-set="allowed_purchase" t-value="website.is_allowed_purchase(product.product_variant_id.id)"/>
+            <span id="allowed_purchase" t-esc="allowed_purchase['status']" style="display: none;"/>
+        </xpath>
+        <xpath expr="//form[hasclass('js_add_cart_variants')]" position="before">
+            <div id="purchase_msg" class="mt8 mb8"/>
+        </xpath>
+    </template>
+
+    <template id="las_product_wishlist" name="Wishlist Page Las Rías" inherit_id="website_sale_wishlist.product_wishlist">
+        <xpath expr="//div[@id='wrap']" position="inside">
+            <t t-set="pageName" t-value="'wishlistpage'"/>
+        </xpath>
+        <xpath expr="//tr/td[2]" position="inside">
+            <t t-set="allowed_purchase" t-value="website.is_allowed_purchase(wish.product_id.id)"/>
+            <span class="allowed_purchase" t-esc="allowed_purchase['status']" style="display: none;"/>
+            <div class="purchase_msg"/>
+        </xpath>
+        <xpath expr="//tr/td[4]" position="inside">
+            <a title="Ir o crear pedido de campaña." t-if="allowed_purchase['status'] == 'warning' and allowed_purchase['campaign_id']" t-attf-href="/my/campaigns/select/#{ allowed_purchase['campaign_id'] }" class="btn btn-primary">
+                <i class="fa fa-shopping-cart"></i>
+            </a>
+        </xpath>
+
     </template>
 
 </odoo>

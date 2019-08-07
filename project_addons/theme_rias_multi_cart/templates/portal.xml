@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <template id="portal_my_home_with_campaign" name="Portal My Home: Campaigns" inherit_id="portal.portal_my_home">
+        <xpath expr="//ul[hasclass('o_portal_docs')]" position="inside">
+            <t t-set="campaigns_count" t-value="website.count_active_campaigns()"/>
+            <t t-set="carts_count" t-value="website.count_user_draft_carts()"/>
+            <li t-if="campaigns_count" class="list-group-item">
+                <span class="badge" t-esc="campaigns_count"/>
+                <a href="/my/campaigns">Campaigns</a>
+            </li>
+            <li t-if="carts_count" class="list-group-item">
+                <span class="badge" t-esc="carts_count"/>
+                <a href="/my/carts">My Carts</a>
+            </li>
+        </xpath>
+    </template>
+</odoo>
