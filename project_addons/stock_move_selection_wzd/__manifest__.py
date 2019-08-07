@@ -15,8 +15,8 @@
 
     ],
     'data': [
-        'views/picking_type.xml',
         'views/stock_move.xml',
+        'views/picking_type.xml',
         'views/stock_picking.xml',
         'views/stock_quant_package.xml',
         'wizard/batch_picking_wzd_view.xml',
