@@ -17,35 +17,30 @@
             <field name="parent_id" ref="website.main_menu"/>
             <field name="sequence" type="int">20</field>
             <field name="website_ids" eval="[(6, 0, [ref('website.default_website')])]"/>
-            <field name="not_portal">False</field>
-            <field name="website_published">True</field>
         </record>
 
         <record id="menu_tarifas" model="website.menu">
             <field name="name">Pricelists</field>
-            <field name="url">/Pricelist</field>
+            <field name="url">/pricelist/list</field>
             <field name="parent_id" ref="website.main_menu"/>
-            <field name="sequence" type="int">1</field>
+            <field name="sequence" type="int">2</field>
             <field name="website_id" ref="website.default_website"/>
-            <field name="website_published">True</field>
         </record>
 
         <record id="menu_tarifas_list" model="website.menu">
             <field name="name">See Pricelists</field>
-            <field name="url">/Pricelist/list</field>
-            <field name="parent_id" ref="theme_rias_menu.menu_tarifas"/>
+            <field name="url">/pricelist/list</field>
+            <field name="parent_id" ref="menu_tarifas"/>
             <field name="sequence" type="int">1</field>
             <field name="website_id" ref="website.default_website"/>
-            <field name="website_published">True</field>
         </record>
 
         <record id="menu_tarifas_form" model="website.menu">
             <field name="name">Submit Pricelist</field>
-            <field name="url">/Pricelist/form</field>
-            <field name="parent_id" ref="theme_rias_menu.menu_tarifas"/>
+            <field name="url">/pricelist/form</field>
+            <field name="parent_id" ref="menu_tarifas"/>
             <field name="sequence" type="int">2</field>
             <field name="website_id" ref="website.default_website"/>
-            <field name="website_published">True</field>
         </record>
 
 

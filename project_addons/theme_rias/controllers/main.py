@@ -159,7 +159,7 @@ class WebsiteSaleCatalogue(WebsiteSale):
         attributes_ids = {v[0] for v in attrib_values}
         attrib_set = {v[1] for v in attrib_values}
 
-        domain = self._get_search_domain(search, category, attrib_values)
+        domain = self._get_search_domain(search, category, attrib_values, check_campaign=False)
 
         keep = QueryURL('/catalogue', category=category and int(category), search=search, attrib=attrib_list, order=post.get('order'))
 

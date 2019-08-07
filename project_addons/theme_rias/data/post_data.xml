@@ -1,12 +1,20 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <data noupdate="1">
+    <!-- <data noupdate="1"> -->
+    <data>
 
         <!-- Blog data -->
 
         <record id="blog_blog_retailers" model="blog.blog">
             <field name="name">Blog for retailers</field>
             <field name="subtitle">News for retailers</field>
+            <field name="for_retailers">True</field>
+            <field name="for_customers">False</field>
+        </record>
+
+        <record id="blog_blog_campaigns" model="blog.blog">
+            <field name="name">Ofertas</field>
+            <field name="subtitle">Ofertas destacadas</field>
             <field name="for_retailers">True</field>
             <field name="for_customers">False</field>
         </record>
@@ -71,8 +79,16 @@ Y como siempre, para cualquier cosa que necesitéis visitar a vuestra ferreterí
             <field name="datas" type="base64" file="theme_rias/static/img/posts/spot-tvg.png"></field>
         </record>
 
+        <record id="blog_post_campaigns_img" model="ir.attachment">
+            <field name="public" eval="True"/>
+            <field name="name">Verano 2019</field>
+            <field name="datas_fname">verano_2019.png</field>
+            <field name="res_model">ir.ui.view</field>
+            <field name="datas" type="base64" file="theme_rias/static/img/catalogues/verano2019rias.png"></field>
+        </record>
 
-         <!-- POSTS retailer -->
+
+         <!-- POSTS retailer/campaigns -->
         <record id="blog_post_retailer" model="blog.post">
             <field name="name">Spot de las rías en Televisión Gallega</field>
             <field name="blog_id" ref="blog_blog_retailers"/>
@@ -95,6 +111,33 @@ Y como siempre, para cualquier cosa que necesitéis visitar a vuestra ferreterí
                     Podéis "pinchar" en el <a href="https://youtu.be/BsA1-eg6FRo">enlace</a> para ver el SPOT.
                 </p>
                 <iframe width="100%" height="250" src="http://www.youtube.com/embed/BsA1-eg6FRo" frameborder="0" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+</section>
+]]>
+            </field>
+        </record>
+
+        <record id="blog_post_campaign" model="blog.post">
+            <field name="name">Verano 2019</field>
+            <field name="blog_id" ref="blog_blog_campaigns"/>
+            <field name="introduction">Ya puedes descargar/visualizar el folleto de Verano 2019.</field>
+            <field name="website_published" eval="True"/>
+            <field name="published_date" eval="time.strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="attachment_ids" eval="[(6, 0, [ref('blog_post_campaigns_img')])]"/>
+            <field name="image" type="base64" file="theme_rias/static/img/catalogues/verano2019rias.png"></field>
+            <field name="cover_properties">{"background-image": "url(/web/image/theme_rias.blog_post_campaigns_img)", "resize_class": "cover container-fluid cover_full", "background-color": "oe_black", "opacity": "0.0"}</field>
+            <field name="content"><![CDATA[
+<section class="s_text_block">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2 mb16 mt16">
+                <p>
+                    Ya puedes descargar/visualizar el folleto de Verano 2019.
+                </p><p>
+                    <a href="/theme_rias/static/pdf/catalogues/verano2019es.pdf">PDF</a>
+                </p>
             </div>
         </div>
     </div>

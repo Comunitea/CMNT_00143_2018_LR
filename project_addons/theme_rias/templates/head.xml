@@ -13,6 +13,7 @@
             <link href="/theme_rias/static/css/page_about_us.less" rel="stylesheet" type="text/less"/>
             <link href="/theme_rias/static/css/catalogue.less" rel="stylesheet" type="text/less"/>
             <link href="/theme_rias/static/css/blog.less" rel="stylesheet" type="text/less"/>
+            <link href="/theme_rias/static/css/page_ourshops.less" rel="stylesheet" type="text/less"/>
         </xpath>
 
         <!--Add custom scripts-->

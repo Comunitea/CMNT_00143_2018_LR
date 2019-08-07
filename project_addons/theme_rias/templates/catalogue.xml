@@ -217,6 +217,7 @@
     <template id="products_attributes_catalogue" inherit_id="theme_rias.products_catalogue" active="True" customize_show="True" name="Catalogue Product Attribute's Filters">
         <xpath expr="//div[@id='products_grid_before']" position="inside">
             <form class="js_attributes" method="get">
+                <input t-if="category" type="hidden" name="category" t-att-value="category.id" />
                 <input type="hidden" name="search" t-att-value="search" />
                 <ul class="nav nav-pills nav-stacked mt16">
                     <t t-foreach="attributes" t-as="a">
@@ -396,7 +397,7 @@
     <template id="dynamic_category">
 		<ul class="custom-menu-inside-div custom-menu-inside-div-nth dropdown-menu hidden-sm hidden-md hidden-lg">
             <div class="custom-menu-inside-maxW">
-                <div class="fisrt_li">
+                <div class="first_li">
                     <t t-set="category_fetch" t-value="website.category_check()"></t>
                     <t t-foreach="category_fetch" t-as="category_individual">
                         <t t-if="not category_individual.parent_id">
@@ -467,17 +468,59 @@
         </xpath>
     </template>
 
+    <template id="las_template_current_cart" name="Current cart breadcrumb">
+        
+        <ol class="breadcrumb">
+            <li t-if="not request.env.user._is_public()">
+                <a href="/shop/cart"><i class="fa fa-shopping-cart"/></a>
+            </li>
+            <t t-set="cart" t-value="request.website.sale_get_order()"/>
+            <t t-if="cart">
+                <li t-att-class="'active'">
+                    <span t-esc="cart.name"/>
+                    <t t-if="cart.campaign_id.name">
+                            - <span t-esc="cart.campaign_id.name"/>
+                    </t>
+                </li>
+            </t>
+        </ol>
+
+    </template>
+
+    <!-- <a t-else="" t-att-href="crumb.url" t-esc="crumb.name"/> -->
+
     <template id="las_template_catalogue_tags" inherit_id="breadcrumbs_base.bcb_main_wrap">
-        <xpath expr="//div[hasclass('wp_breadcrumbs_base')]"  position="replace">
+        <xpath expr="//t[@t-foreach='breadcrumbs']" position="replace">
+            <t t-if="pageName == 'cataloguepage' or pageName == 'catalogueproductpage'">
+                <t t-foreach="breadcrumbs" t-as="crumb">
+                    <li t-att-class="'active' if crumb.active else None">
+                        <span t-if="crumb.active" t-esc="crumb.name"/>
+                        <a t-else="" t-att-href="website.crumb_for_catalogue(crumb.url)" t-esc="crumb.name"/>
+                    </li>
+                </t>
+            </t>
+            <t t-else="">
+                <t t-foreach="breadcrumbs" t-as="crumb">
+                    <li t-att-class="'active' if crumb.active else None">
+                        <span t-if="crumb.active" t-esc="crumb.name"/>
+                        <a t-else="" t-att-href="crumb.url" t-esc="crumb.name"/>
+                    </li>
+                </t>
+            </t>
+        </xpath>
+        <xpath expr="//div[hasclass('wp_breadcrumbs_base')]"  position="before">
             <t t-if="pageName == 'cataloguepage'">
                 <t t-call="theme_rias.categories_top_catalogue"/>
             </t>
         </xpath>
+        <xpath expr="//ol[hasclass('breadcrumb')]" position="before">
+            <t t-call="theme_rias.las_template_current_cart"/>
+        </xpath>
     </template>
-
 
     <template id="product_catalogue" name="Catalogue Product">
         <t t-call="website.layout">
+            <t t-set="pageName" t-value="'catalogueproductpage'"/>
             <t t-set="additional_title" t-value="product.name" />
             <div itemscope="itemscope" itemtype="http://schema.org/Product" id="wrap" class="js_sale">
                 <section t-attf-class="container mt8 oe_website_sale #{(compute_currency(product.lst_price) - product.website_price) &gt; 0.01 and website.get_current_pricelist().discount_policy == 'without_discount'  and 'discount'}" id="product_detail">

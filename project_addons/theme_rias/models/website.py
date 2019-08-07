@@ -2,8 +2,7 @@
 # © 2018 Comunitea - Ruben Seijas <ruben@comunitea.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from odoo import models, fields
-from pprint import pprint
+from odoo import models, fields, _
 
 
 class Website(models.Model):
@@ -62,3 +61,9 @@ class Website(models.Model):
         }
 
         return data
+
+    def crumb_for_catalogue(self, url):
+        if '/shop' in url:
+            return '/catalogue'
+        elif '/category/' in url:
+            return url.replace('/category/', '/catalogue/category/')

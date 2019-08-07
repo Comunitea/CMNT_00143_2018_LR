@@ -2,6 +2,7 @@
 <odoo>
     <!-- Our Shops Template -->
     <template id="las_template_our_shops" name="Our Shops Point Template">
+        <t t-set="pageName" t-value="'ourshopspage'"/>
         <t t-call="website.layout">
             <div id="wrap">
                 <div class="map-wrap">
