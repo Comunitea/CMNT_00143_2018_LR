@@ -12,7 +12,6 @@
             <field name="user_not_logged">False</field>
         </record>
 
-
         <record id="menu_my_carts" model="website.menu">
             <field name="name">My Carts</field>
             <field name="url">/my/carts</field>

@@ -31,7 +31,9 @@ class Website(models.Model):
         self.ensure_one()
         user_id = self.env.user.partner_id.id
         if user_id:
-            sale_orders = self.env['sale.order'].sudo().search([('partner_id', '=', user_id), ('state', '=', 'draft')])
+            today = datetime.today().strftime('%Y-%m-%d')
+            campaigns = self.env['campaign'].sudo().search([('purchases_start_date', '<=', today), ('purchases_end_date', '>=', today)])
+            sale_orders = self.env['sale.order'].sudo().search([('partner_id', '=', user_id), ('state', '=', 'draft'), '|', ('campaign_id', 'in', campaigns.ids), ('campaign_id', '=', False)])
         else:
             raise ValueError(
                     'We found a problem with your user, '

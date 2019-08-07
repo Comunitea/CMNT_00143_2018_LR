@@ -117,7 +117,7 @@ odoo.define('theme_rias.website_sale', function(require) {
         var variant_id = $(event.target).closest('tr').attr('variant-id');
         var model = 'product.template';
 
-        if (variant_id == true) {
+        if (variant_id) {
             model = 'product.product';
             product_id = variant_id;
         }
@@ -167,10 +167,9 @@ odoo.define('theme_rias.website_sale', function(require) {
         event.preventDefault();
         var product_id = $(event.target).closest('tr').attr('product-id');
         var variant_id = $(event.target).closest('tr').attr('variant-id');
-
         var model = 'product.template';
 
-        if (variant_id == true) {
+        if (variant_id) {
             model = 'product.product';
             product_id = variant_id;
         }
@@ -185,7 +184,7 @@ odoo.define('theme_rias.website_sale', function(require) {
                 "display_name",
             ]})
             .then(function(data){
-                modal_content = '<img src="/website/image/product.template/'+data[0]['id']+'/image" alt="'+data[0]['display_name']+'"></img>';
+                modal_content = '<img src="/website/image/'+model+'/'+data[0]['id']+'/image" alt="'+data[0]['display_name']+'"></img>';
 
                 var html =  '<div class="modal fade" id="modalWindow" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">';
                 html += '<div class="modal-dialog" role="document">';
