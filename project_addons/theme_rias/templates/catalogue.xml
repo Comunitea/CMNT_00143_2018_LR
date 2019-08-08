@@ -283,9 +283,9 @@
             <t t-if="main_object._name == 'product.template'" t-set="action" t-value="'product.product_template_action'" />
         </xpath>
     </template>
-
+    
     <template id="products_description_catalogue" inherit_id="theme_rias.products_item_catalogue" active="False" customize_show="True" name="Catalogue Product Description">
-        <xpath expr="//div[hasclass('product_price')]" position="before">
+        <xpath expr="//section[hasclass('text-center')]" position="inside">
             <div class="text-info oe_subdescription" contenteditable="false">
                 <div itemprop="description" t-field="product.description_sale"></div>
             </div>
@@ -526,17 +526,7 @@
                 <section t-attf-class="container mt8 oe_website_sale #{(compute_currency(product.lst_price) - product.website_price) &gt; 0.01 and website.get_current_pricelist().discount_policy == 'without_discount'  and 'discount'}" id="product_detail">
                     <div class="row">
                         <div class="col-sm-4">
-                            <ol class="breadcrumb">
-                                <li>
-                                    <a t-att-href="keep(category=0)">Products</a>
-                                </li>
-                                <li t-if="category">
-                                    <a t-att-href="keep('/catalogue/category/%s' % slug(category), category=0)" t-field="category.name" />
-                                </li>
-                                <li class="active">
-                                    <span t-field="product.name" />
-                                </li>
-                            </ol>
+                            
                         </div>
                         <div class="col-sm-3 mb8">
                             <t t-call="website_sale.search" />
@@ -594,6 +584,15 @@
                         <div class="col-sm-5 col-lg-4 col-lg-offset-1" id="product_details">
                             <h1 itemprop="name" t-field="product.name">Product Name</h1>
                             <span itemprop="url" style="display:none;" t-esc="'%scatalogue/product/%s' % (request.httprequest.url_root, slug(product))"/>
+                            <div class="js_product" t-if="product.product_variant_ids">
+                                <t t-placeholder="select">
+                                    <input type="hidden" class="product_id" name="product_id" t-att-value="product.product_variant_id.id if len(product.product_variant_ids) == 1 else '0'" />
+                                    <t t-call="website_sale.variants">
+                                        <t t-set="ul_class" t-value="'nav-stacked'" />
+                                    </t>
+                                </t>
+                                <p t-if="len(product.product_variant_ids) &gt; 1" class="css_not_available_msg bg-danger" style="padding: 15px;">This combination does not exist.</p>
+                            </div>
                             <hr t-if="product.description_sale" />
                             <div class="o_not_editable">
                                 <p t-field="product.description_sale" class="text-muted" />
@@ -619,5 +618,100 @@
         </t>
     </template>
 
+    <template inherit_id='theme_rias.product_catalogue' id="product_catalogue_picture_magnify" customize_show="True" name="Product Catalogue Activate Magnify">
+        <xpath expr='//div[hasclass("js_sale")]' position='attributes'>
+            <attribute name="class" separator=" " add="ecom-zoomable zoomodoo-hover" />
+        </xpath>
+    </template>
+
+    <template id="product_catalogue_recommended_products" inherit_id="theme_rias.product_catalogue" customize_show="True" name="Product Catalogue Alternative Products">
+        <xpath expr="//div[@id='product_full_description']" position="after">
+            <div class="container mt32" t-if="product.alternative_product_ids">
+                <h3>Alternative Products:</h3>
+                <div class="row mt16" style="">
+                    <t t-foreach="product.alternative_product_ids" t-as="alt_product">
+                        <div class="col-md-2 thumbnail" style="width: 170px; height:130px; float:left; display:inline; margin-right: 10px; overflow:hidden;">
+                            <div class="mt16 text-center" style="height: 100%;">
+                                <div t-field="alt_product.image_small" t-options="{'widget': 'image', 'class': 'img-rounded shadow o_alternative_product' }" />
+                                <h5>
+                                    <a t-attf-href="/catalogue/product/#{ slug(alt_product) }" style="display: block">
+                                        <span t-att-title="alt_product.name" t-field="alt_product.name" class="o_text_overflow" style="display: block;" />
+                                    </a>
+                                </h5>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </xpath>
+    </template>
+
+    <template id="product_catalogue_product_attributes" inherit_id="theme_rias.product_catalogue" name="Product catalogue attributes">
+        <xpath expr="//p[@t-field='product.description_sale']" position="after">
+            <hr t-if="sum([(1 if len(l.value_ids)==1 else 0) for l in product.attribute_line_ids])" id='hr_product_attributes_simple'/>
+            <p class="text-muted" id="product_attributes_simple">
+                <t t-foreach="product.attribute_line_ids.sorted(key=lambda x: x.attribute_id.sequence)" t-as="variant_id">
+                    <t t-if="len(variant_id.value_ids)==1">
+                        <span t-field="variant_id.attribute_id" />: <span t-field="variant_id.value_ids[0].name" /><br /></t>
+                </t>
+            </p>
+        </xpath>
+    </template>
+
+    <!-- Product options: OpenChatter -->
+    <template id="product_catalogue_product_comment" inherit_id="theme_rias.product_catalogue" active="False" customize_show="True" name="Product Catalogue Discussion and Rating">
+        <xpath expr="//div[@t-field='product.website_description']" position="after">
+            <div class="o_shop_discussion_rating">
+                <section class="container mt16 mb16">
+                    <hr/>
+                    <div class="row">
+                        <div class="col-md-8 col-md-offset-2">
+                            <t t-call="portal.message_thread">
+                                <t t-set="object" t-value="product"/>
+                                <t t-set="display_rating" t-value="True"/>
+                            </t>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </xpath>
+    </template>
+
+    <template id="product_catalogue_product_variants" inherit_id="theme_rias.product_catalogue" active="False" customize_show="True" name="Product Catalogue List View of Variants">
+      <xpath expr="//t[@t-placeholder='select']" position="replace">
+        <input type="hidden" t-if="len(product.product_variant_ids) == 1" class="product_id" name="product_id" t-att-value="product.product_variant_id.id"/>
+        <t t-if="len(product.product_variant_ids) &gt; 1">
+          <label label-default="label-default" class="radio" t-foreach="product.product_variant_ids" t-as="variant_id">
+            <input type="radio" name="product_id" class="js_product_change" t-att-checked="'checked' if variant_id_index == 0 else None" t-att-value="variant_id.id" t-att-data-lst_price="compute_currency(variant_id.lst_price)" t-att-data-price="variant_id.price"/>
+            <span t-esc="variant_id.name_get()[0][1]"/>
+            <t t-set="diff_price" t-value="variant_id.price - variant_id.product_tmpl_id.price"/>
+          </label>
+        </t>
+        <t t-else="">
+            <t t-set="attribute_value_ids" t-value="get_attribute_value_ids(product)"/>
+            <ul class="hidden js_add_cart_variants" t-att-data-attribute_value_ids="json.dumps(attribute_value_ids)"/>
+        </t>
+      </xpath>
+    </template>
+
+    <template id="product_catalogue_product_description" name="Product catalogue product description" inherit_id="theme_rias.product_catalogue">
+
+        <!-- Product descriptions -->
+        <xpath expr="//div[@id='product_details']//hr[@t-if='product.description_sale']" position="attributes">
+            <attribute name="t-if">product.description_short</attribute>
+        </xpath>
+        <xpath expr="//div[@id='product_details']//div[hasclass('o_not_editable')]/p" position="attributes">
+            <attribute name="t-field">product.description_short</attribute>
+        </xpath>
+        <xpath expr="//div[@id='product_full_description']" position="replace">
+            <div class="oe_structure mt16 mb16" id="product_full_description" t-if="product.description">
+                <div class="container" t-if="len(product.description) > 15" itemprop="description">
+                    <div class="row">
+                        <div class="col-md-12" t-field="product.description"/>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+    </template>
     
 </odoo>
