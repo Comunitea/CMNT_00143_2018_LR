@@ -13,6 +13,76 @@ from odoo.addons.sale.controllers.portal import CustomerPortal
 from odoo.addons.website_sale.controllers.main import WebsiteSale
 from pprint import pprint
 
+PPG = 20  # Products Per Page
+PPR = 4   # Products Per Row
+
+class TableCompute(object):
+
+    def __init__(self):
+        self.table = {}
+
+    def _check_place(self, posx, posy, sizex, sizey):
+        res = True
+        for y in range(sizey):
+            for x in range(sizex):
+                if posx + x >= PPR:
+                    res = False
+                    break
+                row = self.table.setdefault(posy + y, {})
+                if row.setdefault(posx + x) is not None:
+                    res = False
+                    break
+            for x in range(PPR):
+                self.table[posy + y].setdefault(x, None)
+        return res
+
+    def process(self, products, ppg=PPG):
+        # Compute products positions on the grid
+        minpos = 0
+        index = 0
+        maxy = 0
+        x = 0
+        for p in products:
+            x = min(max(p.website_size_x, 1), PPR)
+            y = min(max(p.website_size_y, 1), PPR)
+            if index >= ppg:
+                x = y = 1
+
+            pos = minpos
+            while not self._check_place(pos % PPR, pos // PPR, x, y):
+                pos += 1
+            # if 21st products (index 20) and the last line is full (PPR products in it), break
+            # (pos + 1.0) / PPR is the line where the product would be inserted
+            # maxy is the number of existing lines
+            # + 1.0 is because pos begins at 0, thus pos 20 is actually the 21st block
+            # and to force python to not round the division operation
+            if index >= ppg and ((pos + 1.0) // PPR) > maxy:
+                break
+
+            if x == 1 and y == 1:   # simple heuristic for CPU optimization
+                minpos = pos // PPR
+
+            for y2 in range(y):
+                for x2 in range(x):
+                    self.table[(pos // PPR) + y2][(pos % PPR) + x2] = False
+            self.table[pos // PPR][pos % PPR] = {
+                'product': p, 'x': x, 'y': y,
+                'class': " ".join(x.html_class for x in p.website_style_ids if x.html_class)
+            }
+            if index <= ppg:
+                maxy = max(maxy, y + (pos // PPR))
+            index += 1
+
+        # Format table according to HTML needs
+        rows = sorted(self.table.items())
+        rows = [r[1] for r in rows]
+        for col in range(len(rows)):
+            cols = sorted(rows[col].items())
+            x += len(cols)
+            rows[col] = [r[1] for r in cols if r[1]]
+
+        return rows
+
 def my_carts_control_access(order_id=False):
     
     user = request.env.user
@@ -167,4 +237,66 @@ class WebsiteSaleContext(WebsiteSale):
                 campaign_products = cart.campaign_id.article_ids.mapped('product_id').ids
                 campaign_products_tmpl = cart.campaign_id.article_ids.mapped('product_id').mapped('product_tmpl_id').ids
                 res += ['|',('id', 'in', campaign_products_tmpl),('product_variant_ids', 'in', campaign_products)]
+        return res
+
+    @http.route([
+        '/shop',
+        '/shop/page/<int:page>',
+        '/shop/category/<model("product.public.category"):category>',
+        '/shop/category/<model("product.public.category"):category>/page/<int:page>'
+    ], type='http', auth="public", website=True)
+    def shop(self, page=0, category=None, search='', ppg=False, **post):
+        res = super(WebsiteSaleContext, self).shop(page=0, category=None, search='', ppg=False, **post)
+
+        providers = request.httprequest.args.getlist('provider')
+        providers_res = []
+
+        if providers and len(providers)>=1 and providers[0] is not '':
+            for provider in providers:
+                providers_res += [int(provider) if provider is not '' else False]
+
+            if ppg:
+                try:
+                    ppg = int(ppg)
+                except ValueError:
+                    ppg = PPG
+                post["ppg"] = ppg
+            else:
+                ppg = PPG
+
+            url = "/shop"
+            if category:
+                url = "/shop/category/%s" % slug(res.qcontext['category'])
+
+            Product = request.env['product.template']
+
+            domain = self._get_search_domain(res.qcontext['search'], res.qcontext['category'], res.qcontext['attrib_values'])
+            domain += '|', ('variant_seller_ids.name.id', 'in', providers_res), ('seller_ids.name.id', 'in', providers_res)
+
+            product_count = Product.search_count(domain)
+            pager = request.website.pager(url=url, total=product_count, page=page, step=ppg, scope=7, url_args=post)
+            products = Product.search(domain, limit=ppg, offset=pager['offset'], order=self._get_search_order(post))
+
+            ProductAttribute = request.env['product.attribute']
+            if products:
+                # get all products without limit
+                selected_products = Product.search(domain, limit=False)
+                attributes = ProductAttribute.search([('attribute_line_ids.product_tmpl_id', 'in', selected_products.ids)])
+            else:
+                attributes = ProductAttribute.browse(res.qcontext['attributes'].ids)
+
+            res.qcontext.update({
+                'providers_set': providers_res,
+                'products': products,
+                'bins': TableCompute().process(products, ppg),
+                'attributes': attributes,
+                'search_count': product_count,  # common for all searchbox
+                'pager': pager,
+            })
+            
+        else:
+            res.qcontext.update({
+                'providers_set': providers_res,
+            })
+
         return res

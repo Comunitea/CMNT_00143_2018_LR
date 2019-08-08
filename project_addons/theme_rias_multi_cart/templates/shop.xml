@@ -165,6 +165,23 @@
         <xpath expr="//div[@id='wrap']/div[hasclass('oe_website_sale')]" position="inside">
             <div id="rpc_modal"></div>
         </xpath>
+
+        <xpath expr="//div[@id='products_grid_before']/form/ul" position="inside">
+            <t t-foreach="bins" t-as="tr_product">
+                <t t-set="providers" t-value="website.get_providers_in_list(tr_product)"/>
+                <li t-if="providers">
+                    <div>
+                        <strong>Providers</strong>
+                    </div>
+                    <select class="form-control" name="provider">
+                        <option value="" />
+                        <t t-foreach="providers" t-as="provider">
+                            <option t-att-value="provider.id" t-esc="provider.name" t-att-selected="provider.id in providers_set"/>
+                        </t>
+                    </select>
+                </li>
+            </t>
+        </xpath>
     </template>
 
     <template id="las_shop_product_page" name="Shop Product Page Las Rías" inherit_id="website_sale.product">

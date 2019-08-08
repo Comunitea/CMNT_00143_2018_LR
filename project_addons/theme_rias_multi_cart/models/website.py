@@ -222,3 +222,11 @@ class Website(models.Model):
             'status': status,
             'campaign_id': product_in_act_campaigns
         }
+
+    @api.multi
+    def get_providers_in_list(self, products):
+        product_list = []
+        for product in products:
+            product_list += [product['product'].id]
+        providers_list = request.env['product.supplierinfo'].search([('product_tmpl_id', 'in', product_list)]).name
+        return providers_list
