@@ -1,0 +1,1959 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* theme_rias
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 11.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-08-08 07:22+0000\n"
+"PO-Revision-Date: 2019-08-08 07:22+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.portal_order_page_products_links_catalogue
+msgid " Catalogue Orders Followup Products Links"
+msgstr " Catalogue Orders Followup Products Links"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.pricelist_thanks_ir_ui_view
+#: model:website.page,arch_db:theme_rias.pricelist_thanks
+msgid "&amp;times;"
+msgstr "&amp;times;"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.404_catalogue
+msgid "404_catalogue"
+msgstr "404_catalogue"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.default_send_forms
+msgid "<span class=\"btn btn-primary btn-lg o_website_form_send\">Send</span>\n"
+"                <span id=\"o_website_form_result\"/>"
+msgstr "<span class=\"btn btn-primary btn-lg o_website_form_send\">Enviar</span>\n"
+"                <span id=\"o_website_form_result\"/>"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.product_catalogue
+msgid "<span class=\"fa fa-chevron-left\" aria-hidden=\"true\"/>\n"
+"                                            <span class=\"sr-only\">Previous</span>"
+msgstr "<span class=\"fa fa-chevron-left\" aria-hidden=\"true\"/>\n"
+"                                            <span class=\"sr-only\">Previo</span>"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.product_catalogue
+msgid "<span class=\"fa fa-chevron-right\" aria-hidden=\"true\"/>\n"
+"                                            <span class=\"sr-only\">Next</span>"
+msgstr "<span class=\"fa fa-chevron-right\" aria-hidden=\"true\"/>\n"
+"                                            <span class=\"sr-only\">Siguiente</span>"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.categories_top_catalogue
+msgid "<span data-oe-model=\"website.menu\" data-oe-id=\"37\" data-oe-field=\"name\" data-oe-type=\"char\" data-oe-expression=\"submenu.name\">Categories</span>"
+msgstr "<span data-oe-model=\"website.menu\" data-oe-id=\"37\" data-oe-field=\"name\" data-oe-type=\"char\" data-oe-expression=\"submenu.name\">Categorías</span>"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+msgid "<span id=\"reset_filter\" class=\"btn btn-primary btn-lg o_website_form_send mt32 mb32\">Reset</span>\n"
+"                <span id=\"map_filter\" class=\"btn btn-primary btn-lg o_website_form_send mt32 mb32\">Enviar</span>\n"
+"                <span id=\"o_website_form_result\"/>"
+msgstr "<span id=\"reset_filter\" class=\"btn btn-primary btn-lg o_website_form_send mt32 mb32\">Reset</span>\n"
+"                <span id=\"map_filter\" class=\"btn btn-primary btn-lg o_website_form_send mt32 mb32\">Enviar</span>\n"
+"                <span id=\"o_website_form_result\"/>"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.sort_catalogue
+msgid "<span>Sort by</span>\n"
+"                        <span class=\"caret\"/>"
+msgstr "<span>Ordenar por</span>\n"
+"                        <span class=\"caret\"/>"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "A CAÑIZA"
+msgstr "A CAÑIZA"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "A CORUÑA"
+msgstr "A CORUÑA"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+msgid "A Coruña"
+msgstr "A Coruña"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "A ESTRADA"
+msgstr "A ESTRADA"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "A GUARDA"
+msgstr "A GUARDA"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "AGUEDA"
+msgstr "AGUEDA"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "AMES"
+msgstr "AMES"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "AS PONTES"
+msgstr "AS PONTES"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "AVANCA"
+msgstr "AVANCA"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.rias_aboutus_page_ir_ui_view
+#: model:ir.ui.view,name:theme_rias.rias_aboutus_page_view
+msgid "About Us Rías View"
+msgstr "About Us Rías View"
+
+#. module: theme_rias
+#: model:website.menu,name:theme_rias.menu_aboutus
+#: model:website.page,name:theme_rias.rias_aboutus_page
+msgid "About us"
+msgstr "Quiénes somos"
+
+#. module: theme_rias
+#: model:website.page,name:theme_rias.portal_my_details
+msgid "Account Details"
+msgstr "Account Details"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.portal_my_details_ir_ui_view
+#: model:ir.ui.view,name:theme_rias.rias_portal_my_details_view
+msgid "Account Details Rías View"
+msgstr "Account Details Rías View"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.wbb_view_blog_post_form
+msgid "Add content and image fields to the blog.post view"
+msgstr "Añada contenido e imágenes a la vista del blog"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+msgid "Address/Zip Code"
+msgstr "Address/Zip Code"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+msgid "Alicante"
+msgstr "Alicante"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.option_collapse_products_categories_catalogue
+#: model:ir.ui.view,arch_db:theme_rias.products_categories_catalogue
+msgid "All Products"
+msgstr "Todos los productos"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+msgid "Almería"
+msgstr "Almería"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_piscinas
+msgid "Animaros a visitar las ferreterías de las rías y podréis ver las novedades que tenemos este año en piscinas."
+msgstr "Animaros a visitar las ferreterías de las rías y podréis ver las novedades que tenemos este año en piscinas."
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+msgid "Asturias"
+msgstr "Asturias"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.default_file_forms
+msgid "Attach Pricelist"
+msgstr "Attach Pricelist"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.website_blog_header_footer_custom
+msgid "Automatic Footer Rias Template"
+msgstr "Automatic Footer Rias Template"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "BAIONA"
+msgstr "BAIONA"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "BALTAR – PAREDES"
+msgstr "BALTAR – PAREDES"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "BARALLA"
+msgstr "BARALLA"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "BEMBIBRE"
+msgstr "BEMBIBRE"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "BETANZOS"
+msgstr "BETANZOS"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "BOIRO"
+msgstr "BOIRO"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "BRAGA"
+msgstr "BRAGA"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "BRAGANÇA"
+msgstr "BRAGANÇA"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "BURELA"
+msgstr "BURELA"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+msgid "Badajoz"
+msgstr "Badajoz"
+
+#. module: theme_rias
+#: model:ir.model,name:theme_rias.model_blog_post
+msgid "Blog Post"
+msgstr "Entrada del blog"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.wbb_website_blog_blog_post_complete_youtube
+msgid "Blog Post with Right Column Youtube"
+msgstr "Blog Post with Right Column Youtube"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.s_latest_post_youtube
+msgid "Blog Snippets Template Youtube"
+msgstr "Blog Snippets Template Youtube"
+
+#. module: theme_rias
+#: model:blog.blog,name:theme_rias.blog_blog_retailers
+msgid "Blog for retailers"
+msgstr "Blog for retailers"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_page_our_shops_ir_ui_view
+#: model:ir.ui.view,arch_db:theme_rias.las_template_our_shops
+#: model:website.page,arch_db:theme_rias.las_page_our_shops
+msgid "Buscador de tiendas"
+msgstr "Buscador de tiendas"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "Buscar Tiendas"
+msgstr "Buscar Tiendas"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "Buscar por población"
+msgstr "Buscar por población"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "CAMBADOS"
+msgstr "CAMBADOS"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "CAMBRE"
+msgstr "CAMBRE"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "CANGAS"
+msgstr "CANGAS"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "CARBALLIÑO"
+msgstr "CARBALLIÑO"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "CARBALLO"
+msgstr "CARBALLO"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "CARIÑO"
+msgstr "CARIÑO"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "CASTRO"
+msgstr "CASTRO"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.snippet_three_columns_lasrias
+msgid "CATÁLOGO INTERACTIVO"
+msgstr "CATÁLOGO INTERACTIVO"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "CEE"
+msgstr "CEE"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "CELANOVA"
+msgstr "CELANOVA"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "CESANTES - REDONDELA"
+msgstr "CESANTES - REDONDELA"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "CHANTADA"
+msgstr "CHANTADA"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "COIA-VIGO"
+msgstr "COIA-VIGO"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "CORTEGADA"
+msgstr "CORTEGADA"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "CORUÑA"
+msgstr "CORUÑA"
+
+#. module: theme_rias
+#: model:product.public.category,name:theme_rias.category_calefaccion
+msgid "Calefacción y climatización"
+msgstr "Calefacción y climatización"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.categories_top_catalogue
+msgid "Catalogue Categories Top"
+msgstr "Catalogue Categories Top"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.product_edit_options_catalogue
+msgid "Catalogue Edit Product Options"
+msgstr "Catalogue Edit Product Options"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.products_list_view_catalogue
+msgid "Catalogue List View"
+msgstr "Catalogue List View"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.product_catalogue
+msgid "Catalogue Product"
+msgstr "Catalogue Product"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.products_attributes_catalogue
+msgid "Catalogue Product Attribute's Filters"
+msgstr "Catalogue Product Attribute's Filters"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.products_description_catalogue
+msgid "Catalogue Product Description"
+msgstr "Catalogue Product Description"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.sort_catalogue
+msgid "Catalogue Show Sort by"
+msgstr "Catalogue Show Sort by"
+
+#. module: theme_rias
+#: model:website.page,name:theme_rias.rias_catalogues_page
+msgid "Catalogues"
+msgstr "Catálogos"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.rias_catalogues_page_ir_ui_view
+#: model:ir.ui.view,name:theme_rias.rias_catalogues_page_view
+msgid "Catalogues LasRias View"
+msgstr "Catalogues LasRias View"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.dynamic_category_menu
+msgid "Category dynamic menu"
+msgstr "Category dynamic menu"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.categories_recursive_catalogue
+msgid "Category list Catalogue"
+msgstr "Category list Catalogue"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.snippet_three_columns_lasrias
+msgid "Catálogo Jardines 2019"
+msgstr "Catálogo Jardines 2019"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.snippet_three_columns_lasrias
+msgid "Catálogo Piscinas 2019"
+msgstr "Catálogo Piscinas 2019"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.snippet_three_columns_lasrias
+msgid "Catálogo Reformas 2019"
+msgstr "Catálogo Reformas 2019"
+
+#. module: theme_rias
+#: model:slide.category,name:theme_rias.category_catalogues
+msgid "Catálogos"
+msgstr "Catálogos"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.snippet_three_columns_lasrias
+msgid "Catálogos y folletos"
+msgstr "Catálogos y folletos"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.products_catalogue
+msgid "Click <i>'New'</i> in the top-right corner to create your first product."
+msgstr "Clic a <i>'Nuevo'</i> en la esquina superior derecha para crear su primer producto."
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.option_collapse_categories_recursive_catalogue
+msgid "Collapse Category Recursive Catalogue"
+msgstr "Collapse Category Recursive Catalogue"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.option_collapse_products_categories_catalogue
+msgid "Collapsible Category List Catalogue"
+msgstr "Collapsible Category List Catalogue"
+
+#. module: theme_rias
+#: model:blog.post,content:theme_rias.blog_post_retailer
+msgid "Con motivo de la festividad del <strong>día 25 de Julio, DIA DE GALICIA</strong>, la Televisión Gallega llevará a cabo una programación especial y vamos a anunciarnos con un SPOT en prime time."
+msgstr "Con motivo de la festividad del <strong>día 25 de Julio, DIA DE GALICIA</strong>, la Televisión Gallega llevará a cabo una programación especial y vamos a anunciarnos con un SPOT en prime time."
+
+#. module: theme_rias
+#: model:product.public.category,name:theme_rias.category_construccion
+msgid "Construcción"
+msgstr "Construcción"
+
+#. module: theme_rias
+#: model:website.page,name:theme_rias.rias_contactus_page
+msgid "Contact Us"
+msgstr "Contact Us"
+
+#. module: theme_rias
+#: model:website.page,name:theme_rias.rias_contactus_thanks_page
+msgid "Contact Us (Thanks)"
+msgstr "Contact Us (Thanks)"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.rias_contactus_thanks_page_ir_ui_view
+#: model:ir.ui.view,name:theme_rias.rias_contactus_thanks_view
+msgid "Contact Us (Thanks) Rías View"
+msgstr "Contact Us (Thanks) Rías View"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.rias_contactus_page_ir_ui_view
+#: model:ir.ui.view,name:theme_rias.rias_contactus_view
+msgid "Contact Us Rías View"
+msgstr "Contact Us Rías View"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_aboutus_contact
+msgid "Contacto"
+msgstr "Contacto"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.snippet_cover_lasrias
+msgid "Cover Las Rías"
+msgstr "Cover Las Rías"
+
+#. module: theme_rias
+#: model:blog.post,website_meta_description:theme_rias.post_jardin
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_jardines
+msgid "Cultiva, poda, arranca las malas hierbas con las herramientas adecuadas y ¡¡PRESUME DE JARDÍN!!"
+msgstr "Cultiva, poda, arranca las malas hierbas con las herramientas adecuadas y ¡¡PRESUME DE JARDÍN!!"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.las_template_current_cart
+msgid "Current cart breadcrumb"
+msgstr "Current cart breadcrumb"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+msgid "Cáceres"
+msgstr "Cáceres"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+msgid "Cádiz"
+msgstr "Cádiz"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+msgid "Córdoba"
+msgstr "Córdoba"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "DENA - MEAÑO"
+msgstr "DENA - MEAÑO"
+
+#. module: theme_rias
+#: model:blog.post,name:theme_rias.post_piscinas
+#: model:blog.post,website_meta_title:theme_rias.post_piscinas
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_piscinas
+msgid "DISFRUTA EL BUEN TIEMPO"
+msgstr "DISFRUTA EL BUEN TIEMPO"
+
+#. module: theme_rias
+#: model:product.public.category,name:theme_rias.category_decoracion
+msgid "Decoración"
+msgstr "Decoración"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.default_send_forms
+msgid "Default Send Form Rías Snippet"
+msgstr "Default Send Form Rías Snippet"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_aboutus_contact
+msgid "Donde estamos"
+msgstr "Donde estamos"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.rias_pricelist_list_template
+msgid "Download"
+msgstr "Descargar"
+
+#. module: theme_rias
+#: model:product.public.category,name:theme_rias.category_drogue
+msgid "Droguería"
+msgstr "Droguería"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_aboutus_contact
+msgid "E-mail:"
+msgstr "E-mail:"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_jardines
+msgid "El Jardín es  un espacio en donde se cultivan plantas y flores ornamentales para hacer de él un lugar agradable. \n"
+"                            Si echamos un vistazo rápido  a los Jardines más \"bellos del mundo\" nos encontramos con  Jardines de todo tipo, grandes, \n"
+"                            como los de la Villa Borghese (Roma, Italia),o Jardín Keukenhof (Holanda). Jardines con mucha historia como los Jardines del \n"
+"                            Generalife (Granada, España), emblemáticos como los del Taj Mahal (India)  o los Jardines de Kensington en Londres, (Inglaterra) \n"
+"                            que forman parte del palacio  que  fue la residencia oficial de la princesa Diana. Todos maravillosos  e  inspiradores aunque, \n"
+"                            por qué no decirlo el mejor, el más bonito de todos es siempre el que uno hace. Aunque sea en una terraza de ciudad, simplemente \n"
+"                            con unas flores bien puestas,  con un toque personal .¡Ese es el mejor!"
+msgstr "El Jardín es  un espacio en donde se cultivan plantas y flores ornamentales para hacer de él un lugar agradable. \n"
+"                            Si echamos un vistazo rápido  a los Jardines más \"bellos del mundo\" nos encontramos con  Jardines de todo tipo, grandes, \n"
+"                            como los de la Villa Borghese (Roma, Italia),o Jardín Keukenhof (Holanda). Jardines con mucha historia como los Jardines del \n"
+"                            Generalife (Granada, España), emblemáticos como los del Taj Mahal (India)  o los Jardines de Kensington en Londres, (Inglaterra) \n"
+"                            que forman parte del palacio  que  fue la residencia oficial de la princesa Diana. Todos maravillosos  e  inspiradores aunque, \n"
+"                            por qué no decirlo el mejor, el más bonito de todos es siempre el que uno hace. Aunque sea en una terraza de ciudad, simplemente \n"
+"                            con unas flores bien puestas,  con un toque personal .¡Ese es el mejor!"
+
+#. module: theme_rias
+#: model:blog.post,content:theme_rias.post_jardin
+msgid "El Jardín es  un espacio en donde se cultivan plantas y flores ornamentales para hacer de él un lugar agradable. Si echamos un vistazo rápido  a los Jardines más \"bellos del mundo\" nos encontramos con  Jardines de todo tipo, grandes, como los de la Villa Borghese (Roma, Italia),o Jardín Keukenhof (Holanda). Jardines con mucha historia como los Jardines del Generalife (Granada, España), emblemáticos como los del Taj Mahal (India)  o los Jardines de Kensington en Londres, (Inglaterra) que forman parte del palacio  que  fue la residencia oficial de la princesa Diana. Todos maravillosos  e  inspiradores aunque, por qué no decirlo el mejor, el más bonito de todos es siempre el que uno hace. Aunque sea en una terraza de ciudad, simplemente con unas flores bien puestas,  con un toque personal .¡Ese es el mejor!\n"
+"\n"
+"La llegada de la primavera  nos permite disfrutar más del aire libre y, con ello, podemos pasar más tiempo en nuestro jardín, ya sea urbano o no. En cualquiera de nuestras ferreterías encontrarás el asesoramiento necesario para aconsejarte el producto que más se adecúe a tus necesidades. Muchas veces no se trata de gastar más, sino de gastar bien y para eso los profesionales te pueden ayudar.\n"
+"\n"
+"Cultiva, poda, arranca las malas hierbas con las herramientas adecuadas y ¡¡PRESUME DE JARDÍN!!\n"
+"\n"
+"Os animamos a hacer un Jardín sencillo, con un poco de color, iluminación y tradición. Fácil de mantener. Para la decoración podéis usar piedras, flores, fuentes y todo tipo de elementos decorativos, pero sin recargarlo, que le den la personalidad que queremos para hacerlo nuestro.\n"
+"\n"
+"Y como siempre, para cualquier cosa que necesitéis visitar a vuestra ferretería de confianza."
+msgstr "El Jardín es  un espacio en donde se cultivan plantas y flores ornamentales para hacer de él un lugar agradable. Si echamos un vistazo rápido  a los Jardines más \"bellos del mundo\" nos encontramos con  Jardines de todo tipo, grandes, como los de la Villa Borghese (Roma, Italia),o Jardín Keukenhof (Holanda). Jardines con mucha historia como los Jardines del Generalife (Granada, España), emblemáticos como los del Taj Mahal (India)  o los Jardines de Kensington en Londres, (Inglaterra) que forman parte del palacio  que  fue la residencia oficial de la princesa Diana. Todos maravillosos  e  inspiradores aunque, por qué no decirlo el mejor, el más bonito de todos es siempre el que uno hace. Aunque sea en una terraza de ciudad, simplemente con unas flores bien puestas,  con un toque personal .¡Ese es el mejor!\n"
+"\n"
+"La llegada de la primavera  nos permite disfrutar más del aire libre y, con ello, podemos pasar más tiempo en nuestro jardín, ya sea urbano o no. En cualquiera de nuestras ferreterías encontrarás el asesoramiento necesario para aconsejarte el producto que más se adecúe a tus necesidades. Muchas veces no se trata de gastar más, sino de gastar bien y para eso los profesionales te pueden ayudar.\n"
+"\n"
+"Cultiva, poda, arranca las malas hierbas con las herramientas adecuadas y ¡¡PRESUME DE JARDÍN!!\n"
+"\n"
+"Os animamos a hacer un Jardín sencillo, con un poco de color, iluminación y tradición. Fácil de mantener. Para la decoración podéis usar piedras, flores, fuentes y todo tipo de elementos decorativos, pero sin recargarlo, que le den la personalidad que queremos para hacerlo nuestro.\n"
+"\n"
+"Y como siempre, para cualquier cosa que necesitéis visitar a vuestra ferretería de confianza."
+
+#. module: theme_rias
+#: model:product.public.category,name:theme_rias.category_electricidad
+msgid "Electricidad"
+msgstr "Electricidad"
+
+#. module: theme_rias
+#: model:website.page,name:theme_rias.page_404
+msgid "Error 404"
+msgstr "Error 404"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.page_404_ir_ui_view
+#: model:ir.ui.view,name:theme_rias.rias_page_404_view
+msgid "Error 404 Rías View"
+msgstr "Error 404 Rías View"
+
+#. module: theme_rias
+#: model:blog.post,content:theme_rias.blog_post_retailer
+msgid "Está previsto que se emita nuestro SPOT, el día 24 desde durante el programa de los <strong>fuegos del Apóstol </strong> y el día 25  en el <strong>programa especial que presentará Xosé Ramón Gayoso</strong>. Se emitirá 5 veces cada día, desde las 21:45 a 24:30. considerando que serán los momentos de máxima audiencia."
+msgstr "Está previsto que se emita nuestro SPOT, el día 24 desde durante el programa de los <strong>fuegos del Apóstol </strong> y el día 25  en el <strong>programa especial que presentará Xosé Ramón Gayoso</strong>. Se emitirá 5 veces cada día, desde las 21:45 a 24:30. considerando que serán los momentos de máxima audiencia."
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.blog_post_short_extended
+msgid "Extended Blog Posts View"
+msgstr "Extended Blog Posts View"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "FAFE"
+msgstr "FAFE"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "FERROL"
+msgstr "FERROL"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "FONSAGRADA"
+msgstr "FONSAGRADA"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "FONTECULLER - CULLEREDO"
+msgstr "FONTECULLER - CULLEREDO"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "FREIXEIRO - NARÓN"
+msgstr "FREIXEIRO - NARÓN"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "FRIOL"
+msgstr "FRIOL"
+
+#. module: theme_rias
+#: model:product.public.category,name:theme_rias.category_ferreteria
+msgid "Ferretería"
+msgstr "Ferretería"
+
+#. module: theme_rias
+#: model:product.public.category,name:theme_rias.category_fontaner
+msgid "Fontanería"
+msgstr "Fontanería"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.layout_footer_copyright_custom
+msgid "Footer Copyright Custom"
+msgstr "Footer Copyright Custom"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.rias_portal_frontend_layout
+msgid "Frontend Layout LasRías Template"
+msgstr "Frontend Layout LasRías Template"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "GODIM-MAIA"
+msgstr "GODIM-MAIA"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "GRIJÓ"
+msgstr "GRIJÓ"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "GUIMARÃES"
+msgstr "GUIMARÃES"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+msgid "Granada"
+msgstr "Granada"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.snippet_cover_lasrias
+msgid "Hablando de <b>FERRETERÍA</b> !Nos vamos a entender!"
+msgstr "Hablando de <b>FERRETERÍA</b> !Nos vamos a entender!"
+
+#. module: theme_rias
+#: model:product.public.category,name:theme_rias.category_herramien
+msgid "Herramientas"
+msgstr "Herramientas"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+msgid "Huelva"
+msgstr "Huelva"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.pricelist_thanks_ir_ui_view
+#: model:website.page,arch_db:theme_rias.pricelist_thanks
+msgid "If you have an emergency, do not hesitate to contact us by phone:"
+msgstr "Si tiene una emergencia, no dude en contactarnos por teléfono:"
+
+#. module: theme_rias
+#: model:product.public.category,name:theme_rias.category_ilumina
+msgid "Iluminación"
+msgstr "Iluminación"
+
+#. module: theme_rias
+#: model:product.public.category,name:theme_rias.category_industr
+msgid "Industrial"
+msgstr "Industrial"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_aboutus_socios
+msgid "Inicialmente, la Cooperativa busca obtener el mejor precio de compra de productos para sus socios, así como mantener un stock permanente. \n"
+"                            Con el tiempo, las actividades se han orientado hacia la prestación de servicios como la facturación y pagos centralizados para obtener \n"
+"                            una mayor eficiencia, el asesoramiento técnico y comercial, y una fuerte orientación hacia la comercialización y el marketing."
+msgstr "Inicialmente, la Cooperativa busca obtener el mejor precio de compra de productos para sus socios, así como mantener un stock permanente. \n"
+"                            Con el tiempo, las actividades se han orientado hacia la prestación de servicios como la facturación y pagos centralizados para obtener \n"
+"                            una mayor eficiencia, el asesoramiento técnico y comercial, y una fuerte orientación hacia la comercialización y el marketing."
+
+#. module: theme_rias
+#: model:website.page,name:theme_rias.portal_invoice_page
+msgid "Invoice"
+msgstr "Factura"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.portal_invoice_page_ir_ui_view
+#: model:ir.ui.view,name:theme_rias.rias_portal_invoice_page_view
+msgid "Invoice Rías View"
+msgstr "Invoice Rías View"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.google_recaptcha_contact_form
+msgid "Is human?"
+msgstr "¿Es humano?"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.snippet_three_columns_lasrias
+msgid "JARDINES 2019"
+msgstr "JARDINES 2019"
+
+#. module: theme_rias
+#: model:product.public.category,name:theme_rias.category_jardine
+msgid "Jardinería"
+msgstr "Jardinería"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.snippet_image_text_lasrias_jardines
+msgid "Jardines Las Rías"
+msgstr "Jardines Las Rías"
+
+#. module: theme_rias
+#: model:slide.slide,name:theme_rias.slide_jardin_2019
+msgid "Jardín 2019"
+msgstr "Jardín 2019"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+msgid "Jaén"
+msgstr "Jaén"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "LALÍN"
+msgstr "LALÍN"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "LARACHA"
+msgstr "LARACHA"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "LUGO"
+msgstr "LUGO"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_jardines
+msgid "La llegada de la primavera  nos permite disfrutar más del aire libre y, con ello, podemos pasar más tiempo en nuestro jardín, \n"
+"                            ya sea urbano o no. En cualquiera de nuestras ferreterías encontrarás el asesoramiento necesario para aconsejarte el producto \n"
+"                            que más se adecúe a tus necesidades. Muchas veces no se trata de gastar más, sino de gastar bien y para eso los profesionales \n"
+"                            te pueden ayudar."
+msgstr "La llegada de la primavera  nos permite disfrutar más del aire libre y, con ello, podemos pasar más tiempo en nuestro jardín, \n"
+"                            ya sea urbano o no. En cualquiera de nuestras ferreterías encontrarás el asesoramiento necesario para aconsejarte el producto \n"
+"                            que más se adecúe a tus necesidades. Muchas veces no se trata de gastar más, sino de gastar bien y para eso los profesionales \n"
+"                            te pueden ayudar."
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.s_latest_post_limit_subtitle
+msgid "Latest Post"
+msgstr "Últimas entradas del blog"
+
+#. module: theme_rias
+#: model:website.page,name:theme_rias.rias_advise_page
+msgid "Legal Advise"
+msgstr "Legal Advise"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.rias_advise_page_ir_ui_view
+#: model:ir.ui.view,name:theme_rias.rias_advise_page_view
+msgid "Legal Advise Rías View"
+msgstr "Legal Advise Rías View"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "Localizar una tienda Rías"
+msgstr "Localizar una tienda Rías"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+msgid "Location"
+msgstr "Entrada"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "MARÍN"
+msgstr "MARÍN"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "MEIRA"
+msgstr "MEIRA"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "MELIDE"
+msgstr "MELIDE"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "MIÑO"
+msgstr "MIÑO"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "MOAÑA"
+msgstr "MOAÑA"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "MONFORTE DE LEMOS"
+msgstr "MONFORTE DE LEMOS"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "MONTERROSO"
+msgstr "MONTERROSO"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "MONÇAO"
+msgstr "MONÇAO"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "MUROS"
+msgstr "MUROS"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.snippet_image_text_lasrias_map
+msgid "Map Las Rías"
+msgstr "Map Las Rías"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "Mapa España"
+msgstr "Mapa España"
+
+#. module: theme_rias
+#: model:product.public.category,name:theme_rias.category_maquinari
+msgid "Maquinaria"
+msgstr "Maquinaria"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+msgid "Melilla"
+msgstr "Melilla"
+
+#. module: theme_rias
+#: model:product.public.category,name:theme_rias.category_menaje_cocina
+msgid "Menaje cocina"
+msgstr "Menaje cocina"
+
+#. module: theme_rias
+#: model:product.public.category,name:theme_rias.category_menaje_hogar
+msgid "Menaje hogar"
+msgstr "Menaje hogar"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+msgid "Menorca"
+msgstr "Menorca"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+msgid "Murcia"
+msgstr "Murcia"
+
+#. module: theme_rias
+#: model:website.page,name:theme_rias.portal_my_invoices
+msgid "My Invoices and Payments"
+msgstr "My Invoices and Payments"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.portal_my_invoices_ir_ui_view
+#: model:ir.ui.view,name:theme_rias.rias_portal_my_invoices_view
+msgid "My Invoices and Payments Rías View"
+msgstr "My Invoices and Payments Rías View"
+
+#. module: theme_rias
+#: model:website.page,name:theme_rias.portal_my_home
+msgid "My Portal"
+msgstr "My Portal"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.portal_my_home_ir_ui_view
+#: model:ir.ui.view,name:theme_rias.rias_portal_my_home_view
+msgid "My Portal Rías View"
+msgstr "My Portal Rías View"
+
+#. module: theme_rias
+#: model:website.page,name:theme_rias.rias_portal_my_purchase_orders
+msgid "My Purchase Orders"
+msgstr "My Purchase Orders"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.rias_portal_my_purchase_orders_ir_ui_view
+#: model:ir.ui.view,name:theme_rias.rias_portal_my_purchase_orders_view
+msgid "My Purchase Orders Rías View"
+msgstr "My Purchase Orders Rías View"
+
+#. module: theme_rias
+#: model:website.page,name:theme_rias.portal_my_quotations
+msgid "My Quotations"
+msgstr "My Quotations"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.portal_my_quotations_ir_ui_view
+#: model:ir.ui.view,name:theme_rias.rias_portal_my_quotations_view
+msgid "My Quotations Rías View"
+msgstr "My Quotations Rías View"
+
+#. module: theme_rias
+#: model:website.page,name:theme_rias.portal_my_orders
+msgid "My Sales Orders"
+msgstr "My Sales Orders"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.portal_my_orders_ir_ui_view
+#: model:ir.ui.view,name:theme_rias.rias_portal_my_orders_view
+msgid "My Sales Orders Rías View"
+msgstr "My Sales Orders Rías View"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+msgid "Málaga"
+msgstr "Málaga"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "NEGREIRA"
+msgstr "NEGREIRA"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "NOIA"
+msgstr "NOIA"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.sort_catalogue
+msgid "Name - A to Z"
+msgstr "Nombre: de la A a la Z"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.sort_catalogue
+msgid "Name - Z to A"
+msgstr "Nombre: de la Z a la A"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.content_new_product_catalogue
+msgid "New Product"
+msgstr "Nuevo producto"
+
+#. module: theme_rias
+#: model:blog.blog,subtitle:theme_rias.blog_blog_retailers
+msgid "News for retailers"
+msgstr "News for retailers"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.products_catalogue
+msgid "No product defined."
+msgstr "No se ha definido producto."
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_aboutus_socios
+msgid "Nuestra equipo"
+msgstr "Nuestra equipo"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_aboutus
+msgid "Nuestras instalaciones"
+msgstr "Nuestras instalaciones"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "O BARCO DE VALDEORRAS"
+msgstr "O BARCO DE VALDEORRAS"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "ORDES"
+msgstr "ORDES"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "OURENSE"
+msgstr "OURENSE"
+
+#. module: theme_rias
+#: model:blog.blog,name:theme_rias.blog_blog_campaigns
+msgid "Ofertas"
+msgstr "Ofertas"
+
+#. module: theme_rias
+#: model:blog.blog,subtitle:theme_rias.blog_blog_campaigns
+msgid "Ofertas destacadas"
+msgstr "Ofertas destacadas"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.website_blog_header_footer_custom
+msgid "Open en Google Maps"
+msgstr "Open en Google Maps"
+
+#. module: theme_rias
+#: model:product.public.category,name:theme_rias.category_ordenacion
+msgid "Ordenación"
+msgstr "Ordenación"
+
+#. module: theme_rias
+#: model:website.page,name:theme_rias.order_confirmation
+msgid "Order Confirmation"
+msgstr "Order Confirmation"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.order_confirmation_ir_ui_view
+#: model:ir.ui.view,name:theme_rias.rias_order_confirmation_view
+msgid "Order Confirmation Rías View"
+msgstr "Order Confirmation Rías View"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_jardines
+msgid "Os animamos a hacer un Jardín sencillo, con un poco de color, iluminación y tradición. Fácil de mantener. \n"
+"                            Para la decoración podéis usar piedras, flores, fuentes y todo tipo de elementos decorativos, pero sin recargarlo, \n"
+"                            que le den la personalidad que queremos para hacerlo nuestro."
+msgstr "Os animamos a hacer un Jardín sencillo, con un poco de color, iluminación y tradición. Fácil de mantener. \n"
+"                            Para la decoración podéis usar piedras, flores, fuentes y todo tipo de elementos decorativos, pero sin recargarlo, \n"
+"                            que le den la personalidad que queremos para hacerlo nuestro."
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_reformas
+msgid "Os animamos a que visitéis las tiendas y veáis los diferentes artículos que tenemos disponibles en vuestras \n"
+"                            <b>ferreterías de confianza.</b>"
+msgstr "Os animamos a que visitéis las tiendas y veáis los diferentes artículos que tenemos disponibles en vuestras \n"
+"                            <b>ferreterías de confianza.</b>"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_piscinas
+msgid "Os presentamos nuestro FOLLETO PISCINAS, un especial dedicado a una de las familias que más crecen año a año \n"
+"                            en ventas en las ferreterías de las rías."
+msgstr "Os presentamos nuestro FOLLETO PISCINAS, un especial dedicado a una de las familias que más crecen año a año \n"
+"                            en ventas en las ferreterías de las rías."
+
+#. module: theme_rias
+#: model:blog.post,website_meta_description:theme_rias.post_piscinas
+msgid "Os presentamos nuestro FOLLETO PISCINAS, un especial dedicado a una de las familias que más crecen año a año en ventas en las ferreterías de las rías."
+msgstr "Os presentamos nuestro FOLLETO PISCINAS, un especial dedicado a una de las familias que más crecen año a año en ventas en las ferreterías de las rías."
+
+#. module: theme_rias
+#: model:blog.post,content:theme_rias.post_piscinas
+msgid "Os presentamos nuestro FOLLETO PISCINAS, un especial dedicado a una de las familias que más crecen año a año en ventas en las ferreterías de las rías.\n"
+"\n"
+"Animaros a visitar las ferreterías de las rías y podréis ver las novedades que tenemos este año en piscinas."
+msgstr "Os presentamos nuestro FOLLETO PISCINAS, un especial dedicado a una de las familias que más crecen año a año en ventas en las ferreterías de las rías.\n"
+"\n"
+"Animaros a visitar las ferreterías de las rías y podréis ver las novedades que tenemos este año en piscinas."
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.las_page_our_shops_ir_ui_view
+#: model:ir.ui.view,name:theme_rias.las_template_our_shops
+msgid "Our Shops Point Template"
+msgstr "Our Shops Point Template"
+
+#. module: theme_rias
+#: model:website.menu,name:theme_rias.menu_ourshops
+msgid "Our shops"
+msgstr "Tiendas"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+msgid "Ourense"
+msgstr "Ourense"
+
+#. module: theme_rias
+#: model:product.public.category,name:theme_rias.category_pae
+msgid "PAE"
+msgstr "PAE"
+
+#. module: theme_rias
+#: model:blog.post,content:theme_rias.blog_post_campaign
+#: model:ir.ui.view,arch_db:theme_rias.snippet_three_columns_lasrias
+msgid "PDF"
+msgstr "PDF"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "PERLÍO - FENE"
+msgstr "PERLÍO - FENE"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "PESADOIRA - NEGREIRA"
+msgstr "PESADOIRA - NEGREIRA"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.snippet_three_columns_lasrias
+msgid "PISCINAS 2019"
+msgstr "PISCINAS 2019"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "POBRA DE TRIVES"
+msgstr "POBRA DE TRIVES"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "POBRA DO CARAMIÑAL"
+msgstr "POBRA DO CARAMIÑAL"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "PONTEAREAS"
+msgstr "PONTEAREAS"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "PONTECALDELAS"
+msgstr "PONTECALDELAS"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "PONTECESURES"
+msgstr "PONTECESURES"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "PONTEDEUME"
+msgstr "PONTEDEUME"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "PORRIÑO"
+msgstr "PORRIÑO"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "PORRÁNS-BARRO"
+msgstr "PORRÁNS-BARRO"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "PORTO DO SON RIANXO"
+msgstr "PORTO DO SON RIANXO"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_aboutus_contact
+msgid "Phone:"
+msgstr "Teléfono:"
+
+#. module: theme_rias
+#: model:product.public.category,name:theme_rias.category_pintura
+msgid "Pintura"
+msgstr "Pintura"
+
+#. module: theme_rias
+#: model:slide.slide,name:theme_rias.slide_piscinas_2019
+msgid "Piscinas 2019"
+msgstr "Piscinas 2019"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.snippet_image_text_lasrias_piscinas
+msgid "Piscinas Las Rías"
+msgstr "Piscinas Las Rías"
+
+#. module: theme_rias
+#: model:blog.post,content:theme_rias.blog_post_retailer
+msgid "Podéis \"pinchar\" en el"
+msgstr "Podéis \"pinchar\" en el"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+msgid "Pontevedra"
+msgstr "Pontevedra"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+msgid "Portugal"
+msgstr "Portugal"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.rias_pricelist_list_template
+msgid "Pricelist Date"
+msgstr "Pricelist Date"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.default_file_forms
+msgid "Pricelist Document Form Rías Snippet"
+msgstr "Pricelist Document Form Rías Snippet"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.pricelist_hidden_fields_forms
+msgid "Pricelist Form Hidden Fields Rías Snippet"
+msgstr "Pricelist Form Hidden Fields Rías Snippet"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.pricelist_form
+#: model:website.page,name:theme_rias.rias_pricelist_form_view
+msgid "Pricelist form"
+msgstr "Pricelist form"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.rias_pricelist_form_template
+msgid "Pricelist form template"
+msgstr "Pricelist form template"
+
+#. module: theme_rias
+#: model:website.page,name:theme_rias.rias_pricelist_list_view
+msgid "Pricelist list"
+msgstr "Pricelist list"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.rias_pricelist_list_template
+msgid "Pricelist list template"
+msgstr "Pricelist list template"
+
+#. module: theme_rias
+#: model:website.menu,name:theme_rias.menu_tarifas
+msgid "Pricelists"
+msgstr "Pricelists"
+
+#. module: theme_rias
+#: model:website.page,name:theme_rias.rias_privacy_page
+msgid "Privacy Policy"
+msgstr "Privacy Policy"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.rias_privacy_page_ir_ui_view
+#: model:ir.ui.view,name:theme_rias.rias_privacy_page_view
+msgid "Privacy Policy Rías View"
+msgstr "Privacy Policy Rías View"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.product_catalogue
+msgid "Product Name"
+msgstr "Nombre del producto"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.404_catalogue
+msgid "Product not found!"
+msgstr "Producto no encontrado"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.product_catalogue
+msgid "Products"
+msgstr "Productos"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.products_catalogue
+msgid "Products Catalogue"
+msgstr "Products Catalogue"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.products_item_catalogue
+msgid "Products item Catalogue"
+msgstr "Products item Catalogue"
+
+#. module: theme_rias
+#: model:product.public.category,name:theme_rias.category_proteccion_laboral
+msgid "Protección laboral"
+msgstr "Protección laboral"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+msgid "Province"
+msgstr "Province"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_reformas
+#: model:ir.ui.view,arch_db:theme_rias.snippet_three_columns_lasrias
+msgid "REFORMAS 2019"
+msgstr "REFORMAS 2019"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "RIBADAVIA"
+msgstr "RIBADAVIA"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "RIBADEO"
+msgstr "RIBADEO"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "RIBERAS DE LEA"
+msgstr "RIBERAS DE LEA"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "RIVEIRA"
+msgstr "RIVEIRA"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.s_latest_post_youtube
+msgid "Read more"
+msgstr "Leer más"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.google_recaptcha_contact_form
+msgid "Recaptcha Rías Snippet"
+msgstr "Recaptcha Rías Snippet"
+
+#. module: theme_rias
+#: model:slide.slide,name:theme_rias.slide_reformas_2019
+msgid "Reformas 2019"
+msgstr "Reformas 2019"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.snippet_image_text_lasrias_reformas
+msgid "Reformas Las Rías"
+msgstr "Reformas Las Rías"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_page_our_shops_ir_ui_view
+#: model:ir.ui.view,arch_db:theme_rias.las_template_our_shops
+#: model:website.page,arch_db:theme_rias.las_page_our_shops
+msgid "Resultados de búsqueda"
+msgstr "Resultados de búsqueda"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.404_catalogue
+msgid "Return to the product list."
+msgstr "Volver a la lista de producto."
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "SADA"
+msgstr "SADA"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "SALVATERRA DE MIÑO"
+msgstr "SALVATERRA DE MIÑO"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "SAN CLODIO"
+msgstr "SAN CLODIO"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "SANTO TIRSO"
+msgstr "SANTO TIRSO"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "SARRIA"
+msgstr "SARRIA"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "SOUTELO DE MONTES"
+msgstr "SOUTELO DE MONTES"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "STA. CRUZ - OLEIROS"
+msgstr "STA. CRUZ - OLEIROS"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "STA. MARTA DE ORTIGUEIRA"
+msgstr "STA. MARTA DE ORTIGUEIRA"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.products_item_catalogue
+msgid "Sale"
+msgstr "Oferta"
+
+#. module: theme_rias
+#: model:website.page,name:theme_rias.portal_order_page
+msgid "Sales Order"
+msgstr "Sales Order"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.portal_order_page_ir_ui_view
+#: model:ir.ui.view,name:theme_rias.rias_portal_order_page_view
+msgid "Sales Order Rías View"
+msgstr "Sales Order Rías View"
+
+#. module: theme_rias
+#: model:product.public.category,name:theme_rias.category_sanitario
+msgid "Sanitario"
+msgstr "Sanitario"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.search_catalogue
+msgid "Search Box"
+msgstr "Search Box"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.las_search_our_shops
+msgid "Search Form Our Shops"
+msgstr "Search Form Our Shops"
+
+#. module: theme_rias
+#: model:website.menu,name:theme_rias.menu_tarifas_list
+msgid "See Pricelists"
+msgstr "See Pricelists"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.rias_pricelist_form_template
+msgid "Select your pricelist file and push the send button."
+msgstr "Select your pricelist file and push the send button."
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+msgid "Sevilla"
+msgstr "Sevilla"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.products_catalogue
+msgid "Shop"
+msgstr "Tienda"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+msgid "Shop name"
+msgstr "Shop name"
+
+#. module: theme_rias
+#: model:website.page,name:theme_rias.las_page_our_shops
+msgid "Shops"
+msgstr "Shops"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.search count_catalogue
+msgid "Show # found Catalogue"
+msgstr "Show # found Catalogue"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.snippet_image_text_lasrias_aboutus
+msgid "Snippet About Us Las Rías"
+msgstr "Snippet About Us Las Rías"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.snippet_image_text_lasrias_aboutus_contact
+msgid "Snippet Contact About Us Las Rías"
+msgstr "Snippet Contact About Us Las Rías"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.snippet_image_text_lasrias_aboutus_socios
+msgid "Snippet Socios About Us Las Rías"
+msgstr "Snippet Socios About Us Las Rías"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_aboutus
+msgid "Sobre nosotros"
+msgstr "Sobre nosotros"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_aboutus
+msgid "Somos la mayor red de tiendas de ferretería y bricolaje de Galicia y Portugal. \n"
+"                            Disponemos de un moderno Centro Logístico de distribución de artículos de ferretería y bricolaje situado en la provincia de A Coruña, \n"
+"                            para dar el mejor servicio a nuestros socios. La empresa nace en el año 1.974 como agrupación de tiendas de ferretería y \n"
+"                            electrodomésticos, con el objetivo de disponer del mejor surtido posible de productos que les permitiera prestar un servicio \n"
+"                            adecuado a sus clientes."
+msgstr "Somos la mayor red de tiendas de ferretería y bricolaje de Galicia y Portugal. \n"
+"                            Disponemos de un moderno Centro Logístico de distribución de artículos de ferretería y bricolaje situado en la provincia de A Coruña, \n"
+"                            para dar el mejor servicio a nuestros socios. La empresa nace en el año 1.974 como agrupación de tiendas de ferretería y \n"
+"                            electrodomésticos, con el objetivo de disponer del mejor surtido posible de productos que les permitiera prestar un servicio \n"
+"                            adecuado a sus clientes."
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.404_catalogue
+msgid "Sorry, this product is not available anymore."
+msgstr "Lo sentimos. Este producto ya no está disponible."
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.sort_catalogue
+msgid "Sorting by :"
+msgstr "Ordenado por:"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+msgid "Spain"
+msgstr "Spain"
+
+#. module: theme_rias
+#: model:blog.post,name:theme_rias.blog_post_retailer
+msgid "Spot de las rías en Televisión Gallega"
+msgstr "Spot de las rías en Televisión Gallega"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+msgid "State"
+msgstr "Estado"
+
+#. module: theme_rias
+#: model:website.menu,name:theme_rias.menu_tarifas_form
+msgid "Submit Pricelist"
+msgstr "Submit Pricelist"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.rias_pricelist_form_template
+msgid "Submit new pricelist"
+msgstr "Submit new pricelist"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.rias_pricelist_list_template
+msgid "Submitted pricelists"
+msgstr "Submitted pricelists"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "TEIXEIRO"
+msgstr "TEIXEIRO"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "TINES - VIMIANZO"
+msgstr "TINES - VIMIANZO"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "TOMIÑO"
+msgstr "TOMIÑO"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "TORENO"
+msgstr "TORENO"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "TOURO"
+msgstr "TOURO"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "TRAZO"
+msgstr "TRAZO"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "TUY"
+msgstr "TUY"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+msgid "Tenerife"
+msgstr "Tenerife"
+
+#. module: theme_rias
+#: model:website.page,name:theme_rias.rias_terms_page
+msgid "Terms of Use"
+msgstr "Terms of Use"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.rias_terms_page_ir_ui_view
+#: model:ir.ui.view,name:theme_rias.rias_terms_page_view
+msgid "Terms of Use Rías View"
+msgstr "Terms of Use Rías View"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.pricelist_thanks_ir_ui_view
+msgid "Thanks (Contact us)"
+msgstr "Thanks (Contact us)"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.pricelist_thanks_ir_ui_view
+#: model:website.page,arch_db:theme_rias.pricelist_thanks
+msgid "Thanks!"
+msgstr "¡Gracias!"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.rias_pricelist_list_template
+msgid "There are currently no pricelists submitted by you."
+msgstr "There are currently no pricelists submitted by you."
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.snippet_three_columns_lasrias
+msgid "Three Columns Las Rías"
+msgstr "Three Columns Las Rías"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_aboutus_socios
+msgid "Un equipo de profesionales se encarga de dar soporte a las gestiones de compras, administrativas, financieras, logísticas e \n"
+"                            informáticas para que nuestros socios dispongan del mejor servicio, y se centren en la venta a sus clientes."
+msgstr "Un equipo de profesionales se encarga de dar soporte a las gestiones de compras, administrativas, financieras, logísticas e \n"
+"                            informáticas para que nuestros socios dispongan del mejor servicio, y se centren en la venta a sus clientes."
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "VALPAÇOS"
+msgstr "VALPAÇOS"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "VEGA DE ESPINAREDA"
+msgstr "VEGA DE ESPINAREDA"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "VERÍN"
+msgstr "VERÍN"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "VIANA DO CASTELO"
+msgstr "VIANA DO CASTELO"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "VIGO"
+msgstr "VIGO"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "VILA DE CRUCES"
+msgstr "VILA DE CRUCES"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "VILA DO CONDE"
+msgstr "VILA DO CONDE"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "VILA FRESCAINHA (SÃO PEDRO)-BA"
+msgstr "VILA FRESCAINHA (SÃO PEDRO)-BA"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "VILAGARCÍA DE AROUSA"
+msgstr "VILAGARCÍA DE AROUSA"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "VILALBA"
+msgstr "VILALBA"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "VIVEIRO"
+msgstr "VIVEIRO"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+msgid "Valencia"
+msgstr "Valencia"
+
+#. module: theme_rias
+#: model:blog.post,name:theme_rias.blog_post_campaign
+msgid "Verano 2019"
+msgstr "Verano 2019"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.pricelist_thanks_ir_ui_view
+#: model:website.page,arch_db:theme_rias.pricelist_thanks
+msgid "We will get back to you shortly."
+msgstr "Le contestaremos en breve."
+
+#. module: theme_rias
+#: model:ir.model,name:theme_rias.model_website
+msgid "Website"
+msgstr "Sitio web"
+
+#. module: theme_rias
+#: model:ir.model,name:theme_rias.model_product_public_category
+msgid "Website Product Category"
+msgstr "Categoría eCommerce"
+
+#. module: theme_rias
+#: model:ir.model.fields,field_description:theme_rias.field_product_public_category_website_published
+msgid "Website Published"
+msgstr "Website Published"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_map
+msgid "XINZO DE LIMIA"
+msgstr "XINZO DE LIMIA"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_jardines
+msgid "Y como siempre, para cualquier cosa que necesitéis visitar a vuestra ferretería de confianza."
+msgstr "Y como siempre, para cualquier cosa que necesitéis visitar a vuestra ferretería de confianza."
+
+#. module: theme_rias
+#: model:blog.post,content:theme_rias.post_verano
+msgid "Ya están disponibles en las ferreterías, nuestros catálogos de VERANO, PISCINAS ,JARDIN y REFORMAS  con todas las propuestas para este Verano del  2019"
+msgstr "Ya están disponibles en las ferreterías, nuestros catálogos de VERANO, PISCINAS ,JARDIN y REFORMAS  con todas las propuestas para este Verano del  2019"
+
+#. module: theme_rias
+#: model:blog.post,website_meta_description:theme_rias.post_verano
+msgid "Ya están disponibles en las ferreterías, nuestros catálogos de VERANO, PISCINAS ,JARDIN y REFORMAS  con todas las propuestas para este Verano del  2019."
+msgstr "Ya están disponibles en las ferreterías, nuestros catálogos de VERANO, PISCINAS ,JARDIN y REFORMAS  con todas las propuestas para este Verano del  2019."
+
+#. module: theme_rias
+#: model:blog.post,content:theme_rias.blog_post_campaign
+msgid "Ya puedes descargar/visualizar el folleto de Verano 2019."
+msgstr "Ya puedes descargar/visualizar el folleto de Verano 2019."
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.pricelist_thanks_ir_ui_view
+#: model:website.page,arch_db:theme_rias.pricelist_thanks
+msgid "Your message has been sent successfully."
+msgstr "Su mensaje se ha enviado correctamente."
+
+#. module: theme_rias
+#: model:ir.model.fields,field_description:theme_rias.field_blog_post_youtube_id
+msgid "Youtube"
+msgstr "Youtube"
+
+#. module: theme_rias
+#: model:ir.model.fields,field_description:theme_rias.field_blog_post_youtube_link
+msgid "Youtube link"
+msgstr "Youtube link"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.content_new_product_catalogue
+msgid "content_new_product_catalogue"
+msgstr "content_new_product_catalogue"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.dynamic_category
+msgid "dynamic_category"
+msgstr "dynamic_category"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.products_categories_catalogue
+msgid "eCommerce Categories Catalogue"
+msgstr "eCommerce Categories Catalogue"
+
+#. module: theme_rias
+#: model:blog.post,content:theme_rias.blog_post_retailer
+msgid "enlace"
+msgstr "enlace"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.search count_catalogue
+msgid "found)"
+msgstr "encontrado)"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.las_template_catalogue_tags
+msgid "las_template_catalogue_tags"
+msgstr "las_template_catalogue_tags"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.las_template_our_shops_lasrias_menu
+msgid "las_template_our_shops_lasrias_menu"
+msgstr "las_template_our_shops_lasrias_menu"
+
+#. module: theme_rias
+#: model:blog.post,content:theme_rias.blog_post_retailer
+msgid "para ver el SPOT."
+msgstr "para ver el SPOT."
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.rias_pricelist_form
+#: model:ir.ui.view,name:theme_rias.rias_pricelist_form_view_ir_ui_view
+msgid "pricelist form"
+msgstr "pricelist form"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.rias_pricelist_list
+#: model:ir.ui.view,name:theme_rias.rias_pricelist_list_view_ir_ui_view
+msgid "pricelist list"
+msgstr "pricelist list"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.product_public_category_form_view_published
+msgid "product_public_category_form_view_published"
+msgstr "product_public_category_form_view_published"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.product_public_category_tree_view_published
+msgid "product_public_category_tree_view_published"
+msgstr "product_public_category_tree_view_published"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.rias_portal_frontend_layout
+#: model:ir.ui.view,arch_db:theme_rias.website_blog_header_footer_custom
+msgid "res_company.name"
+msgstr "res_company.name"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.rias_homepage_content
+msgid "rias_homepage_content"
+msgstr "rias_homepage_content"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.rias_website_assets_frontend
+msgid "rias_website_assets_frontend"
+msgstr "rias_website_assets_frontend"
+
+#. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.variants_catalogue
+msgid "variants_catalogue"
+msgstr "variants_catalogue"
+
+#. module: theme_rias
+#: model:blog.post,name:theme_rias.post_verano
+#: model:blog.post,website_meta_title:theme_rias.post_verano
+msgid "¡LLEGÓ EL VERANO A LAS FERRETERÍAS DE LAS RÍAS!"
+msgstr "¡LLEGÓ EL VERANO A LAS FERRETERÍAS DE LAS RÍAS!"
+
+#. module: theme_rias
+#: model:blog.post,name:theme_rias.post_jardin
+#: model:blog.post,website_meta_title:theme_rias.post_jardin
+msgid "¿HABLAMOS DE JARDINES?"
+msgstr "¿HABLAMOS DE JARDINES 2?"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.snippet_image_text_lasrias_jardines
+msgid "¿Hablamos de Jardines?"
+msgstr "¿Hablamos de Jardines?"
+
+#. module: theme_rias
+#: model:ir.ui.view,arch_db:theme_rias.las_search_our_shops
+msgid "Ávila"
+msgstr "Ávila"
+
