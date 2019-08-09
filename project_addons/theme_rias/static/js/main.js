@@ -74,8 +74,8 @@ $(document).ready(function(){
 		$('.custom-menu-inside-div').addClass('block-none');
 		$('.mobile-view-static-menu').css("display","none");
 		$('.top-custom-menu').removeClass("dropdown");
-		$('.fisrt_li').addClass('first-level-category');
-		$('.fisrt_li').removeClass('category-mobile-view');
+		$('.first_li').addClass('first-level-category');
+		$('.first_li').removeClass('category-mobile-view');
 		$('.first-level-li ').find('ul.sub_menu').removeClass('second_level-ul dropdown-menu');
 		$('.sub-menu-ul-heading ').find('ul.third-level-ul').addClass('dropdown-menu');
 		$('.category-heading-div').removeClass('dropdown-submenu');
@@ -125,8 +125,8 @@ $(document).ready(function(){
 		$('.sub-menu-ul-heading ').find('ul.third-level-ul').addClass('dropdown-menu');
 		$('.category-heading-div').addClass('dropdown-submenu');
 		$('.expand-div').addClass('dropdown-submenu');
-		$('.fisrt_li').removeClass('first-level-category');
-		$('.fisrt_li').addClass('category-mobile-view');
+		$('.first_li').removeClass('first-level-category');
+		$('.first_li').addClass('category-mobile-view');
 		$('.submenu-a').addClass('fa fa-chevron-right');
 		$('.first-level-left-div').removeClass('first-level-left-div');
 		$('.toggel_div').removeClass('toggel_div');
