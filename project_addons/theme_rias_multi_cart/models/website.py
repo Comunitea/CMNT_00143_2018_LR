@@ -228,5 +228,5 @@ class Website(models.Model):
         product_list = []
         for product in products:
             product_list += [product['product'].id]
-        providers_list = request.env['product.supplierinfo'].search([('product_tmpl_id', 'in', product_list)]).name
+        providers_list = request.env['product.supplierinfo'].sudo().search([('product_tmpl_id', 'in', product_list)]).name
         return providers_list

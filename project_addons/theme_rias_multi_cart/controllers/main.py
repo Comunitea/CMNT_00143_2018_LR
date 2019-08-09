@@ -11,7 +11,6 @@ from odoo.http import request
 from odoo.exceptions import AccessError
 from odoo.addons.sale.controllers.portal import CustomerPortal
 from odoo.addons.website_sale.controllers.main import WebsiteSale
-from pprint import pprint
 
 PPG = 20  # Products Per Page
 PPR = 4   # Products Per Row
@@ -246,7 +245,7 @@ class WebsiteSaleContext(WebsiteSale):
         '/shop/category/<model("product.public.category"):category>/page/<int:page>'
     ], type='http', auth="public", website=True)
     def shop(self, page=0, category=None, search='', ppg=False, **post):
-        res = super(WebsiteSaleContext, self).shop(page=0, category=None, search='', ppg=False, **post)
+        res = super(WebsiteSaleContext, self).shop(page=page, category=category, search=search, ppg=ppg, **post)
 
         providers = request.httprequest.args.getlist('provider')
         providers_res = []
@@ -275,7 +274,7 @@ class WebsiteSaleContext(WebsiteSale):
 
             product_count = Product.search_count(domain)
             pager = request.website.pager(url=url, total=product_count, page=page, step=ppg, scope=7, url_args=post)
-            products = Product.search(domain, limit=ppg, offset=pager['offset'], order=self._get_search_order(post))
+            products = Product.sudo().search(domain, limit=ppg, offset=pager['offset'], order=self._get_search_order(post))
 
             ProductAttribute = request.env['product.attribute']
             if products:
