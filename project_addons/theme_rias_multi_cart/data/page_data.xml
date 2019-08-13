@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <!-- <data noupdate="1"> -->
     <data>
 
         <!-- My Carts -->
@@ -19,7 +18,7 @@
                             <thead>
                                 <tr class="active">
                                     <th>
-                                        <a href="/my/carts/new" name="New cart"><i class="fa fa-plus-circle"></i></a>
+                                        <a href="/my/carts/new" name="New cart"><i class="fa fa-plus-circle"/></a>
                                     </th>
                                     <th>
                                         <span class='hidden-xs'>Carts #</span>
@@ -33,7 +32,7 @@
                             <t t-foreach="orders" t-as="order">
                                 <tr>
                                     <td>
-                                        <a t-attf-href="/my/carts/select/{{order.id}}?{{keep_query()}}"><i class="fa fa-play-circle"></i></a>
+                                        <a t-attf-href="/my/carts/select/{{order.id}}?{{keep_query()}}"><i class="fa fa-play-circle"/></a>
                                     </td>
                                     <td>
                                         <a t-attf-href="/my/carts/{{order.id}}?{{keep_query()}}"><t t-esc="order.name"/></a>

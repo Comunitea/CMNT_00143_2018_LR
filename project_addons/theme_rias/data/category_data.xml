@@ -1,137 +1,137 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <data noupdate="1">
+    <data>
 
         <record id="category_calefaccion" model="product.public.category">
             <field name="name">Calefacción y climatización</field>            
             <field name="sequence" type="int">1</field>
-            <field name="image_medium" type="base64" file="theme_rias/static/img/categories/calefacc.png"></field>
+            <field name="image_medium" type="base64" file="theme_rias/static/img/categories/calefacc.png"/>
             <field name="website_published">True</field>
         </record>
 
         <record id="category_construccion" model="product.public.category">
             <field name="name">Construcción</field>            
             <field name="sequence" type="int">2</field>
-            <field name="image_medium" type="base64" file="theme_rias/static/img/categories/construcc.png"></field>
+            <field name="image_medium" type="base64" file="theme_rias/static/img/categories/construcc.png"/>
             <field name="website_published">True</field>
         </record>
 
         <record id="category_decoracion" model="product.public.category">
             <field name="name">Decoración</field>            
             <field name="sequence" type="int">3</field>
-            <field name="image_medium" type="base64" file="theme_rias/static/img/categories/decora.png"></field>
+            <field name="image_medium" type="base64" file="theme_rias/static/img/categories/decora.png"/>
             <field name="website_published">True</field>
         </record>
 
         <record id="category_drogue" model="product.public.category">
             <field name="name">Droguería</field>            
             <field name="sequence" type="int">4</field>
-            <field name="image_medium" type="base64" file="theme_rias/static/img/categories/drogue.png"></field>
+            <field name="image_medium" type="base64" file="theme_rias/static/img/categories/drogue.png"/>
             <field name="website_published">True</field>
         </record>
 
         <record id="category_electricidad" model="product.public.category">
             <field name="name">Electricidad</field>            
             <field name="sequence" type="int">5</field>
-            <field name="image_medium" type="base64" file="theme_rias/static/img/categories/electri.png"></field>
+            <field name="image_medium" type="base64" file="theme_rias/static/img/categories/electri.png"/>
             <field name="website_published">True</field>
         </record>
 
         <record id="category_ferreteria" model="product.public.category">
             <field name="name">Ferretería</field>            
             <field name="sequence" type="int">6</field>
-            <field name="image_medium" type="base64" file="theme_rias/static/img/categories/ferrete.png"></field>
+            <field name="image_medium" type="base64" file="theme_rias/static/img/categories/ferrete.png"/>
             <field name="website_published">True</field>
         </record>
 
         <record id="category_fontaner" model="product.public.category">
             <field name="name">Fontanería</field>            
             <field name="sequence" type="int">7</field>
-            <field name="image_medium" type="base64" file="theme_rias/static/img/categories/fontaner.png"></field>
+            <field name="image_medium" type="base64" file="theme_rias/static/img/categories/fontaner.png"/>
             <field name="website_published">True</field>
         </record>
 
         <record id="category_herramien" model="product.public.category">
             <field name="name">Herramientas</field>            
             <field name="sequence" type="int">8</field>
-            <field name="image_medium" type="base64" file="theme_rias/static/img/categories/herramien.png"></field>
+            <field name="image_medium" type="base64" file="theme_rias/static/img/categories/herramien.png"/>
             <field name="website_published">True</field>
         </record>
         
         <record id="category_ilumina" model="product.public.category">
             <field name="name">Iluminación</field>            
             <field name="sequence" type="int">9</field>
-            <field name="image_medium" type="base64" file="theme_rias/static/img/categories/ilumina.png"></field>
+            <field name="image_medium" type="base64" file="theme_rias/static/img/categories/ilumina.png"/>
             <field name="website_published">True</field>
         </record>
 
         <record id="category_industr" model="product.public.category">
             <field name="name">Industrial</field>            
             <field name="sequence" type="int">10</field>
-            <field name="image_medium" type="base64" file="theme_rias/static/img/categories/industr.png"></field>
+            <field name="image_medium" type="base64" file="theme_rias/static/img/categories/industr.png"/>
             <field name="website_published">True</field>
         </record>
 
         <record id="category_jardine" model="product.public.category">
             <field name="name">Jardinería</field>            
             <field name="sequence" type="int">11</field>
-            <field name="image_medium" type="base64" file="theme_rias/static/img/categories/jardine.png"></field>
+            <field name="image_medium" type="base64" file="theme_rias/static/img/categories/jardine.png"/>
             <field name="website_published">True</field>
         </record>
 
         <record id="category_maquinari" model="product.public.category">
             <field name="name">Maquinaria</field>            
             <field name="sequence" type="int">12</field>
-            <field name="image_medium" type="base64" file="theme_rias/static/img/categories/maquinari.png"></field>
+            <field name="image_medium" type="base64" file="theme_rias/static/img/categories/maquinari.png"/>
             <field name="website_published">True</field>
         </record>
 
         <record id="category_menaje_cocina" model="product.public.category">
             <field name="name">Menaje cocina</field>            
             <field name="sequence" type="int">13</field>
-            <field name="image_medium" type="base64" file="theme_rias/static/img/categories/menaje.png"></field>
+            <field name="image_medium" type="base64" file="theme_rias/static/img/categories/menaje.png"/>
             <field name="website_published">True</field>
         </record>
 
         <record id="category_menaje_hogar" model="product.public.category">
             <field name="name">Menaje hogar</field>            
             <field name="sequence" type="int">14</field>
-            <field name="image_medium" type="base64" file="theme_rias/static/img/categories/menaj_hogar.png"></field>
+            <field name="image_medium" type="base64" file="theme_rias/static/img/categories/menaj_hogar.png"/>
             <field name="website_published">True</field>
         </record>
 
         <record id="category_ordenacion" model="product.public.category">
             <field name="name">Ordenación</field>            
             <field name="sequence" type="int">15</field>
-            <field name="image_medium" type="base64" file="theme_rias/static/img/categories/ordenacion.png"></field>
+            <field name="image_medium" type="base64" file="theme_rias/static/img/categories/ordenacion.png"/>
             <field name="website_published">True</field>
         </record>
 
         <record id="category_pae" model="product.public.category">
             <field name="name">PAE</field>            
             <field name="sequence" type="int">16</field>
-            <field name="image_medium" type="base64" file="theme_rias/static/img/categories/pae.png"></field>
+            <field name="image_medium" type="base64" file="theme_rias/static/img/categories/pae.png"/>
             <field name="website_published">True</field>
         </record>
 
         <record id="category_pintura" model="product.public.category">
             <field name="name">Pintura</field>            
             <field name="sequence" type="int">17</field>
-            <field name="image_medium" type="base64" file="theme_rias/static/img/categories/pintura.png"></field>
+            <field name="image_medium" type="base64" file="theme_rias/static/img/categories/pintura.png"/>
             <field name="website_published">True</field>
         </record>
 
         <record id="category_proteccion_laboral" model="product.public.category">
             <field name="name">Protección laboral</field>            
             <field name="sequence" type="int">18</field>
-            <field name="image_medium" type="base64" file="theme_rias/static/img/categories/protecci_laboral.png"></field>
+            <field name="image_medium" type="base64" file="theme_rias/static/img/categories/protecci_laboral.png"/>
             <field name="website_published">True</field>
         </record>
 
         <record id="category_sanitario" model="product.public.category">
             <field name="name">Sanitario</field>            
             <field name="sequence" type="int">19</field>
-            <field name="image_medium" type="base64" file="theme_rias/static/img/categories/sanitario.png"></field>
+            <field name="image_medium" type="base64" file="theme_rias/static/img/categories/sanitario.png"/>
             <field name="website_published">True</field>
         </record>
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <data noupdate="1">
+    <data>
 
         <!-- Home Menu -->
         <record id="menu_aboutus" model="website.menu">

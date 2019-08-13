@@ -37,25 +37,25 @@
                                                 </a>
                                                 <t t-if="class_allowed['status'] == 'warning'">
                                                     <i class="fa fa-info-circle info-button-campaign" aria-hidden="true" data-toggle="tooltip" data-placement="top"
-                                                     data-trigger="click" title="Este producto pertenece a una campaña activa, te recomendamos añadirlo a un pedido de campaña"></i>
+                                                     data-trigger="click" title="Este producto pertenece a una campaña activa, te recomendamos añadirlo a un pedido de campaña"/>
                                                 </t>
                                             </div>
                                             <t t-if="product.product_variant_id.id in products_in_cart">
-                                                <a href='#' class='js_delete_product hidden-xs no-decoration'> <small><i class='fa fa-trash-o'></i> Remove</small></a>
+                                                <a href='#' class='js_delete_product hidden-xs no-decoration'> <small><i class='fa fa-trash-o'/> Remove</small></a>
                                             </t>
                                             <t t-else="">
-                                                <a href='#' class='js_delete_product hidden-xs no-decoration hidden'> <small><i class='fa fa-trash-o'></i> Remove</small></a>
+                                                <a href='#' class='js_delete_product hidden-xs no-decoration hidden'> <small><i class='fa fa-trash-o'/> Remove</small></a>
                                             </t>
                                         </td>
                                         <td class="text-right td-qty">
                                             <div class="css_quantity input-group oe_website_spinner">
                                                 <a t-attf-href="#" class="mb8 input-group-addon js_add_cart_json hidden-xs">
-                                                    <i class="fa fa-minus"></i>
+                                                    <i class="fa fa-minus"/>
                                                 </a>
                                                 <t t-set="current_qty" t-value="website.get_current_cart_qty(website_sale_order, product.product_variant_id.id) if product.product_variant_id.id in products_in_cart else {'line_id': False, 'product_uom_qty': 0}" />                                            
                                                 <input type="number" class="js_quantity form-control quantity" t-att-line-id="current_qty['line_id']" t-att-data-product-id="product.product_variant_id.id" t-att-value="current_qty['product_uom_qty']" placeholder="0"/>
                                                 <a t-attf-href="#" class="mb8 input-group-addon float_left js_add_cart_json hidden-xs">
-                                                    <i class="fa fa-plus"></i>
+                                                    <i class="fa fa-plus"/>
                                                 </a>
                                             </div>
                                         </td>
@@ -78,7 +78,7 @@
                                         <td class="text-right">
                                             <div class="col-md-6">
                                                 <a title="Ir o crear pedido de campaña." t-if="class_allowed['status'] == 'warning' and class_allowed['campaign_id']" t-attf-href="/my/campaigns/select/#{ class_allowed['campaign_id'] }" class="btn btn-primary">
-                                                    <i class="fa fa-shopping-cart"></i>
+                                                    <i class="fa fa-shopping-cart"/>
                                                 </a>
                                             </div>
                                             <!-- <div class="col-md-6">
@@ -103,24 +103,24 @@
                                                         <strong class="oe_inline" name="attr_name" t-esc="variant_id.name_get()[0][1]"/>
                                                     </a>
                                                     <t t-if="class_allowed['status'] == 'warning'">
-                                                        <i class="fa fa-info-circle info-button-campaign" aria-hidden="true" data-toggle="tooltip" data-placement="top" data-trigger="click" title="Este producto pertenece a una campaña activa, te recomendamos añadirlo a un pedido de campaña"></i>
+                                                        <i class="fa fa-info-circle info-button-campaign" aria-hidden="true" data-toggle="tooltip" data-placement="top" data-trigger="click" title="Este producto pertenece a una campaña activa, te recomendamos añadirlo a un pedido de campaña"/>
                                                     </t>
                                                 </div>
                                                 <t t-if="current_qty['product_uom_qty'] &gt; 0">
-                                                    <a href='#' class='js_delete_product hidden-xs no-decoration'> <small><i class='fa fa-trash-o'></i> Remove</small></a>
+                                                    <a href='#' class='js_delete_product hidden-xs no-decoration'> <small><i class='fa fa-trash-o'/> Remove</small></a>
                                                 </t>
                                                 <t t-else="">
-                                                    <a href='#' class='js_delete_product hidden-xs no-decoration hidden'> <small><i class='fa fa-trash-o'></i> Remove</small></a>
+                                                    <a href='#' class='js_delete_product hidden-xs no-decoration hidden'> <small><i class='fa fa-trash-o'/> Remove</small></a>
                                                 </t>
                                             </td>
                                             <td class="text-right td-qty">
                                                 <div class="css_quantity input-group oe_website_spinner">
                                                     <a t-attf-href="#" class="mb8 input-group-addon js_add_cart_json hidden-xs">
-                                                        <i class="fa fa-minus"></i>
+                                                        <i class="fa fa-minus"/>
                                                     </a>
                                                     <input type="number" class="js_quantity form-control quantity" t-att-line-id="current_qty['line_id']" t-att-data-product-id="variant_id.id" t-att-value="current_qty['product_uom_qty']" placeholder="0"/>
                                                     <a t-attf-href="#" class="mb8 input-group-addon float_left js_add_cart_json hidden-xs">
-                                                        <i class="fa fa-plus"></i>
+                                                        <i class="fa fa-plus"/>
                                                     </a>
                                                 </div>
                                             </td>
@@ -143,7 +143,7 @@
                                             <td class="text-right">
                                                 <div class="col-md-6">
                                                     <a title="Ir o crear pedido de campaña." t-if="class_allowed['status'] == 'warning' and class_allowed['campaign_id']" t-attf-href="/my/campaigns/select/#{ class_allowed['campaign_id'] }" class="btn btn-primary">
-                                                        <i class="fa fa-shopping-cart"></i>
+                                                        <i class="fa fa-shopping-cart"/>
                                                     </a>
                                                 </div>
                                                 <!-- <div class="col-md-6">
@@ -163,9 +163,12 @@
         </xpath>
 
         <xpath expr="//div[@id='wrap']/div[hasclass('oe_website_sale')]" position="inside">
-            <div id="rpc_modal"></div>
+            <div id="rpc_modal"/>
         </xpath>
 
+    </template>
+
+    <template id="website_sale_products_attributes_las" name="Product Attribute's Filters Las Rías" inherit_id="website_sale.products_attributes">
         <xpath expr="//div[@id='products_grid_before']/form/ul" position="inside">
             <t t-foreach="bins" t-as="tr_product">
                 <t t-set="providers" t-value="website.get_providers_in_list(tr_product)"/>
@@ -206,7 +209,7 @@
         </xpath>
         <xpath expr="//tr/td[4]" position="inside">
             <a title="Ir o crear pedido de campaña." t-if="allowed_purchase['status'] == 'warning' and allowed_purchase['campaign_id']" t-attf-href="/my/campaigns/select/#{ allowed_purchase['campaign_id'] }" class="btn btn-primary">
-                <i class="fa fa-shopping-cart"></i>
+                <i class="fa fa-shopping-cart"/>
             </a>
         </xpath>
 

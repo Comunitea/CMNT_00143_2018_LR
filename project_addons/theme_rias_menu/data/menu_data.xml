@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <data noupdate="1">
+    <data>
 
         <!-- Home Menu -->
         <record id="website.main_menu" model="website.menu">
             <field name="name">Top Menu</field>
-            <field name="url"></field>
+            <field name="url"/>
             <field name="parent_id" ref=""/>
             <field name="sequence" type="int">0</field>
-            <field name="menu_icon"></field>
+            <field name="menu_icon"/>
             <field name="website_id" ref="website.default_website"/>
             <field name="user_logged">True</field>
             <field name="user_not_logged">True</field>
@@ -87,7 +87,6 @@
             <field name="user_not_logged">True</field>
         </record>
 
-
         <record id="theme_rias.menu_aboutus" model="website.menu">
             <field name="name">About us</field>
             <field name="url">/aboutus</field>
@@ -103,7 +102,18 @@
             <field name="name">Presentations</field>
             <field name="url">/slides</field>
             <field name="parent_id" ref="website.main_menu"/>
-            <field name="sequence" type="int">50</field>
+            <field name="sequence" type="int">30</field>
+            <field name="website_id" ref="website.default_website"/>
+            <field name="user_logged">False</field>
+            <field name="user_not_logged">False</field>
+        </record>
+
+        <record id="website_blog.menu_news" model="website.menu">
+            <field name="name">Blog</field>
+            <field name="url" eval="'/blog/'+str(ref('website_blog.blog_blog_1'))"/>
+            <field name="parent_id" ref="website.main_menu"/>
+            <field name="sequence" type="int">40</field>
+            <field name="website_id" ref="website.default_website"/>
             <field name="user_logged">False</field>
             <field name="user_not_logged">False</field>
         </record>
