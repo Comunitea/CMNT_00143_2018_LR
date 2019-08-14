@@ -468,6 +468,18 @@
         </xpath>
     </template>
 
+    <template id="las_website_sale_header" inherit_id="website_sale.header" name="Rías Website_sale Header Shop My Cart Link">
+        <xpath expr="//header//ul[@id='top_menu']/li[@id='my_cart']/a/i" position="replace">
+            <t t-if="website_sale_order.campaign_id.name">
+                <i class="fa fa-cart-plus text-danger"></i>
+            </t>
+            <t t-else="">
+                <i class="fa fa-shopping-cart"></i>
+            </t>
+            <t t-esc="website_sale_order.name"/>
+        </xpath>
+    </template>
+
     <template id="las_template_current_cart" name="Current cart breadcrumb">
         
         <ol class="breadcrumb">
@@ -513,9 +525,9 @@
                 <t t-call="theme_rias.categories_top_catalogue"/>
             </t>
         </xpath>
-        <xpath expr="//ol[hasclass('breadcrumb')]" position="before">
+        <!-- <xpath expr="//ol[hasclass('breadcrumb')]" position="before">
             <t t-call="theme_rias.las_template_current_cart"/>
-        </xpath>
+        </xpath> -->
     </template>
 
     <template id="product_catalogue" name="Catalogue Product">
