@@ -170,20 +170,18 @@
 
     <template id="website_sale_products_attributes_las" name="Product Attribute's Filters Las Rías" inherit_id="website_sale.products_attributes">
         <xpath expr="//div[@id='products_grid_before']/form/ul" position="inside">
-            <t t-foreach="bins" t-as="tr_product">
-                <t t-set="providers" t-value="website.get_providers_in_list(tr_product)"/>
-                <li t-if="providers">
-                    <div>
-                        <strong>Providers</strong>
-                    </div>
-                    <select class="form-control" name="provider">
-                        <option value="" />
-                        <t t-foreach="providers" t-as="provider">
-                            <option t-att-value="provider.id" t-esc="provider.name" t-att-selected="provider.id in providers_set"/>
-                        </t>
-                    </select>
-                </li>
-            </t>
+            <t t-set="providers" t-value="website.get_providers_in_list(bins)"/>
+            <li t-if="providers">
+                <div>
+                    <strong>Providers</strong>
+                </div>
+                <select class="form-control" name="provider">
+                    <option value="" />
+                    <t t-foreach="providers" t-as="provider">
+                        <option t-att-value="provider.id" t-esc="provider.name" t-att-selected="provider.id in providers_set"/>
+                    </t>
+                </select>
+            </li>
         </xpath>
     </template>
 
