@@ -22,11 +22,21 @@
             <field name="user_not_logged">False</field>
         </record>
 
+        <record id="menu_my_carts" model="website.menu">
+            <field name="name">My Quotations</field>
+            <field name="url">/my/quotes</field>
+            <field name="parent_id" ref="theme_rias_multi_cart.menu_my_account"/>
+            <field name="sequence" type="int">22</field>
+            <field name="website_id" ref="website.default_website"/>
+            <field name="user_logged">True</field>
+            <field name="user_not_logged">False</field>
+        </record>
+
         <record id="menu_my_orders" model="website.menu">
             <field name="name">My Orders</field>
             <field name="url">/my/orders</field>
             <field name="parent_id" ref="theme_rias_multi_cart.menu_my_account"/>
-            <field name="sequence" type="int">22</field>
+            <field name="sequence" type="int">23</field>
             <field name="website_id" ref="website.default_website"/>
             <field name="user_logged">True</field>
             <field name="user_not_logged">False</field>
@@ -36,7 +46,7 @@
             <field name="name">My Invoices</field>
             <field name="url">/my/invoices</field>
             <field name="parent_id" ref="theme_rias_multi_cart.menu_my_account"/>
-            <field name="sequence" type="int">23</field>
+            <field name="sequence" type="int">24</field>
             <field name="website_id" ref="website.default_website"/>
             <field name="user_logged">True</field>
             <field name="user_not_logged">False</field>
@@ -46,7 +56,7 @@
             <field name="name">Campaigns</field>
             <field name="url">/my/campaigns</field>
             <field name="parent_id" ref="theme_rias_multi_cart.menu_my_account"/>
-            <field name="sequence" type="int">24</field>
+            <field name="sequence" type="int">25</field>
             <field name="website_id" ref="website.default_website"/>
             <field name="user_logged">True</field>
             <field name="user_not_logged">False</field>
