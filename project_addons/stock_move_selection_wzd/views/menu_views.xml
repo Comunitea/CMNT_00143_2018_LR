@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <delete id="stock_move_sel_action2" model="ir.actions.act_window"/>
+    <record id="stock_move_sel_action2" model="ir.actions.act_window">
+            <field name="name">Product Moves</field>
+            <field name="res_model">stock.move</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,pivot,form</field>
+            <field name="view_id" ref="view_move_line_tree_sel"/>
+            <field name="search_view_id" ref="stock_move_view_sel_search"/>
+            <field name="context">{'search_default_todo': 1}</field>
+    </record>
+
+    <!-- MENUS PICKING TYPE KANBAN >> MONITOR DE ALMACEN -->
+
+    <menuitem
+        id="stock_move_selection_wzd.wh_monitor_parent_menu"
+        parent="stock.menu_stock_root"
+        sequence="0" name="Monitor de almacén"/>
+
+    <record id="stock_move_kanban_view" model="ir.actions.act_window">
+            <field name="name">Monitor de almacén</field>
+            <field name="res_model">stock.picking.type</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">kanban</field>
+            <field name="view_id" ref="stock_picking_type_kanban_moves"/>
+    </record>
+    <menuitem
+        action="stock_move_kanban_view"
+        parent="stock_move_selection_wzd.wh_monitor_parent_menu"
+        id="stock_move_selection_wzd.menu_stock_move_kanban"
+        sequence="0" name="Todos"/>
+
+
+    <record id="picking_type_pickings_view" model="ir.actions.server">
+            <field name="name">Picking</field>
+            <field name="res_model">stock.picking.type</field>
+            <field name="model_id" ref="model_stock_picking_type"/>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="code">
+                action = env['stock.picking.type']._return_action_show_types('picking')
+            </field>
+    </record>
+    <menuitem
+        action="picking_type_pickings_view"
+        parent="stock_move_selection_wzd.wh_monitor_parent_menu"
+        id="stock_move_selection_wzd.wh_monitor_picking"
+        sequence="1" name="Picking"/>
+
+    <record id="picking_type_incoming_view" model="ir.actions.server">
+            <field name="name">Entradas</field>
+            <field name="res_model">stock.picking.type</field>
+            <field name="model_id" ref="model_stock_picking_type"/>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="code">
+                action = env['stock.picking.type']._return_action_show_types('incoming')
+            </field>
+    </record>
+    <menuitem
+        action="picking_type_incoming_view"
+        parent="stock_move_selection_wzd.wh_monitor_parent_menu"
+        id="stock_move_selection_wzd.wh_monitor_incoming"
+        sequence="1" name="Entradas"/>
+
+    <record id="picking_type_outgoing_view" model="ir.actions.server">
+            <field name="name">Salidas</field>
+            <field name="res_model">stock.picking.type</field>
+            <field name="model_id" ref="model_stock_picking_type"/>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="code">
+                action = env['stock.picking.type']._return_action_show_types('outgoing')
+            </field>
+    </record>
+    <menuitem
+        action="picking_type_outgoing_view"
+        parent="stock_move_selection_wzd.wh_monitor_parent_menu"
+        id="stock_move_selection_wzd.wh_monitor_outgoing"
+        sequence="1" name="Salidas"/>
+
+     <!-- MENUS PICKING TYPE KANBAN >> MONITOR DE movimientos -->
+
+    <menuitem
+        id="stock_move_selection_wzd.stock_move_sel_menu"
+        parent="stock.menu_stock_root"
+        sequence="1" name="Monitor de movimientos"/>
+
+    <record id="stock_move_sel_action_all" model="ir.actions.server">
+            <field name="name">Product Moves</field>
+            <field name="res_model">stock.move</field>
+            <field name="model_id" ref="model_stock_move"/>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="code">
+                action = env['stock.move']._return_action_show_moves()
+            </field>
+    </record>
+
+    <menuitem
+        action="stock_move_sel_action_all"
+        parent="stock_move_selection_wzd.stock_move_sel_menu"
+        id="stock_move_selection_wzd.menu_stock_move_sel_all"
+        sequence="99" name="All moves"/>
+
+     <record id="stock_move_sel_action_incoming" model="ir.actions.server">
+            <field name="name">Incoming Moves</field>
+            <field name="res_model">stock.move</field>
+            <field name="model_id" ref="model_stock_move"/>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="code">
+                action = env['stock.move']._return_action_show_moves('incoming')
+            </field>
+    </record>
+    <menuitem
+        action="stock_move_sel_action_incoming"
+        parent="stock_move_selection_wzd.stock_move_sel_menu"
+        id="stock_move_selection_wzd.menu_stock_move_sel_incoming"
+        sequence="51" name="Incoming moves"/>
+
+    <record id="stock_move_sel_action_picking" model="ir.actions.server">
+            <field name="name">Picking Moves</field>
+            <field name="res_model">stock.move</field>
+            <field name="model_id" ref="model_stock_move"/>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="code">
+                action = env['stock.move']._return_action_show_moves('picking')
+            </field>
+    </record>
+    <menuitem
+        action="stock_move_sel_action_picking"
+        parent="stock_move_selection_wzd.stock_move_sel_menu"
+        id="stock_move_selection_wzd.stock_move_sel_menu_picking"
+        sequence="52" name="Picking moves"/>
+
+    <record id="stock_move_sel_action_outgoing" model="ir.actions.server">
+            <field name="name">Outgoing Moves</field>
+            <field name="res_model">stock.move</field>
+            <field name="model_id" ref="model_stock_move"/>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="code">
+                action = env['stock.move']._return_action_show_moves('outgoing')
+            </field>
+    </record>
+    <menuitem
+        action="stock_move_sel_action_outgoing"
+        parent="stock_move_selection_wzd.stock_move_sel_menu"
+        id="stock_move_selection_wzd.stock_move_sel_menu_outgoing"
+        sequence="53" name="Outgoing moves"/>
+
+    <record id="stock_move_sel_action_location" model="ir.actions.server">
+            <field name="name">Location Moves</field>
+            <field name="res_model">stock.move</field>
+            <field name="model_id" ref="model_stock_move"/>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="code">
+                action = env['stock.move']._return_action_show_moves('location')
+            </field>
+    </record>
+    <menuitem
+        action="stock_move_sel_action_location"
+        parent="stock_move_selection_wzd.stock_move_sel_menu"
+        id="stock_move_selection_wzd.stock_move_sel_menu_location"
+        sequence="54" name="Location moves"/>
+
+    <record id="stock_move_sel_action_internal" model="ir.actions.server">
+            <field name="name">Internal Moves</field>
+            <field name="res_model">stock.move</field>
+            <field name="model_id" ref="model_stock_move"/>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="code">
+                action = env['stock.move']._return_action_show_moves('internal')
+            </field>
+    </record>
+    <menuitem
+        action="stock_move_sel_action_internal"
+        parent="stock_move_selection_wzd.stock_move_sel_menu"
+        id="stock_move_selection_wzd.stock_move_sel_menu_internal"
+        sequence="55" name="Internal moves"/>
+
+    <record id="stock_move_sel_action_reposition" model="ir.actions.server">
+            <field name="name">Reposition Moves</field>
+            <field name="res_model">stock.move</field>
+            <field name="model_id" ref="model_stock_move"/>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="code">
+                action = env['stock.move']._return_action_show_moves('reposition')
+            </field>
+    </record>
+    <menuitem
+        action="stock_move_sel_action_reposition"
+        parent="stock_move_selection_wzd.stock_move_sel_menu"
+        id="stock_move_selection_wzd.stock_move_sel_menu_reposition"
+        sequence="56" name="Reposition moves"/>
+
+     <record id="stock_move_sel_action_other" model="ir.actions.server">
+            <field name="name">Other Moves</field>
+            <field name="res_model">stock.move</field>
+            <field name="model_id" ref="model_stock_move"/>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="code">
+                action = env['stock.move']._return_action_show_moves('other')
+            </field>
+    </record>
+    <menuitem
+        action="stock_move_sel_action_other"
+        parent="stock_move_selection_wzd.stock_move_sel_menu"
+        id="stock_move_selection_wzd.stock_move_sel_menu_other"
+        sequence="57" name="Other moves"/>
+
+
+    <record id="action_assign_picking" model="ir.actions.server">
+        <field name="name">Asignar albarán</field>
+        <field name="model_id" ref="stock.model_stock_move"/>
+        <field name="binding_model_id" ref="stock.model_stock_move"/>
+        <field name="state">code</field>
+        <field name="code">records.move_sel_assign_picking()</field>
+    </record>
+
+    <record id="action_deassign_picking" model="ir.actions.server">
+        <field name="name">Desasignar albarán</field>
+        <field name="model_id" ref="stock.model_stock_move"/>
+        <field name="binding_model_id" ref="stock.model_stock_move"/>
+        <field name="state">code</field>
+        <field name="code">records.move_de_sel_assign_picking()</field>
+    </record>
+
+
+</odoo>

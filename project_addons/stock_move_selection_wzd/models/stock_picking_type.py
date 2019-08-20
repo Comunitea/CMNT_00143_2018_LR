@@ -20,9 +20,9 @@ PICKING_TYPE_GROUP = [('incoming', 'Incoming'),
                       ('outgoing', 'Outgoing'),
                       ('picking', 'Picking'),
                       ('internal', 'Internal'),
-                      ('location','Location'),
-                      ('reposition','Reposition'),
-                      ('other','Other')]
+                      ('location', 'Location'),
+                      ('reposition', 'Reposition'),
+                      ('other', 'Other')]
 
 SGA_STATES = [('NI', 'Sin integracion'),
               ('NE', 'No enviado'),
@@ -43,6 +43,7 @@ class PickingType(models.Model):
 
     # Statistics for the kanban view for moves
     last_done_move = fields.Char('Last 10 Done Pickings', compute='_compute_last_done_moves')
+
     count_move_draft = fields.Integer(compute='_compute_picking_count')
     count_move_done = fields.Integer(compute='_compute_picking_count')
     count_move_todo_today = fields.Integer(compute='_compute_picking_count')
@@ -95,12 +96,10 @@ class PickingType(models.Model):
         ### SOBREESCRIBO LA FUNCION COMPLETA PARA AÑADIR EL SGA_STATE
 
         context_domain = self.get_context_domain(date_expected='scheduled_date')
-
         move_domains, picking_domains = self.get_moves_domain()
 
         for field in move_domains:
             domain = move_domains[field] + [('picking_type_id', 'in', self.ids)]
-
             data = self.env['stock.move'].read_group(domain, ['picking_type_id'], ['picking_type_id'])
             count = {
                 x['picking_type_id'][0]: x['picking_type_id_count']
@@ -159,20 +158,22 @@ class PickingType(models.Model):
         today_filter = [('date_expected', '<', tomorrow), ('date_expected', '>', today)]
         hide_state = [('state', 'not in', ('draft', 'done', 'cancel'))]
         to_do_state = [('state', 'in', ('partially_available', 'assigned', 'waiting', 'confirmed'))]
+        waiting_state = [('state', 'in', ('waiting','partially_available', 'confirmed'))]
+        no_stock_state = [('state', 'in', ('partially_available', 'confirmed'))]
         ready_state = [('state', 'in', ('partially_available', 'assigned')), ('sga_state', 'in', ('NI', 'NE'))]
         with_pick = [('picking_id', '!=', False)]
-        with_out_pick = [('picking_id', '=', False)]
-        before_tomorrow =  [('date_expected', '<', tomorrow)]
+        without_pick = [('picking_id', '=', False)]
+        before_tomorrow = [('date_expected', '<', tomorrow)]
         late = [('date_expected', '<', yesterday)]
         move_domains = {
             'count_move_todo_today': context_domain + to_do_state + before_tomorrow,
             'count_move_done': context_domain + [('state', '=', 'done'), ('date', '>', yesterday)],
             'count_move_draft': context_domain + [('state', '=', 'draft')],
-            'count_move_waiting': context_domain + to_do_state,
-            'count_move_unpacked': context_domain + ready_state + with_out_pick + [('picking_type_id.group_code', '=', 'outgoing'), ('result_package_id', '=', False)],
+            'count_move_waiting': context_domain + waiting_state,
+            'count_move_unpacked': context_domain + ready_state + without_pick + [('picking_type_id.group_code', '=', 'outgoing'), ('result_package_id', '=', False)],
             'count_move_ready': context_domain + ready_state + with_pick + before_tomorrow,
             'count_move': context_domain + to_do_state,
-            'count_move_to_pick': context_domain + ready_state + with_out_pick + before_tomorrow,
+            'count_move_to_pick': context_domain + ready_state + without_pick + before_tomorrow,
             'count_move_late': context_domain + to_do_state + late,
             'count_move_backorders': context_domain + to_do_state + [('origin_returned_move_id', '!=', False)],
         }
@@ -304,40 +305,38 @@ class PickingType(models.Model):
         self.last_done_move = json.dumps(tristates)
 
     def update_context(self, context={}):
+        print("Update context para agrupar los moviemintos de tipo {}  actualizando de {}".format(self.group_code,
+                                                                                                  context))
+        context.update({'group_code': self.group_code})
 
         if self.group_code == 'picking':
             context.update({
-                'search_default_by_shipping_type': True,
-                #'search_default_by_delivery_path_route_id': True,
-                #'search_default_by_carrier_id': True
-
+                'search_default_by_shipping_id': True,
             })
 
-        elif self.group_code=='outgoing':
+        elif self.group_code == 'outgoing':
             context.update({
-                'search_default_by_shipping_type':True,
-                'search_default_by_delivery_route_path_id':True,
-                'search_default_by_carrier_id': True,
-                'search_default_by_partner_id':True
-            })
-        elif self.group_code=='incoming':
-            context.update({
-                'search_default_partner_id': 1,
 
+                'search_default_by_shipping_id': True,
+                #'search_default_by_shipping_type': True,
+                #'search_default_by_delivery_route_path_id': True,
+                #'search_default_by_carrier_id': True,
+            })
+        elif self.group_code == 'incoming':
+            context.update({
+                'search_default_by_shipping_id': True,
             })
         elif self.group_code == 'location':
             context.update({
-                'search_default_location_dest_id': 1,
+                'search_default_by_location_dest_id': True,
             })
-
         elif self.group_code == 'internal':
             context.update({
-                'search_default_location_id': 1,
-                'search_default_location_dest_id': 1,
+                'search_default_by_location_id': True,
+                'search_default_by_location_dest_id': True,
             })
 
-
-
+        print("a {}".format(context))
         return context
 
     @api.multi
@@ -356,9 +355,11 @@ class PickingType(models.Model):
         if context:
             action['context'] = context
 
-        name_str = [x[1] for x in PICKING_TYPE_GROUP if x[0] == group_code]
-        if name_str:
-            action['display_name'] = "---------> {} Moves".format(name_str[0])
+        action['name'] = self.name
+        action['display_name'] = self.name
+        #name_str = [x[1] for x in PICKING_TYPE_GROUP if x[0] == group_code]
+        #if name_str:
+        #    action['display_name'] = "---------> {} Moves".format(name_str[0])
         return action
 
 
@@ -492,4 +493,19 @@ class PickingType(models.Model):
         }
         return self.return_action_show_moves(domain, context)
 
+    @api.multi
+    def _return_action_show_types(self, group_code=''):
 
+        kanban = self.env.ref('stock_move_selection_wzd.stock_picking_type_kanban_moves', False)
+        action = self.env.ref(
+            'stock_move_selection_wzd.stock_move_kanban_view').read()[0]
+        action['domain'] = [('group_code', '=', group_code)]
+        action['views'] = [(kanban and kanban.id or False, 'kanban')]
+
+        action['context'] = {
+                             }
+
+        name_str = [x[1] for x in PICKING_TYPE_GROUP if x[0] == group_code]
+        if name_str:
+            action['display_name'] = "---------> {} Moves".format(name_str[0])
+        return action

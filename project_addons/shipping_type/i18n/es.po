@@ -172,7 +172,7 @@ msgstr "Presupuesto"
 #: model:ir.model.fields,field_description:shipping_type.field_stock_picking_type_delivery_route_path_id
 #: model:ir.model.fields,field_description:shipping_type.field_stock_quant_package_delivery_route_path_id
 msgid "Route path"
-msgstr "Routa de transporte"
+msgstr "Ruta de transporte"
 
 #. module: shipping_type
 #: selection:info.route.mixin,shipping_type:0

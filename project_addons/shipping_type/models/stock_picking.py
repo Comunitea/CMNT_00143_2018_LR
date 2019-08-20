@@ -15,7 +15,6 @@ class StockPickintType(models.Model):
     bool_carrier_id = fields.Boolean('Agrupa por forma de envío')
     bool_campaign_id = fields.Boolean('Agrupa por campaña')
 
-
 class StockBatchPicking(models.Model):
 
     _inherit = ['stock.batch.picking', 'info.route.mixin']
@@ -63,7 +62,7 @@ class StockPicking(models.Model):
             if child_vals and not self._context.get('write_from_pick', False):
                 for pick in self:
                     if pick.batch_picking_id:
-                        raise ValidationError ('No puedes cambiar estos valores en el albarán si ya está en un a carta de porte')
+                        raise ValidationError ('No puedes cambiar estos valores en el albarán si ya está en una carta de porte')
             if child_vals:
                 ctx = self._context.copy()
                 ctx.update(write_from_pick=True)

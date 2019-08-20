@@ -38,36 +38,36 @@
                   create="0"
                   default_order="date">
 
-                <field name="shipping_type" invisible="context.get('incoming', False)"/>
-                <field name="delivery_route_path_id" invisible="context.get('incoming', False)"/>
-                <field name="carrier_id" invisible="context.get('incoming', False)"/>
+                <field name="shipping_type" invisible="context.get('group_code', False) not in ('outgoing', 'picking')"/>
+                <field name="delivery_route_path_id" invisible="context.get('group_code', False) not in ('outgoing', 'picking')"/>
+                <field name="carrier_id" invisible="context.get('group_code', False) not in ('outgoing', 'picking')"/>
                 <!--field name="urgent" invisible="context.get('incoming', False)"/-->
-                <field name="picking_id"/>
-                <field name="sale_id" invisible="context.get('incoming', False)"/>
-                <field name="purchase_id" invisible="context.get('outgoing', False)"/>
+                <field name="picking_id" />
+                <field name="sale_id" invisible="context.get('group_code', False) not in ('outgoing', 'picking')"/>
+                <field name="purchase_id" invisible="context.get('group_code', False) not in ('incoming', 'all')"/>
 
                 <field name="id" groups="base.group_no_one" invisible="1"/>
-                <field name="picking_type_id" invisible="not context.get('all', False)"/>
+                <field name="picking_type_id" invisible="context.get('group_code', False) in ('incoming', 'outgoing', 'picking')"/>
 
-                <field name="shipping_id" invisible="context.get('show_partner', False)"/>
+                <field name="shipping_id" invisible="context.get('group_code', False) not in ('incoming', 'outgoing', 'picking')"/>
                 <field name="date" invisible="1" />
-                <field name="campaign_id" invisible="context.get('incoming', False)"/>
-                <field name="date_expected" invisible="context.get('show_date', False)"/>
+                <field name="campaign_id" invisible="1"/>
+                <field name="date_expected" />
                 <!--field name="reference" string="Reference"/-->
 
 
 
                 <field name="product_id"/>
-                <field name="location_id"  invisible="context.get('incoming', False)"/>
-                <field name="package_id" />
-                <field name="location_dest_id" invisible="context.get('outgoing', False)"/>
-                <field name="result_package_id" />
+                <field name="location_id" invisible="context.get('group_code', False) in ('incoming', 'outgoing')"/>
+                <field name="package_id" invisible="1"/>
+                <field name="location_dest_id" invisible="context.get('group_code', False) in ('picking', 'incoming', 'outgoing')"/>
+                <field name="result_package_id" invisible="context.get('group_code', False) not in ('outgoing', 'all')"/>
                 <field name="product_uom_qty" string="Quantity Ordered"/>
 
 
                 <field name="state"/>
                 <field name="company_id" invisible="1"/>
-                <field name="move_dest_ids" widget="many2many_tags"/>
+                <field name="move_dest_ids" widget="many2many_tags" invisible="context.get('group_code', False) in ('incoming', 'picking')"/>
                 <!--field name="wh_state"/-->
 
             </tree>
@@ -144,18 +144,19 @@
                     <filter string="Status" name="by_state" domain="[]"  context="{'group_by':'state'}"/>
                     <!--filter string="SGA status" name="by_wh_status" domain="[]"  context="{'group_by':'wh_state'}"/-->
                     <filter string="Partner" name="by_partner_id" domain="[]"  context="{'group_by':'partner_id'}"/>
+                    <filter string="Dirección de entrega" name="by_shipping_id" domain="[]"  context="{'group_by':'shipping_id'}"/>
                     <filter string="Campaña" name="by_campaign_id" domain="[]"  context="{'group_by':'campaign_id'}"/>
                     <filter string="Sale order" name="by_sale_id" domain="[]"  context="{'group_by':'sale_id'}"/>
                     <filter string="Ruta de transporte" name="by_delivery_path_route_id" domain="[]"  context="{'group_by':'delivery_route_path_id'}"/>
                     <filter string="Forma de envío" name="by_carrier_id" domain="[]"  context="{'group_by':'carrier_id'}"/>
-                    <filter string="Purchase order" name="by_purchase_id" domain="[]"  context="{'group_by':'purchase_id'}"/>
-                    <filter string="Origin" name="by_origin" domain="[]"  context="{'group_by':'location_id'}"/>
-                    <filter string="Dest" name="by_origin" domain="[]"  context="{'group_by':'location_dest_id'}"/>
-                    <filter string="Company" name="by_company" domain="[]"  context="{'group_by':'company_id'}"/>
-                    <filter string="Type" name="by_type" domain="[]"  context="{'group_by':'picking_type_id'}"/>
+                    <filter string="Orden de compra" name="by_purchase_id" domain="[]"  context="{'group_by':'purchase_id'}"/>
+                    <filter string="Origen" name="by_location_id" domain="[]"  context="{'group_by':'location_id'}"/>
+                    <filter string="Destino" name="by_location_dest_id" domain="[]"  context="{'group_by':'location_dest_id'}"/>
+                    <filter string="Compañia" name="by_company" domain="[]"  context="{'group_by':'company_id'}"/>
+                    <filter string="Tipo de albarán" name="by_type" domain="[]"  context="{'group_by':'picking_type_id'}"/>
                     <filter string="Picking" name="by_picking" domain="[]"  context="{'group_by':'picking_id'}"/>
-                    <filter string="Package" name="by_package" domain="[]"  context="{'group_by':'package_id'}"/>
-                    <filter string="Dest. Package" name="by_dest_package" domain="[]"  context="{'group_by':'result_package_id'}"/>
+                    <filter string="Paquete" name="by_package" domain="[]"  context="{'group_by':'package_id'}"/>
+                    <filter string="Dest. Paquete" name="by_dest_package" domain="[]"  context="{'group_by':'result_package_id'}"/>
 
 
                 </group>
@@ -205,13 +206,15 @@
                                         </div>
                                     </div>
                                     <field name="state" widget="label_selection" options="{'classes': {'draft': 'default', 'cancel': 'danger', 'assigned': 'success', 'confirmed': 'default'}}"/>
-                                    <field name="sga_state" widget="label_selection" />
+                                    <span t-if="record.sga_integrated.raw_value">
+                                        <field name="sga_state" widget="label_selection" />
+                                    </span>
                                 </div>
-                                <div class="o_kanban_record_body">
+                                <!--div class="o_kanban_record_body">
                                     <div>
                                         <field name="product_id"/>
                                     </div>
-                                </div>
+                                </div-->
                                 <div class="o_kanban_record_bottom">
                                     <div class="oe_kanban_bottom_left">
                                         <button name="action_show_details" string="Register lots, packs, location"
@@ -229,168 +232,7 @@
                 </kanban>
             </field>
         </record>
-    <delete id="stock_move_sel_action2" model="ir.actions.act_window"/>
-    <record id="stock_move_sel_action2" model="ir.actions.act_window">
-            <field name="name">Product Moves</field>
-            <field name="res_model">stock.move</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">tree,kanban,pivot,form</field>
-            <field name="view_id" ref="view_move_line_tree_sel"/>
-            <field name="search_view_id" ref="stock_move_view_sel_search"/>
-            <field name="context">{'search_default_todo': 1, 'search_default_without_pick': 1}</field>
-    </record>
-    <menuitem
-        id="stock_move_sel_menu"
-        parent="stock.menu_stock_root"
-        sequence="1" name="Moves panel"/>
 
-    <record id="stock_move_sel_action_all" model="ir.actions.server">
-            <field name="name">Product Moves</field>
-            <field name="res_model">stock.move</field>
-            <field name="model_id" ref="model_stock_move"/>
-            <field name="type">ir.actions.server</field>
-            <field name="state">code</field>
-            <field name="code">
-                action = env['stock.move']._return_action_show_moves()
-            </field>
-
-    </record>
-    model="ir.actions.act_window"/>
-    <menuitem
-        action="stock_move_sel_action_all"
-        parent="stock_move_selection_wzd.stock_move_sel_menu"
-        id="stock_move_selection_wzd.menu_stock_move_sel_all"
-        sequence="99" name="All moves"/>
-
-     <record id="stock_move_sel_action_incoming" model="ir.actions.server">
-            <field name="name">Incoming Moves</field>
-            <field name="res_model">stock.move</field>
-            <field name="model_id" ref="model_stock_move"/>
-            <field name="type">ir.actions.server</field>
-            <field name="state">code</field>
-            <field name="code">
-                action = env['stock.move']._return_action_show_moves('incoming')
-            </field>
-    </record>
-    <menuitem
-        action="stock_move_sel_action_incoming"
-        parent="stock_move_selection_wzd.stock_move_sel_menu"
-        id="stock_move_selection_wzd.menu_stock_move_sel_incoming"
-        sequence="1" name="Incoming moves"/>
-
-    <record id="stock_move_sel_action_picking" model="ir.actions.server">
-            <field name="name">Picking Moves</field>
-            <field name="res_model">stock.move</field>
-            <field name="model_id" ref="model_stock_move"/>
-            <field name="type">ir.actions.server</field>
-            <field name="state">code</field>
-            <field name="code">
-                action = env['stock.move']._return_action_show_moves('picking')
-            </field>
-    </record>
-    <menuitem
-        action="stock_move_sel_action_picking"
-        parent="stock_move_selection_wzd.stock_move_sel_menu"
-        id="stock_move_selection_wzd.stock_move_sel_menu_picking"
-        sequence="2" name="Picking moves"/>
-
-    <record id="stock_move_sel_action_outgoing" model="ir.actions.server">
-            <field name="name">Outgoing Moves</field>
-            <field name="res_model">stock.move</field>
-            <field name="model_id" ref="model_stock_move"/>
-            <field name="type">ir.actions.server</field>
-            <field name="state">code</field>
-            <field name="code">
-                action = env['stock.move']._return_action_show_moves('outgoing')
-            </field>
-    </record>
-    <menuitem
-        action="stock_move_sel_action_outgoing"
-        parent="stock_move_selection_wzd.stock_move_sel_menu"
-        id="stock_move_selection_wzd.stock_move_sel_menu_outgoing"
-        sequence="3" name="Outgoing moves"/>
-
-    <record id="stock_move_sel_action_location" model="ir.actions.server">
-            <field name="name">Location Moves</field>
-            <field name="res_model">stock.move</field>
-            <field name="model_id" ref="model_stock_move"/>
-            <field name="type">ir.actions.server</field>
-            <field name="state">code</field>
-            <field name="code">
-                action = env['stock.move']._return_action_show_moves('location')
-            </field>
-    </record>
-    <menuitem
-        action="stock_move_sel_action_location"
-        parent="stock_move_selection_wzd.stock_move_sel_menu"
-        id="stock_move_selection_wzd.stock_move_sel_menu_location"
-        sequence="4" name="Location moves"/>
-
-    <record id="stock_move_sel_action_internal" model="ir.actions.server">
-            <field name="name">Internal Moves</field>
-            <field name="res_model">stock.move</field>
-            <field name="model_id" ref="model_stock_move"/>
-            <field name="type">ir.actions.server</field>
-            <field name="state">code</field>
-            <field name="code">
-                action = env['stock.move']._return_action_show_moves('internal')
-            </field>
-    </record>
-    <menuitem
-        action="stock_move_sel_action_internal"
-        parent="stock_move_selection_wzd.stock_move_sel_menu"
-        id="stock_move_selection_wzd.stock_move_sel_menu_internal"
-        sequence="5" name="Internal moves"/>
-
-    <record id="stock_move_sel_action_reposition" model="ir.actions.server">
-            <field name="name">Reposition Moves</field>
-            <field name="res_model">stock.move</field>
-            <field name="model_id" ref="model_stock_move"/>
-            <field name="type">ir.actions.server</field>
-            <field name="state">code</field>
-            <field name="code">
-                action = env['stock.move']._return_action_show_moves('reposition')
-            </field>
-    </record>
-    <menuitem
-        action="stock_move_sel_action_reposition"
-        parent="stock_move_selection_wzd.stock_move_sel_menu"
-        id="stock_move_selection_wzd.stock_move_sel_menu_reposition"
-        sequence="6" name="Reposition moves"/>
-
-     <record id="stock_move_sel_action_other" model="ir.actions.server">
-            <field name="name">Other Moves</field>
-            <field name="res_model">stock.move</field>
-            <field name="model_id" ref="model_stock_move"/>
-            <field name="type">ir.actions.server</field>
-            <field name="state">code</field>
-            <field name="code">
-                action = env['stock.move']._return_action_show_moves('other')
-            </field>
-    </record>
-    <menuitem
-        action="stock_move_sel_action_other"
-        parent="stock_move_selection_wzd.stock_move_sel_menu"
-        id="stock_move_selection_wzd.stock_move_sel_menu_other"
-        sequence="7" name="Other moves"/>
-
-
-    <record id="action_assign_picking" model="ir.actions.server">
-        <field name="name">Asignar albarán</field>
-        <field name="model_id" ref="stock.model_stock_move"/>
-        <field name="binding_model_id" ref="stock.model_stock_move"/>
-        <field name="state">code</field>
-        <field name="code">records.move_sel_assign_picking()</field>
-    </record>
-
-    <record id="action_deassign_picking" model="ir.actions.server">
-        <field name="name">Desasignar albarán</field>
-        <field name="model_id" ref="stock.model_stock_move"/>
-        <field name="binding_model_id" ref="stock.model_stock_move"/>
-        <field name="state">code</field>
-        <field name="code">records.move_de_sel_assign_picking()</field>
-    </record>
 
 </odoo>
 

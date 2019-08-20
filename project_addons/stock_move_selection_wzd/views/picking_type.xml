@@ -77,7 +77,7 @@
                                                                 class="btn btn-primary" name="get_action_picking_tree_ready" type="object"
                                                                 >
                                                                 <span><t t-esc="record.count_picking_ready.value"/></span>
-                                                                <span t-if="record.count_picking_late.raw_value &gt; 0">(<t t-esc="record.count_picking_late.value"/>)</span>
+                                                                <span t-if="record.count_picking_late.raw_value &gt; 0 and False">(<t t-esc="record.count_picking_late.value"/>)</span>
 
                                                                 <span t-if="record.group_code.raw_value =='incoming'">Recepciones</span>
                                                                 <span t-if="record.group_code.raw_value =='outgoing'">Envíos</span>
@@ -96,16 +96,15 @@
                                                         >
 
                                                             <span><t t-esc="record.count_picking_ready.value"/></span>
-                                                            <span t-if="record.count_picking_late.raw_value &gt; 0">(<t t-esc="record.count_picking_late.value"/>)</span>
+                                                            <span t-if="record.count_picking_late.raw_value &gt; 0 and False">(<t t-esc="record.count_picking_late.value"/>)</span>
                                                             <span>Para SGA</span>
                                                         </button>
                                                     </div>
                                                 </div>
                                                 <div name="sga_and_not">
-                                                     <div class="row col-xs-9" title="Albaranes pendientes de otros movimientos o sin reserva">
+                                                     <div t-if="False" class="row col-xs-9" title="Albaranes pendientes de otros movimientos o sin reserva">
                                                         <button t-if="record.count_picking_waiting.raw_value" class="btn btn-warning" name="get_action_picking_tree_late" type="object"
                                                         >
-
                                                             <span><t t-esc="record.count_picking_waiting.value"/> En espera</span>
                                                         </button>
                                                     </div>
@@ -118,7 +117,7 @@
                                                     </div>
                                                 </div>
                                                 <div name="moves">
-                                                    <div t-if="record.count_move_unpacked.raw_value &gt; 0" class="row">
+                                                    <div t-if="record.count_move_unpacked.raw_value &gt; 0 and record.group_code.raw_value =='outgoing'" class="row">
                                                         <div class="col-xs-9 text-info" title="Para empaquetar">
                                                             <a class="oe_kanban_stock_picking_type_list" name="get_action_move_tree_no_package" type="object">
                                                                 Para empaquetar
@@ -152,7 +151,7 @@
                                                     </div>
 
                                                     <div t-if="record.count_move_waiting.raw_value &gt; 0" class="row">
-                                                        <div class="col-xs-9 text-warning" title="Movimientos sin reserva o pendientes de otro movimiento">
+                                                        <div class="col-xs-9 text-warning" title="Movimientos sin stock o pendientes de otro movimiento">
                                                             <a name="get_action_move_tree_waiting" type="object">
                                                                 En espera
                                                             </a>
@@ -162,7 +161,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div t-if="record.count_move_late.raw_value &gt; 0" class="row">
+                                                    <div t-if="record.count_move_late.raw_value &gt; 0 and False" class="row">
                                                         <div class="col-xs-9 text-danger" title="Movimientos retrasados. Fecha programada anterior a hoy">
                                                             <a class="text-danger" name="get_action_move_tree_late" type="object">
                                                                 Retrasados
@@ -308,18 +307,5 @@
             </field>
         </record>
 
-    <record id="stock_move_kanban_view" model="ir.actions.act_window">
-            <field name="name">Monitor de almacén</field>
-            <field name="res_model">stock.picking.type</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">kanban</field>
-            <field name="view_id" ref="stock_picking_type_kanban_moves"/>
 
-    </record>
-     <menuitem
-        action="stock_move_kanban_view"
-        parent="stock_move_selection_wzd.stock_move_sel_menu"
-        id="stock_move_selection_wzd.menu_stock_move_kanban"
-        sequence="0" name="Monitor de almacén"/>
 </odoo>

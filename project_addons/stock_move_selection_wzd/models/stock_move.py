@@ -19,7 +19,6 @@ class ProcurementRule(models.Model):
                                               origin=origin,
                                               values=values,
                                               group_id=group_id)
-
         if values.get('sale_line_id', False):
             sol = self.env['sale.order.line'].browse(values['sale_line_id'])
             vals.update({'campaign_id': sol.campaign_id and sol.campaign_id.id,
@@ -35,26 +34,25 @@ class StockMove(models.Model):
     _inherit = 'stock.move'
 
     ##NEcesito traer estos campos de stock_move_line
-    package_id = fields.Many2one('stock.quant.package', 'Paquete origen', inverse='set_package_id_to_lines',
-                                 compute="get_package_id_from_line", store=True)
-
-    result_package_id = fields.Many2one('stock.quant.package', 'Paquete origen',
+    package_id = fields.Many2one('stock.quant.package', 'Paquete origen',
+                                 inverse='set_package_id_to_lines',
+                                 compute="get_package_id_from_line",
+                                 store=True)
+    result_package_id = fields.Many2one('stock.quant.package', 'Paquete destino',
                                         inverse='set_result_package_id_to_lines',
-                                        compute="get_result_package_id_from_line", store=True)
+                                        compute="get_result_package_id_from_line",
+                                        store=True)
 
     lot_id = fields.Many2one('stock.production.lot', 'Lote')
-
     dunmy_picking_id = fields.Many2one('stock.picking', 'Transfer Reference', store=False)
-
     sga_integrated = fields.Boolean('Sga', help='Marcar si tiene un tipo de integración con el sga')
     sga_state = fields.Selection(SGA_STATES, default='NI', string="SGA Estado")
 
 
     def get_new_location_vals(self, location_field, location):
         vals = super().get_new_location_vals(location_field, location)
-
         if location.picking_type_id and vals:
-            vals.update(sga_integrated = location.picking_type_id.sga_integrated,
+            vals.update(sga_integrated=location.picking_type_id.sga_integrated,
                         sga_state='NE' if location.picking_type_id.sga_integrated else 'NI')
         return vals
 
@@ -65,7 +63,6 @@ class StockMove(models.Model):
         print (vals)
         return vals
 
-
     def get_moves_selection_domain(self, group_code=''):
         wh_ids = self.env['stock.warehouse'].search([('company_id', '=', self.env.user.company_id.id)])
         lot_stock = wh_ids.mapped('lot_stock_id')
@@ -75,7 +72,6 @@ class StockMove(models.Model):
         domain += [('state', 'not in', ['draft', 'cancel', 'done'])]
         print(domain)
         return domain
-
 
     @api.multi
     def button_batch_picking_wzd_act_window(self):
@@ -92,13 +88,11 @@ class StockMove(models.Model):
         action['domain'] = self.get_moves_selection_domain(group_code)
         action['views'] = [(tree and tree.id or False, 'tree'),
                            (kanban and kanban.id or False, 'kanban')]
-
         action['context'] = {group_code if group_code else 'all': True,
                              'show_partner': group_code in ['internal', 'location', 'reposition'],
                              'show_date': group_code in ['incoming', 'outgoing'],
                              'search_default_todo': 1,
                              'search_default_without_pick': 1}
-
         name_str = [x[1] for x in PICKING_TYPE_GROUP if x[0] == group_code]
         if name_str:
             action['display_name'] = "---------> {} Moves".format(name_str[0])
@@ -112,7 +106,6 @@ class StockMove(models.Model):
         moves = self.get_domain_moves_to_asign()
         for move in moves:
             move.action_force_assign_picking()
-
         if moves:
             res = self.env['stock.move']._return_action_show_moves()
             res['context'] = {'search_default_without_pick': 0}
@@ -134,13 +127,9 @@ class StockMove(models.Model):
 
     @api.multi
     def write(self, vals):
-
-
         if 'picking_id' in vals:
             self.mapped('move_line_ids').write({'picking_id': vals['picking_id']})
         return super().write(vals)
-
-
 
     def set_package_id_to_lines(self):
         for move in self:
