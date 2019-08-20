@@ -24,3 +24,4 @@ devel_*
 devel-*
 .mr.developer.cfg
 .vscode
+!project_addons/stock_move_apk/static/www/plugins/*/src
