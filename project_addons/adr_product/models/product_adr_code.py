@@ -34,7 +34,7 @@ class ProductAdrCode(models.Model):
     numero_onu = fields.Char('Nombre')
     official_name = fields.Char('Descripción oficial')
     acc_signals = fields.Char('Señales accesorias')
-    ranking_id = fields.Many2one('adr.code.ranking', 'Clasificación')
+    ranking_id = fields.Char('Clasificación')
     packing_group = fields.Char('Grupo de embalaje')
     t_code = fields.Char("Código tunel")
     qty_limit = fields.Integer('Cantidad limitada')
