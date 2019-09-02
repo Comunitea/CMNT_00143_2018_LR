@@ -68,7 +68,7 @@ class DeliveryBatchCustomReport(models.AbstractModel):
                             'adr_bultodesc': product_tmpl_line.adr_bultodesc,
                             'packing_group': product_tmpl_line.adr_idnumonu.packing_group,
                             'official_name': product_tmpl_line.adr_idnumonu.official_name,
-                            'ranking_id': product_tmpl_line.adr_idnumonu.ranking_id,
+                            'ranking_id': product_tmpl_line.adr_idnumonu.ranking,
                             't_code': product_tmpl_line.adr_idnumonu.t_code,
                             'adr_exe22315': product_tmpl_line.adr_exe22315,
                             'adr_peligroma': product_tmpl_line.adr_peligroma,
