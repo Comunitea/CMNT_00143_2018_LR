@@ -62,16 +62,16 @@ class DeliveryBatchCustomReport(models.AbstractModel):
                             'origin': move_line.origin,
                             'name': product_tmpl_line.name,
                             'default_code': product_tmpl_line.default_code,
-                            'adr_denomtecnica': product_tmpl_line.adr_idnumonu.denomtecnica,
+                            'adr_denomtecnica': product_tmpl_line.adr_denomtecnica,
                             'adr_qty_limit': product_tmpl_line.adr_idnumonu.qty_limit,
                             'product_qty': line.qty_done,
-                            'adr_bultodesc': product_tmpl_line.adr_idnumonu.bultodesc,
+                            'adr_bultodesc': product_tmpl_line.adr_bultodesc,
                             'packing_group': product_tmpl_line.adr_idnumonu.packing_group,
                             'official_name': product_tmpl_line.adr_idnumonu.official_name,
-                            'ranking_id': product_tmpl_line.adr_idnumonu.ranking_id,
+                            'ranking_id': product_tmpl_line.adr_idnumonu.ranking,
                             't_code': product_tmpl_line.adr_idnumonu.t_code,
-                            'adr_exe22315': product_tmpl_line.adr_idnumonu.exe22315,
-                            'adr_peligroma': product_tmpl_line.adr_idnumonu.peligroma,
+                            'adr_exe22315': product_tmpl_line.adr_exe22315,
+                            'adr_peligroma': product_tmpl_line.adr_peligroma,
                             'adr_weight_x_kgrs_11363': product_tmpl_line.adr_weight_x_kgrs_11363*line.qty_done,
                             'adr_weight_x_kgrs_11364': product_tmpl_line.adr_weight_x_kgrs_11364*line.qty_done,
                             'adr_acc_signals': product_tmpl_line.adr_idnumonu.acc_signals,
@@ -81,14 +81,14 @@ class DeliveryBatchCustomReport(models.AbstractModel):
                             'result_package_id': line.result_package_id.name,
                         })
                         
-                        if not product_tmpl_line.adr_idnumonu.exe22315 and not product_tmpl_line.adr_idnumonu.qty_limit > 0:
+                        if not product_tmpl_line.adr_exe22315 and not product_tmpl_line.adr_idnumonu.qty_limit > 0:
                             exe11363_total_weight = exe11363_total_weight + product_tmpl_line.adr_weight_x_kgrs_11363*line.qty_done
                             exe11364_total_weight = exe11364_total_weight + product_tmpl_line.adr_weight_x_kgrs_11364*line.qty_done
                             ## Guardamos las categorías diferentes
                             if not product_tmpl_line.adr_idnumonu.adr_category_id.id in categories_ids:
                                 categories_ids.append(product_tmpl_line.adr_idnumonu.adr_category_id.id)
                         else:
-                            if product_tmpl_line.adr_idnumonu.exe22315 and not product_tmpl_line.adr_idnumonu.qty_limit > 0:
+                            if product_tmpl_line.adr_exe22315 and not product_tmpl_line.adr_idnumonu.qty_limit > 0:
                                 exe22315_total_weight = exe22315_total_weight + product_tmpl_line.weight*line.qty_done
                                 counter_22315 = counter_22315 + 1
                             else:
