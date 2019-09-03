@@ -277,6 +277,93 @@
                 </t>
             </div>
 
+            <div class="row" t-if="exention_type" style="background-color:#fff !important; padding-top: 10px; border-top: solid 1px black; page-break-after: always;">
+            </div>
+
+            <div class="row" t-if="exention_type" style="background-color:#fff !important;">
+                <div class="col-xs-12">
+                    <div class="col-xs-2">
+                        <t t-esc="date"/>
+                    </div>
+                    <div class="col-xs-10">
+                        Detalle de partida <t t-esc="exention_type"/>:
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" t-if="exention_type" style="background-color:#fff !important; padding-top: 10px; border-top: solid 1px black;">
+            </div>
+
+            <div class="row" t-if="exention_type" style="background-color:#fff !important; border: solid 1px black;">
+                <div class="col-xs-12" style="border-bottom: solid 1px black; text-align: left;">
+                    <div class="col-xs-2">
+                        PAQUETE
+                    </div>
+                    <div class="col-xs-2">
+                        REFERENCIA
+                    </div>
+                    <div class="col-xs-4">
+                        DESCRIPCIÓN
+                    </div>
+                    <div class="col-xs-1">
+                        UDS
+                    </div>
+                    <div class="col-xs-1">
+                        PESO UNI.
+                    </div>
+                    <div class="col-xs-1">
+                        MULTIP.
+                    </div>
+                    <div class="col-xs-1">
+                        PESO TOTAL
+                    </div>
+                </div> 
+
+                <t t-foreach="elements" t-as="element">
+                    <t t-set="previous_origin" t-value="0"/>
+                    <t t-foreach="element['movements']" t-as="movement">
+                        <t t-if="previous_origin != movement['picking_id']">
+                            <div class="col-xs-12">
+                                <div class="col-xs-3 col-xs-offset-1" style="border-bottom: solid 1px black; text-align: left;">
+                                    Albarán: <t t-esc="movement['picking_id']"/> 
+                                </div>
+                            </div>
+                        </t>
+                        <div class="col-xs-12" style="text-align: left;" t-if="not movement['adr_exe22315'] and not movement['adr_qty_limit'] > 0">
+                            <div class="col-xs-2">
+                                <t t-esc="movement['result_package_id']"/> 
+                                <t t-set="previous_origin" t-value="movement['picking_id']"/>
+                            </div>
+                            <div class="col-xs-2">
+                                <t t-esc="movement['default_code']"/>
+                            </div>
+                            <div class="col-xs-4">
+                                <t t-esc="movement['name']"/>
+                            </div>
+                            <div class="col-xs-1">
+                                <t t-esc="movement['product_qty']"/>
+                            </div>
+                            <div class="col-xs-1">
+                                <t t-esc="movement['product_weight']"/>
+                            </div>
+                            <div class="col-xs-1">
+                                <t t-if="exention_type == '1.1.3.6.3'">
+                                    <t t-if="movement['multiplier'] and movement['multiplier'] != 0">
+                                        <t t-esc="movement['multiplier']"/>
+                                    </t>
+                                    <t t-else="" t-esc="movement['x_kgrs_11363']"/>
+                                </t>
+                                <t t-else="exention_type == '1.1.3.6.4'" t-esc="movement['x_kgrs_11364']"/>
+                            </div>
+                            <div class="col-xs-1">
+                                <t t-if="exention_type == '1.1.3.6.3'" t-esc="movement['adr_weight_x_kgrs_11363']"/>
+                                <t t-if="exention_type == '1.1.3.6.4'" t-esc="movement['adr_weight_x_kgrs_11364']"/>
+                            </div>
+                        </div>                    
+                    </t>
+                </t>
+            </div>
+
         </div>
 
     </template>

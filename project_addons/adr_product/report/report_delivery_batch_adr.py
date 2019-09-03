@@ -79,6 +79,10 @@ class DeliveryBatchCustomReport(models.AbstractModel):
                             'adr_regular_weight': product_tmpl_line.weight*line.qty_done,
                             'picking_id': line.picking_id.name,
                             'result_package_id': line.result_package_id.name,
+                            'product_weight': product_tmpl_line.weight,
+                            'multiplier': product_tmpl_line.adr_idnumonu.multiplier,
+                            'x_kgrs_11363': product_tmpl_line.adr_idnumonu.adr_category_id.x_kgrs_11363,
+                            'x_kgrs_11364': product_tmpl_line.adr_idnumonu.adr_category_id.x_kgrs_11364,
                         })
                         
                         if not product_tmpl_line.adr_exe22315 and not product_tmpl_line.adr_idnumonu.qty_limit > 0:
