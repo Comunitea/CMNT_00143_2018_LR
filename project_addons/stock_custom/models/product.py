@@ -133,3 +133,47 @@ class ProductProduct(models.Model):
     @api.model
     def cron_compute_abc_classification(self):
         self.env['product.product'].search([]).compute_abc_classification()
+
+    @api.multi
+    def get_sale_days_qty(self, days):
+        """
+        Get qty sold in the last days attr.
+        Qty sold searchs for done moves in the last days
+        and also in the hisotry rotation model
+        """
+        self.ensure_one()
+        res = 0.0
+        current_date = datetime.now().strftime('%Y-%m-%d')
+        start_date = \
+            (datetime.now() - relativedelta(days=days)).strftime('%Y-%m-%d')
+        # SEARCH IN MOVES
+        domain = [
+            ('product_id', '=', self.id),
+            ('picking_id.date_done', '>=', start_date),
+            ('picking_id.date_done', '<', current_date),
+            ('picking_id.state', 'in', ['done'])
+        ]
+        moves = self.env['stock.move'].search(domain)
+        if moves:
+            res += sum(moves.mapped('product_uom_qty'))
+
+        # SEARCH IN HISTORY
+        history_line = self.env['stock.rotation.history'].search(
+            [('product_id', '=', self.id)], limit=1)
+
+        # Solo miro cuando puedo ver los dos últimos meses al actual
+        # en el histórico
+        date_file = datetime.strptime(history_line.date, '%Y-%m-%d')
+        date_limit = date_file + relativedelta(months=1)
+        date_limit = date_limit.strftime('%Y-%m-1')
+        if history_line and current_date < date_limit:
+            qty_month1 = history_line.month_1
+            qty_month2 = qty_month1 + history_line.month_2
+            import ipdb; ipdb.set_trace()
+            if days >= 60:
+                res = qty_month2
+            elif days >= 30:
+                res = qty_month1
+            elif days == 21:  # roporción 21 días del último mes
+                res = int(round((qty_month1 * 21) / 31))
+        return res
