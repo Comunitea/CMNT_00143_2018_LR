@@ -11,7 +11,7 @@
                                     t-attf-href="{{ menu['url'] if menu['url'] else ''}}">
                                 <div class="row"> 
                                     <span t-attf-class="fa {{ menu['menu_icon'] if menu['menu_icon'] else '' }} fa-4x"></span>
-                                    <div>
+                                    <div class="menu-title">
                                         <h4 class="mt16 text-muted">
                                             <t t-esc="menu['name']" />
                                         </h4>
