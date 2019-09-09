@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <template id="snippet_cover_lasrias" name="Cover Las Rías">
-        <section class="s_text_block_image_fw oe_img_bg oe_custom_bg" style="background-image: url('/theme_rias/static/img/covers/cover.jpg'); background-position: 50% 100%">
+        <section id="cover_las_rias" class="s_text_block_image_fw oe_img_bg oe_custom_bg" style="background-image: url('/theme_rias/static/img/covers/cover.jpg'); background-position: 50% 100%">
             <div class="container">
                 <div class="container">
                     <div class="hidden-xs col-md-offset-1 col-md-6 mt64 mb64 bg-black-25">
