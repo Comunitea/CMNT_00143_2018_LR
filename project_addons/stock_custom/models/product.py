@@ -169,7 +169,6 @@ class ProductProduct(models.Model):
         if history_line and current_date < date_limit:
             qty_month1 = history_line.month_1
             qty_month2 = qty_month1 + history_line.month_2
-            import ipdb; ipdb.set_trace()
             if days >= 60:
                 res = qty_month2
             elif days >= 30:
