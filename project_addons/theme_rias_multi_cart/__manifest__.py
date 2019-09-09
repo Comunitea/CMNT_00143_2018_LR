@@ -18,6 +18,7 @@
         'templates/head.xml',
         'templates/shop.xml',
         'templates/portal.xml',
+        'templates/header.xml',
         ],
     'images': [
         '/static/description/icon.png',
