@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="custom_product_pricelist_item_form_view" model="ir.ui.view">
+        <field name="name">custom.product.pricelist.item.form</field>
+        <field name="model">product.pricelist.item</field>
+        <field name="inherit_id" ref="product.product_pricelist_item_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@col='6']" position="after">
+                <group attrs="{'invisible':[('compute_price', 'not in', ['margin_sale', 'margin_purchase'])]}">
+                    <label string="New Price ="/>
+                    <div>
+                        <span attrs="{'invisible':[('compute_price', '!=', 'margin_sale')]}">Cost Price  * [ 1 / ( (1 - DISCOUNT) * (1 - MARGIN) ) ]</span>
+                        <span attrs="{'invisible':[('compute_price', '!=', 'margin_purchase')]}">Cost Price  * [ (1 + MARGIN) / (1 - DISCOUNT) ]</span>   
+                    </div>
+                    <field name="custom_margin"/>
+                    <field name="custom_discount"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>
+
