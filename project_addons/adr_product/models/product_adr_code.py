@@ -14,14 +14,6 @@ class AdrCodeCategory(models.Model):
     max_weight_11364 = fields.Integer('Max. Kg', help='Maximum amount allowed in one shipping for exception 1.1.3.6.4')
 
 
-class AdrCodeRanking(models.Model):
-    _name = "adr.code.ranking"
-
-    code = fields.Char("Code")
-    name = fields.Char('Name')
-
-
-
 class ProductAdrCode(models.Model):
 
     _name = "product.adr.code"
@@ -34,7 +26,7 @@ class ProductAdrCode(models.Model):
     numero_onu = fields.Char('Nombre')
     official_name = fields.Char('Descripción oficial')
     acc_signals = fields.Char('Señales accesorias')
-    ranking_id = fields.Many2one('adr.code.ranking', 'Clasificación')
+    ranking = fields.Char('Clasificación')
     packing_group = fields.Char('Grupo de embalaje')
     t_code = fields.Char("Código tunel")
     qty_limit = fields.Integer('Cantidad limitada')

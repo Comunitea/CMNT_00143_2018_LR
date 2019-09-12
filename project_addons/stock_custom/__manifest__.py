@@ -17,6 +17,7 @@
         'views/product_view.xml',
         'views/sale.xml',
         'views/stock_rotation_history_view.xml',
+        'views/stock_warehouse_view.xml',
         'wizard/sale_invoice_on_date.xml',
         'security/ir.model.access.csv'
     ],

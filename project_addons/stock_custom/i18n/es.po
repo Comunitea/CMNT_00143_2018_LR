@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 11.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-05 10:55+0000\n"
-"PO-Revision-Date: 2019-08-05 10:55+0000\n"
+"POT-Creation-Date: 2019-09-09 15:56+0000\n"
+"PO-Revision-Date: 2019-09-09 15:56+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -97,6 +97,16 @@ msgid "B1"
 msgstr "B1"
 
 #. module: stock_custom
+#: model:ir.ui.view,arch_db:stock_custom.warehouse_orderpoint_search_abc
+msgid "By ABC"
+msgstr "Según ABC"
+
+#. module: stock_custom
+#: model:ir.model.fields,field_description:stock_custom.field_stock_warehouse_orderpoint_by_abc
+msgid "By ABC classification"
+msgstr "Según clasificación ABC"
+
+#. module: stock_custom
 #: selection:product.product,abc_classification:0
 msgid "C1"
 msgstr "C1"
@@ -120,6 +130,11 @@ msgstr "Click para definir una nueva línea de histórico"
 #: model:ir.ui.view,arch_db:stock_custom.view_id
 msgid "Compute ABC"
 msgstr "Calcular ABC"
+
+#. module: stock_custom
+#: model:ir.ui.view,arch_db:stock_custom.view_warehouse_orderpoint_form_abc
+msgid "Compute by ABC"
+msgstr "Calcular según ABC"
 
 #. module: stock_custom
 #: model:ir.model.fields,field_description:stock_custom.field_sale_invoice_on_date_create_uid
@@ -170,9 +185,16 @@ msgid "Get Product ABC Classification"
 msgstr "Calcular clasificación ABC de productos"
 
 #. module: stock_custom
+#: model:ir.actions.server,name:stock_custom.ir_cron_product_warehouse_orderpoint_ir_actions_server
+#: model:ir.cron,cron_name:stock_custom.ir_cron_product_warehouse_orderpoint
+#: model:ir.cron,name:stock_custom.ir_cron_product_warehouse_orderpoint
+msgid "Get Replenishement Rules by ABC Classification"
+msgstr "Reglas de reabastecimiento por clasificación ABC"
+
+#. module: stock_custom
 #: model:ir.model.fields,field_description:stock_custom.field_sale_order_has_invoiceable_lines
 msgid "Has Invoiceable Lines"
-msgstr "Tiene líneas facturables"
+msgstr "Tiene  líneas facturables"
 
 #. module: stock_custom
 #: model:ir.model.fields,field_description:stock_custom.field_sale_invoice_on_date_id
@@ -225,6 +247,11 @@ msgid "Line"
 msgstr "Linea"
 
 #. module: stock_custom
+#: model:ir.model,name:stock_custom.model_stock_warehouse_orderpoint
+msgid "Minimum Inventory Rule"
+msgstr "Regla de inventario mínimo"
+
+#. module: stock_custom
 #: selection:product.product,abc_classification:0
 msgid "None"
 msgstr "Ninguna"
@@ -248,7 +275,7 @@ msgstr "El producto debe ser único"
 #. module: stock_custom
 #: model:ir.model.fields,field_description:stock_custom.field_sale_order_line_qty_to_invoice_on_date
 msgid "Qty To Invoice On Date"
-msgstr "Cant a facturar en fecha"
+msgstr "Cant Ta facturar en fecha"
 
 #. module: stock_custom
 #: model:ir.model.fields,field_description:stock_custom.field_sale_order_line_delivery_quantity
