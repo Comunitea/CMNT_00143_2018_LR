@@ -1,5 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
+    <record id="view_open_batch_wzd" model="ir.ui.view">
+        <field name="name">batch_picking_wzd_form</field>
+        <field name="model">open.batch.wzd</field>
+        <field name="arch" type="xml">
+            <form string="Grupos">
+                <separator string="Asistente para grupos de albaranes"/> <footer>
+                <button name="continue_to_wzd" string="Continuar" type="object" class="oe_highlight"/>
+                <button string="Cancel" class="oe_link" special="cancel"/>
+            </footer>
+            </form>
+
+        </field>
+    </record>
     <record id="view_create_batch_picking" model="ir.ui.view">
         <field name="name">batch_picking_wzd_form</field>
         <field name="model">stock.batch.picking.wzd</field>
@@ -89,12 +103,13 @@
 
 
     <act_window name="Gestión de grupos"
-                res_model="stock.batch.picking.wzd"
+                res_model="open.batch.wzd"
                 src_model="stock.move"
                 view_mode="form"
                 target="new"
                 key2="client_action_multi"
                 id="batch_picking_wzd_act_window"/>
+    <!--delete id="stock_move_selection_wzd.batch_picking_wzd_act_window" model="ir.actions.act_window"/-->
 
     <record id="open_view_create_batch_picking" model="ir.actions.act_window">
         <field name="name">Gestión de grupos</field>
@@ -104,12 +119,13 @@
         <field name="target">new</field>
         <field name="view_mode">form</field>
     </record>
+
     <record id="action_assign_batch_picking_from_moves" model="ir.actions.server">
         <field name="name">Gestión de grupos</field>
         <field name="model_id" ref="stock.model_stock_move"/>
         <field name="binding_model_id" ref="stock.model_stock_move"/>
         <field name="state">code</field>
-        <field name="code">records.action_add_to_batch_picking()</field>
+        <field name="code">records.action_add_moves_to_batch_picking()</field>
     </record>
     <delete id="action_assign_batch_picking_from_moves" model="ir.actions.server"/>
     <record id="action_assign_batch_picking_from_picks" model="ir.actions.server">

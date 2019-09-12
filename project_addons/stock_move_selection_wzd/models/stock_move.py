@@ -47,10 +47,6 @@ class StockMove(models.Model):
             elif move.sga_state == 'PE':
                 move.sga_state = 'NE'
 
-
-
-
-
     def _assign_package(self, package):
         if self.result_package_id:
             if self.result_package_id.batch_delivery_id:
@@ -94,20 +90,37 @@ class StockMove(models.Model):
         print(domain)
         return domain
 
-    @api.multi
-    def action_add_to_batch_picking(self):
-
+    def action_add_moves_to_batch_picking(self):
         ctx = self._context.copy()
         if 'active_domain' in ctx.keys():
             ctx.pop('active_domain')
-
-
-        print (self._context)
-        action = self.env.ref('stock_move_selection_wzd.batch_picking_wzd_act_window').read()[0]
         obj = self.env['stock.batch.picking.wzd']
         wzd_id = obj.create_from('stock.move', self.ids)
+        action = wzd_id.get_formview_action()
+        action['target'] = 'new'
+        #return action
+
+
+        action = self.env.ref('stock_move_selection_wzd.open_view_create_batch_picking').read()[0]
         action['res_id'] = wzd_id.id
-        print (action)
+
+        return action
+
+    @api.multi
+    def action_add_to_batch_picking(self):
+        ctx = self._context.copy()
+        if 'active_domain' in ctx.keys():
+            ctx.pop('active_domain')
+        obj = self.env['stock.batch.picking.wzd']
+        wzd_id = obj.create_from('stock.move', self.ids)
+        action = wzd_id.get_formview_action()
+        action['target'] = 'new'
+        return action
+
+
+        action = self.env.ref('stock_move_selection_wzd.open_view_create_batch_picking').read()[0]
+        action['res_id'] = wzd_id.id
+
         return action
 
     @api.multi

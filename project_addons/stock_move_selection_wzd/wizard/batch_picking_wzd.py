@@ -6,6 +6,14 @@ from odoo.exceptions import UserError
 
 from odoo.addons.shipping_type.models.info_route_mixin import SHIPPING_TYPE_SEL, DEFAULT_SHIPPING_TYPE, STRING_SHIPPING_TYPE,HELP_SHIPPING_TYPE
 
+class OpenBatchWzd(models.TransientModel):
+    _name = 'open.batch.wzd'
+
+    @api.multi
+    def continue_to_wzd(self):
+        domain = [('id', 'in', self._context.get('active_ids'))]
+        return self.env['stock.move'].search(domain).action_add_to_batch_picking()
+
 class StockBatchPickingWzd(models.TransientModel):
     """Create a stock.batch.picking from stock.picking
     """
@@ -98,7 +106,7 @@ class StockBatchPickingWzd(models.TransientModel):
 
     @api.model
     def default_get(self, fields):
-
+        return super().default_get(fields)
         if self._context.get('active_model', False) == 'stock.picking.type':
             return super().default_get(fields)
 
@@ -107,7 +115,7 @@ class StockBatchPickingWzd(models.TransientModel):
         new_ids = self._context.get('active_ids', [])
         if new_ids:
             ctx = self._context.copy()
-            ctx.update(active_model = 'stock.picking.type')
+            ctx.update(active_model='stock.picking.type')
             self = self.with_context(ctx)
             model = self._context.get('model', self._context.get('active_model', 'stock.move'))
             wzd_id = self.create_from(model, new_ids)
@@ -198,3 +206,11 @@ class StockBatchPickingWzd(models.TransientModel):
         })
         self.new_picking_ids.write({'batch_picking_id': batch_picking_id.id})
         return batch_picking_id.get_formview_action()
+
+    @api.multi
+    def action_assign_batch(self):
+        if self.batch_picking_id:
+            for pick in self.new_picking_ids:
+                pick.batch_picking_id = self.batch_picking_id
+            #self.new_picking_ids.mapped('move_lines').write({'batch_picking_id': self.batch_picking_id.id})
+            #return self.batch_picking_id.get_formview_action()
