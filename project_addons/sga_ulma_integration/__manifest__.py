@@ -15,7 +15,6 @@
     'depends': [
         'stock',
         'stock_move_selection_wzd',
-        'stock_batch_picking_lr'
     ],
     'data': ['views/res_config_views.xml',
         #'views/stock_batch_picking_views.xml',

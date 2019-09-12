@@ -17,7 +17,7 @@
         'stock',
         'shipping_type',
         'stock_batch_picking',
-        'stock_batch_picking_lr'
+        'stock_move_selection_wzd'
     ],
     'data': [
         'security/ir.model.access.csv',
