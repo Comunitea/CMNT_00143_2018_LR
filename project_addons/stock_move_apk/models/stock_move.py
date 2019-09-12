@@ -52,7 +52,7 @@ class StockMoveLine(models.Model):
         partner_id = vals.get('partner_id', False)
         domain = [('location_dest_id.usage', '=', 'customer'),
                   ('state', 'in', ['assigned', 'partially_available']),
-                  ('picking_id', '=', False)]
+                  ]
         if partner_id:
             domain += [('move_id.partner_id', '=', partner_id)]
 
@@ -162,7 +162,6 @@ class StockMoveLine(models.Model):
     @api.model
     def assign_package(self, vals):
         result_package_id = vals.get('result_package_id', False)
-
         move_ids = vals.get('move_line_ids', False)
         move_line_ids = self.browse(move_ids)
         move_ids = move_line_ids.mapped('move_id')
