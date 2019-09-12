@@ -53,8 +53,8 @@
                                 <field name="origin"/>
                                 <field name="product_id"/>
                                 <field name="product_uom_qty"/>
-                                <field name="state" invisible="1"/>
-                                <field name="sga_state" invisible="1"/>
+                                <field name="state" invisible="0"/>
+                                <field name="sga_state" invisible="0"/>
                                 <button
                                         name="action_set_envio_sga"
                                         string="Marcar para alternar envio a SGA"

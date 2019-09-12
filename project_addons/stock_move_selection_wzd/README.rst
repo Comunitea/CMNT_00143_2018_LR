@@ -1,7 +1,7 @@
 Actualización de Inventario
 ===========================
 
-1º Instarucciones para actualizar
+1º Instrucciones para actualizar
 --------------------------------------------------------------
 
 Desinstalar stock_picking_custom_lr

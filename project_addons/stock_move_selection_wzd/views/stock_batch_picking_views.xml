@@ -28,7 +28,38 @@
                             type="object" class="oe_stat_button" icon="fa-cubes"/>
 
             </xpath>
+            <xpath expr="//page[1]" position="before">
+                <page string="Movimientos">
+                    <!--field name="effective_move_lines"
+                           context="{'tree_view_ref': 'stock_move_selection_wzd.view_move_line_tree_sel'}"
+                           readonly="1" options="{'reload_on_button': true}"/-->
 
+                    <field name="effective_move_lines">
+                        <tree>
+                            <field name="product_id"/>
+                            <field name="product_uom_qty"/>
+                            <field name="reserved_availability"/>
+                            <field name="picking_type_id" invisible="1"/>
+                            <field name="sga_integrated" invisible="1"/>
+                            <field name="group_code" invisible="1"/>
+                            <field name="sale_id" string="Venta" column_invisible="[('parent.picking_type_id.group_code', 'in', ('picking', 'outgoing'))]"/>
+                            <field name="purchase_id" string="Compra" column_invisible="[('parent.picking_type_id.group_code', 'in', ('location', 'incoming'))]"/>
+                            <field name="result_package_id" column_invisible="[('parent.picking_type_id.group_code', '!=', 'outgoing')]"/>
+                            <field name="sga_state" column_invisible="[('parent.picking_type_id.sga_integrated', '!=', False)]"/>
+                            <field name="state"/>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+            <xpath expr="//page/field[@name='id']/.." position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//page/field[@name='active_picking_ids']/.." position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//page/field[@name='move_line_ids']/.." position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
         </field>
     </record>
     <record id="stock_batch_picking_tree" model="ir.ui.view">
@@ -39,8 +70,9 @@
         <field name="arch" type="xml">
             <field name="name" position="after">
                 <field name="partner_id"/>
-                <field name="picking_ids" widget="many2many_tags"/>
+                <!--field name="picking_ids" widget="many2many_tags"/-->
             </field>
+
         </field>
     </record>
     <record id="stock_batch_picking_search" model="ir.ui.view">

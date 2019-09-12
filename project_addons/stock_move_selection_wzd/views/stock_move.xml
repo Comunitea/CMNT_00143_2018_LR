@@ -52,12 +52,14 @@
             <tree decoration-muted="state not in ('assigned', 'partially_available')"
                   decoration-success="state in ('assigned', 'partially_available') and (
                                         (group_code == 'outgoing' and batch_delivery_id and shipping_type and result_package_id) or
-                                        (group_code != 'outgoing' and batch_picking_id)
-)"
+                                        (group_code != 'outgoing' and batch_picking_id) or
+                                        (group_code in ('location','picking') and sga_state in ('PE', 'SR', 'PS'))
+                                        )"
+
                   decoration-warning="state in ('assigned', 'partially_available') and
                     ((group_code != 'outgoing' and not batch_picking_id) or
-                    (group_code == 'outgoing' and (not shipping_type or not result_package_id))) "
-
+                    (group_code == 'outgoing' and (not shipping_type or not result_package_id)) or
+                    (group_code in ('location','picking') and sga_state not in ('PE', 'SR', 'PS')))"
 
                   string="Movimientos"
                   edit="1"
@@ -83,19 +85,27 @@
                         icon="fa-tasks"
                         attrs="{'invisible': ['|', ('group_code', 'not in', ('picking', 'location', 'reposition')), ('state', 'not in', ('assigned', 'partially_available'))]}"
                         />
-                <button name="action_send_to_sga"
-                        string="SGA"
+                <button name="action_set_envio_sga"
+                        string="Cancelar envío a SGA"
                         type="object"
                         context="{'object': 'move'}"
-                        icon="fa-rss"
-                        attrs="{'invisible': ['|', ('sga_state', '=', 'NE'), ('state', 'not in', ('assigned', 'partially_available'))]}"
+                        icon="fa-volume-up"
+                        attrs="{'invisible': ['|', '|', ('sga_integrated', '=', False), ('sga_state', '=', 'PE'), ('state', 'not in', ('assigned', 'partially_available'))]}"
                         />
-                <field name="picking_id"/>
+                <button name="action_set_envio_sga"
+                        string="Enviar a SGA"
+                        type="object"
+                        context="{'object': 'move'}"
+                        icon="fa-volume-off"
+                        attrs="{'invisible': ['|', '|', ('sga_integrated', '=', False), ('sga_state', '=', 'NE'), ('state', 'not in', ('assigned', 'partially_available'))]}"
+                        />
+                <field name="picking_id" invisible="1"/>
                 <field name="sale_id" string="Venta" invisible="not context.get('group_code', False) in ('outgoing', 'picking')"/>
                 <field name="purchase_id" string="Compra" invisible="not context.get('group_code', False) in ('incoming', 'location')"/>
 
                 <field name="id" groups="base.group_no_one" invisible="1"/>
                 <field name="picking_type_id" invisible="1"/>
+                <field name="sga_integrated" invisible="1"/>
                 <field name="code" invisible="1"/>
                 <field name="group_code" invisible="1"/>
                 <field name="partner_id" />

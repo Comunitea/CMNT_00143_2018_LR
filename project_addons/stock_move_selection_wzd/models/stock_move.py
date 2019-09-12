@@ -37,6 +37,20 @@ class StockMove(models.Model):
         move.move_line_ids.unpack()
         return True
 
+    @api.multi
+    def action_set_envio_sga(self):
+        for move in self.filtered(lambda x: x.sga_state in ('NE', 'PE') and x.state not in ('cancel', 'done')):
+            if move.sga_state=='NE':
+                if move.state == 'waiting':
+                    raise ValidationError ('No puedes enviar nada a SGA sin disponibilidad.')
+                move.sga_state = 'PE'
+            elif move.sga_state == 'PE':
+                move.sga_state = 'NE'
+
+
+
+
+
     def _assign_package(self, package):
         if self.result_package_id:
             if self.result_package_id.batch_delivery_id:

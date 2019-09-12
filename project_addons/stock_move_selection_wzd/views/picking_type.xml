@@ -125,11 +125,9 @@
                                                 <span t-if="record.sga_integrated.raw_value" class="badge">
                                                     <i class="fa fa-fw fa-rss-square"/>
                                                 </span>
-
                                                 <a type="object" name="get_stock_move_action_move_type">
                                                     <field name="name"/>
                                                 </a>
-
                                             </div>
                                             <div class="o_secondary"><field class="o_secondary" name="warehouse_id"/></div>
                                         </div>
@@ -174,6 +172,23 @@
                                                                 <span t-if="record.group_code.raw_value =='other'">Albaranes </span>
                                                         </button>
                                                     </div>
+                                                    <div class="row col-xs-9"
+                                                         title="Albaranes: Preparados"
+                                                         t-if="record.visible_count_batch_ready.raw_value == true">
+                                                        <button t-if="record.sga_integrated.raw_value != false"
+                                                                class="btn btn-primary" name="get_action_batch_picking_tree_ready" type="object">
+                                                                <span><t t-esc="record.count_batch_ready.value"/></span>
+                                                                <!--span t-if="record.count_picking_late.raw_value &gt; 0 and False">(<t t-esc="record.count_picking_late.value"/>)</span-->
+                                                                <span t-if="record.group_code.raw_value =='incoming'">Recepciones</span>
+                                                                <span t-if="record.group_code.raw_value =='outgoing'">Clientes</span>
+                                                                <span t-if="record.group_code.raw_value =='picking'">Picking</span>
+                                                                <span t-if="record.group_code.raw_value =='internal'">Internos </span>
+                                                                <span t-if="record.group_code.raw_value =='location'">Ubicaciones </span>
+                                                                <span t-if="record.group_code.raw_value =='reposition'">Reposiciones </span>
+                                                                <span t-if="record.group_code.raw_value =='other'">Albaranes </span>
+                                                        </button>
+                                                    </div>
+
                                                 </div>
                                                 <!--div name='not_sga'>
                                                     <div class="row col-xs-9" title="Albaranes integrados con SGA: Preparados (Retrasados)">

@@ -99,7 +99,6 @@ class StockBatchPickingWzd(models.TransientModel):
     @api.model
     def default_get(self, fields):
 
-
         if self._context.get('active_model', False) == 'stock.picking.type':
             return super().default_get(fields)
 
@@ -121,7 +120,6 @@ class StockBatchPickingWzd(models.TransientModel):
             defaults.update(vals)
             print (defaults)
         return defaults
-
 
 
     @api.onchange('batch_picking_id')
@@ -156,8 +154,6 @@ class StockBatchPickingWzd(models.TransientModel):
             ], limit=1)
         return warehouse.default_picker_id
 
-
-
     @api.multi
     def action_create_batch_split(self):
         """ Create a batch picking  with selected pickings after having checked
@@ -188,3 +184,17 @@ class StockBatchPickingWzd(models.TransientModel):
         if self.moves_to_remove:
             self.moves_to_remove.action_force_assign_picking()
         return batch.get_formview_action()
+
+    @api.multi
+    def action_create_batch(self):
+        batch_picking_id = self.env['stock.batch.picking'].create({
+            'date': self.date,
+            'notes': self.notes,
+            'picker_id': self.picker_id.id,
+            'picking_type_id': self.picking_type_id.id,
+            #'carrier_id': self.carrier_id.id,
+            #'delivery_route_path_id': self.delivery_route_path_id.id,
+            #'shipping_type': self.shipping_type
+        })
+        self.new_picking_ids.write({'batch_picking_id': batch_picking_id.id})
+        return batch_picking_id.get_formview_action()

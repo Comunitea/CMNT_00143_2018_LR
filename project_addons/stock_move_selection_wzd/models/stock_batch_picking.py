@@ -9,11 +9,19 @@ from odoo.exceptions import ValidationError
 class StockBatchPicking(models.Model):
     _inherit = 'stock.batch.picking'
 
-
+    @api.multi
+    def _get_effective_move_lines(self):
+        for batch_picking_id in self:
+            if batch_picking_id.picking_type_id.sga_integrated:
+                batch_picking_id.effective_move_lines = batch_picking_id.move_lines.filtered(
+                    lambda x: x.sga_state not in ('PE', 'SR', 'SC') and x.reserved_availability > 0)
+            else:
+                batch_picking_id.effective_move_lines = batch_picking_id.move_lines.filtered(
+                    lambda x: x.reserved_availability > 0)
 
     batch_delivery_id = fields.Many2one('stock.batch.delivery', string="Delivery batch")
     picking_type_id = fields.Many2one(string='Picking type', comodel_name='stock.picking.type', required=True, readonly=True, states={'draft': [('readonly', False)]},)
-
+    effective_move_lines = fields.One2many('stock.move', string='Movimientos', compute=_get_effective_move_lines)
 
 
     @api.onchange('picking_ids')

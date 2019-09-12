@@ -126,7 +126,7 @@
 
     <record id="action_stock_batch_delivery_tree"
             model="ir.actions.act_window">
-        <field name="name">Batch Delivery</field>
+        <field name="name">Ordenes de carga</field>
         <field name="res_model">stock.batch.delivery</field>
         <field name="view_mode">tree,form</field>
     </record>

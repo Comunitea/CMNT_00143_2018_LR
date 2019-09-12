@@ -209,7 +209,7 @@ class PickingType(models.Model):
                    ('batch_picking_id', '!=', False), ('state', '=', 'assigned')]
 
         ready_domain['pick'] = expression.OR([int_dom, in_dom, out_dom])
-        ready_domain['batch'] = [('state', '=', 'assigned')]
+        ready_domain['batch'] = [('state', 'in', ('draft', 'assigned'))]
 
         print ("Ready domain {}".format(ready_domain))
         return ready_domain
