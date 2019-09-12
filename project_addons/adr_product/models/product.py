@@ -14,6 +14,11 @@ class ProductTemplate(models.Model):
     adr_weight_x_kgrs_11363 = fields.Float(compute="_weight_calculator")
     adr_weight_x_kgrs_11364 = fields.Float(compute="_weight_calculator")
 
+    adr_denomtecnica = fields.Char('Denominación técnica')
+    adr_peligroma = fields.Boolean('Artículo peligroso')
+    adr_exe22315 = fields.Boolean ('Sujeto a la exención 22315')
+    adr_bultodesc = fields.Char("Descripción del bulto")
+
     @api.multi
     @api.depends('adr_idnumonu.multiplier', 'weight', 'adr_idnumonu.adr_category_id')
     def _weight_calculator(self):

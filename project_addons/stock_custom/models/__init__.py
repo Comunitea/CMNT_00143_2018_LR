@@ -5,3 +5,4 @@ from . import product
 from . import sale
 from . import stock
 from . import stock_rotation_history
+from . import stock_warehouse

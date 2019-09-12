@@ -7,6 +7,10 @@
         <field name="arch" type="xml">
             <field name="type" position="after">
                 <field name="adr_idnumonu" string="Número ONU"/>
+                <field name="adr_denomtecnica" string="Denominación técnica"/>
+                <field name="adr_peligroma" string="Artículo peligroso"/>
+                <field name="adr_exe22315" string="Sujeto a la exención 22315"/>
+                <field name="adr_bultodesc" string="Descripción del bulto"/>
             </field>
         </field>
     </record>
