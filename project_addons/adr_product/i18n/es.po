@@ -440,7 +440,7 @@ msgid "Picking"
 msgstr "Albarán"
 
 #. module: adr_product
-#: model:ir.ui.view,arch_db:adr_product.stock_batch_picking_lr_adr_form
+#: model:ir.ui.view,arch_db:adr_product.stock_move_selection_wzd_adr_form
 msgid "Print RDA"
 msgstr "Imprimir ADR"
 
