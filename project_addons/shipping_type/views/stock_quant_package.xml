@@ -64,9 +64,9 @@
             <xpath expr="//separator" position="before">
                 <group string="Tipo de envío" attr="{'invisible': [('move_line_ids[0].picking_type_id.code','=', 'outgoing')]}">
                     <group>
-                        <field name="picking_id" context="{'write_from_picking': True}"/>
-                        <field name="shipping_type" context="{'write_from_package': True}"/>
-                        <field name="delivery_route_path_id" context="{'write_from_package': True}"/>
+                        <field name="picking_ids" widget="many2many_tags" />
+                        <field name="shipping_type" context="{'force_route_vals': True}"/>
+                        <field name="delivery_route_path_id" context="{'force_route_vals': True}"/>
                         <!--field name="urgent" context="{'write_from_package': True}"/-->
                     </group>
                 </group>

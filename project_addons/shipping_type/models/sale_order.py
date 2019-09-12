@@ -16,7 +16,6 @@ class SaleOrder(models.Model):
         res = super().onchange_partner_id()
         self.shipping_type = self.partner_id and self.partner_id.shipping_type or False
         self.delivery_route_path_id = self.partner_id and self.partner_id.delivery_route_path_id or False
-
         return res
 
     def get_new_vals(self):

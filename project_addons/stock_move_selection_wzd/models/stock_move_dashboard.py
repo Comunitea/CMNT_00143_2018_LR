@@ -25,7 +25,7 @@ class StockPickingType(models.Model):
 
     kanban_dashboard_graph = fields.Text(compute='_kanban_dashboard_graph')
     color = fields.Integer("Color Index", default=0)
-    num_error_day = fields.Integer ("Numero días a mostrar con errores", default = 3)
+    num_error_day = fields.Integer ("Dias de error", default = 3, help="Numero de días a mostrar con errores.")
 
     @api.multi
     def get_bar_graph_datas(self):

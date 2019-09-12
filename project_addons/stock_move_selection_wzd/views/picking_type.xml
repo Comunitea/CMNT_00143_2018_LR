@@ -7,16 +7,52 @@
         <field name="type">form</field>
         <field name="arch" type="xml">
             <field name="show_reserved" position="after">
-
                 <field name="num_error_day"/>
-
             </field>
             <field name="warehouse_id" position="after">
                 <field name="sga_integrated"/>
                 <field name="sga_integration_type" attrs="{'invisible': [('sga_integrated','=',False)]}" />
+
             </field>
+
+            <xpath expr="//group[@name='logistics']" position="after">
+                 <div></div>
+                 <group string="Kanban conf.">
+                    <field name="visible_kanban_conf"/></group><group></group>
+                    <group string="Albaranes y Reservas" attrs="{'invisible': [('visible_kanban_conf','=', False)]}">
+                        <field name="visible_count_picking"/>
+                        <field name="visible_count_picking_waiting"/>
+                        <field name="visible_count_picking_ready"/>
+                        <field name="visible_count_picking_late"/>
+                        <field name="visible_count_picking_backorders"/>
+
+                        <field name="visible_count_pick_to_batch"/>
+                        <field name="visible_count_batch_ready"/>
+
+                    </group>
+                    <group string="Movimientos" attrs="{'invisible': [('visible_kanban_conf','=', False)]}">
+                        <field name="visible_bargraph"/>
+                        <field name="visible_ratio"/>
+                        <field name="visible_count_move_ready"/>
+                        <field name="visible_count_move_todo_today"/>
+                        <field name="visible_count_move_waiting"/>
+                        <field name="visible_count_move_done"/>
+                        <field name="visible_count_move_late"/>
+                        <field name="visible_count_move_backorders"/>
+                        <field name="visible_count_move_to_pick"/>
+                        <field name="visible_count_move_unpacked"/>
+                        <field name="visible_last_done_move"/>
+                    </group>
+
+            </xpath>
+
+
+
+
         </field>
     </record>
+
+
     <record id="stock_picking_type_kanban_moves" model="ir.ui.view">
             <field name="name">stock.picking.type.kanban.moves</field>
             <field name="model">stock.picking.type</field>
@@ -24,27 +60,60 @@
                 <kanban class="oe_background_grey o_kanban_dashboard o_emphasize_colors o_account_kanban" create="0">
                     <field name="color"/>
                     <field name="code"/>
+
+                    <field name="last_done_move"/>
+                    <field name="visible_last_done_move"/>
+
                     <field name="count_move_ready"/>
+                    <field name="visible_count_move_ready"/>
+
                     <field name="count_move_draft"/>
+
                     <field name="count_move_waiting"/>
+                    <field name="visible_count_move_waiting"/>
+
                     <field name="count_move_late"/>
+                    <field name="visible_count_move_late"/>
+
                     <field name="count_move_backorders"/>
+                    <field name="visible_count_move_backorders"/>
+
                     <field name="count_move_to_pick"/>
+                    <field name="visible_count_move_to_pick"/>
+
+
+                    <field name="count_pick_to_batch"/>
+                    <field name="visible_count_pick_to_batch"/>
+
+                    <field name="count_batch_ready"/>
+                    <field name="visible_count_batch_ready"/>
 
                     <field name="count_picking_ready"/>
+                    <field name="visible_count_picking_ready"/>
+
+
+                    <field name="count_move_unpacked"/>
+                    <field name="visible_count_move_unpacked"/>
+
+
                     <field name="count_picking_waiting"/>
+                    <field name="visible_count_picking_waiting"/>
+
                     <field name="count_picking_late"/>
+                    <field name="visible_count_picking_late"/>
+
                     <field name="count_picking_backorders"/>
+                    <field name="visible_count_picking_backorders"/>
+
+
+                    <field name="visible_bargraph"/>
+                    <field name="visible_ratio"/>
 
                     <field name="sga_integrated"/>
                     <field name="group_code"/>
-                    <field name="grouped"/>
                     <field name="context_domain"/>
-
                     <field name="shipping_type"/>
-
                     <field name="delivery_route_path_id"/>
-
                     <field name="kanban_dashboard_graph"/>
                     <templates>
                         <t t-name="kanban-box">
@@ -72,54 +141,70 @@
                                         <div class="row">
                                             <div class="col-xs-6 o_kanban_primary_left">
                                                 <div name='sga'>
-                                                    <div class="row col-xs-9" title="Albaranes No SGA: Preparados (Retrasados)">
+                                                    <div class="row col-xs-9"
+                                                         title="Reservas de pedidos: Preparados (Retrasados)"
+                                                         t-if="record.visible_count_picking_ready.raw_value == true">
                                                         <button t-if="record.sga_integrated.raw_value == false"
-                                                                class="btn btn-primary" name="get_action_picking_tree_ready" type="object"
-                                                                >
+                                                                class="btn btn-primary" name="get_action_picking_tree_ready" type="object">
                                                                 <span><t t-esc="record.count_picking_ready.value"/></span>
                                                                 <span t-if="record.count_picking_late.raw_value &gt; 0 and False">(<t t-esc="record.count_picking_late.value"/>)</span>
-
                                                                 <span t-if="record.group_code.raw_value =='incoming'">Recepciones</span>
-                                                                <span t-if="record.group_code.raw_value =='outgoing'">Envíos</span>
+                                                                <span t-if="record.group_code.raw_value =='outgoing'">Reservas de pedidos</span>
                                                                 <span t-if="record.group_code.raw_value =='picking'">Picking</span>
                                                                 <span t-if="record.group_code.raw_value =='internal'">Internos </span>
                                                                 <span t-if="record.group_code.raw_value =='location'">Ubicaciones </span>
                                                                 <span t-if="record.group_code.raw_value =='reposition'">Reposiciones </span>
                                                                 <span t-if="record.group_code.raw_value =='other'">Albaranes </span>
+                                                        </button>
+                                                    </div>
 
+                                                    <div class="row col-xs-9"
+                                                         title="Albaranes: Preparados (Retrasados)"
+                                                         t-if="record.visible_count_batch_ready.raw_value == true">
+                                                        <button t-if="record.sga_integrated.raw_value == false"
+                                                                class="btn btn-primary" name="get_action_batch_picking_tree_ready" type="object">
+                                                                <span><t t-esc="record.count_batch_ready.value"/></span>
+                                                                <!--span t-if="record.count_picking_late.raw_value &gt; 0 and False">(<t t-esc="record.count_picking_late.value"/>)</span-->
+                                                                <span t-if="record.group_code.raw_value =='incoming'">Recepciones</span>
+                                                                <span t-if="record.group_code.raw_value =='outgoing'">Clientes</span>
+                                                                <span t-if="record.group_code.raw_value =='picking'">Picking</span>
+                                                                <span t-if="record.group_code.raw_value =='internal'">Internos </span>
+                                                                <span t-if="record.group_code.raw_value =='location'">Ubicaciones </span>
+                                                                <span t-if="record.group_code.raw_value =='reposition'">Reposiciones </span>
+                                                                <span t-if="record.group_code.raw_value =='other'">Albaranes </span>
                                                         </button>
                                                     </div>
                                                 </div>
-                                                <div name='not_sga'>
+                                                <!--div name='not_sga'>
                                                     <div class="row col-xs-9" title="Albaranes integrados con SGA: Preparados (Retrasados)">
-                                                        <button t-if="record.sga_integrated.raw_value == true and record.count_picking_ready.value" class="btn btn-success" name="get_action_picking_tree_ready" type="object"
-                                                        >
-
+                                                        <button t-if="record.sga_integrated.raw_value == true and record.count_picking_ready.value" class="btn btn-success" name="get_action_picking_tree_ready" type="object">
                                                             <span><t t-esc="record.count_picking_ready.value"/></span>
                                                             <span t-if="record.count_picking_late.raw_value &gt; 0 and False">(<t t-esc="record.count_picking_late.value"/>)</span>
                                                             <span>Para SGA</span>
                                                         </button>
                                                     </div>
-                                                </div>
+
+
+                                                </div-->
+
                                                 <div name="sga_and_not">
-                                                     <div t-if="False" class="row col-xs-9" title="Albaranes pendientes de otros movimientos o sin reserva">
-                                                        <button t-if="record.count_picking_waiting.raw_value" class="btn btn-warning" name="get_action_picking_tree_late" type="object"
-                                                        >
+                                                     <div t-if="record.visible_count_picking_waiting.raw_value == true" class="row col-xs-9" title="Albaranes pendientes de otros movimientos o sin reserva">
+                                                        <button t-if="record.count_picking_waiting.raw_value" class="btn btn-warning" name="get_action_picking_tree_late" type="object">
                                                             <span><t t-esc="record.count_picking_waiting.value"/> En espera</span>
                                                         </button>
-                                                    </div>
-
-                                                    <div class="row col-xs-9" title="Albaranes de retorno">
-                                                        <button t-if="record.count_picking_backorders.raw_value" class="btn btn-info" name="get_action_picking_tree_backorder" type="object"
-                                                        >
+                                                     </div>
+                                                     <div t-if="record.visible_count_picking_backorders.raw_value == true"  class="row col-xs-9" title="Albaranes de retorno">
+                                                        <button t-if="record.count_picking_backorders.raw_value" class="btn btn-info" name="get_action_picking_tree_backorder" type="object">
                                                             <span><t t-esc="record.count_picking_backorders.value"/> Backorder</span>
                                                         </button>
                                                     </div>
                                                 </div>
+
+
                                                 <div name="moves">
-                                                    <div t-if="record.count_move_unpacked.raw_value &gt; 0 and record.group_code.raw_value =='outgoing'" class="row">
-                                                        <div class="col-xs-9 text-info" title="Para empaquetar">
-                                                            <a class="oe_kanban_stock_picking_type_list" name="get_action_move_tree_no_package" type="object">
+                                                    <div t-if="record.visible_count_move_unpacked.raw_value == true" class="row">
+                                                        <div class="col-xs-9 text-primary" title="Para empaquetar">
+                                                            <a name="get_action_move_tree_no_package" type="object">
                                                                 Para empaquetar
                                                             </a>
                                                         </div>
@@ -127,10 +212,9 @@
                                                             <field name="count_move_unpacked"/>
                                                         </div>
                                                     </div>
-                                                    <div t-if="record.count_move_to_pick.raw_value &gt; 0" class="row">
-                                                        <div class="col-xs-9 text-primary" title="Movimientos que no han sido asignados a un albarán">
-                                                            <a name="get_action_move_to_picking_ready" type="object"
-                                                            >
+                                                    <div t-if="record.visible_count_move_to_pick.raw_value == true" class="row">
+                                                        <div class="col-xs-9 text-primary" title="Movimientos que no han sido asignados a un grupo">
+                                                            <a name="get_action_move_to_picking_ready" type="object">
                                                                 Para albaranar
                                                             </a>
                                                         </div>
@@ -139,7 +223,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div t-if="record.count_move_ready.raw_value &gt; 0" class="row">
+                                                    <div t-if="record.visible_count_move_ready.raw_value == true" class="row">
                                                         <div class="col-xs-9 text-primary" title="Movimientos que ya tienen reserva total o parcial y pueden ser procesados">
                                                             <a class="text-primary" name="get_action_move_tree_ready" type="object">
                                                                 Preparados
@@ -150,7 +234,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div t-if="record.count_move_waiting.raw_value &gt; 0" class="row">
+                                                    <div t-if="record.visible_count_move_waiting == true" class="row">
                                                         <div class="col-xs-9 text-warning" title="Movimientos sin stock o pendientes de otro movimiento">
                                                             <a name="get_action_move_tree_waiting" type="object">
                                                                 En espera
@@ -161,7 +245,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div t-if="record.count_move_late.raw_value &gt; 0 and False" class="row">
+                                                    <div t-if="record.visible_count_move_late.raw_value == true" class="row">
                                                         <div class="col-xs-9 text-danger" title="Movimientos retrasados. Fecha programada anterior a hoy">
                                                             <a class="text-danger" name="get_action_move_tree_late" type="object">
                                                                 Retrasados
@@ -172,7 +256,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div t-if="record.count_move_backorders.raw_value &gt; 0" class="row">
+                                                    <div t-if="record.visible_count_move_backorders.raw_value == true" class="row">
                                                         <div class="col-xs-9 text-info" title="Movimientos de retorno">
                                                             <a class="oe_kanban_stock_picking_type_list" name="get_action_move_tree_backorder" type="object">
                                                                 Back Orders
@@ -186,7 +270,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="row col-xs-6 text-center">
+                                            <div t-if="record.visible_ratio.raw_value == true" class="row col-xs-6 text-center">
                                                 <span >
                                                   <a type="object" name="get_stock_move_action_move_type_today" title="Movimientos programados para hoy o realizados hoy">
                                                     <field name="count_move_todo_today"/>
@@ -204,7 +288,7 @@
 
 
 
-                                        <div class="row">
+                                        <div t-if="record.visible_bargraph.raw_value == true" class="row">
                                              <field name="kanban_dashboard_graph" t-att-graph_type="'bar'" widget="dashboard_graph"/>
                                         </div>
                                     </div>
@@ -255,6 +339,8 @@
                 </kanban>
             </field>
    </record>
+
+
      <record id="view_pickingtype_filter" model="ir.ui.view">
         <field name="name">stock.picking.type.filter</field>
         <field name="model">stock.picking.type</field>
@@ -262,7 +348,6 @@
         <field name="arch" type="xml">
 
             <field name="name" position="after">
-
                 <field name="shipping_type" widget="selection" context="{'search1_shipping_type': self}"/>
                 <field name="delivery_route_path_id" widget="selection" context="{'search1_delivery_route_path_id': self}"/>
                 <!--field name="urgent" widget="selection" context="{'search1_urgent': self}"/-->
@@ -271,7 +356,7 @@
                 <field name="group_code"/>
                 <field name="default_location_src_id"/>
                 <field name="default_location_dest_id"/>
-                <field name="group_code"/>
+
 
             </field>
             <xpath expr="//filter[@name='inactive']" position="after">

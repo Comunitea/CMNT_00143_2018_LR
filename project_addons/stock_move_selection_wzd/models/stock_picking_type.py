@@ -11,7 +11,7 @@ from odoo.osv import expression
 from odoo.tools.safe_eval import safe_eval
 from odoo import api, fields, models, _
 from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT, DEFAULT_SERVER_DATE_FORMAT
-from odoo.addons.shipping_type.models.res_partner import SHIPPING_TYPE_SEL, DEFAULT_SHIPPING_TYPE, STRING_SHIPPING_TYPE,HELP_SHIPPING_TYPE
+from odoo.addons.shipping_type.models.info_route_mixin import SHIPPING_TYPE_SEL, DEFAULT_SHIPPING_TYPE, STRING_SHIPPING_TYPE,HELP_SHIPPING_TYPE
 
 
 SEARCH_F = ['urgent', 'delivery_route_path_id', 'shipping_type']
@@ -26,6 +26,7 @@ PICKING_TYPE_GROUP = [('incoming', 'Incoming'),
 
 SGA_STATES = [('NI', 'Sin integracion'),
               ('NE', 'No enviado'),
+              ('PE', 'Para enviar'),
               ('PS', 'Pendiente Sga'),
               ('EE', 'Error en exportacion'),
               ('EI', 'Error en importacion'),
@@ -39,21 +40,61 @@ SGA_INTEGRATION_TYPES = [('sga_ulma', 'SGA ULMA'),
 class PickingType(models.Model):
     _inherit = "stock.picking.type"
 
+    allow_unpacked = fields.Boolean('Movimientos sin paquete', help='En ordenes de carga, si no está marcado genera automaticamente un paquete para el movimiento')
+    allow_unbatched = fields.Boolean('Albaranes sin grupo', help='En ordenes de carga, si no está marcado genera automaticamente un grupo para el albarán')
+
     group_code = fields.Selection(PICKING_TYPE_GROUP, string="Code group")
-
+    visible_kanban_conf = fields.Boolean('Configuración de Kanban', default="1")
     # Statistics for the kanban view for moves
-    last_done_move = fields.Char('Last 10 Done Pickings', compute='_compute_last_done_moves')
 
-    count_move_draft = fields.Integer(compute='_compute_picking_count')
-    count_move_done = fields.Integer(compute='_compute_picking_count')
-    count_move_todo_today = fields.Integer(compute='_compute_picking_count')
-    count_move_ready = fields.Integer(compute='_compute_picking_count')
-    count_move = fields.Integer(compute='_compute_picking_count')
-    count_move_waiting = fields.Integer(compute='_compute_picking_count')
-    count_move_late = fields.Integer(compute='_compute_picking_count')
-    count_move_backorders = fields.Integer(compute='_compute_picking_count')
-    count_move_to_pick = fields.Integer(compute='_compute_picking_count')
-    count_move_unpacked= fields.Integer(compute='_compute_picking_count')
+    count_move_draft = fields.Integer(compute='_compute_picking_count', string="Movs. borrador")
+
+    visible_last_done_move= fields.Boolean('Ultimos movs')
+    last_done_move = fields.Char('Ultimos movs', compute='_compute_last_done_moves')
+
+
+    count_move_done = fields.Integer(compute='_compute_picking_count', string="Movs. realizados")
+    visible_count_move_done = fields.Boolean('Movs. realizados')
+
+    count_move_todo_today = fields.Integer(compute='_compute_picking_count', string="Movs para realizar hoy")
+    visible_count_move_todo_today = fields.Boolean('Movs para realizar hoy')
+
+    count_move_ready = fields.Integer(compute='_compute_picking_count', string="Movs. preparados para validar")
+    visible_count_move_ready = fields.Boolean('Movs. preparados para validar')
+
+    count_move_waiting = fields.Integer(compute='_compute_picking_count', string="Movs. esperando disponibilidad u otra operación")
+    visible_count_move_waiting = fields.Boolean('Movs. esperando disponibilidad u otra operación')
+
+    count_move_late = fields.Integer(compute='_compute_picking_count', string="Movs. retrasados")
+    visible_count_move_late = fields.Boolean('Movs. retrasados')
+
+    count_move_backorders = fields.Integer(compute='_compute_picking_count', string="Movs. de 2º albarán")
+    visible_count_move_backorders = fields.Boolean('Movs. de 2º albarán')
+
+    visible_count_move_to_pick = fields.Boolean('Movs. de reservas sin grupo')
+    count_move_to_pick = fields.Integer(compute='_compute_picking_count', string="Movs. sin grupo")
+
+    visible_count_pick_to_batch = fields.Boolean('Reservas sin carga')
+    count_pick_to_batch = fields.Integer(compute='_compute_picking_count', string="Reservas sin carga")
+
+    visible_count_batch_ready = fields.Boolean('Albaranes/Grupos preparados para enviar/validar')
+    count_batch_ready = fields.Integer(compute='_compute_picking_count', string="Albaranes/Grupos preparados para enviar/validar")
+
+    visible_count_move_unpacked= fields.Boolean('Movs. sin empaquetar')
+    count_move_unpacked = fields.Integer(compute='_compute_picking_count', string="Movs. sin empaquetar")
+
+    visible_bargraph = fields.Boolean('Barras inferiores')
+    visible_ratio = fields.Boolean('Ratio')
+
+    visible_count_picking_waiting = fields.Boolean('Albaranes en espera')
+    visible_count_picking_ready = fields.Boolean('Albaranes preparados')
+    visible_count_picking = fields.Boolean('Albaranes')
+    visible_count_picking_late = fields.Boolean('Albaranes tarde')
+    visible_count_picking_backorders = fields.Boolean('2º albarán')
+
+
+
+    count_move = fields.Integer(compute='_compute_picking_count', string='Movs. totales')
     rate_move_late = fields.Integer(compute='_compute_picking_count', string="Ratio")
     rate_move_backorders = fields.Integer(compute='_compute_picking_count')
     rate_done = fields.Integer(compute='_compute_picking_count', string="Ratio")
@@ -65,6 +106,7 @@ class PickingType(models.Model):
     delivery_route_path_id = fields.Many2one('delivery.route.path', string="Route path", store=False)
     urgent = fields.Selection([('urgent', 'Urgente'), ('no_urgent', 'No uergente')], help='Default urgent for partner orders\nPlus 3.20%', store=False)
     context_domain = fields.Char()
+
 
     def get_sga_integrated(self):
         return self.sga_integrated
@@ -94,9 +136,8 @@ class PickingType(models.Model):
     def _compute_picking_count(self):
         # TDE TODO count picking can be done using previous two
         ### SOBREESCRIBO LA FUNCION COMPLETA PARA AÑADIR EL SGA_STATE
-
         context_domain = self.get_context_domain(date_expected='scheduled_date')
-        move_domains, picking_domains = self.get_moves_domain()
+        move_domains, picking_domains, batch_domains = self.get_moves_domain()
 
         for field in move_domains:
             domain = move_domains[field] + [('picking_type_id', 'in', self.ids)]
@@ -121,12 +162,21 @@ class PickingType(models.Model):
             print('Data {}'.format(data))
             for record in self:
                 record[field] = count.get(record.id, 0)
-
+        for field in batch_domains:
+            data = self.env['stock.batch.picking'].read_group(batch_domains[field] +
+                [('state', 'not in', ('done', 'cancel')), ('picking_type_id', 'in', self.ids)],
+                ['picking_type_id'], ['picking_type_id'])
+            count = {
+                x['picking_type_id'][0]: x['picking_type_id_count']
+                for x in data if x['picking_type_id']
+            }
+            print('Data {}'.format(data))
+            for record in self:
+                record[field] = count.get(record.id, 0)
         for record in self:
 
             record.rate_picking_late = record.count_picking and record.count_picking_late * 100 / record.count_picking or 0
             record.rate_picking_backorders = record.count_picking and record.count_picking_backorders * 100 / record.count_picking or 0
-
             count_move_today = record.count_move_todo_today + record.count_move_done
             record.rate_done = count_move_today and record.count_move_done * 100 / count_move_today or 0
             record.rate_move_late = record.count_move and record.count_move_late * 100 / record.count_move or 0
@@ -135,15 +185,34 @@ class PickingType(models.Model):
 
     def get_type_domain(self, type=''):
         return []
-        if type=='moves':
-        ## domain para movimientos de salida listos
-            type_domain = [
-                '|', ('picking_type_id.group_code', '!=', 'outgoing'),
-                '&', '&', ('picking_type_id.group_code', '=', 'outgoing'), ('state', 'in', ('partially_available', 'assigned')), ('result_package_id', '!=', False)]
-        else:
-            type_domain=[]
 
-        return type_domain
+    def get_ready_state(self):
+        ready_domain = {}
+
+        #internal moves
+        int_dom = [('picking_type_id.code', '=', 'internal'),
+                   ('state', 'in', ('partially_available', 'assigned'))]
+        #recepciones
+        in_dom = [('picking_type_id.code', '=', 'incoming'),
+                  ('state', 'in', ('partially_available', 'assigned'))]
+        #salidas
+        out_dom = [('picking_type_id.code', '=', 'outgoing'),
+                   ('result_package_id', '!=', False)]
+
+        ready_domain['move'] = expression.OR([int_dom, in_dom, out_dom])
+
+        int_dom = [('picking_type_id.code', '=', 'internal'), ('state', '=', 'assigned')]
+        # recepciones
+        in_dom = [('picking_type_id.code', '=', 'incoming'), ('state', '=', 'assigned')]
+        # salidas
+        out_dom = [('picking_type_id.code', '=', 'outgoing'),
+                   ('batch_picking_id', '!=', False), ('state', '=', 'assigned')]
+
+        ready_domain['pick'] = expression.OR([int_dom, in_dom, out_dom])
+        ready_domain['batch'] = [('state', '=', 'assigned')]
+
+        print ("Ready domain {}".format(ready_domain))
+        return ready_domain
 
     def get_moves_domain(self):
         c_dom = self.get_type_domain('moves')
@@ -155,49 +224,59 @@ class PickingType(models.Model):
         tomorrow = (datetime.now() + timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT)
         yesterday = (datetime.now() - timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT)
 
+        draft = [('state', '=', 'draft')]
+        done = [('state', '=', 'done')]
         today_filter = [('date_expected', '<', tomorrow), ('date_expected', '>', today)]
         hide_state = [('state', 'not in', ('draft', 'done', 'cancel'))]
         to_do_state = [('state', 'in', ('partially_available', 'assigned', 'waiting', 'confirmed'))]
+
         waiting_state = [('state', 'in', ('waiting','partially_available', 'confirmed'))]
         no_stock_state = [('state', 'in', ('partially_available', 'confirmed'))]
-        ready_state = [('state', 'in', ('partially_available', 'assigned')), ('sga_state', 'in', ('NI', 'NE'))]
-        with_pick = [('picking_id', '!=', False)]
-        without_pick = [('picking_id', '=', False)]
+        ready_state = self.get_ready_state()
+
+        with_pick = [('batch_picking_id', '!=', False)]
+        without_pick = [('batch_picking_id', '=', False)]
+
+        with_batch = [('batch_delivery_id', '!=', False)]
+        without_batch = [('batch_delivery_id', '=', False)]
+
+        with_result_package = [('result_package_id', '!=',False )]
+        without_result_package = [('result_package_id', '=', False)]
         before_tomorrow = [('date_expected', '<', tomorrow)]
         late = [('date_expected', '<', yesterday)]
         move_domains = {
             'count_move_todo_today': context_domain + to_do_state + before_tomorrow,
-            'count_move_done': context_domain + [('state', '=', 'done'), ('date', '>', yesterday)],
-            'count_move_draft': context_domain + [('state', '=', 'draft')],
+            'count_move_done': context_domain + done + [('date', '>', yesterday)],
+            'count_move_draft': context_domain + draft,
             'count_move_waiting': context_domain + waiting_state,
-            'count_move_unpacked': context_domain + ready_state + without_pick + [('picking_type_id.group_code', '=', 'outgoing'), ('result_package_id', '=', False)],
-            'count_move_ready': context_domain + ready_state + with_pick + before_tomorrow,
+            'count_move_unpacked': context_domain + [('result_package_id', '=', False), ('state', 'in', ('partially_available', 'assigned'))],
+            'count_move_ready': context_domain + ready_state['move'] + with_pick,
             'count_move': context_domain + to_do_state,
-            'count_move_to_pick': context_domain + ready_state + without_pick + before_tomorrow,
+            'count_move_to_pick': context_domain + ready_state['move'] + without_pick + before_tomorrow,
             'count_move_late': context_domain + to_do_state + late,
             'count_move_backorders': context_domain + to_do_state + [('origin_returned_move_id', '!=', False)],
         }
-
         context_domain = self.get_context_domain('scheduled_date')
-
         picking_domains = {
-            'count_picking_draft': context_domain + [('state', '=', 'draft')],
+            'count_picking_draft': context_domain + draft,
             'count_picking_waiting': context_domain + [('state', 'in', ('confirmed', 'waiting'))],
-            'count_picking_ready': context_domain + ready_state,
+            'count_picking_ready': context_domain + ready_state['pick'],
             'count_picking': context_domain + to_do_state,
             'count_picking_late': context_domain +
                 [('scheduled_date', '<', datetime.now().strftime(DEFAULT_SERVER_DATETIME_FORMAT))] +
                 to_do_state,
             'count_picking_backorders': context_domain + [('backorder_id', '!=', False)] + to_do_state,
+            'count_pick_to_batch': context_domain + ready_state['pick'] + without_pick
         }
-
+        batch_domains = {
+            'count_batch_ready': context_domain + ready_state['batch'],
+        }
         print ('{}\n{}'.format(move_domains, picking_domains))
-        return move_domains, picking_domains
+        return move_domains, picking_domains, batch_domains
 
     @api.model
     def search(self, args, offset=0, limit=None, order=None, count=False):
         """Include commercial name in direct name search."""
-
         args = expression.normalize_domain(args)
 
         for token in args:
@@ -297,8 +376,8 @@ class PickingType(models.Model):
     def _compute_last_done_moves(self):
         # TDE TODO: true multi
         tristates = []
-        for move in self.env['stock.move'].search([('picking_type_id', '=', self.id), ('state', '=', 'done')], order='date_done desc', limit=20):
-            if move.date_done > move.date:
+        for move in self.env['stock.move'].search([('picking_type_id', '=', self.id), ('state', '=', 'done')], order='date desc', limit=20):
+            if move.date > move.date_expected:
                 tristates.insert(0, {'tooltip': move.name or '' + ": " + _('Late'), 'value': -1})
             else:
                 tristates.insert(0, {'tooltip': move.name or '' + ": " + _('OK'), 'value': 1})
@@ -311,20 +390,16 @@ class PickingType(models.Model):
 
         if self.group_code == 'picking':
             context.update({
-                'search_default_by_shipping_id': True,
+                'search_default_by_partner_id': True,
             })
 
         elif self.group_code == 'outgoing':
             context.update({
-
-                'search_default_by_shipping_id': True,
-                #'search_default_by_shipping_type': True,
-                #'search_default_by_delivery_route_path_id': True,
-                #'search_default_by_carrier_id': True,
+                'search_default_by_shipping_partner_id': True,
             })
         elif self.group_code == 'incoming':
             context.update({
-                'search_default_by_shipping_id': True,
+                'search_default_by_partner_id': True,
             })
         elif self.group_code == 'location':
             context.update({
@@ -364,7 +439,7 @@ class PickingType(models.Model):
 
 
     def get_action_move_tree_late(self):
-        move_domains, picking_domains = self.get_moves_domain()
+        move_domains, picking_domains, batch_domains = self.get_moves_domain()
         domain = move_domains['count_move_late']
         context = {
                    'search_default_picking_type_id': self.id,
@@ -372,14 +447,14 @@ class PickingType(models.Model):
         return self.return_action_show_moves(domain, context)
 
     def get_action_move_tree_backorder(self):
-        move_domains, picking_domains = self.get_moves_domain()
+        move_domains, picking_domains, batch_domains = self.get_moves_domain()
         domain = move_domains['count_move_backorders']
         context = {
                    'search_default_picking_type_id': self.id,}
         return self.return_action_show_moves(domain, context)
 
     def get_action_move_to_picking_ready(self):
-        move_domains, picking_domains = self.get_moves_domain()
+        move_domains, picking_domains, batch_domains = self.get_moves_domain()
         domain = move_domains['count_move_to_pick']
         context = {
                    'search_default_picking_type_id': self.id}
@@ -387,7 +462,7 @@ class PickingType(models.Model):
 
     def get_action_move_to_sga_ready(self):
 
-        move_domains, picking_domains = self.get_moves_domain()
+        move_domains, picking_domains, batch_domains = self.get_moves_domain()
         domain = move_domains['count_move_ready']
         context = {
                    'search_default_picking_type_id': self.id}
@@ -395,7 +470,7 @@ class PickingType(models.Model):
 
 
     def get_action_move_tree_waiting(self):
-        move_domains, picking_domains = self.get_moves_domain()
+        move_domains, picking_domains, batch_domains = self.get_moves_domain()
         domain = move_domains['count_move_waiting']
         context = {
             'search_default_picking_type_id': self.id}
@@ -404,7 +479,7 @@ class PickingType(models.Model):
 
     def get_action_move_tree_ready(self):
 
-        move_domains, picking_domains = self.get_moves_domain()
+        move_domains, picking_domains, batch_domains = self.get_moves_domain()
         domain = move_domains['count_move_ready']
         context = {
             'search_default_picking_type_id': self.id,}
@@ -412,7 +487,7 @@ class PickingType(models.Model):
         return self.return_action_show_moves(domain, context)
 
     def get_action_move_tree_all_done(self):
-        move_domains, picking_domains = self.get_moves_domain()
+        move_domains, picking_domains, batch_domains = self.get_moves_domain()
         context = {
             'search_default_picking_type_id': self.id,
             'search_default_done': 1}
@@ -420,7 +495,7 @@ class PickingType(models.Model):
         return self.return_action_show_moves(move_domains, context)
 
     def get_action_move_tree_all_not_done(self):
-        move_domains, picking_domains = self.get_moves_domain()
+        move_domains, picking_domains, batch_domains = self.get_moves_domain()
         context = {
             'search_default_picking_type_id': self.id,
             'search_default_not_done': 1}
@@ -428,7 +503,7 @@ class PickingType(models.Model):
         return self.return_action_show_moves(move_domains, context)
 
     def get_action_picking_tree_ready(self):
-        move_domains, picking_domains = self.get_moves_domain()
+        move_domains, picking_domains, batch_domains = self.get_moves_domain()
         action = self.env.ref('stock.action_picking_tree_ready').read()[0]
         action['domain'] = self.get_context_domain('scheduled_date')
         if self.sga_integrated:
@@ -441,8 +516,17 @@ class PickingType(models.Model):
             action['display_name'] = self.display_name
         return action
 
+    def get_action_batch_picking_tree_ready(self):
+
+        move_domains, picking_domains, batch_domains = self.get_moves_domain()
+        action = self.env.ref('stock_batch_picking.action_stock_batch_picking_tree').read()[0]
+        action['domain'] = batch_domains['count_batch_ready'] + [('picking_type_id', '=', self.id)]
+        if self:
+            action['display_name'] = self.display_name
+        return action
+
     def get_stock_move_action_move_type_today(self):
-        move_domains, picking_domains = self.get_moves_domain()
+        move_domains, picking_domains, batch_domains = self.get_moves_domain()
         domain = move_domains['count_move_todo_today']
         context = {
             'search_default_picking_type_id': self.id,
@@ -466,7 +550,7 @@ class PickingType(models.Model):
         return self.return_action_show_moves(domain, context)
 
     def get_action_move_tree_no_package(self):
-        move_domains, picking_domains = self.get_moves_domain()
+        move_domains, picking_domains, batch_domains = self.get_moves_domain()
         domain = move_domains['count_move_unpacked']
         context = {
             'search_default_picking_type_id': self.id,

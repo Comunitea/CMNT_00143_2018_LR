@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+     <record id="view_move_form_shipping_typr" model="ir.ui.view">
+        <field name="name">stock.move.shipping.type</field>
+        <field name="inherit_id" ref="stock.view_move_form"/>
+        <field name="model">stock.move</field>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='origin_grp']" position="after" >
+                    <group string="Logística envíos" name = "logistics">
+                        <field name="campaign_id"/>
+                        <field name="shipping_type"/>
+                        <field name="delivery_route_path_id"/>
+                        <field name="carrier_id"/>
+                        <!--field name="urgent" invisible="1"/-->
+                    </group>
+            </xpath>
+        </field>
+    </record>
+     <record id="view_move_line_form_shipping_typr" model="ir.ui.view">
+        <field name="name">stock.move.line.type.shipping.type</field>
+        <field name="inherit_id" ref="stock.view_move_line_form"/>
+        <field name="model">stock.move.line</field>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='picking_id']" position="attributes">
+                <attribute name="invisible">0</attribute>
+            </xpath>
+            <xpath expr="//field[@name='date']/../.." position="after" >
+                <group>
+                    <group string="Logística envíos" name = "logistics">
+                        <field name="campaign_id"/>
+                        <field name="shipping_type"/>
+                        <field name="delivery_route_path_id"/>
+                        <field name="carrier_id"/>
+                         <!--field name="urgent" invisible="1"/-->
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_move_line_tree_shipping_type" model="ir.ui.view">
+        <field name="name">view.move.line.shipping_type</field>
+        <field name="model">stock.move.line</field>
+        <field name="inherit_id" ref="stock.view_move_line_tree"/>
+        <field name="arch" type="xml">
+            <field name="reference" position="after">
+                <field name="picking_id"/>
+                <field name="campaign_id"/>
+                 <field name="info_route_str" />
+                <field name="package_id"/>
+                <field name="result_package_id"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_move_shipping_type" model="ir.ui.view">
+        <field name="name">view.move.shipping_type</field>
+        <field name="model">stock.move</field>
+        <field name="inherit_id" ref="stock.view_move_tree"/>
+        <field name="arch" type="xml">
+            <field name="reference" position="after">
+                <field name="campaign_id"/>
+                 <field name="shipping_type" />
+                 <field name="delivery_route_path_id"/>
+                 <!--field name="urgent" invisible="1"/-->
+            </field>
+        </field>
+    </record>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</odoo>

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+    <record model="ir.ui.view" id="delivery_plate_form">
+        <field name="name">delivery.plate.form</field>
+        <field name="model">delivery.plate</field>
+        <field name="arch" type="xml">
+            <form string="Plate">
+                <sheet>
+                    <div class="oe_title" name="title">
+                        <label for="name" string="Name" class="oe_edit_only"/>
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <!--group>
+                        <group>
+                            <field name="default_route_id" create="0" edit="0"/>
+                        </group>
+                        <group>
+                            <field name="default_driver_id" create="0" edit="0"/>
+
+                        </group>
+                    </group-->
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_delivery_plate_view" model="ir.actions.act_window">
+        <field name="name">Delivery plate</field>
+        <field name="res_model">delivery.plate</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_delivery_plate" name="Delivery plates" parent="delivery.menu_delivery"
+              action="shipping_type.action_delivery_plate_view"
+              groups="stock.group_tracking_lot"/>
+
+
+    <record model="ir.ui.view" id="delivery_route_path_form">
+        <field name="name">delivery.route.path.form</field>
+        <field name="model">delivery.route.path</field>
+        <field name="arch" type="xml">
+            <form string="Route">
+                <sheet>
+                    <div class="oe_title" name="title">
+                        <label for="name" string="Name" class="oe_edit_only"/>
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <field name="description"/>
+                    </group>
+                    <!--group>
+                        <group>
+                            <field name="description"/>
+                        </group>
+                        <group>
+                            <field name="day_ids"/>
+                            <field name="plate_ids"/>
+                        </group>
+                    </group-->
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="delivery_route_path_search">
+        <field name="name">delivery.route.path.search</field>
+        <field name="model">delivery.route.path</field>
+        <field name="arch" type="xml">
+                <search string="Delivery Route">
+                    <field name="name" string="Route" />
+                    <field name="description" string="escription" />
+                </search>
+            </field>
+    </record>
+
+    <record model="ir.ui.view" id="delivery_route_path_tree">
+        <field name="name">delivery.route.path.tree</field>
+        <field name="model">delivery.route.path</field>
+        <field name="arch" type="xml">
+            <tree string="Route">
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_delivery_route_path_view" model="ir.actions.act_window">
+        <field name="name">Delivery Routes</field>
+        <field name="res_model">delivery.route.path</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree', 'view_id': ref('shipping_type.delivery_route_path_tree')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('shipping_type.delivery_route_path_form')})]"/>
+        <field name="search_view_id" ref="shipping_type.delivery_route_path_search"/>
+    </record>
+
+    <menuitem id="menu_delivery_route_path" name="Delivery Routes" parent="delivery.menu_delivery" action="shipping_type.action_delivery_route_path_view"  groups="stock.group_tracking_lot"/>
+</odoo>

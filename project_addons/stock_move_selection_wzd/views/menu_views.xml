@@ -25,7 +25,7 @@
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
             <field name="view_mode">kanban</field>
-            <field name="view_id" ref="stock_picking_type_kanban_moves"/>
+            <field name="view_id" ref="stock_move_selection_wzd.stock_picking_type_kanban_moves"/>
     </record>
     <menuitem
         action="stock_move_kanban_view"
@@ -234,6 +234,10 @@
         <field name="state">code</field>
         <field name="code">records.move_de_sel_assign_picking()</field>
     </record>
-
-
+    <delete id="stock.stock_picking_type_menu" model="ir.ui.menu"/>
+    <!--menuitem
+            action="stock_picking_type_action"
+            id="stock_picking_type_menu"
+            parent="menu_stock_root" sequence="0"
+            name="Dashboard"/-->
 </odoo>

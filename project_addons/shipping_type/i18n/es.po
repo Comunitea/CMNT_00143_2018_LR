@@ -72,7 +72,7 @@ msgstr "Campo urgente por defecto para ventas\n"
 "Más 3.20%"
 
 #. module: shipping_type
-#: model:ir.model.fields,field_description:shipping_type.field_stock_quant_package_dest_partner_id
+#: model:ir.model.fields,field_description:shipping_type.field_stock_quant_package_partner_shipping_id
 msgid "Dest Partner"
 msgstr "Cliente final"
 

@@ -4,13 +4,8 @@
 
 from odoo import models, fields, api, _
 
-
-
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
     def get_new_vals(self):
-
         return super().get_new_vals()
-        vals.update(sga_integrated= self.shipping_type.get_sga_integrated())
-        return vals

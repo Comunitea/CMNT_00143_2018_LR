@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="stock_batch_picking_search" model="ir.ui.view">
+        <field name="name">batch.picking.search</field>
+        <field name="model">stock.batch.picking</field>
+        <field name="inherit_id" ref="stock_batch_picking.stock_batch_picking_search"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//filter[@name='picker_id']" position="after">
+                <filter name="group_code"  context="{'group_by':'group_code'}"/>
+                <filter name="picking_type_id" context="{'group_by':'picking_type_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -7,42 +7,41 @@ from odoo.exceptions import ValidationError
 
 
 from .stock_picking_type import PICKING_TYPE_GROUP
-
 from .stock_picking_type import SGA_STATES
-
-
 
 class StockPicking(models.Model):
     _inherit = 'stock.picking'
 
     sga_integrated = fields.Boolean('Sga', help='Marcar si tiene un tipo de integración con el sga')
     sga_state = fields.Selection(SGA_STATES, default='NI', string="SGA Estado")
-    state = fields.Selection(selection_add=[('packaging', 'Empaquetado')])
+    #state = fields.Selection(selection_add=[('packaging', 'Empaquetado')])
 
 
-    @api.depends('move_type', 'move_lines.state', 'move_lines.picking_id', 'move_line_ids.result_package_id')
-    @api.one
-    def _compute_state(self):
-
-        super()._compute_state()
-        for pick in self.filtered (lambda x: x.picking_type_id.group_code == 'outgoing' and x.state == 'assigned'):
-            if pick.move_line_ids.filtered(lambda x: x.result_package_id == False):
-                pick.state = 'packaging'
 
 
-    @api.multi
-    def action_done(self):
-        ctx = self._context.copy()
-        ctx.update(write_from_picking=True)
-        for pick in self:
-            if pick.state == 'packaging':
-                raise ValidationError ('No puedes validar el albarán {} porque está en empaquetado'.format(pick.name))
-        return super(StockPicking, self.with_context(ctx)).action_done()
+    def create_second_pick(self, second_moves=[]):
+        """ Copy of create backorder
+        """
+        second_pick = self.env['stock.picking']
+        if second_moves:
+            second_pick = self.copy({
+                    'name': '/',
+                    'move_lines': [],
+                    'move_line_ids': [],
+                    'second_id': self.id
+                })
+            self.message_post(
+                _('The backorder <a href=# data-oe-model=stock.picking data-oe-id=%d>%s</a> has been created.') % (
+                    second_pick.id, second_pick.name))
+            second_moves.write({'picking_id': second_pick.id})
+            second_moves.mapped('move_line_ids').write({'picking_id': second_pick.id})
+            second_pick.action_assign()
+        return second_pick
 
     @api.model
     def create(self, vals):
-        if len(vals) == 1 and vals.get('name', False):
 
+        if len(vals) == 1 and vals.get('name', False):
             domain = [('name', '=', vals.get('name', False))]
             picking_type_id = self.env['stock.picking.type'].search(domain)
             if not picking_type_id:

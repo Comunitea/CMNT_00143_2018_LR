@@ -1,90 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-     <record id="stock_picking_type_shipping_typr" model="ir.ui.view">
-        <field name="name">stock.picking.type.shipping.type</field>
-        <field name="inherit_id" ref="stock.view_picking_type_form"/>
-        <field name="model">stock.picking.type</field>
-        <field name="arch" type="xml">
-            <xpath expr="//group/field[@name='default_location_src_id']/../.." position="after" >
-                <group>
-
-                    <group string="Logística albaranes" name = "logistics">
-                        <field name="bool_campaign_id"/>
-                        <field name="bool_shipping_type"/>
-                        <field name="bool_delivery_route_path_id"/>
-                        <field name="bool_carrier_id"/>
-                    </group>
-                </group>
-            </xpath>
-        </field>
-    </record>
-     <record id="view_move_form_shipping_typr" model="ir.ui.view">
-        <field name="name">stock.move.shipping.type</field>
-        <field name="inherit_id" ref="stock.view_move_form"/>
-        <field name="model">stock.move</field>
-        <field name="arch" type="xml">
-            <xpath expr="//group[@name='origin_grp']" position="after" >
-                    <group string="Logística envíos" name = "logistics">
-                        <field name="campaign_id"/>
-                        <field name="shipping_type"/>
-                        <field name="delivery_route_path_id"/>
-                        <field name="carrier_id"/>
-                        <!--field name="urgent" invisible="1"/-->
-                    </group>
-            </xpath>
-        </field>
-    </record>
-     <record id="view_move_line_form_shipping_typr" model="ir.ui.view">
-        <field name="name">stock.move.line.type.shipping.type</field>
-        <field name="inherit_id" ref="stock.view_move_line_form"/>
-        <field name="model">stock.move.line</field>
-        <field name="arch" type="xml">
-            <xpath expr="//field[@name='picking_id']" position="attributes">
-                <attribute name="invisible">0</attribute>
-            </xpath>
-            <xpath expr="//field[@name='date']/../.." position="after" >
-                <group>
-                    <group string="Logística envíos" name = "logistics">
-                        <field name="campaign_id"/>
-                        <field name="shipping_type"/>
-                        <field name="delivery_route_path_id"/>
-                        <field name="carrier_id"/>
-                         <!--field name="urgent" invisible="1"/-->
-                    </group>
-                </group>
-            </xpath>
-        </field>
-    </record>
-
-    <record id="view_move_line_tree_shipping_type" model="ir.ui.view">
-        <field name="name">view.move.line.shipping_type</field>
-        <field name="model">stock.move.line</field>
-        <field name="inherit_id" ref="stock.view_move_line_tree"/>
-        <field name="arch" type="xml">
-            <field name="reference" position="after">
-                <field name="picking_id"/>
-                <field name="campaign_id"/>
-                 <field name="info_route_str" />
-                <field name="package_id"/>
-                <field name="result_package_id"/>
-            </field>
-        </field>
-    </record>
-
-    <record id="view_move_shipping_type" model="ir.ui.view">
-        <field name="name">view.move.shipping_type</field>
-        <field name="model">stock.move</field>
-        <field name="inherit_id" ref="stock.view_move_tree"/>
-        <field name="arch" type="xml">
-            <field name="reference" position="after">
-                <field name="campaign_id"/>
-                 <field name="shipping_type" />
-                 <field name="delivery_route_path_id"/>
-                 <!--field name="urgent" invisible="1"/-->
-            </field>
-        </field>
-    </record>
-   <record id="view_picking_shipping_type" model="ir.ui.view">
+     <!--record id="view_picking_shipping_type" model="ir.ui.view">
         <field name="name">stock.picking.shipping.type</field>
         <field name="model">stock.picking</field>
         <field name="inherit_id" ref="stock.view_picking_form"/>
@@ -92,73 +8,21 @@
             <xpath expr="//group/field[@name='picking_type_id']" position="after">
                 <field name="shipping_type"/>
                 <field name="delivery_route_path_id"/>
-                 <!--field name="urgent" invisible="1"/-->
             </xpath>
         </field>
-    </record>
-
-    <record model="ir.ui.view" id="stock_batch_picking_shipping_type">
-        <field name="name">stock.batch.picking.shipping_type.form</field>
-        <field name="model">stock.batch.picking</field>
-        <field name="inherit_id" ref="stock_batch_picking.stock_batch_picking_form"/>
+    </record-->
+     <record id="stock_picking_type_shipping_typr" model="ir.ui.view">
+        <field name="name">stock.picking.type.shipping.type</field>
+        <field name="inherit_id" ref="stock.view_picking_type_form"/>
+        <field name="model">stock.picking.type</field>
         <field name="arch" type="xml">
-
-            <xpath expr="//notebook" position="before">
-
+            <xpath expr="//group/field[@name='default_location_src_id']/../.." position="after" >
                 <group>
-                    <group>
+                    <group string="Logística albaranes" name = "logistics">
 
-                        <field name="shipping_type"/>
-                        <field name="delivery_route_path_id"/>
-
-                    </group>
-                    <group>
-                       <field name="carrier_id"/>
-                        <!--field name="urgent" invisible="1"/-->
                     </group>
                 </group>
-
-
-            </xpath>
-
-        </field>
-    </record>
-    <record id="stock_batch_picking_search" model="ir.ui.view">
-        <field name="name">batch.picking.search</field>
-        <field name="model">stock.batch.picking</field>
-        <field name="inherit_id" ref="stock_batch_picking.stock_batch_picking_search"/>
-
-        <field name="arch" type="xml">
-            <field name="name" position="after">
-                <field name="shipping_type"/>
-                <field name="delivery_route_path_id"/>
-                <field name="carrier_id"/>
-                 <!--field name="urgent" invisible="1"/-->
-
-            </field>
-
-            <xpath expr="//filter[@name='picker_id']" position="after">
-                <filter name="shipping_type" context="{'group_by':'shipping_type'}"/>
-                <filter name="delivery_route_path_id" context="{'group_by':'delivery_route_path_id'}"/>
-                <filter name="carrier_id" context="{'group_by':'carrier_id'}"/>
-                <filter name="group_code"  context="{'group_by':'group_code'}"/>
-                <filter name="picking_type_id" context="{'group_by':'picking_type_id'}"/>
             </xpath>
         </field>
     </record>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 </odoo>

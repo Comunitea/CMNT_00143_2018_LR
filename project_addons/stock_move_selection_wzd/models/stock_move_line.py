@@ -11,7 +11,19 @@ class StockMoveLine(models.Model):
 
     sga_integrated = fields.Boolean('Sga', help='Marcar si tiene un tipo de integración con el sga')
     sga_state = fields.Selection(SGA_STATES, default='NI', string="SGA Estado")
+    batch_picking_id = fields.Many2one(related='picking_id.batch_picking_id')
+    batch_delivery_id = fields.Many2one(related='move_id.batch_delivery_id')
 
     @api.multi
     def write(self, vals):
         return super().write(vals)
+
+    @api.multi
+    def unpack(self):
+        for move in self:
+            if move.state != 'done':
+                move.write({'result_package_id': False})
+            elif move.package_id and move.state in ('assigned', 'partially_available') and move.product_qty != 0:
+                move.package_id.mapped('quant_ids').write({'package_id': False})
+                move.write({'package_id': False})
+        return True

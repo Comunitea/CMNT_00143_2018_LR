@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- stock.batch.picking form view -->
+    <record model="ir.ui.view" id="stock_batch_delivery_form">
+        <field name="name">stock.batch.delivery.form</field>
+        <field name="model">stock.batch.delivery</field>
+        <field name="arch" type="xml">
+            <form string="Batch delivery">
+                <header>
+                    <!--button name="action_assign" class="oe_highlight" string="Reserve All"
+                            states="draft" type="object"/-->
+                    <button name="action_transfer" states="draft" string="Validate" type="object"/>
+                    <button name="action_transfer" states="assigned" string="Validate" class="oe_highlight" type="object"/>
+                    <button name="action_cancel" states="draft,assigned" confirm="All pickings will be cancelled, Are you sure?" string="Cancel" type="object"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirm"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_stock_batch_picking"
+                                class="oe_stat_button"
+                                icon="fa-truck"
+                                type="object">
+                                <field name="count_picking_ids" widget="statinfo" string="Albaranes"/>
+                        </button>
+                        <button name="action_view_stock_package"
+                                class="oe_stat_button"
+                                icon="fa-dropbox"
+                                type="object">
+                                <field name="count_package_ids" widget="statinfo" string="Paquetes"/>
+                        </button>
+                        <button name="action_view_stock_move"
+                                class="oe_stat_button"
+                                icon="fa-list"
+                                string="Líneas"
+                                type="object">
+                                <field name="count_move_lines" widget="statinfo" string="Líneas"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <div class="oe_edit_only">
+                            <label for="name" string="Delivery Name"/>
+                        </div>
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <field name="partner_ids" widget="many2many_tags" />
+                        <field name="picker_id"/>
+                        <field name="date_expected"/>
+                        <field name="date_done"/>
+                    </group>
+                    <group string="Delivery info">
+                        <field name="shipping_type"/>
+                        <field name="delivery_route_path_id"/>
+                        <field name="carrier_id"/>
+                        <field name="plate_id"/>
+                        <field name="driver_id"/>
+                    </group>
+                    <notebook colspan="4">
+                        <page string='Notes'>
+                            <field name='notes' colspan='4' nolabel='1'/>
+                            <group>
+                                <field name="package_ids" widget="many2many_tags" readonly="1"/>
+                                <field name="picking_ids" widget="many2many_tags" />
+                                <field name="move_lines" widget="many2many_tags" />
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- stock.batch.picking tree view -->
+    <record model="ir.ui.view" id="stock_batch_delivery_tree">
+        <field name="name">stock.batch.delivery.tree</field>
+        <field name="model">stock.batch.delivery</field>
+        <field name="arch" type="xml">
+            <tree string="Batch Picking">
+                <field name="name"/>
+                <field name="date_expected"/>
+                <field name="info_route_str"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.actions.server" id="action_stock_batch_delivery_assign_all">
+        <field name="name">Reserve All</field>
+        <field name="model_id" ref="stock_move_selection_wzd.model_stock_batch_delivery"/>
+        <field name="binding_model_id" ref="stock_move_selection_wzd.model_stock_batch_delivery"/>
+        <field name="state">code</field>
+        <field name="code">
+            batches = records.action_assign()
+        </field>
+    </record>
+
+    <!-- stock.batch.picking search view -->
+    <record id="stock_batch_delivery_search" model="ir.ui.view">
+        <field name="name">batch.delivery.search</field>
+        <field name="model">stock.batch.delivery</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="picker_id"/>
+                <field name="state"/>
+                <field name="date_expected"/>
+                <field name="shipping_type"/>
+                <field name="delivery_route_path_id"/>
+                <field name="carrier_id"/>
+
+                <group expand="0" string="Group By...">
+                    <filter name="picker_id" string="Picker" context="{'group_by':'picker_id'}"/>
+                    <filter name="state" string="State" context="{'group_by':'state'}"/>
+                    <filter name="date_expected" string="Order Date" context="{'group_by':'date'}"/>
+                    <filter name="shippint_type" string="Shipping type" context="{'group_by':'shipping_type'}"/>
+                </group>
+                <filter name="no_picker_id" string="Unassigned" domain="[('picker_id','=', False)]"/>
+                <filter name="no_route" string="Sin ruta" domain="[('delivery_route_path_id','=', False)]"/>
+                <filter name="no_carrier" string="Sin transportista" domain="[('carrier_id','=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_stock_batch_delivery_tree"
+            model="ir.actions.act_window">
+        <field name="name">Batch Delivery</field>
+        <field name="res_model">stock.batch.delivery</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem
+        id="stock_move_selection_wzd.stock_move_selection_wzd"
+        parent="stock.menu_stock_root"
+        sequence="0" name="Monitor de carga"/>
+    <menuitem action='action_stock_batch_delivery_tree'
+              parent='stock_move_selection_wzd.stock_move_selection_wzd'
+              id='menu_action_stock_batch_delivery'
+              sequence='0'/>
+
+</odoo>

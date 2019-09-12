@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- stock.batch.picking form view -->
+    <record model="ir.ui.view" id="stock_move_selection_wzd_form">
+        <field name="name">stock.move.selection.wzr.form</field>
+        <field name="model">stock.batch.picking</field>
+        <field name="inherit_id" ref="stock_batch_picking.stock_batch_picking_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_cancel']" position="after">
+                <button name="batch_printing" string="Print" type="object" class="oe_highlight"/>
+            </xpath>
+            <xpath expr="//field[@name='picker_id']" position="after">
+                    <field name="picking_type_id"/>
+            </xpath>
+             <field name="picking_ids" position="attributes">
+                <attribute name="domain">[
+                    ('state', '=', 'assigned'),
+                    ('batch_picking_id','=', False),
+                    ('picking_type_id', '=', picking_type_id)
+                    ]
+                </attribute>
+            </field>
+
+            <xpath expr="//button[@name='action_view_stock_picking']" position="before">
+
+                    <button name="action_see_packages" string="Packages"
+                            type="object" class="oe_stat_button" icon="fa-cubes"/>
+
+            </xpath>
+
+        </field>
+    </record>
+    <record id="stock_batch_picking_tree" model="ir.ui.view">
+        <field name="name">batch.picking.tree</field>
+        <field name="model">stock.batch.picking</field>
+        <field name="inherit_id" ref="stock_batch_picking.stock_batch_picking_tree"/>
+
+        <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field name="partner_id"/>
+                <field name="picking_ids" widget="many2many_tags"/>
+            </field>
+        </field>
+    </record>
+    <record id="stock_batch_picking_search" model="ir.ui.view">
+        <field name="name">batch.picking.search</field>
+        <field name="model">stock.batch.picking</field>
+        <field name="inherit_id" ref="stock_batch_picking.stock_batch_picking_search"/>
+
+        <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field name="picking_type_id"/>
+            </field>
+
+            <xpath expr="//filter[@name='picker_id']" position="after">
+                <filter name="picking_type_id" string="Picking type" context="{'group_by':'picking_type_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
+
+
+

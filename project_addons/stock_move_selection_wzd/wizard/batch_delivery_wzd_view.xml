@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_create_batch_delivery" model="ir.ui.view">
+        <field name="name">batch_delivery_wzd_form</field>
+        <field name="model">stock.batch.delivery.wzd</field>
+        <field name="arch" type="xml">
+            <form string="Asistente: Orden de carga.">
+                <separator string="Orden"/>
+                <label string="Asistente para envíos."/>
+                <br/>
+                <group>
+                    <field name="state"/>
+                    <field name="batch_delivery_id" domain="[
+                    ('delivery_route_path_id', '=', delivery_route_path_id),
+                    ('shipping_type', '=', shipping_type),
+                    ('carrier_id', '=', carrier_id),
+                    ('state', 'in', ('draft', 'ready'))]"/>
+                    <field name="batch_delivery_ids" widget="many2many_tags" readonly="1"/>
+                    <field name="date"/>
+                    <field name="picker_id"/>
+                </group>
+                <group>
+                    <field name="shipping_type" required="True"/>
+                    <field name="delivery_route_path_id"/>
+                    <field name="carrier_id"/>
+                    <field name="driver_id"/>
+                    <field name="plate_id"/>
+                    <field name="picks_to_batch_ids" widget="many2many_tags" readonly="1"/>
+                </group>
+                <label for="notes"/>
+                <field name="notes"/>
+                <notebook>
+                    <page string="Paquetes en la orden">
+                        <label string="Lista de paquetes que se añaden a la orden de carga"/>
+                        <field name="packages_ids" >
+                            <tree>
+                                <field name="name"/>
+                                <field name="info_route_str"/>
+                            </tree>
+                        </field>
+                    </page>
+                    <page string="Movimientos">
+                        <h2>
+                            Lista de movimientos que se añaden a la orden de carga
+                        </h2>
+                        <field name="move_ids">
+                            <tree>
+                                <field name="name"/>
+                                <field name="product_uom_qty"/>
+                                <field name="result_package_id"/>
+                                <field name="state" invisible="1"/>
+                            </tree>
+                        </field>
+                    </page>
+                    <page string="Movimientos sin paquete">
+                        <label string="Lista de movimientos que se añadirán (paquete virtual)"/>
+                        <field name="moves_to_pack_ids">
+                            <tree>
+                                <field name="name"/>
+                                <field name="product_uom_qty"/>
+                                <field name="state" invisible="1"/>
+                            </tree>
+                        </field>
+                    </page>
+                      <page string="Pedidos relacionados">
+                        <label string="Lista de pedidos relacionados en esta orden"/>
+                        <field name="picking_ids">
+                            <tree>
+                                <field name="sale_id"/>
+                                <field name="partner_id"/>
+                                <field name="name"/>
+                                <field name="state" invisible="1"/>
+                            </tree>
+                        </field>
+                    </page>
+                </notebook>
+                <footer>
+                    <button name="action_create_batch" attrs="{'invisible': ['|', ('moves_to_pack_ids', '!=', []), ('batch_delivery_id', '!=', False)]}"
+                            string="Generar orden" type="object" class="oe_highlight"/>
+                    <button name="action_in_batch" attrs="{'invisible': ['|', ('moves_to_pack_ids', '!=', []), ('batch_delivery_id', '=', False)]}"
+                            string="Asignar orden" type="object" class="oe_highlight"/>
+                    <button name="action_assign_partner_batch" string="Asignar albaranes de cliente"
+                            attrs="{'invisible': [('picks_to_batch_ids', '=', [])]}" type="object" class="oe_highlight"/>
+                    <button name="action_packed_moves" string="Empaquetar"
+                            attrs="{'invisible': [('moves_to_pack_ids', '=', [])]}" type="object" class="oe_highlight"/>
+                    <button name="action_assign_route" string="Info envío"
+                            attrs="{'invisible': [('shipping_type', '=', False)]}" type="object" class="oe_highlight" />
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <act_window name="Ordenes de carga"
+                res_model="stock.batch.delivery.wzd"
+                src_model="stock.move"
+                view_mode="form"
+                target="new"
+                key2="client_action_multi"
+                id="batch_delivery_wzd_act_window"/>
+
+</odoo>

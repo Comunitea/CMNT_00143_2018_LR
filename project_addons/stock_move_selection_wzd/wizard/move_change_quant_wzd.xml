@@ -13,6 +13,7 @@
                 <br/>
                 <group>
                     <field name="move_id"/>
+                    <field name="override_qty"/>
                 </group>
                 <field name="move_line_ids">
                     <tree edit="0" create="0">
@@ -43,7 +44,14 @@
             </form>
         </field>
     </record>
-
+    <delete id="stock_move_selection_wzd.action_assign_batch_delivery" model="ir.actions.server"/>
+    <!--record id="action_assign_batch_delivery" model="ir.actions.server">
+        <field name="name">Generar orden de carga</field>
+        <field name="model_id" ref="stock.model_stock_move"/>
+        <field name="binding_model_id" ref="stock.model_stock_move"/>
+        <field name="state">code</field>
+        <field name="code">records.move_sel_assign_picking()</field>
+    </record-->
     <act_window name="Asistente de cambio de almacén"
                 res_model="move.change.quant.wzd"
                 src_model="stock.move"

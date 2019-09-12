@@ -8,7 +8,6 @@
             <field name="picking_type_id" position="after">
                 <field name="sga_integrated"></field>
             </field>
-
             <notebook position="inside">
                 <page string="Integración SGA" attrs="{'invisible': [('sga_state','=', 'NI')]}">
                     <header>
@@ -36,7 +35,6 @@
         <field name="inherit_id" ref="stock.vpicktree"/>
         <field name="arch" type="xml">
             <field name="state" position="after">
-
                 <field name="sga_state" invisible="context.get('hide_sga_state', True)"/>
                 <button name="action_send_to_sga"
                         attrs="{'invisible': [('sga_state','!=', 'NE')]}"
