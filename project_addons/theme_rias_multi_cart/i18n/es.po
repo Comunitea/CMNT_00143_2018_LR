@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 11.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-08 07:30+0000\n"
-"PO-Revision-Date: 2019-08-08 07:30+0000\n"
+"POT-Creation-Date: 2019-09-09 08:06+0000\n"
+"PO-Revision-Date: 2019-09-09 08:06+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -36,10 +36,15 @@ msgstr "<small><i class=\"fa fa-trash-o\"/> Eliminar</small>"
 #: model:ir.ui.view,arch_db:theme_rias_multi_cart.rias_multi_cart_my_draft_orders_ir_ui_view
 #: model:ir.ui.view,arch_db:theme_rias_multi_cart.rias_multi_cart_my_draft_orders_view
 #: model:website.page,arch_db:theme_rias_multi_cart.rias_multi_cart_my_draft_orders
-msgid "<span class=\"hidden-xs\">Carts #</span>\n"
+msgid "<span class=\"hidden-xs\">View Cart</span>\n"
 "                                        <span class=\"visible-xs\">Ref.</span>"
-msgstr "<span class=\"hidden-xs\">Carritos #</span>\n"
+msgstr "<span class=\"hidden-xs\">Ver Carrito</span>\n"
 "                                        <span class=\"visible-xs\">Ref.</span>"
+
+#. module: theme_rias_multi_cart
+#: model:ir.ui.view,arch_db:theme_rias_multi_cart.website_sale_products_attributes_las
+msgid "<strong>Providers</strong>"
+msgstr "<strong>Proveedores</strong>"
 
 #. module: theme_rias_multi_cart
 #: model:ir.ui.view,arch_db:theme_rias_multi_cart.product_grid_las
@@ -68,7 +73,7 @@ msgstr "Campaigns"
 #: model:ir.ui.view,arch_db:theme_rias_multi_cart.rias_multi_cart_my_draft_orders_view
 #: model:website.page,arch_db:theme_rias_multi_cart.rias_multi_cart_my_draft_orders
 msgid "Cart Date"
-msgstr "Fecha"
+msgstr "Fecha del carrito"
 
 #. module: theme_rias_multi_cart
 #: model:ir.ui.view,arch_db:theme_rias_multi_cart.rias_multi_cart_my_draft_orders_ir_ui_view
@@ -98,7 +103,7 @@ msgstr "Ir o crear pedido de campaña."
 #. module: theme_rias_multi_cart
 #: model:website.menu,name:theme_rias_multi_cart.menu_my_account
 msgid "My Account"
-msgstr "Mi Cuenta"
+msgstr "My Account"
 
 #. module: theme_rias_multi_cart
 #: model:ir.ui.view,name:theme_rias_multi_cart.rias_multi_cart_my_campaigns_ir_ui_view
@@ -108,7 +113,6 @@ msgstr "My Campaigns Rías View"
 
 #. module: theme_rias_multi_cart
 #: model:ir.ui.view,arch_db:theme_rias_multi_cart.portal_my_home_with_campaign
-#: model:website.menu,name:theme_rias_multi_cart.menu_my_carts
 #: model:website.page,name:theme_rias_multi_cart.rias_multi_cart_my_draft_orders
 msgid "My Carts"
 msgstr "Mis Carritos"
@@ -130,11 +134,23 @@ msgid "My Orders"
 msgstr "My Orders"
 
 #. module: theme_rias_multi_cart
+#: model:website.menu,name:theme_rias_multi_cart.menu_my_carts
+msgid "My Quotations"
+msgstr "My Quotations"
+
+#. module: theme_rias_multi_cart
 #: model:ir.ui.view,arch_db:theme_rias_multi_cart.rias_multi_cart_my_campaigns_ir_ui_view
 #: model:ir.ui.view,arch_db:theme_rias_multi_cart.rias_multi_cart_my_campaigns_view
 #: model:website.page,arch_db:theme_rias_multi_cart.rias_multi_cart_my_campaigns
 msgid "Name"
 msgstr "Nombre"
+
+#. module: theme_rias_multi_cart
+#: model:ir.ui.view,arch_db:theme_rias_multi_cart.rias_multi_cart_my_draft_orders_ir_ui_view
+#: model:ir.ui.view,arch_db:theme_rias_multi_cart.rias_multi_cart_my_draft_orders_view
+#: model:website.page,arch_db:theme_rias_multi_cart.rias_multi_cart_my_draft_orders
+msgid "Nuevo carrito <i class=\"fa fa-plus-circle\"/>"
+msgstr "Nuevo carrito <i class=\"fa fa-plus-circle\"/>"
 
 #. module: theme_rias_multi_cart
 #: model:ir.ui.view,arch_db:theme_rias_multi_cart.product_grid_las
@@ -152,6 +168,11 @@ msgid "Product"
 msgstr "Producto"
 
 #. module: theme_rias_multi_cart
+#: model:ir.ui.view,name:theme_rias_multi_cart.website_sale_products_attributes_las
+msgid "Product Attribute's Filters Las Rías"
+msgstr "Product Attribute's Filters Las Rías"
+
+#. module: theme_rias_multi_cart
 #: model:ir.ui.view,name:theme_rias_multi_cart.product_grid_las
 msgid "Products grid Las Rías"
 msgstr "Products grid Las Rías"
@@ -165,6 +186,20 @@ msgstr "Cantidad"
 #: model:ir.ui.view,arch_db:theme_rias_multi_cart.product_grid_las
 msgid "Reference"
 msgstr "Referencia"
+
+#. module: theme_rias_multi_cart
+#: model:ir.ui.view,arch_db:theme_rias_multi_cart.rias_multi_cart_my_draft_orders_ir_ui_view
+#: model:ir.ui.view,arch_db:theme_rias_multi_cart.rias_multi_cart_my_draft_orders_view
+#: model:website.page,arch_db:theme_rias_multi_cart.rias_multi_cart_my_draft_orders
+msgid "Select <i class=\"fa fa-play-circle\"/>"
+msgstr "Seleccionar <i class=\"fa fa-play-circle\"/>"
+
+#. module: theme_rias_multi_cart
+#: model:ir.ui.view,arch_db:theme_rias_multi_cart.rias_multi_cart_my_draft_orders_ir_ui_view
+#: model:ir.ui.view,arch_db:theme_rias_multi_cart.rias_multi_cart_my_draft_orders_view
+#: model:website.page,arch_db:theme_rias_multi_cart.rias_multi_cart_my_draft_orders
+msgid "Select Cart"
+msgstr "Seleccionar Carrito"
 
 #. module: theme_rias_multi_cart
 #: model:ir.ui.view,name:theme_rias_multi_cart.las_shop_product_page

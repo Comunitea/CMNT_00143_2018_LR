@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="website_sale_wishlist_header" inherit_id="website_sale_wishlist.header" name="Las Rías Header Shop Wishlist Link No Text">
+        <xpath expr="//li[@id='my_wish']" position="replace">
+            <t t-if="request.env.ref('website_sale_wishlist.add_to_wishlist').active">
+                <t t-set='wishcount' t-value="len(request.env['product.wishlist'].current())"/>
+                <li id="my_wish" t-att-style="not wishcount and 'display:none;'">
+                    <a href="/shop/wishlist">
+                        <i class="fa fa-heart"></i>
+                        <sup t-attf-class="my_wish_quantity o_animate_blink label label-primary"><t t-esc='wishcount'/></sup>
+                    </a>
+                </li>
+            </t>
+        </xpath>
+    </template>
+</odoo>
