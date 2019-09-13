@@ -34,12 +34,7 @@ class StockBatchPickingWzd(models.TransientModel):
 
     )
     notes = fields.Text('Notes', help='free form remarks')
-    batch_picking_ids = fields.Many2many('stock.picking', string="Grupos")
-    new_picking_ids = fields.Many2many('stock.picking', string="Nuevos albaranes")
     picking_type_id = fields.Many2one('stock.picking.type', string='Tipo de operación')
-    moves_to_remove = fields.Many2many('stock.move', string="Movimientos para eliminar")
-    moves_to_sga = fields.Many2many('stock.move', string="Para enviar a SGA")
-    moves_not_sga = fields.Many2many('stock.move', string="Sin enviar a SGA")
     move_ids = fields.Many2many('stock.move', string="Movimientos")
     shipping_type = fields.Selection(SHIPPING_TYPE_SEL, default=DEFAULT_SHIPPING_TYPE, string=STRING_SHIPPING_TYPE,
                                      help=HELP_SHIPPING_TYPE)
@@ -66,7 +61,7 @@ class StockBatchPickingWzd(models.TransientModel):
         if len(picking_type_id)>1:
             raise UserError(_('No se pueden agrupar alabranes de distinto tipo'))
 
-        batch_picking = moves.mapped('batch_picking_id')
+        batch_picking = moves.mapped('draft_batch_picking_id')
         batch_picking_id = len(batch_picking) == 1 and batch_picking.id
         picker_id = batch_picking and batch_picking.picker_id and batch_picking.picker_id.id
 
@@ -91,16 +86,16 @@ class StockBatchPickingWzd(models.TransientModel):
             moves_to_sga = moves_not_sga = self.env['stock.move']
 
         vals = {
-            'date':min(picking_ids.mapped('scheduled_date')),
+            'date':min(moves.mapped('picking_id').mapped('scheduled_date')),
             'picking_type_id': picking_type_id and picking_type_id.id or False,
             'batch_picking_id': batch_picking and batch_picking_id or False,
             'picker_id': picker_id and picker_id.id or False,
             'notes': note,
-            'new_picking_ids': [(6,0,new_picking_ids.ids)],
-            'batch_picking_ids': [(6,0,batch_picking_ids.ids)],
+            #'new_picking_ids': [(6,0,new_picking_ids.ids)],
+            #'batch_picking_ids': [(6,0,batch_picking_ids.ids)],
             'move_ids': [(6, 0, moves.ids)],
-            'moves_to_sga': [(6, 0, moves_to_sga.ids)],
-            'moves_not_sga': [(6, 0, moves_not_sga.ids)]
+            #'moves_to_sga': [(6, 0, moves_to_sga.ids)],
+            #'moves_not_sga': [(6, 0, moves_not_sga.ids)]
             }
         return vals
 
@@ -128,26 +123,6 @@ class StockBatchPickingWzd(models.TransientModel):
             defaults.update(vals)
             print (defaults)
         return defaults
-
-
-    @api.onchange('batch_picking_id')
-    def change_batch_id(self):
-        if not self.batch_picking_id:
-            self.picking_type_id = False
-            self.batch_picking_ids = []
-            self.date = False
-            self.notes = ''
-        self.picking_type_id = self.batch_picking_id and self.batch_picking_id.picking_type_id or False
-        self.picker_id = self.batch_picking_id.picker_id
-        self.date = self.batch_picking_id.date
-        self.notes = self.notes
-
-        picking_ids = self.batch_picking_id and self.batch_picking_id.picking_ids and self.batch_picking_id.picking_ids.ids or False
-
-        if picking_ids:
-            self.batch_picking_ids = [(6, 0, picking_ids)]
-        else:
-            self.batch_picking_ids = []
 
     def _default_picker_id(self):
         """ Return default_picker_id from the main company warehouse
@@ -200,17 +175,13 @@ class StockBatchPickingWzd(models.TransientModel):
             'notes': self.notes,
             'picker_id': self.picker_id.id,
             'picking_type_id': self.picking_type_id.id,
-            #'carrier_id': self.carrier_id.id,
-            #'delivery_route_path_id': self.delivery_route_path_id.id,
-            #'shipping_type': self.shipping_type
+            'state': 'assigned'
         })
-        self.new_picking_ids.write({'batch_picking_id': batch_picking_id.id})
+        self.move_ids.write({'draft_batch_picking_id': batch_picking_id.id})
         return batch_picking_id.get_formview_action()
 
     @api.multi
     def action_assign_batch(self):
         if self.batch_picking_id:
-            for pick in self.new_picking_ids:
-                pick.batch_picking_id = self.batch_picking_id
-            #self.new_picking_ids.mapped('move_lines').write({'batch_picking_id': self.batch_picking_id.id})
-            #return self.batch_picking_id.get_formview_action()
+            self.move_ids.write({'draft_batch_picking_id': self.batch_picking_id.id})
+        return self.batch_picking_id.get_formview_action()

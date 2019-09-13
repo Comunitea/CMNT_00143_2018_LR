@@ -26,8 +26,20 @@ class StockMove(models.Model):
     sga_state = fields.Selection(SGA_STATES, default='NI', string="SGA Estado")
     batch_delivery_id = fields.Many2one('stock.batch.delivery', string='Orden de carga', store=True)
     batch_picking_id = fields.Many2one(related='picking_id.batch_picking_id', string='Grupo', store=True)
+    draft_batch_picking_id = fields.Many2one('stock.batch.picking', string='Grupo')
+    batch_id = fields.Many2one('stock.batch.picking', compute="get_effective_batch_id", inverse='set_effective_batch_id', string='Grupo')
     code = fields.Selection(related='picking_type_id.code')
     group_code = fields.Selection(related='picking_type_id.group_code')
+
+    @api.multi
+    @api.depends('state', 'draft_batch_picking_id', 'batch_picking_id')
+    def get_effective_batch_id(self):
+        for move in self:
+            move.batch_id = move.batch_picking_id if move.state == 'done' else move.draft_batch_picking_id
+
+    @api.multi
+    def set_effective_batch_id(self):
+        self.filtered(lambda x: x.state not in ('done', 'cancel')).write({'draft_batch_picking_id': self.batch_id})
 
     @api.multi
     def unpack(self):
@@ -108,20 +120,26 @@ class StockMove(models.Model):
 
     @api.multi
     def action_add_to_batch_picking(self):
-        ctx = self._context.copy()
-        if 'active_domain' in ctx.keys():
-            ctx.pop('active_domain')
-        obj = self.env['stock.batch.picking.wzd']
-        wzd_id = obj.create_from('stock.move', self.ids)
-        action = wzd_id.get_formview_action()
-        action['target'] = 'new'
-        return action
+
+        to_add = self.filtered(lambda x: not x.draft_batch_picking_id)
+        to_remove = self.filtered(lambda x: x.draft_batch_picking_id)
+        if to_remove:
+            to_remove.write({'draft_batch_picking_id': False})
+        elif to_add:
+            ctx = self._context.copy()
+            if 'active_domain' in ctx.keys():
+                ctx.pop('active_domain')
+            obj = self.env['stock.batch.picking.wzd']
+            wzd_id = obj.create_from('stock.move', to_add.ids)
+            action = wzd_id.get_formview_action()
+            action['target'] = 'new'
+            return action
 
 
-        action = self.env.ref('stock_move_selection_wzd.open_view_create_batch_picking').read()[0]
-        action['res_id'] = wzd_id.id
+            action = self.env.ref('stock_move_selection_wzd.open_view_create_batch_picking').read()[0]
+            action['res_id'] = wzd_id.id
 
-        return action
+            return action
 
     @api.multi
     def action_add_to_batch_delivery(self):
@@ -268,6 +286,5 @@ class StockMove(models.Model):
 
     def _get_new_picking_domain(self):
         domain = super()._get_new_picking_domain()
-        #domain += [('batch_picking_id', '=', False)]
         return domain
 

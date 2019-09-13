@@ -21,8 +21,44 @@ class StockBatchPicking(models.Model):
 
     batch_delivery_id = fields.Many2one('stock.batch.delivery', string="Delivery batch")
     picking_type_id = fields.Many2one(string='Picking type', comodel_name='stock.picking.type', required=True, readonly=True, states={'draft': [('readonly', False)]},)
-    effective_move_lines = fields.One2many('stock.move', string='Movimientos', compute=_get_effective_move_lines)
+    effective_move_lines = fields.One2many('stock.move', 'draft_batch_picking_id', string='Movimientos')
 
+    @api.multi
+    def action_transfer(self):
+        """ Make the transfer for all active pickings in these batches
+        and set state to done all picking are done.
+        """
+        if self.mapped('effective_move_lines'):
+            for batch in self:
+                if all(x.qty_done == 0.00 for x in batch.effective_move_lines.mapped('move_line_ids')):
+                    for ml in batch.effective_move_lines.mapped('move_line_ids'):
+                        ml.qty_done = ml.product_uom_qty
+
+                moves = batch.effective_move_lines.filtered(lambda x: x.state in ('assigned', 'partially_available') and x.quantity_done>0)
+                picks = moves.mapped('picking_id')
+                picks.force_transfer(
+                        force_qty=all(
+                            operation.qty_done == 0
+                            for operation in batch.move_line_ids
+                        )
+                    )
+                picks.write({'batch_picking_id': batch.id})
+                batch.verify_state()
+            return
+        return super().action_transfer()
+
+    @api.depends('picking_ids', 'state', 'effective_move_lines')
+    @api.multi
+    def get_partner_id(self):
+        for batch in self:
+            if batch.state == 'done':
+                partner_id = batch.picking_ids.mapped('partner_id')
+            else:
+                partner_id = batch.effective_move_lines.mapped('partner_id')
+            if len(partner_id) == 1:
+                batch.partner_id = partner_id[0]
+            else:
+                batch.partner_id = False
 
     @api.onchange('picking_ids')
     def onchange_picking_ids(self):

@@ -12,6 +12,7 @@ class StockMoveLine(models.Model):
     sga_integrated = fields.Boolean('Sga', help='Marcar si tiene un tipo de integración con el sga')
     sga_state = fields.Selection(SGA_STATES, default='NI', string="SGA Estado")
     batch_picking_id = fields.Many2one(related='picking_id.batch_picking_id')
+    draft_batch_picking_id = fields.Many2one(related='move_id.draft_batch_picking_id')
     batch_delivery_id = fields.Many2one(related='move_id.batch_delivery_id')
 
     @api.multi

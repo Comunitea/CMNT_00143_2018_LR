@@ -75,9 +75,11 @@
                         type="object"
                         context="{'object': 'move'}"
                         icon="fa-truck"
-                        attrs="{'invisible': ['|','|', ('group_code', 'not in', ('outgoing', 'dropship')), ('result_package_id', '!=', False), ('state', 'not in', ('assigned', 'partially_available'))]}"
+                        attrs="{'invisible': ['|','|',('group_code', 'not in', ('outgoing', 'dropship')), ('result_package_id', '!=', False), ('state', 'not in', ('assigned', 'partially_available'))]}"
                         />
-                <field name="batch_picking_id" />
+                <field name="batch_id"/>
+                <field name="batch_picking_id" invisible="1"/>
+                <field name="draft_batch_picking_id" invisible="1"/>
                 <button name="action_add_to_batch_picking"
                         string="Enviar"
                         type="object"
@@ -85,7 +87,7 @@
                         icon="fa-tasks"
                         attrs="{'invisible': ['|', ('group_code', 'not in', ('picking', 'location', 'reposition')), ('state', 'not in', ('assigned', 'partially_available'))]}"
                         />
-                <button name="action_set_envio_sga"
+                <!--button name="action_set_envio_sga"
                         string="Cancelar envío a SGA"
                         type="object"
                         context="{'object': 'move'}"
@@ -98,7 +100,7 @@
                         context="{'object': 'move'}"
                         icon="fa-volume-off"
                         attrs="{'invisible': ['|', '|', ('sga_integrated', '=', False), ('sga_state', '=', 'NE'), ('state', 'not in', ('assigned', 'partially_available'))]}"
-                        />
+                        /-->
                 <field name="picking_id" invisible="1"/>
                 <field name="sale_id" string="Venta" invisible="not context.get('group_code', False) in ('outgoing', 'picking')"/>
                 <field name="purchase_id" string="Compra" invisible="not context.get('group_code', False) in ('incoming', 'location')"/>

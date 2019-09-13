@@ -200,7 +200,7 @@ class PickingType(models.Model):
                    ('result_package_id', '!=', False)]
 
         ready_domain['move'] = expression.OR([int_dom, in_dom, out_dom])
-
+        ready_domain['move'] = [('state', 'in', ('partially_available', 'assigned'))]
         int_dom = [('picking_type_id.code', '=', 'internal'), ('state', '=', 'assigned')]
         # recepciones
         in_dom = [('picking_type_id.code', '=', 'incoming'), ('state', '=', 'assigned')]
@@ -234,8 +234,8 @@ class PickingType(models.Model):
         no_stock_state = [('state', 'in', ('partially_available', 'confirmed'))]
         ready_state = self.get_ready_state()
 
-        with_pick = [('batch_picking_id', '!=', False)]
-        without_pick = [('batch_picking_id', '=', False)]
+        with_pick = ['|', ('draft_batch_picking_id', '!=', False), ('batch_picking_id', '!=', False)]
+        without_pick = ['|', ('draft_batch_picking_id', '=', False), ('batch_picking_id', '=', False)]
 
         with_batch = [('batch_delivery_id', '!=', False)]
         without_batch = [('batch_delivery_id', '=', False)]
@@ -250,7 +250,7 @@ class PickingType(models.Model):
             'count_move_draft': context_domain + draft,
             'count_move_waiting': context_domain + waiting_state,
             'count_move_unpacked': context_domain + [('result_package_id', '=', False), ('state', 'in', ('partially_available', 'assigned'))],
-            'count_move_ready': context_domain + ready_state['move'] + with_pick,
+            'count_move_ready': context_domain + ready_state['move'] ,
             'count_move': context_domain + to_do_state,
             'count_move_to_pick': context_domain + ready_state['move'] + without_pick + before_tomorrow,
             'count_move_late': context_domain + to_do_state + late,
@@ -266,7 +266,7 @@ class PickingType(models.Model):
                 [('scheduled_date', '<', datetime.now().strftime(DEFAULT_SERVER_DATETIME_FORMAT))] +
                 to_do_state,
             'count_picking_backorders': context_domain + [('backorder_id', '!=', False)] + to_do_state,
-            'count_pick_to_batch': context_domain + ready_state['pick'] + without_pick
+            'count_pick_to_batch': context_domain + ready_state['pick']
         }
         batch_domains = {
             'count_batch_ready': context_domain + ready_state['batch'],

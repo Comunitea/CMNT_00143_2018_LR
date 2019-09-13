@@ -38,7 +38,7 @@
                 <label for="notes"/>
                 <field name="notes"/>
                 <notebook>
-                    <page string="Albaranes para añadir">
+                    <!--page string="Albaranes para añadir">
                         <field name="new_picking_ids" >
                             <tree>
                                 <field name="state"/>
@@ -79,7 +79,7 @@
 
                             </tree>
                         </field>
-                    </page>
+                    </page-->
 
                     <page string="Movimientos" >
                         <field name="move_ids" readonly="1">
@@ -93,8 +93,8 @@
                     </page>
                 </notebook>
                 <footer>
-                    <button name="action_create_batch" string="Crear grupo" type="object" class="oe_highlight" attrs="{'invisible': [('new_picking_ids', '=', []), ('batch_picking_id','!=', False)]}"/>
-                    <button name="action_assign_batch" string="Asignar grupo" type="object" class="oe_highlight" attrs="{'invisible': [('new_picking_ids', '=', []), ('batch_picking_id','=', False)]}"/>
+                    <button name="action_create_batch" string="Crear grupo" type="object" class="oe_highlight" attrs="{'invisible': [('batch_picking_id','!=', False)]}"/>
+                    <button name="action_assign_batch" string="Asignar grupo" type="object" class="oe_highlight" attrs="{'invisible': [('batch_picking_id','=', False)]}"/>
                     <button string="Cancel" class="oe_link" special="cancel"/>
                 </footer>
             </form>
