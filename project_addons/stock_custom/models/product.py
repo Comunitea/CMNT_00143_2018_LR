@@ -163,16 +163,19 @@ class ProductProduct(models.Model):
 
         # Solo miro cuando puedo ver los dos últimos meses al actual
         # en el histórico
-        date_file = datetime.strptime(history_line.date, '%Y-%m-%d')
-        date_limit = date_file + relativedelta(months=1)
-        date_limit = date_limit.strftime('%Y-%m-1')
-        if history_line and current_date < date_limit:
-            qty_month1 = history_line.month_1
-            qty_month2 = qty_month1 + history_line.month_2
-            if days >= 60:
-                res = qty_month2
-            elif days >= 30:
-                res = qty_month1
-            elif days == 21:  # roporción 21 días del último mes
-                res = int(round((qty_month1 * 21) / 31))
-        return res
+        if history_line:
+            date_file = datetime.strptime(history_line.date, '%Y-%m-%d')
+            date_limit = date_file + relativedelta(months=1)
+            date_limit = date_limit.strftime('%Y-%m-1')
+            if history_line and current_date < date_limit:
+                qty_month1 = history_line.month_1
+                qty_month2 = qty_month1 + history_line.month_2
+                if days >= 60:
+                    res = qty_month2
+                elif days >= 30:
+                    res = qty_month1
+                elif days == 21:  # roporción 21 días del último mes
+                    res = int(round((qty_month1 * 21) / 31))
+            return res
+        else:
+            return 0

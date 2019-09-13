@@ -3,7 +3,7 @@
 from odoo import models, fields, _, api
 
 
-class SaleOrderLine(models.Model):
+class StockWarehouseOrderPoint(models.Model):
 
     _inherit = 'stock.warehouse.orderpoint'
 
