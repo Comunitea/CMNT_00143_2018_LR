@@ -3,6 +3,7 @@
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 
 from odoo import fields, models, tools, api, _
+from odoo.exceptions import UserError, ValidationError
 
 class StockPickingTypeSGA(models.Model):
 
@@ -15,10 +16,12 @@ class StockPickingTypeSGA(models.Model):
 
     def get_ulma_vals(self, type=''):
 
-        if self.group_code=='picking':
+        if self.group_code == 'picking':
             mmmCMDREF = 'SAL'
-        else:
+        elif self.group_code == 'location':
             mmmCMDREF = 'ENT'
+        else:
+            raise ValidationError ('Tipo no permitido')
 
         vals = {'mmmdisref': self.ulma_type,
                 'mmmsesid': 1 if self.ulma_type == 'SUBUNI' else 2,

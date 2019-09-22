@@ -3,17 +3,10 @@
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 
 from odoo import fields, models, api, _
+from odoo.addons.stock_move_selection_wzd.models.stock_picking_type import SGA_STATES
 from odoo.exceptions import Warning, UserError
 
 ULMA_PARAMS = ['ulma_user', 'ulma_pass', 'ulma_host', 'ulma_port', 'ulma_sid',  'ulma_database', 'mmmout_table', 'packing_table', 'fdw', 'oracle_extension', 'oracle_server', 'oracle_mmmout', 'oracle_mmminp', 'oracle_packing']
-
-SGA_STATES = [('NI', 'Sin integracion'),
-              ('NE', 'No enviado'),
-              ('PS', 'Pendiente Sga'),
-              ('EE', 'Error en exportacion'),
-              ('EI', 'Error en importacion'),
-              ('SR', 'Realizado'),
-              ('SC', 'Cancelado')]
 
 
 class ConfigUlmaData(models.TransientModel):

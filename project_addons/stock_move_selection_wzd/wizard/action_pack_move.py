@@ -13,7 +13,7 @@ class StockMovePackListWzd(models.TransientModel):
     wzd_id = fields.Many2many('stock.move.pack.wzd')
     selected = fields.Boolean('Seleccionado')
     package_id = fields.Many2one('stock.quant.package', string='Paquete',readonly="1")
-    move_ids = fields.Many2many('stock.move.line', string='Movimientos',readonly="1")
+    move_ids = fields.Many2many('stock.move', string='Movimientos',readonly="1")
     partner_id = fields.Many2one(related='package_id.partner_id',readonly="1")
     info_route_str = fields.Char(related='package_id.info_route_str', string='Info ruta',readonly="1")
 
@@ -82,6 +82,7 @@ class StockMovePackWzd(models.TransientModel):
         return action
 
     def create_from_moves(self, moves):
+
         move_line_ids = moves.mapped('move_line_ids')
         not_moves = moves.filtered(lambda x: x.picking_type_id.code != 'outgoing')
         if not_moves:

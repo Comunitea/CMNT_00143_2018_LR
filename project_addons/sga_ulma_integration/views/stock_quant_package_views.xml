@@ -22,9 +22,9 @@
                 <field name="sga_state"/>
             </field>
             <xpath expr="//group" position="inside">
-                <filter name="waiting" string="Waiting" domain="[('sga_state','=', 'W')]"/>
-                <filter name="error" string="Error" domain="[('sga_state','=', 'E')]"/>
-                <filter name="processed" string="Processed" domain="[('sga_state','=', 'P')]"/>
+                <filter name="waiting" string="Waiting" domain="[('sga_state','=', 'pending')]"/>
+                <filter name="error" string="Error" domain="[('sga_state','=', ('import_error', 'export_error'))]"/>
+                <filter name="processed" string="Processed" domain="[('sga_state','=', 'done')]"/>
             </xpath>
         </field>
     </record>
@@ -38,8 +38,8 @@
             <xpath expr="//header" position="inside">
                 <button name="send_to_sga" string="Mover a ULMA" type="object"/>
                 <button name="get_from_ulma" string="Recibir de ULMA" type="object"/>
-                <field name="sga_state" widget="statusbar" statusbar_visible="W,P,E"
-                    statusbar_colors='{"E":"red", "W":"blue", "P":"green"}'/>
+                <field name="sga_state" widget="statusbar" statusbar_visible="pending,no_send, done"
+                    statusbar_colors='{"export_error":"red", "import_error":"red","pending":"blue", "done":"green"}'/>
             </xpath>
         </field>
     </record>

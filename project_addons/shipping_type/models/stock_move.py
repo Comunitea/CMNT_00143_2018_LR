@@ -12,8 +12,10 @@ class StockMoveLine(models.Model):
     _inherit = ['stock.move.line', 'info.route.mixin']
     _name = 'stock.move.line'
 
-    carrier_id = fields.Many2one("delivery.carrier", string="Carrier")
-    campaign_id = fields.Many2one('campaign', 'Campaign')
+    carrier_id = fields.Many2one(related="move_id.carrier_id")
+    delivery_route_path_id = fields.Many2one(related="move_id.delivery_route_path_id")
+    shipping_type = fields.Selection(related="move_id.shipping_type")
+    campaign_id = fields.Many2one(related="move_id.campaign_id")
 
 
     @api.model
@@ -24,10 +26,7 @@ class StockMoveLine(models.Model):
     @api.multi
     def write(self, vals):
         return super().write(vals)
-        child_vals = self.get_write_route_vals(vals)
-        if child_vals and self.mapped('result_package_id') and not self._context.get('force_route_vals', False):
-            raise ValidationError('No puedes cambiar la información de ruta de un movimiento empaquetado. Cambialo desde el paquete o desempaquetado')
-        return super().write(vals)
+
 
     def update_to_new_package(self, new_package_ids):
         ## revisar esto
@@ -60,21 +59,12 @@ class StockMove(models.Model):
         vals = self.update_info_route_vals()
         return vals
 
-    def _get_new_picking_values(self):
-        res = super()._get_new_picking_values()
-        if self.picking_type_id.code == 'outgoing':
-            res.update(self.get_new_vals())
-        return res
-
     def _prepare_procurement_values(self):
         res = super()._prepare_procurement_values()
         res.update(self.update_info_route_vals())
         return res
 
-    def _prepare_move_line_vals(self, quantity=None, reserved_quant=None):
-        res = super()._prepare_move_line_vals(quantity=quantity, reserved_quant=reserved_quant)
-        res.update(self.update_info_route_vals())
-        return res
+
 
     def _prepare_extra_move_vals(self, qty):
         res = super()._prepare_extra_move_vals(qty=qty)
@@ -86,17 +76,11 @@ class StockMove(models.Model):
         res.update(self.update_info_route_vals())
         return res
 
-    def propagate_route_vals(self, vals):
 
-        child_vals = self.get_write_route_vals(vals)
-        if child_vals:
-            if self.mapped('move_line_ids').mapped('result_package_id') and not self._context.get('force_route_vals', False):
-                raise ValidationError('Hay movimientos con paquetes. Debes cambiar los datos de envío en los paquetes')
-            self.mapped('move_line_ids').write(child_vals)
-        return
 
     @api.multi
     def write(self, vals):
+        return super().write(vals)
         if self._context.get('no_propagate_route_vals', True):
             self.propagate_route_vals(vals)
         super().write(vals)

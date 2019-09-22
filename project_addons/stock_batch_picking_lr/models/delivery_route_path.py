@@ -17,8 +17,7 @@ class DeliveryRoutePath(models.Model):
 class DeliveryPlate(models.Model):
     _name = 'delivery.plate'
 
-    sequence = fields.Integer('Sequence')
-    name = fields.Char('Plate')
+    name = fields.Char('Plate', required=True)
     default_route_id = fields.Many2one('delivery.route.path', string="Default route")
     default_driver_id = fields.Many2one('res.partner', string="Default driver", domain=[('route_driver', '=', True)])
 

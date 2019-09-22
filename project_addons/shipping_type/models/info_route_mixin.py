@@ -35,6 +35,7 @@ class InfoRouteMixin(models.AbstractModel):
 
     @api.multi
     def write(self, vals):
+        return super().write(vals)
         if self._context.get('no_propagate_route_vals', True):
             vals.update(self.get_write_route_vals(vals))
         return super().write(vals)

@@ -10,10 +10,11 @@
                 <header>
                     <!--button name="action_assign" class="oe_highlight" string="Reserve All"
                             states="draft" type="object"/-->
-                    <button name="action_transfer" states="draft" string="Validate" type="object"/>
-                    <button name="action_transfer" states="assigned" string="Validate" class="oe_highlight" type="object"/>
+                    <button name="action_transfer" states="draft, ready" string="Validar" type="object"/>
                     <button name="action_cancel" states="draft,assigned" confirm="All pickings will be cancelled, Are you sure?" string="Cancel" type="object"/>
+                    <button name="generar_adr" string="ADR" type="object"/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,confirm"/>
+
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
@@ -32,7 +33,7 @@
                         <button name="action_view_stock_move"
                                 class="oe_stat_button"
                                 icon="fa-list"
-                                string="Líneas"
+
                                 type="object">
                                 <field name="count_move_lines" widget="statinfo" string="Líneas"/>
                         </button>
@@ -51,7 +52,7 @@
                         <field name="date_expected"/>
                         <field name="date_done"/>
                     </group>
-                    <group string="Delivery info">
+                    <group string="Información de envío">
                         <field name="shipping_type"/>
                         <field name="delivery_route_path_id"/>
                         <field name="carrier_id"/>
@@ -61,11 +62,11 @@
                     <notebook colspan="4">
                         <page string='Notes'>
                             <field name='notes' colspan='4' nolabel='1'/>
-                            <group>
+                            <!--group>
                                 <field name="package_ids" widget="many2many_tags" readonly="1"/>
                                 <field name="picking_ids" widget="many2many_tags" />
                                 <field name="move_lines" widget="many2many_tags" />
-                            </group>
+                            </group-->
                         </page>
                     </notebook>
                 </sheet>

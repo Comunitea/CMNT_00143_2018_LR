@@ -12,13 +12,13 @@ ADAIA_PARAMS = ['path_files', 'adaia_partner_code', 'adaia_partner_prefix', 'ada
  'adaia_product_template_code', 'adaia_product_template_prefix', 'adaia_barcode_code', 'adaia_barcode_prefix', 'adaia_stock_code', 'adaia_stock_prefix',
  'adaia_stock_picking_in', 'adaia_stock_picking_out']
 
-SGA_STATES = [('NI', 'Sin integracion'),
-              ('NE', 'No enviado'),
-              ('PS', 'Pendiente Sga'),
-              ('EE', 'Error en exportacion'),
-              ('EI', 'Error en importacion'),
-              ('SR', 'Realizado'),
-              ('SC', 'Cancelado')]
+SGA_STATES = [('no_integrated', 'Sin integracion'),
+              ('no_send', 'No enviado'),
+              ('pending', 'Pendiente Sga'),
+              ('export_error', 'Error en exportacion'),
+              ('import_error', 'Error en importacion'),
+              ('done', 'Realizado'),
+              ('cancel', 'Cancelado')]
 
 ODOO_READ_FOLDER = 'Send'
 ODOO_END_FOLDER = 'Receive'

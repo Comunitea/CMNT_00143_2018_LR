@@ -11,16 +11,12 @@
                 <button name="batch_printing" string="Print" type="object" class="oe_highlight"/>
             </xpath>
             <xpath expr="//notebook" position="before">
-
-
-                    <group>
-                        <field name="shipping_type"/>
-                    </group>
-
+                <group>
+                    <field name="picking_type_id"/>
+                </group>
                 <field name="has_packages" invisible="1"/>
             </xpath>
             <xpath expr="//field[@name='notes']/.." position="before">
-
                 <page string="Packages">
                     <field name="current_package_list"
                            context="{'shipping_type' : shipping_type}"
@@ -28,7 +24,7 @@
                         <tree edit="0">
                             <field name="id" />
                             <field name="name"/>
-                            <field name="dest_partner_id"/>
+
                             <field name="shipping_type" />
                             <!--field name="delivery_carrier_id" readonly="1"/-->
                             <field name="batch_picking_id"/>
@@ -66,12 +62,12 @@
                 </group>
                 </page>
             </xpath>
-            <xpath expr="//sheet/div[@class='oe_title']" position="before">
-                <div class="oe_button_box" name="button_box">
+            <xpath expr="//button[@name='action_view_stock_picking']" position="before">
+
                     <button name="action_see_packages" string="Packages"
                             context="{'batch_picking_id' : id, 'shipping_type': shipping_type}"
                             type="object" class="oe_stat_button" icon="fa-cubes"/>
-                </div>
+
             </xpath>
         </field>
     </record>

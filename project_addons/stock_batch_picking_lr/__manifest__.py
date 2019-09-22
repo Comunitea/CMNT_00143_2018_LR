@@ -13,7 +13,6 @@
     'installable': True,
     'depends': [
         'stock',
-
         'stock_batch_picking',
         'stock_picking_group',
         'shipping_type',

@@ -10,6 +10,33 @@ from .stock_picking_type import SGA_STATES
 class StockMove(models.Model):
     _inherit = 'stock.move'
 
+    @api.multi
+    def get_color_status(self):
+        for move in self:
+            if move.state in ('draft', 'cancel'):
+                move.decoration = 'muted'
+            elif move.sga_state in ('export_error', 'import_error') or move.sga_state == 'done' and move.state != 'done':
+                move.decoration = 'danger'
+            elif move.sga_state == 'pending':
+                move.decoration = 'warning'
+            elif move.state == 'done':
+                move.decoration = 'success'
+            elif move.group_code != 'outgoing' and move.state in ('waiting', 'confirmed'):
+                move.decoration = 'muted'
+            elif move.group_code in ('location', 'outgoing') and move.state == 'confirmed':
+                move.decoration = 'danger'
+            elif move.group_code == 'picking':
+                if move.quantity_done >= 0:
+                    move.decoration == 'primary'
+            elif move.group_code == 'outgoing':
+                if move.result_package_id and move.batch_picking_id:
+                    move.decoration = 'primary'
+                else:
+                    move.decoration = 'warning'
+
+            else:
+                move.decoration = ''
+
     ##NEcesito traer estos campos de stock_move_line
     package_id = fields.Many2one('stock.quant.package', 'Paquete origen',
                                  inverse='set_package_id_to_lines',
@@ -19,21 +46,30 @@ class StockMove(models.Model):
                                         inverse='set_result_package_id_to_lines',
                                         compute="get_result_package_id_from_line",
                                         store=True)
-
     lot_id = fields.Many2one('stock.production.lot', 'Lote')
     dunmy_picking_id = fields.Many2one('stock.picking', 'Transfer Reference', store=False)
-    sga_integrated = fields.Boolean('Sga', help='Marcar si tiene un tipo de integración con el sga')
-    sga_state = fields.Selection(SGA_STATES, default='NI', string="SGA Estado")
+    sga_integrated = fields.Boolean(related="picking_type_id.sga_integrated")
+    sga_state = fields.Selection(SGA_STATES, default='no_integrated', string="SGA Estado")
     batch_delivery_id = fields.Many2one('stock.batch.delivery', string='Orden de carga', store=True)
     batch_picking_id = fields.Many2one(related='picking_id.batch_picking_id', string='Grupo', store=True)
     draft_batch_picking_id = fields.Many2one('stock.batch.picking', string='Grupo')
     batch_id = fields.Many2one('stock.batch.picking', compute="get_effective_batch_id", inverse='set_effective_batch_id', string='Grupo')
     code = fields.Selection(related='picking_type_id.code')
     group_code = fields.Selection(related='picking_type_id.group_code')
+    decoration = fields.Char(compute = get_color_status)
+
+
+
+    def check_allow_change_route_fields(self):
+        super().check_allow_change_route_fields()
+        if any(move.batch_id for move in self.move_line_ids) and not self._context.get('force_route_vals', False):
+            raise ValidationError (_('No puedes cambiar en movimientos en un batch'))
+        return True
 
     @api.multi
     @api.depends('state', 'draft_batch_picking_id', 'batch_picking_id')
     def get_effective_batch_id(self):
+
         for move in self:
             move.batch_id = move.batch_picking_id if move.state == 'done' else move.draft_batch_picking_id
 
@@ -51,13 +87,13 @@ class StockMove(models.Model):
 
     @api.multi
     def action_set_envio_sga(self):
-        for move in self.filtered(lambda x: x.sga_state in ('NE', 'PE') and x.state not in ('cancel', 'done')):
-            if move.sga_state=='NE':
+        for move in self.filtered(lambda x: x.sga_state in ('no_send', 'ready') and x.state not in ('cancel', 'done')):
+            if move.sga_state=='no_send':
                 if move.state == 'waiting':
                     raise ValidationError ('No puedes enviar nada a SGA sin disponibilidad.')
-                move.sga_state = 'PE'
-            elif move.sga_state == 'PE':
-                move.sga_state = 'NE'
+                move.sga_state = 'ready'
+            elif move.sga_state == 'ready':
+                move.sga_state = 'no_send'
 
     def _assign_package(self, package):
         if self.result_package_id:
@@ -82,14 +118,13 @@ class StockMove(models.Model):
         vals = super().get_new_location_vals(location_field, location)
         if location.picking_type_id and vals:
             vals.update(sga_integrated=location.picking_type_id.sga_integrated,
-                        sga_state='NE' if location.picking_type_id.sga_integrated else 'NI')
+                        sga_state='no_send' if location.picking_type_id.sga_integrated else 'no_integrated')
         return vals
 
     def get_new_vals(self):
         vals = super().get_new_vals()
         vals.update(sga_integrated=self.picking_type_id and self.picking_type_id.sga_integrated,
-                    sga_state='NE' if self.picking_type_id.sga_integrated else 'NI')
-        print (vals)
+                    sga_state='no_send' if self.picking_type_id.sga_integrated else 'no_integrated')
         return vals
 
     def get_moves_selection_domain(self, group_code=''):
@@ -99,15 +134,23 @@ class StockMove(models.Model):
         if group_code:
             domain += [('picking_type_id.group_code', '=', group_code)]
         domain += [('state', 'not in', ['draft', 'cancel', 'done'])]
-        print(domain)
         return domain
 
+    def get_affected_moves(self):
+        ## Cuando selecciono un movimiento o varios debo seleccionar todos los que van en el mismo paquete
+
+        result_package_ids = self.filtered(lambda x: x.state not in ('draft', 'cancel')).mapped("move_line_ids").mapped('result_package_id')
+        return result_package_ids.mapped("move_line_ids").mapped('move_id')
+
     def action_add_moves_to_batch_picking(self):
+        moves_ids = self.get_affected_moves()
+        ## Cuando selecciono un movimiento o varios debo seleccionar todos los que van en el mismo paquete
+
         ctx = self._context.copy()
         if 'active_domain' in ctx.keys():
             ctx.pop('active_domain')
         obj = self.env['stock.batch.picking.wzd']
-        wzd_id = obj.create_from('stock.move', self.ids)
+        wzd_id = obj.create_from('stock.move', moves_ids.ids)
         action = wzd_id.get_formview_action()
         action['target'] = 'new'
         #return action
@@ -120,9 +163,10 @@ class StockMove(models.Model):
 
     @api.multi
     def action_add_to_batch_picking(self):
-
-        to_add = self.filtered(lambda x: not x.draft_batch_picking_id)
-        to_remove = self.filtered(lambda x: x.draft_batch_picking_id)
+        to_add = self.filtered(lambda x: not x.draft_batch_picking_id).get_affected_moves()
+        to_remove = self.filtered(lambda x: x.draft_batch_picking_id).get_affected_moves()
+        if to_add and to_remove:
+            raise ValidationError (_('Selección inconsiste. Hay movimientos con y sin batch'))
         if to_remove:
             to_remove.write({'draft_batch_picking_id': False})
         elif to_add:
@@ -138,16 +182,14 @@ class StockMove(models.Model):
 
             action = self.env.ref('stock_move_selection_wzd.open_view_create_batch_picking').read()[0]
             action['res_id'] = wzd_id.id
-
             return action
 
     @api.multi
     def action_add_to_batch_delivery(self):
         action = self.env.ref('stock_move_selection_wzd.batch_delivery_wzd_act_window').read()[0]
         if self._context.get('object') == 'move':
-            if self.batch_delivery_id:
-                self.batch_delivery_id= False
-                return
+            self.get_affected_moves().filtered(lambda x:x.batch_delivery_id).write({'batch_delivery_id': False})
+            return
             object='move'
         elif self._context.get('object') == 'package':
             if self.result_package_id and self.batch_delivery_id:
@@ -205,9 +247,6 @@ class StockMove(models.Model):
     def get_domain_moves_to_deasign(self):
         return self.filtered(lambda x: x.picking_id and x.state not in ('done', 'cancel', 'draft'))
 
-    def get_batch_picking_domain(self):
-        domain = [('picking_type_id', '=', )]
-
 
     @api.multi
     def move_assign_batch_delivery(self):
@@ -239,6 +278,7 @@ class StockMove(models.Model):
 
     @api.multi
     def action_tree_manage_pack(self):
+
         if self.result_package_id:
             package = self.result_package_id
             self.result_package_id = False
@@ -248,8 +288,6 @@ class StockMove(models.Model):
                 'stock_move_selection_wzd.view_stock_move_pack_wzd_act_window').read()[0]
             action['res_id'] = wzd_id.id
             return action
-
-
 
     @api.multi
     def move_de_sel_assign_picking(self):
@@ -287,4 +325,8 @@ class StockMove(models.Model):
     def _get_new_picking_domain(self):
         domain = super()._get_new_picking_domain()
         return domain
+
+    def _action_done(self):
+        return super()._action_done()
+
 

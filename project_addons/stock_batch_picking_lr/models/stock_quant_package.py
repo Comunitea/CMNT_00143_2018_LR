@@ -9,19 +9,7 @@ class StockQuantPackage(models.Model):
     _inherit = 'stock.quant.package'
 
     batch_picking_id = fields.Many2one('stock.batch.picking', 'Stock Batch')
-    in_batch = fields.Boolean(compute="_check_if_in_batch", default=False)
 
-    @api.multi
-    def _check_if_in_batch(self):
-        for package in self:
-            ctx = self._context.copy()
-            batch_picking_id = ctx.get('batch_picking_id')
-            stock_batch = self.browse(batch_picking_id)
-            if stock_batch and package.mapped('move_line_ids').mapped('picking_id') and stock_batch.id == package.mapped('move_line_ids').mapped('picking_id').mapped('batch_picking_id').id:
-                package.in_batch = True
-            else:
-                package.in_batch = False
-    
     @api.multi
     def add_package_to_batch(self):
 

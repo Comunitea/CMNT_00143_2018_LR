@@ -28,8 +28,8 @@
         <field name="inherit_id" ref="stock_batch_picking.stock_batch_picking_tree"/>
         <field name="arch" type="xml">
             <xpath expr="//tree" position="replace">
-                <tree string="Batch Picking Ulma Status" decoration-info="sga_state == 'W'" decoration-danger="sga_state == 'E'"
-                  decoration-success="sga_state == 'P'">
+                <tree string="Batch Picking Ulma Status" decoration-info="sga_state == 'pending'" decoration-danger="sga_state in ('import_error', 'export_error'))"
+                  decoration-success="sga_state == 'done'">
                     <field name="name"/>
                     <field name="picker_id"/>
                     <field name="date"/>
@@ -53,9 +53,9 @@
                 <filter name="sga_state" string="Ulma State" context="{'group_by':'sga_state'}"/>
             </filter>
             <filter name="no_picker_id" position="after">
-                <filter name="waiting" string="Waiting" domain="[('sga_state','=', 'W')]"/>
-                <filter name="error" string="Error" domain="[('sga_state','=', 'E')]"/>
-                <filter name="processed" string="Processed" domain="[('sga_state','=', 'P')]"/>
+                <filter name="waiting" string="Waiting" domain="[('sga_state','=', 'pending')]"/>
+                <filter name="error" string="Error" domain="[('sga_state','in', ('import_error', 'export_error'))]"/>
+                <filter name="processed" string="Processed" domain="[('sga_state','=', 'done')]"/>
             </filter>
         </field>
     </record>

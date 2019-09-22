@@ -8,17 +8,17 @@
             <notebook position="inside">
                 <page string="Integración Adaia">
                     <group>
-                        <field name="sga_state" widget="statusbar" statusbar_visible="NE,PS,SD" statusbar_colors='{"EE":"red", "EI":"red", "PS":"blue", "RS":"green"}'/>
+                        <field name="sga_state" widget="statusbar" statusbar_visible="no_send,pending,done" statusbar_colors='{"export_error":"red", "import_error":"red", "pending":"blue", "done":"green"}'/>
 
                         <button name="create_new_adaia_file_button" context="{'file_type': 'adaia_product_code', 'mod_type': 'AG', 'version': 0}" 
                         string="Adaia New file" type="object" class="oe_stat_button"
-                         icon="fa-shopping-cart" attrs="{'invisible': [('sga_state','in',('NI', 'SC', 'RS'))]}"/>
+                         icon="fa-shopping-cart" attrs="{'invisible': [('sga_state','in',('no_integrated', 'cancel', 'donde'))]}"/>
                         <button name="create_new_adaia_file_button" context="{'file_type': 'adaia_product_code', 'mod_type': 'MO', 'version': 0}"
                          string="Adaia Modification file" type="object" class="oe_stat_button"
-                         icon="fa-shopping-cart" attrs="{'invisible': [('sga_state','in',('NI', 'SC', 'RS', 'EE', 'EI'))]}"/>
+                         icon="fa-shopping-cart" attrs="{'invisible': [('sga_state','in',('no_integrated', 'cancel', 'done', 'export_error', 'import_error'))]}"/>
                         <button name="create_new_adaia_file_button" context="{'file_type': 'adaia_product_code', 'mod_type': 'DE', 'version': 0}"
                         string="Adaia remove file" type="object" class="oe_stat_button"
-                         icon="fa-shopping-cart" attrs="{'invisible': [('sga_state','in',('NI', 'SC', 'RS', 'EE', 'EI'))]}"/>
+                         icon="fa-shopping-cart" attrs="{'invisible': [('sga_state','in',('no_integrated', 'cancel', 'done', 'export_error', 'import_error'))]}"/>
                     </group>
                     <group>
                         <h4>Barcode</h4>

@@ -25,16 +25,19 @@
                     <field name="carrier_id"/>
                     <field name="driver_id"/>
                     <field name="plate_id"/>
-                    <field name="picks_to_batch_ids" widget="many2many_tags" readonly="1"/>
+
                 </group>
                 <label for="notes"/>
                 <field name="notes"/>
                 <notebook>
                     <page string="Paquetes en la orden">
-                        <label string="Lista de paquetes que se añaden a la orden de carga"/>
-                        <field name="packages_ids" >
-                            <tree>
+                        <h2>Lista de paquetes que se añaden a la orden de carga</h2>
+                        <field name="packages_ids" readonly="1" >
+                            <tree >
                                 <field name="name"/>
+                                <field name="batch_picking_id"/>
+                                <field name="partner_id"/>
+
                                 <field name="info_route_str"/>
                             </tree>
                         </field>
@@ -43,7 +46,7 @@
                         <h2>
                             Lista de movimientos que se añaden a la orden de carga
                         </h2>
-                        <field name="move_ids">
+                        <field name="move_ids" readonly="1">
                             <tree>
                                 <field name="name"/>
                                 <field name="product_uom_qty"/>
@@ -52,19 +55,34 @@
                             </tree>
                         </field>
                     </page>
-                    <page string="Movimientos sin paquete">
-                        <label string="Lista de movimientos que se añadirán (paquete virtual)"/>
-                        <field name="moves_to_pack_ids">
+                    <page string="Movimientos sin albarán de cliente">
+                        <h2>Lista de movimientos que no se asignado a un albarán de cliente. No se añadirán a la orden de carga</h2>
+                        <field name="moves_to_batch_ids" readonly="1">
                             <tree>
                                 <field name="name"/>
                                 <field name="product_uom_qty"/>
+                                <field name="sale_id"/>
+                                <field name="partner_id"/>
+                                <field name="result_package_id"/>
+                                <field name="state" invisible="1"/>
+                            </tree>
+                        </field>
+                    </page>
+                    <page string="Movimientos sin paquete">
+                        <h2>Lista de movimientos que se añadirán sin paquete (o paquete virtual)</h2>
+                        <field name="moves_to_pack_ids" readonly="1">
+                            <tree>
+                                <field name="name"/>
+                                <field name="product_uom_qty"/>
+                                <field name="sale_id"/>
+                                <field name="partner_id"/>
                                 <field name="state" invisible="1"/>
                             </tree>
                         </field>
                     </page>
                       <page string="Pedidos relacionados">
-                        <label string="Lista de pedidos relacionados en esta orden"/>
-                        <field name="picking_ids">
+                        <h2>Lista de pedidos relacionados en esta orden de carga</h2>
+                         <field name="picking_ids" readonly="1">
                             <tree>
                                 <field name="sale_id"/>
                                 <field name="partner_id"/>
@@ -80,10 +98,10 @@
                     <button name="action_in_batch" attrs="{'invisible': ['|', ('moves_to_pack_ids', '!=', []), ('batch_delivery_id', '=', False)]}"
                             string="Asignar orden" type="object" class="oe_highlight"/>
                     <button name="action_assign_partner_batch" string="Asignar albaranes de cliente"
-                            attrs="{'invisible': [('picks_to_batch_ids', '=', [])]}" type="object" class="oe_highlight"/>
+                            attrs="{'invisible': [('moves_to_batch_ids', '=', [])]}" type="object" class="oe_highlight"/>
                     <button name="action_packed_moves" string="Empaquetar"
                             attrs="{'invisible': [('moves_to_pack_ids', '=', [])]}" type="object" class="oe_highlight"/>
-                    <button name="action_assign_route" string="Info envío"
+                    <button name="action_assign_route" string="Aplicar info envío"
                             attrs="{'invisible': [('shipping_type', '=', False)]}" type="object" class="oe_highlight" />
                     <button string="Cancel" class="oe_link" special="cancel"/>
                 </footer>

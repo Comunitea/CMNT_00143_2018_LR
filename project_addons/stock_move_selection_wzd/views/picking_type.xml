@@ -105,9 +105,12 @@
                     <field name="count_picking_backorders"/>
                     <field name="visible_count_picking_backorders"/>
 
-
                     <field name="visible_bargraph"/>
                     <field name="visible_ratio"/>
+
+                    <field name="count_sga_done"/>
+                    <field name="count_sga_send"/>
+                    <field name="count_sga_error"/>
 
                     <field name="sga_integrated"/>
                     <field name="group_code"/>
@@ -148,7 +151,7 @@
                                                                 <span t-if="record.count_picking_late.raw_value &gt; 0 and False">(<t t-esc="record.count_picking_late.value"/>)</span>
                                                                 <span t-if="record.group_code.raw_value =='incoming'">Recepciones</span>
                                                                 <span t-if="record.group_code.raw_value =='outgoing'">Reservas de pedidos</span>
-                                                                <span t-if="record.group_code.raw_value =='picking'">Picking</span>
+                                                                <span t-if="record.group_code.raw_value =='picking'">Batch</span>
                                                                 <span t-if="record.group_code.raw_value =='internal'">Internos </span>
                                                                 <span t-if="record.group_code.raw_value =='location'">Ubicaciones </span>
                                                                 <span t-if="record.group_code.raw_value =='reposition'">Reposiciones </span>
@@ -165,7 +168,7 @@
                                                                 <!--span t-if="record.count_picking_late.raw_value &gt; 0 and False">(<t t-esc="record.count_picking_late.value"/>)</span-->
                                                                 <span t-if="record.group_code.raw_value =='incoming'">Recepciones</span>
                                                                 <span t-if="record.group_code.raw_value =='outgoing'">Clientes</span>
-                                                                <span t-if="record.group_code.raw_value =='picking'">Picking</span>
+                                                                <span t-if="record.group_code.raw_value =='picking'">Batch</span>
                                                                 <span t-if="record.group_code.raw_value =='internal'">Internos </span>
                                                                 <span t-if="record.group_code.raw_value =='location'">Ubicaciones </span>
                                                                 <span t-if="record.group_code.raw_value =='reposition'">Reposiciones </span>
@@ -181,7 +184,7 @@
                                                                 <!--span t-if="record.count_picking_late.raw_value &gt; 0 and False">(<t t-esc="record.count_picking_late.value"/>)</span-->
                                                                 <span t-if="record.group_code.raw_value =='incoming'">Recepciones</span>
                                                                 <span t-if="record.group_code.raw_value =='outgoing'">Clientes</span>
-                                                                <span t-if="record.group_code.raw_value =='picking'">Picking</span>
+                                                                <span t-if="record.group_code.raw_value =='picking'">Batch</span>
                                                                 <span t-if="record.group_code.raw_value =='internal'">Internos </span>
                                                                 <span t-if="record.group_code.raw_value =='location'">Ubicaciones </span>
                                                                 <span t-if="record.group_code.raw_value =='reposition'">Reposiciones </span>
@@ -217,6 +220,18 @@
 
 
                                                 <div name="moves">
+                                                    <div t-if="record.sga_integrated.raw_value == true" class="row">
+                                                        <div class="col-xs-9 text-primary" title="Pendientes de SGA">
+                                                            <a name="get_action_move_tree_send_sga" type="object">
+                                                                Pendientes SGA
+                                                            </a>
+                                                        </div>
+                                                        <div class="col-xs-3">
+
+                                                            <span><t t-esc="record.count_sga_done.value"/>(<t t-esc="record.count_sga_send.value"/>)</span>
+
+                                                        </div>
+                                                    </div>
                                                     <div t-if="record.visible_count_move_unpacked.raw_value == true" class="row">
                                                         <div class="col-xs-9 text-primary" title="Para empaquetar">
                                                             <a name="get_action_move_tree_no_package" type="object">
@@ -313,6 +328,9 @@
                                                 <div class="o_kanban_card_manage_title">
                                                     <span>View</span>
                                                 </div>
+                                                <div t-if="record.sga_integrated.raw_value == true" title="SGA con error">
+                                                    <a name="get_action_move_tree_sga_error" type="object">Error SGA</a>
+                                                </div>
                                                 <div title="Todos los moviemintos de este tipo de albarán">
                                                     <a name="get_stock_move_action_move_type" type="object">Todos</a>
                                                 </div>
@@ -322,6 +340,7 @@
                                                 <div title="Todos los movimientos no realizados">
                                                     <a name="get_action_move_tree_all_not_done" type="object">No hechos</a>
                                                 </div>
+
                                             </div>
                                             <div class="col-xs-6 o_kanban_card_manage_section o_kanban_manage_new">
 
@@ -330,6 +349,16 @@
                                                 </div>
                                                 <div title="Todos los movimientos para recoger">
                                                     <a name="get_action_move_tree_pasaran" type="object">Pasarán</a>
+                                                </div>
+                                                <div title="Todos los 2º movimientos">
+                                                    <div class="col-xs-9 text-info" title="Movimientos de 2º">
+                                                            <a class="oe_kanban_stock_picking_type_list" name="get_action_move_tree_backorder" type="object">
+                                                                Back Orders
+                                                            </a>
+                                                        </div>
+                                                        <div class="col-xs-3">
+                                                            <field name="count_move_backorders"/>
+                                                        </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -368,6 +397,7 @@
                 <!--field name="urgent" widget="selection" context="{'search1_urgent': self}"/-->
             </field>
             <field name="warehouse_id" position="after">
+                <field name="partner_id" context = "{'search_partner_id': self}" domain="[('partner_id','child_of',self)]"/>
                 <field name="group_code"/>
                 <field name="default_location_src_id"/>
                 <field name="default_location_dest_id"/>
@@ -376,6 +406,8 @@
             </field>
             <xpath expr="//filter[@name='inactive']" position="after">
 
+                <separator/>
+                <filter string="Empresa" name="filter_partner" domain="[('partner_id','child_of',self)]"/>
                 <separator/>
                 <filter string="Urgente" name="filter_urgent" domain="[('shipping_type','=','urgent')]"/>
                 <filter string="Ruta" name="filter_ruta" domain="[('shipping_type','=','route')]"/>

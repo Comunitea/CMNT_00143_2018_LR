@@ -24,14 +24,15 @@ PICKING_TYPE_GROUP = [('incoming', 'Incoming'),
                       ('reposition', 'Reposition'),
                       ('other', 'Other')]
 
-SGA_STATES = [('NI', 'Sin integracion'),
-              ('NE', 'No enviado'),
-              ('PE', 'Para enviar'),
-              ('PS', 'Pendiente Sga'),
-              ('EE', 'Error en exportacion'),
-              ('EI', 'Error en importacion'),
-              ('SR', 'Realizado'),
-              ('SC', 'Cancelado')]
+
+SGA_STATES = [('no_integrated', 'Sin integracion'),
+              ('no_send', 'No enviado'),
+              ('ready', 'Para enviar'),
+              ('pending', 'Pendiente Sga'),
+              ('export_error', 'Error en exportacion'),
+              ('import_error', 'Error en importacion'),
+              ('done', 'Realizado'),
+              ('cancel', 'Cancelado')]
 
 SGA_INTEGRATION_TYPES = [('sga_ulma', 'SGA ULMA'),
                          ('sga_adaia', 'SGA ADAIA')]
@@ -71,7 +72,7 @@ class PickingType(models.Model):
     count_move_backorders = fields.Integer(compute='_compute_picking_count', string="Movs. de 2º albarán")
     visible_count_move_backorders = fields.Boolean('Movs. de 2º albarán')
 
-    visible_count_move_to_pick = fields.Boolean('Movs. de reservas sin grupo')
+    visible_count_move_to_pick = fields.Boolean('Movs. sin batch')
     count_move_to_pick = fields.Integer(compute='_compute_picking_count', string="Movs. sin grupo")
 
     visible_count_pick_to_batch = fields.Boolean('Reservas sin carga')
@@ -82,6 +83,10 @@ class PickingType(models.Model):
 
     visible_count_move_unpacked= fields.Boolean('Movs. sin empaquetar')
     count_move_unpacked = fields.Integer(compute='_compute_picking_count', string="Movs. sin empaquetar")
+
+    count_sga_send = fields.Integer(compute='_compute_picking_count', string="Movs. enviados a SGA")
+    count_sga_done = fields.Integer(compute='_compute_picking_count', string="Movs. hechos en SGA")
+    count_sga_error = fields.Integer(compute='_compute_picking_count', string="Errores de SGA")
 
     visible_bargraph = fields.Boolean('Barras inferiores')
     visible_ratio = fields.Boolean('Ratio')
@@ -107,30 +112,32 @@ class PickingType(models.Model):
     urgent = fields.Selection([('urgent', 'Urgente'), ('no_urgent', 'No uergente')], help='Default urgent for partner orders\nPlus 3.20%', store=False)
     context_domain = fields.Char()
 
+    partner_id = fields.Many2one('res.partner', 'Cliente/Proveedor', store=False)
+
 
     def get_sga_integrated(self):
         return self.sga_integrated
 
     def get_parent_state(self, child_ids):
         ### LO PONGO AQUI PORQUE ES DONDE ESTA SGA_STATE
-        if all(child.sga_state == 'NI' for child in child_ids):
-            sga_state = 'NI'
-        elif all(child.sga_state == 'SR' for child in child_ids):
-            sga_state = 'SR'
-        elif all(child.sga_state == 'PS' for child in child_ids):
-            sga_state = 'PS'
-        elif all(child.sga_state == 'SC' for child in child_ids):
-            sga_state = 'SC'
-        elif all(child.sga_state == 'NE' for child in child_ids):
-            sga_state = 'NE'
-        elif all(child.sga_state in ('SR', 'PS') for child in child_ids):
-            sga_state = 'PS'
-        elif any(child.sga_state == 'EI' for child in child_ids):
-            sga_state = 'EI'
-        elif any(child.sga_state == 'EE' for child in child_ids):
-            sga_state = 'EE'
+        if all(child.sga_state == 'no_integrated' for child in child_ids):
+            sga_state = 'no_integrated'
+        elif all(child.sga_state == 'done' for child in child_ids):
+            sga_state = 'done'
+        elif all(child.sga_state == 'pending' for child in child_ids):
+            sga_state = 'pending'
+        elif all(child.sga_state == 'cancel' for child in child_ids):
+            sga_state = 'cancel'
+        elif all(child.sga_state == 'no_send' for child in child_ids):
+            sga_state = 'no_send'
+        elif all(child.sga_state in ('done', 'pending') for child in child_ids):
+            sga_state = 'pending'
+        elif any(child.sga_state == 'import_error' for child in child_ids):
+            sga_state = 'import_error'
+        elif any(child.sga_state == 'export_error' for child in child_ids):
+            sga_state = 'export_error'
         else:
-            sga_state = 'EE'
+            sga_state = 'export_error'
         return sga_state
 
     def _compute_picking_count(self):
@@ -146,7 +153,6 @@ class PickingType(models.Model):
                 x['picking_type_id'][0]: x['picking_type_id_count']
                 for x in data if x['picking_type_id']
             }
-            print ('MOVES DATA para el campo {}\n con domain ------------------------\n{}\n: Y DATA ---------------------------\n{}\n------------------'.format(field, domain, data))
 
             for record in self:
                 record[field] = count.get(record.id, 0)
@@ -159,7 +165,6 @@ class PickingType(models.Model):
                 x['picking_type_id'][0]: x['picking_type_id_count']
                 for x in data if x['picking_type_id']
             }
-            print('Data {}'.format(data))
             for record in self:
                 record[field] = count.get(record.id, 0)
         for field in batch_domains:
@@ -170,7 +175,6 @@ class PickingType(models.Model):
                 x['picking_type_id'][0]: x['picking_type_id_count']
                 for x in data if x['picking_type_id']
             }
-            print('Data {}'.format(data))
             for record in self:
                 record[field] = count.get(record.id, 0)
         for record in self:
@@ -187,6 +191,8 @@ class PickingType(models.Model):
         return []
 
     def get_ready_state(self):
+
+        ## todo: MEJORAR ESTO
         ready_domain = {}
 
         #internal moves
@@ -197,21 +203,21 @@ class PickingType(models.Model):
                   ('state', 'in', ('partially_available', 'assigned'))]
         #salidas
         out_dom = [('picking_type_id.code', '=', 'outgoing'),
+                   ('state', 'in', ('partially_available', 'assigned')),
                    ('result_package_id', '!=', False)]
 
         ready_domain['move'] = expression.OR([int_dom, in_dom, out_dom])
-        ready_domain['move'] = [('state', 'in', ('partially_available', 'assigned'))]
+        #ready_domain['move'] = [('state', 'in', ('partially_available', 'assigned'))]
         int_dom = [('picking_type_id.code', '=', 'internal'), ('state', '=', 'assigned')]
         # recepciones
         in_dom = [('picking_type_id.code', '=', 'incoming'), ('state', '=', 'assigned')]
         # salidas
         out_dom = [('picking_type_id.code', '=', 'outgoing'),
                    ('batch_picking_id', '!=', False), ('state', '=', 'assigned')]
-
-        ready_domain['pick'] = expression.OR([int_dom, in_dom, out_dom])
+        #ready_domain['move'] = [('state', 'in', ('partially_available', 'assigned'))]
+        ready_domain['pick'] = [('state', 'in', ('partially_available', 'assigned'))]
         ready_domain['batch'] = [('state', 'in', ('draft', 'assigned'))]
 
-        print ("Ready domain {}".format(ready_domain))
         return ready_domain
 
     def get_moves_domain(self):
@@ -228,6 +234,7 @@ class PickingType(models.Model):
         done = [('state', '=', 'done')]
         today_filter = [('date_expected', '<', tomorrow), ('date_expected', '>', today)]
         hide_state = [('state', 'not in', ('draft', 'done', 'cancel'))]
+        context_domain += hide_state
         to_do_state = [('state', 'in', ('partially_available', 'assigned', 'waiting', 'confirmed'))]
 
         waiting_state = [('state', 'in', ('waiting','partially_available', 'confirmed'))]
@@ -235,7 +242,7 @@ class PickingType(models.Model):
         ready_state = self.get_ready_state()
 
         with_pick = ['|', ('draft_batch_picking_id', '!=', False), ('batch_picking_id', '!=', False)]
-        without_pick = ['|', ('draft_batch_picking_id', '=', False), ('batch_picking_id', '=', False)]
+        without_pick = [('draft_batch_picking_id', '=', False), ('batch_picking_id', '=', False)]
 
         with_batch = [('batch_delivery_id', '!=', False)]
         without_batch = [('batch_delivery_id', '=', False)]
@@ -250,11 +257,15 @@ class PickingType(models.Model):
             'count_move_draft': context_domain + draft,
             'count_move_waiting': context_domain + waiting_state,
             'count_move_unpacked': context_domain + [('result_package_id', '=', False), ('state', 'in', ('partially_available', 'assigned'))],
-            'count_move_ready': context_domain + ready_state['move'] ,
+            'count_move_ready': context_domain + ready_state['move'],
             'count_move': context_domain + to_do_state,
-            'count_move_to_pick': context_domain + ready_state['move'] + without_pick + before_tomorrow,
+            'count_move_to_pick': context_domain + ready_state['move'] + without_pick,
             'count_move_late': context_domain + to_do_state + late,
             'count_move_backorders': context_domain + to_do_state + [('origin_returned_move_id', '!=', False)],
+            'count_sga_send': [('sga_state', '=', 'pending')],
+            'count_sga_done': [('sga_state', '=', 'pending'), ('quantity_done', '=', 0)],
+            'count_sga_error': [('sga_state', 'in', ('export_error', 'import_error'))]
+
         }
         context_domain = self.get_context_domain('scheduled_date')
         picking_domains = {
@@ -271,7 +282,7 @@ class PickingType(models.Model):
         batch_domains = {
             'count_batch_ready': context_domain + ready_state['batch'],
         }
-        print ('{}\n{}'.format(move_domains, picking_domains))
+
         return move_domains, picking_domains, batch_domains
 
     @api.model
@@ -292,13 +303,11 @@ class PickingType(models.Model):
 
     def get_context_domain(self, date_expected ='date_expected'):
         def delete(domain, var, new_token):
-            print('Token: {}'.format(new_token))
             if domain:
                 ##EPETIDO
                 for token in domain:
                     ## Si ya lo tengo devulevo el mismo domainio
                     if token == new_token[0]:
-                        print ('Token repetido: {}'.format(new_token))
                         return domain
                 ##HAGO UN OR CON ALGUNO QUE YA HAY
                 for token in domain:
@@ -309,23 +318,20 @@ class PickingType(models.Model):
                             old_token = token
                             domain.remove(token)
                             domain += ['|', old_token, new_token[0]]
-                            print('Token OR: {}'.format(domain))
                             return domain
 
             ##NO LO ENCUENTRO ES UN AND
 
             domain += new_token
-            print('Token AND: {}'.format(domain))
             return domain
 
-        print ('COntexto: {}'.format(self._context))
         if self._context.get('search1_all', False):
             self.write({'context_domain': '[]'})
             return []
 
 
         domain = safe_eval(self[0].context_domain or '[]', {})
-        domain1 = domain
+
         ##Por sencillez
         try:
             var = (1, '=', 1)
@@ -358,17 +364,22 @@ class PickingType(models.Model):
             domain=[]
 
         if self._context.get('filter_day', False):
-
             f_day = self._context['filter_day']
             today = datetime.now().strftime(DEFAULT_SERVER_DATE_FORMAT)
             tomorrow = (datetime.now() + timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT)
             yesterday = (datetime.now() - timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT)
             if f_day =='today':
-                domain = [(date_expected, '<', tomorrow),(date_expected, '>', yesterday)]
+                domain += [(date_expected, '<', tomorrow),(date_expected, '>', yesterday)]
             elif f_day=='tomorrow':
-                domain = [(date_expected, '>=', tomorrow)]
+                domain += [(date_expected, '>=', tomorrow)]
             elif f_day=='yesterday':
-                domain = [(date_expected, '<=', today)]
+                domain += [(date_expected, '<=', today)]
+
+        if self._context.get('search_partner_id', False):
+            partner_id = self.env['res.partner'].search([('display_name', 'ilike', self._context['search_partner_id'])])
+            if partner_id:
+                domain += [('partner_id', '=', partner_id.id)]
+
         return domain or []
 
 
@@ -384,10 +395,7 @@ class PickingType(models.Model):
         self.last_done_move = json.dumps(tristates)
 
     def update_context(self, context={}):
-        print("Update context para agrupar los moviemintos de tipo {}  actualizando de {}".format(self.group_code,
-                                                                                                  context))
         context.update({'group_code': self.group_code})
-
         if self.group_code == 'picking':
             context.update({
                 'search_default_by_partner_id': True,
@@ -411,7 +419,6 @@ class PickingType(models.Model):
                 'search_default_by_location_dest_id': True,
             })
 
-        print("a {}".format(context))
         return context
 
     @api.multi
@@ -524,6 +531,22 @@ class PickingType(models.Model):
         if self:
             action['display_name'] = self.display_name
         return action
+
+    def get_action_move_tree_sga_error (self):
+        move_domains, picking_domains, batch_domains = self.get_moves_domain()
+        domain = move_domains['count_sga_error']
+        context = {
+            'search_default_picking_type_id': self.id,
+        }
+        return self.return_action_show_moves(domain, context)
+
+    def get_action_move_tree_send_sga (self):
+        move_domains, picking_domains, batch_domains = self.get_moves_domain()
+        domain = move_domains['count_sga_send']
+        context = {
+            'search_default_picking_type_id': self.id,
+        }
+        return self.return_action_show_moves(domain, context)
 
     def get_stock_move_action_move_type_today(self):
         move_domains, picking_domains, batch_domains = self.get_moves_domain()

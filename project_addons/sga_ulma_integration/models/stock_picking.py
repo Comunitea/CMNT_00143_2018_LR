@@ -45,11 +45,11 @@ class StockPicking(models.Model):
         return vals
 
     def force_button_validate(self):
-        self.sga_state = 'SR'
+        self.sga_state = 'done'
         return self.button_validate()
     
     def move_to_not_sent(self):
-        self.sga_state = 'NE'
+        self.sga_state = 'no_send'
 
     @api.multi
     def send_to_sga(self):
@@ -68,7 +68,7 @@ class StockPicking(models.Model):
                     vals = move.get_move_line_ulma_vals(cont=cont)
                     ulma_move = ulma_out.create(vals)
                     cont += 1
-                    move.sga_state='PS'
+                    move.sga_state='pending'
 
                 if ulma_move:
                     vals = sale.get_sale_to_ulma(pick, ulma_move, min(move.move_id.date_expected for move in sale_moves))
@@ -115,11 +115,11 @@ class StockPicking(models.Model):
                             pick.move_line_ids[index].move_id._split(diference)
                             pick.move_line_ids[index]._set_quantity_done(ulma_move.mmmcanuni)
                             pick.move_line_ids[index].write({
-                                'sga_state': 'P'
+                                'sga_state': 'pending'
                             })
 
                     pick.write({
-                        'sga_state': 'P'
+                        'sga_state': 'pending'
                     })
                 return flag_type
         except Exception as error:                  

@@ -9,3 +9,36 @@ class SaleOrder(models.Model):
 
     def get_new_vals(self):
         return super().get_new_vals()
+
+    @api.multi
+    #@api.depends('order_line.move_ids.batch_picking_ids', 'order_line.move_ids.batch_delivery_ids')
+    def get_batch_ids(self):
+
+        for order in self:
+            domain = order.get_moves_domain()
+            move_ids = self.env['stock.move'].search(domain)
+            order.batch_picking_ids = move_ids.mapped('batch_id')
+            order.batch_delivery_ids =move_ids.mapped('batch_delivery_id')
+            order.count_batch_picking_ids = len(order.batch_picking_ids)
+            order.count_batch_delivery_ids = len(order.batch_delivery_ids)
+
+    batch_picking_ids = fields.One2many('stock.batch.picking', compute=get_batch_ids)
+    batch_delivery_ids = fields.One2many('stock.batch.delivery', compute=get_batch_ids)
+    count_batch_picking_ids = fields.Integer(compute=get_batch_ids)
+    count_batch_delivery_ids = fields.Integer(compute=get_batch_ids)
+
+    @api.multi
+    def action_view_batch_picking_ids(self):
+        self.ensure_one()
+        action = self.env.ref(
+            'stock_batch_picking.action_stock_batch_picking_tree').read()[0]
+        action['domain'] = [('id', 'in', self.batch_picking_ids.ids)]
+        return action
+
+    @api.multi
+    def action_view_batch_delivery_ids(self):
+        self.ensure_one()
+        action = self.env.ref(
+            'stock_move_selection_wzd.action_stock_batch_delivery_tree').read()[0]
+        action['domain'] = [('id', 'in', self.batch_delivery_ids.ids)]
+        return action

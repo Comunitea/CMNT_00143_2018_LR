@@ -21,7 +21,7 @@ class ProductProduct(models.Model):
         for pick in self:
             pick.new_adaia_file(file_type, ctx['mod_type'], ctx['version'])
             if ctx['mod_type'] == 'DE':
-                self.env['product.template'].browse(pick.id).write({'sga_state': 'NI'})
+                self.env['product.template'].browse(pick.id).write({'sga_state': 'no_integrated'})
 
     @api.multi
     def new_adaia_file(self, sga_file_type='PRT0', operation=False, force=False):
@@ -40,7 +40,7 @@ class ProductProduct(models.Model):
                 product_ids.append(product.id)
 
         if product_ids and operation is not 'DE':
-            self.env['product.template'].browse(product_ids).write({'sga_state': 'SR'})
+            self.env['product.template'].browse(product_ids).write({'sga_state': 'done'})
         elif not product_ids:
             raise ValidationError("No hay partners para enviar a Adaia")
         return True
@@ -48,4 +48,4 @@ class ProductProduct(models.Model):
     @api.onchange('volume')
     def onchange_volume(self):
         for template in self:
-            template.write({'sga_state': 'NE'})
+            template.write({'sga_state': 'no_send'})

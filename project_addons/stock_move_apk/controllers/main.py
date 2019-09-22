@@ -12,3 +12,8 @@ class ProductionAppController(http.Controller):
     def a(self, debug=False, **k):
         return http.local_redirect(
             '/stock_move_apk/static/www/index.html')
+
+    @http.route(['/packageWww/'], type='http', auth='public')
+    def a(self, debug=False, **k):
+        return http.local_redirect(
+            '/stock_move_apk/static/www_apk/index.html')

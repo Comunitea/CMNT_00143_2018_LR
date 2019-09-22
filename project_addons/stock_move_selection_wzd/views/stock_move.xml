@@ -31,7 +31,7 @@
 
     <record id="view_move_form_wzd_change_quant" model="ir.ui.view">
         <field name="name">stock.move.change_quant_wzd</field>
-        <field name="inherit_id" ref="stock.view_move_form"/>
+        <field name="inherit_id" ref="stock_picking_group.view_move_form"/>
         <field name="model">stock.move</field>
         <field name="arch" type="xml">
             <field name="state" position="before">
@@ -49,57 +49,52 @@
         <field name="name">stock.move.tree.sel</field>
         <field name="model">stock.move</field>
         <field name="arch" type="xml">
-            <tree decoration-muted="state not in ('assigned', 'partially_available')"
-                  decoration-success="state in ('assigned', 'partially_available') and (
-                                        (group_code == 'outgoing' and batch_delivery_id and shipping_type and result_package_id) or
-                                        (group_code != 'outgoing' and batch_picking_id) or
-                                        (group_code in ('location','picking') and sga_state in ('PE', 'SR', 'PS'))
-                                        )"
 
-                  decoration-warning="state in ('assigned', 'partially_available') and
-                    ((group_code != 'outgoing' and not batch_picking_id) or
-                    (group_code == 'outgoing' and (not shipping_type or not result_package_id)) or
-                    (group_code in ('location','picking') and sga_state not in ('PE', 'SR', 'PS')))"
-
+            <tree decoration-muted="decoration=='muted'"
+                  decoration-success="decoration=='success'"
+                  decoration-info="decoration=='info'"
+                  decoration-danger="decoration=='danger'"
+                  decoration-warning="decoration=='warning'"
                   string="Movimientos"
                   edit="1"
                   create="0"
                   default_order="date">
-
+                <field name="decoration" invisible="1"/>
                 <field name="shipping_type" invisible="context.get('group_code', False) in ('reposition', 'incoming', 'location')"/>
                 <field name="delivery_route_path_id" invisible="not context.get('group_code', False) in ('outgoing', 'dropship')"/>
                 <field name="carrier_id" invisible="not context.get('group_code', False) in ('outgoing', 'dropship')"/>
                 <field name="batch_delivery_id" invisible="not context.get('group_code', False) in ('outgoing', 'dropship')"/>
-                 <button name="action_add_to_batch_delivery"
+                <button name="action_add_to_batch_delivery"
                         string="Enviar"
                         type="object"
                         context="{'object': 'move'}"
-                        icon="fa-truck"
+                        icon="fa-truck" class="fa-2x"
                         attrs="{'invisible': ['|','|',('group_code', 'not in', ('outgoing', 'dropship')), ('result_package_id', '!=', False), ('state', 'not in', ('assigned', 'partially_available'))]}"
                         />
                 <field name="batch_id"/>
                 <field name="batch_picking_id" invisible="1"/>
                 <field name="draft_batch_picking_id" invisible="1"/>
                 <button name="action_add_to_batch_picking"
-                        string="Enviar"
+                        string="(Des)Asignar batch"
                         type="object"
                         context="{'model': 'move'}"
-                        icon="fa-tasks"
-                        attrs="{'invisible': ['|', ('group_code', 'not in', ('picking', 'location', 'reposition')), ('state', 'not in', ('assigned', 'partially_available'))]}"
+                        icon="fa-tasks" class="fa-2x"
+                        attrs="{'invisible': ['|', ('state', 'not in', ('assigned', 'partially_available')), ('batch_delivery_id', '!=', False)]}"
                         />
+
                 <!--button name="action_set_envio_sga"
                         string="Cancelar envío a SGA"
                         type="object"
                         context="{'object': 'move'}"
                         icon="fa-volume-up"
-                        attrs="{'invisible': ['|', '|', ('sga_integrated', '=', False), ('sga_state', '=', 'PE'), ('state', 'not in', ('assigned', 'partially_available'))]}"
+                        attrs="{'invisible': ['|', '|', ('sga_integrated', '=', False), ('sga_state', '=', 'ready'), ('state', 'not in', ('assigned', 'partially_available'))]}"
                         />
                 <button name="action_set_envio_sga"
                         string="Enviar a SGA"
                         type="object"
                         context="{'object': 'move'}"
                         icon="fa-volume-off"
-                        attrs="{'invisible': ['|', '|', ('sga_integrated', '=', False), ('sga_state', '=', 'NE'), ('state', 'not in', ('assigned', 'partially_available'))]}"
+                        attrs="{'invisible': ['|', '|', ('sga_integrated', '=', False), ('sga_state', '=', 'no_send'), ('state', 'not in', ('assigned', 'partially_available'))]}"
                         /-->
                 <field name="picking_id" invisible="1"/>
                 <field name="sale_id" string="Venta" invisible="not context.get('group_code', False) in ('outgoing', 'picking')"/>
@@ -123,19 +118,25 @@
 
 
                 <button name="action_add_to_batch_delivery"
-                        string="Enviar"
+                        string="(Des) Cargar"
                         type="object"
                         context="{'object': 'package'}"
-                        icon="fa-truck"
-                        attrs="{'invisible': ['|','|',('result_package_id', '=', False), ('state', 'not in', ('assigned', 'partially_available'))]}"
+                        icon="fa-truck" class="fa-2x"
+                        attrs="{'invisible': ['|', ('group_code', '!=', 'outgoing'),('state', 'not in', ('assigned', 'partially_available'))]}"
                         />
                 <button name="action_tree_manage_pack"
                         string="(Des) Empaquetar"
                         type="object"
-                        icon="fa-dropbox"
-                        attrs="{'invisible': ['|', '|',('batch_delivery_id', '!=', False), ('group_code', '!=', 'outgoing'), ('state', 'not in', ('assigned', 'partially_available'))]}"
+                        icon="fa-dropbox" class="fa-2x"
+                        attrs="{'invisible': ['|', ('batch_delivery_id', '!=', False), ('state', 'not in', ('assigned', 'partially_available'))]}"
                         />
-                <field name="product_uom_qty" string="Quantity Ordered"/>
+                <field name="product_uom_qty"/>
+                <field name="quantity_done"/>
+                <field name="show_details_visible" invisible="1"/>
+                <button name="action_show_details" string="Registrar detalles del movimiento"
+                        type="object" icon="fa-list" class="fa-2x"
+                        attrs="{'invisible': [('show_details_visible', '=', False)]}"
+                        />
                 <field name="state"/>
                 <field name="sga_state" invisible="not context.get('group_code', False) in ('picking', 'internal', 'location', 'reposition')"/>
                 <field name="company_id" invisible="1"/>
@@ -211,9 +212,9 @@
                 <filter string="Ruta" name="route_route" domain="[('shipping_type','=', 'route')]"/>
                 <separator/>
                 <filter name="sga_integrated" string="SGA" domain="[('sga_integrated','=', True)]"/>
-                <filter name="waiting" string="SGA. Enviado" domain="[('sga_state','=', 'PS')]"/>
-                <filter name="error" string="SGA. Error" domain="[('sga_state','in', ['EI', 'EE'])]"/>
-                <filter name="processed" string="SGA. Completado" domain="[('sga_state','=', 'MT')]"/>
+                <filter name="waiting" string="SGA. Enviado" domain="[('sga_state','=', 'pending')]"/>
+                <filter name="error" string="SGA. Error" domain="[('sga_state','in', ['import_error', 'export_error'])]"/>
+                <filter name="processed" string="SGA. Completado" domain="[('sga_state','=', 'done')]"/>
                 <group expand="0" string="Group By">
                     <filter string="Tipo de envío" name="by_shipping_type" domain="[]"  context="{'group_by':'shipping_type'}"/>
                     <filter string="Status" name="by_state" domain="[]"  context="{'group_by':'state'}"/>

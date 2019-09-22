@@ -7,26 +7,12 @@
         <field name="state">code</field>
         <field name="code">records.move_assign_batch_picking()</field>
     </record>
-    <record id="action_moves_DEassign_batch" model="ir.actions.server">
+    <record id="action_moves_deassign_batch" model="ir.actions.server">
         <field name="name">Desasignar carta de porte</field>
         <field name="model_id" ref="stock.model_stock_move"/>
         <field name="binding_model_id" ref="stock.model_stock_move"/>
         <field name="state">code</field>
         <field name="code">records.move_desassign_batch_picking()</field>
-    </record>
-
-    <record id="stock_move_view_sel_search_batch_lr" model="ir.ui.view">
-        <field name="name">stock.move.search.lr</field>
-        <field name="model">stock.move</field>
-        <field name="inherit_id" ref="stock_move_selection_wzd.stock_move_view_sel_search"/>
-        <field name="arch" type="xml">
-            <xpath expr="//filter[@name='pasaran_route']" position="before">
-                <filter string="Sin carta de porte" name="batch_picking_id_false" domain="[('picking_id.batch_picking_id','=', False)]"/>
-                <filter string="Con carte de porte" name="batch_picking_id_true" domain="[('picking_id.batch_picking_id','=', True)]"/>
-                <separator/>
-            </xpath>
-
-        </field>
     </record>
 
     <record id="view_move_line_tree_sel_lr" model="ir.ui.view">

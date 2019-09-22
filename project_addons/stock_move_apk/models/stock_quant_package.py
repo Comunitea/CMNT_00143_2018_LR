@@ -46,10 +46,9 @@ class StockQuantPackage(models.Model):
         
         data = {
             'move_lines_info': move_lines_info,
-            'package_info': package_obj.get_apk_info()
+            'package_info': package_obj.get_apk_info(),
+            'packaging_line_info': package_obj.get_packaging_lines({'package_id': package_id})
             }
-
-        
         return data
     
     @api.model
@@ -100,7 +99,6 @@ class StockQuantPackage(models.Model):
 
         ctx = self._context.copy()
         ctx.update(write_from_package=True)
-        print (values)
         package_id = self.browse(values.get('package_id', False))
         move_line_ids = self.env['stock.move.line'].browse(values.get('move_line_ids', False))
         action = values.get('action')

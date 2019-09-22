@@ -89,7 +89,6 @@ class VirtualFairImportWzd(models.TransientModel):
                 'value': term_name,
                 'term_id': term_id
             }
-            print(vals)
             res.append((0, 0, vals))
         return res
 

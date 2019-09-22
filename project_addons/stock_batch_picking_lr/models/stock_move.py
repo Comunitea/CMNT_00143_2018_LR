@@ -62,7 +62,8 @@ class StockMove(models.Model):
 
     def _get_new_picking_values(self):
         res = super()._get_new_picking_values()
-        res['batch_picking_id'] = self._context.get('batch_picking_id', False)
+        if self._context.get('batch_picking_id', False):
+            res['batch_picking_id'] = self._context.get('batch_picking_id', False)
         res['origin'] = self.origin
         return res
 

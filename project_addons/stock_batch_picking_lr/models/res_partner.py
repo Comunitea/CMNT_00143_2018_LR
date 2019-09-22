@@ -7,4 +7,4 @@ from odoo import fields, api, models
 class ResPartner(models.Model):
     _inherit = 'res.partner'
 
-    route_driver = fields.Boolean('Route driver')
+    #route_driver = fields.Boolean('Route driver')

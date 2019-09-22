@@ -36,7 +36,7 @@ class StockBatchDeliveryWzd(models.TransientModel):
 
     move_ids = fields.Many2many('stock.move', string='Movimientos')
     moves_to_pack_ids = fields.Many2many('stock.move', string='Movimientos sin paquete', inverse='set_moves_to_pack_ids', compute='get_child_vals')
-    picks_to_batch_ids = fields.Many2many('stock.picking', string='Movimientos sin grupo', compute='get_child_vals')
+    moves_to_batch_ids = fields.Many2many('stock.move', string='Movimientos sin batch', compute='get_child_vals')
     picking_ids = fields.Many2many('stock.picking', string='Pedidos asociados', compute='get_child_vals')
     packages_ids = fields.Many2many('stock.quant.package', string='Paquetes', compute='get_child_vals')
 
@@ -50,17 +50,49 @@ class StockBatchDeliveryWzd(models.TransientModel):
         self.packages_ids = self.move_ids.mapped('result_package_id')
         self.moves_to_pack_ids = self.move_ids.filtered(lambda x: not x.result_package_id)
         self.picking_ids = self.move_ids.mapped('picking_id')
-        self.picks_to_batch_ids = self.picking_ids.filtered(lambda x: not x.batch_picking_id)
+        self.moves_to_batch_ids = self.move_ids.filtered(lambda x: not x.batch_id)
 
-
+    def get_new_batch_values(self, picking_type_id):
+        return {
+            'date': self.date,
+            #'notes': self.notes,
+            'picker_id': self.picker_id.id,
+            'picking_type_id': picking_type_id.id,
+            'state': 'assigned'
+        }
     @api.multi
     def action_assign_partner_batch(self):
-        ctx = self._context.copy()
-        ctx.update(force_route_vals=True)
-        for pick in self.picks_to_batch_ids:
-            pick.with_context(ctx).auto_assign_batch_picking(True)
-        return self.autorefresh()
 
+        if len(self.move_ids.mapped('picking_type_id')) > 1:
+            raise ValueError(_('No puedes crear un batch de con movimientos de distiont tipo'))
+        picking_type_id = self.move_ids.mapped('picking_type_id')
+            # self.move_line_ids.mapped('move_id').ids
+        fields = picking_type_id.grouped_batch_field_ids
+        new_batchs = self.env['stock.batch.picking']
+        if not fields:
+            new_batchs = self.env['stock.batch.picking'].create(self.get_wzd_values())
+            self.move_ids.write({'draft_batch_picking_id': new_batchs.id})
+        else:
+            for move in self.move_ids:
+                domain = move.get_batch_domain()
+                batch = self.env['stock.batch.picking'].search(domain, order='id asc', limit=1)
+                if batch:
+                    move.draft_batch_picking_id = batch
+                else:
+                    vals = self.get_new_batch_values(picking_type_id)
+                    vals.update(move.get_batch_vals())
+                    batch = self.env['stock.batch.picking'].create(vals)
+                    move.draft_batch_picking_id = batch
+                    new_batchs += batch
+            for batch in new_batchs:
+                note = 'Notas de los albaranes asociados'
+                for pick in batch.draft_move_lines.mapped('picking_id'):
+                    if pick.note:
+                        note = '{}\n{}\n{}'.format(note, pick.name, pick.note)
+                    else:
+                        note = '{}\n{}'.format(note, pick.name)
+
+        return self.autorefresh()
 
     @api.multi
     def action_assign_route(self):
@@ -134,7 +166,7 @@ class StockBatchDeliveryWzd(models.TransientModel):
         vals.update(default_picking_ids=[(6, 0, moves.mapped('picking_id').ids)])
         vals.update(default_moves_to_pack_ids=[(6, 0, moves.filtered(lambda x: not x.result_package_id).ids)])
         vals.update(default_batch_delivery_ids=[(6, 0, moves.mapped('batch_delivery_id').ids)])
-        vals.update(default_picks_to_batch_ids=[(6, 0, moves.filtered(lambda x: not x.batch_picking_id).ids)])
+        vals.update(default_moves_to_batch_ids=[(6, 0, moves.filtered(lambda x: not x.batch_id).ids)])
 
         ctx = self._context.copy()
         ctx.update(vals)
@@ -179,6 +211,10 @@ class StockBatchDeliveryWzd(models.TransientModel):
         """
         ## compruebo que
 
+
+        if any(not x.draft_batch_picking_id for x in self.move_ids):
+            raise ValidationError('Tienes movimientos sin albarán de cliente')
+
         ctx = self._context.copy()
         ctx.update(force_route_vals=True)
         ## ESCRIBO LAS CANTIDADES PARA QUE ME HAGA SPLIT
@@ -189,17 +225,6 @@ class StockBatchDeliveryWzd(models.TransientModel):
             else:
                 raise ValidationError('Tienes movimientos sin paquete')
                 ml.qty_done = 0.0
-
-        ## ASIGNO ALBARAN CUANDO CORESPONDA
-        for pick in self.picking_ids:
-            if not pick.batch_picking_id:
-
-                if pick.picking_type_id.allow_unbatched:
-                    pick.with_context(ctx).auto_assign_batch_picking(True)
-                else:
-                    raise ValidationError('Tienes albaranes sin grupo')
-
-
 
         self.picking_ids.write({'batch_delivery_id': batch_delivery_id.id})
         self.move_ids.filtered(lambda x: x.quantity_done > 0.00).write({'batch_delivery_id': batch_delivery_id.id})

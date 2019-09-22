@@ -7,3 +7,5 @@ access_manager_delivery_plate,access_manager_delivery_plate,model_delivery_plate
 
 access_stock_batch_delivery_user,stock.delivery.user,model_stock_batch_delivery,stock.group_stock_user,1,1,0,0
 access_stock_batch_delivery_manager,stock.picking.delivery.manager,model_stock_batch_delivery,stock.group_stock_manager,1,1,1,1
+
+access_stock_quant_package_pack_line,stock.quant.package.pack.line.user,model_stock_quant_package_pack_line,stock.group_stock_user,1,1,1,1

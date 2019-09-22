@@ -42,8 +42,8 @@
                 <filter string="Ruta" name="filter_ruta" domain="[('shipping_type','=','route')]"/>
                 <filter string="Pasarán" name="filter_pasaran" domain="[('shipping_type','=','pasaran')]"/>
                 <!--filter name="sga_package" string="SGA" domain="[('sga_state','!=', False)]"/>
-                <filter name="waiting" string="SGA Enviado" domain="[('sga_state','=', 'PS')]"/>
-                <filter name="error" string="SGA Error" domain="[('sga_state','in', ('EI', 'EE')]"/>
+                <filter name="waiting" string="SGA Enviado" domain="[('sga_state','=', 'pending')]"/>
+                <filter name="error" string="SGA Error" domain="[('sga_state','in', ('import_error', 'export_error')]"/>
                 <filter name="processed" string="SGA Realizado" domain="[('sga_state','=', 'SD')]"/>
                 <separator/-->
 

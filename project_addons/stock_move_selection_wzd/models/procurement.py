@@ -20,7 +20,8 @@ class ProcurementRule(models.Model):
             sol = self.env['sale.order.line'].browse(values['sale_line_id'])
             vals.update({'campaign_id': sol.campaign_id and sol.campaign_id.id,
                          'carrier_id': sol.order_id.carrier_id and sol.order_id.carrier_id.id,
-                         'sga_integrated': self.picking_type_id.sga_integrated,
-                         'sga_state': 'NE' if self.picking_type_id.sga_integrated else 'NI'})
+                         })
+        vals.update({'sga_integrated': self.picking_type_id.sga_integrated,
+                    'sga_state': 'no_send' if self.picking_type_id.sga_integrated else 'no_integrated'})
 
         return vals

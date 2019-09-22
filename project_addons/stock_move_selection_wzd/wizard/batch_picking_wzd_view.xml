@@ -24,6 +24,7 @@
                 <br/>
                 <br/>
                 <group>
+                    <field name="id"/>
                     <field name="batch_picking_id" domain="[('picking_type_id', '=', picking_type_id)]"/>
                     <field name="picking_type_id" required="1"/>
                     <field name="sga_integrated"/>
@@ -60,9 +61,9 @@
                     <page string="Movimientos SGA" attrs="{'invisible': [('sga_integrated','=', False)]}">
                         <field name="moves_to_sga">
                             <tree
-                                decoration-success="sga_state=='PE'"
-                                decoration-primary="sga_state=='NE'"
-                                decoration-danger="sga_state not in ('PE', 'NE', 'SR')">
+                                decoration-success="sga_state=='ready'"
+                                decoration-primary="sga_state=='no_send'"
+                                decoration-danger="sga_state not in ('ready', 'no_send', 'done')">
 
                                 <field name="origin"/>
                                 <field name="product_id"/>
@@ -74,7 +75,7 @@
                                         string="Marcar para alternar envio a SGA"
                                         type="object"
                                         icon="fa-rss"
-                                        attrs="{'context': 'PE'}"
+                                        attrs="{'context': 'ready'}"
                                         />
 
                             </tree>
@@ -102,8 +103,8 @@
     </record>
 
 
-    <act_window name="Gestión de grupos"
-                res_model="open.batch.wzd"
+    <act_window name="Asistente para gestión de grupos"
+                res_model="stock.batch.picking.wzd"
                 src_model="stock.move"
                 view_mode="form"
                 target="new"
@@ -112,7 +113,7 @@
     <!--delete id="stock_move_selection_wzd.batch_picking_wzd_act_window" model="ir.actions.act_window"/-->
 
     <record id="open_view_create_batch_picking" model="ir.actions.act_window">
-        <field name="name">Gestión de grupos</field>
+        <field name="name">Asistente para gestión de grupos</field>
         <field name="res_model">stock.batch.picking.wzd</field>
         <field name="view_type">form</field>
         <field name="domain">[]</field>
@@ -120,7 +121,7 @@
         <field name="view_mode">form</field>
     </record>
 
-    <record id="action_assign_batch_picking_from_moves" model="ir.actions.server">
+    <!--record id="action_assign_batch_picking_from_moves" model="ir.actions.server">
         <field name="name">Gestión de grupos</field>
         <field name="model_id" ref="stock.model_stock_move"/>
         <field name="binding_model_id" ref="stock.model_stock_move"/>
@@ -135,5 +136,5 @@
         <field name="state">code</field>
         <field name="code">records.action_add_to_batch_picking()</field>
     </record>
-    <delete id="action_assign_batch_picking_from_picks" model="ir.actions.server"/>
+    <delete id="action_assign_batch_picking_from_picks" model="ir.actions.server"/-->
 </odoo>

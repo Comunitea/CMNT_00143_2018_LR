@@ -29,7 +29,6 @@ class ResPartner(models.Model):
     def _onchange_associate(self):
 
         ICP = self.env['ir.config_parameter']
-        print (self._context)
         partner = self
         if not partner.associate:
             partner.financiable_payment = False

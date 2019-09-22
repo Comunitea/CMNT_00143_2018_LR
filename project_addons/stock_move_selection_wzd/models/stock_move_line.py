@@ -9,8 +9,8 @@ from .stock_picking_type import SGA_STATES
 class StockMoveLine(models.Model):
     _inherit = 'stock.move.line'
 
-    sga_integrated = fields.Boolean('Sga', help='Marcar si tiene un tipo de integración con el sga')
-    sga_state = fields.Selection(SGA_STATES, default='NI', string="SGA Estado")
+    sga_integrated = fields.Boolean(related='move_id.picking_type_id.sga_integrated')
+    sga_state = fields.Selection(related='move_id.sga_state', store=True)
     batch_picking_id = fields.Many2one(related='picking_id.batch_picking_id')
     draft_batch_picking_id = fields.Many2one(related='move_id.draft_batch_picking_id')
     batch_delivery_id = fields.Many2one(related='move_id.batch_delivery_id')

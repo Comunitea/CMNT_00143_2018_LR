@@ -69,12 +69,12 @@ class StockPickingType(models.Model):
             res = self.env.cr.dictfetchall()
             futuro = res and res[0] or 0
 
-            sql = "select count(sm.id) from stock_move sm where (select sum(qty_done) from stock_move_line sml where " \
+            sql = "select count(sm.id) from stock_move sm where (((select sum(qty_done) from stock_move_line sml where " \
                   "sm.company_id= {} and " \
                   "sm.picking_type_id = {} and  " \
                   "sml.move_id = sm.id) != sm.ordered_qty " \
-                  "and state = 'done' and " \
-                  "date > current_date - interval '{} day'".format(self.env.user.company_id.id, type.id, type.num_error_day)
+                  "and state = 'done') or (sm.company_id= {} and sm.picking_type_id = {} and sm.sga_state in ('export_error', 'import_error'))) and " \
+                  "date > current_date - interval '{} day'".format(self.env.user.company_id.id, type.id, self.env.user.company_id.id, type.id, type.num_error_day)
             self.env.cr.execute(sql)
             res = self.env.cr.dictfetchall()
             errores = res and res[0] or 0
@@ -86,5 +86,4 @@ class StockPickingType(models.Model):
                      {'label': 'Futuro', 'value': futuro['count'], 'type': 'future'},
                      {'label': 'Errores', 'value': errores['count'], 'type': 'error'}],
             'title': 'Movimientos', 'key': 'Movimientos'}]
-            print (res)
         return res

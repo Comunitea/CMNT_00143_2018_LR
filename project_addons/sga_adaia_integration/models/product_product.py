@@ -23,7 +23,7 @@ class ProductProduct(models.Model):
                 ctx['ALMREF'] = pick.property_stock_inventory.id
             pick.new_adaia_file(file_type, ctx['mod_type'], ctx['version'])
             if ctx['mod_type'] == 'DE':
-                self.env['product.product'].browse(pick.id).write({'sga_state': 'NI'})
+                self.env['product.product'].browse(pick.id).write({'sga_state': 'no_integrated'})
 
     @api.multi
     def new_adaia_file(self, sga_file_type='AR0', operation=False, code_type=0):
@@ -47,7 +47,7 @@ class ProductProduct(models.Model):
                 product_ids.append(product.id)
 
         if product_ids and operation is not 'DE':
-            self.env['product.product'].browse(product_ids).write({'sga_state': 'SR'})
+            self.env['product.product'].browse(product_ids).write({'sga_state': 'done'})
         elif not product_ids:
             raise ValidationError("No hay partners para enviar a Adaia")
         return True
@@ -55,4 +55,4 @@ class ProductProduct(models.Model):
     @api.onchange('barcode', 'name')
     def onchange_barcode_or_name(self):
         for product in self:
-            product.write({'sga_state': 'NE'})
+            product.write({'sga_state': 'no_send'})

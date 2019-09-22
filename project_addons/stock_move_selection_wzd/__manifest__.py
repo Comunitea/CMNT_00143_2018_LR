@@ -24,6 +24,7 @@
         'views/res_partner_views.xml',
         'views/stock_batch_picking_views.xml',
         'views/stock_move.xml',
+        'views/sale_order.xml',
         'views/stock_picking.xml',
         'views/stock_quant_package.xml',
         'wizard/action_pack_move_wzd.xml',

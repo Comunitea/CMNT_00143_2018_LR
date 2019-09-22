@@ -80,8 +80,8 @@ class StockBatchPickingWzd(models.TransientModel):
             batch_picking_ids = picking_ids.filtered(lambda x: x.batch_picking_id.id == batch_picking_id)
 
         if picking_type_id.sga_integrated:
-            moves_to_sga = moves.filtered(lambda x: x.sga_state != 'NI')
-            moves_not_sga = moves.filtered(lambda x: x.sga_state == 'NI')
+            moves_to_sga = moves.filtered(lambda x: x.sga_state != 'no_integrated')
+            moves_not_sga = moves.filtered(lambda x: x.sga_state == 'no_integrated')
         else:
             moves_to_sga = moves_not_sga = self.env['stock.move']
 
@@ -101,27 +101,11 @@ class StockBatchPickingWzd(models.TransientModel):
 
     @api.model
     def default_get(self, fields):
-        return super().default_get(fields)
-        if self._context.get('active_model', False) == 'stock.picking.type':
-            return super().default_get(fields)
-
 
         defaults = super().default_get(fields)
+        model = self._context.get('model', self._context.get('active_model', 'stock.move'))
         new_ids = self._context.get('active_ids', [])
-        if new_ids:
-            ctx = self._context.copy()
-            ctx.update(active_model='stock.picking.type')
-            self = self.with_context(ctx)
-            model = self._context.get('model', self._context.get('active_model', 'stock.move'))
-            wzd_id = self.create_from(model, new_ids)
-            action = self.env.ref('stock_move_selection_wzd.batch_picking_wzd_act_window').read()[0]
-            action['res_id'] = wzd_id.id
-            print (action)
-
-            return action
-
-            defaults.update(vals)
-            print (defaults)
+        defaults.update(self.get_vals(model, ids=new_ids))
         return defaults
 
     def _default_picker_id(self):
@@ -168,17 +152,55 @@ class StockBatchPickingWzd(models.TransientModel):
             self.moves_to_remove.action_force_assign_picking()
         return batch.get_formview_action()
 
-    @api.multi
-    def action_create_batch(self):
-        batch_picking_id = self.env['stock.batch.picking'].create({
+    def get_wzd_values(self):
+        return {
             'date': self.date,
             'notes': self.notes,
             'picker_id': self.picker_id.id,
             'picking_type_id': self.picking_type_id.id,
             'state': 'assigned'
-        })
-        self.move_ids.write({'draft_batch_picking_id': batch_picking_id.id})
-        return batch_picking_id.get_formview_action()
+        }
+
+    @api.multi
+    def action_create_batch(self):
+
+        if len(self.mapped('picking_type_id'))>1:
+            raise ValueError(_('No puedes crear un batch de con movimientos de distiont tipo'))
+
+        #self.move_line_ids.mapped('move_id').ids
+        fields = self.picking_type_id.grouped_batch_field_ids
+        new_batchs = self.env['stock.batch.picking']
+        if not fields:
+            new_batchs = self.env['stock.batch.picking'].create(self.get_wzd_values())
+            self.move_ids.write({'draft_batch_picking_id': new_batchs.id})
+        else:
+            for move in self.move_ids:
+                domain = move.get_batch_domain()
+                batch = self.env['stock.batch.picking'].search(domain,  order='id asc', limit=1)
+                if batch:
+                    move.draft_batch_picking_id = batch
+                else:
+                    vals = self.get_wzd_values()
+                    vals.update(move.get_batch_vals())
+                    batch = self.env['stock.batch.picking'].create(vals)
+                    move.draft_batch_picking_id = batch
+                    new_batchs += batch
+            for batch in new_batchs:
+                note = 'Notas de los albaranes asociados'
+                for pick in batch.draft_move_lines.mapped('picking_id'):
+                    if pick.note:
+                        note = '{}\n{}\n{}'.format(note, pick.name, pick.note)
+                    else:
+                        note = '{}\n{}'.format(note, pick.name)
+        action = self.env.ref('stock_batch_picking.action_stock_batch_picking_tree').read()[0]
+        action['domain'] = [('id', 'in', new_batchs.ids)]
+        return action
+
+    @api.multi
+    def unlink(self):
+        if any(x.state == 'done' for x in self):
+            raise ValueError(_('No puedes suprimir un batch realizado))'))
+        return super().unlink()
 
     @api.multi
     def action_assign_batch(self):

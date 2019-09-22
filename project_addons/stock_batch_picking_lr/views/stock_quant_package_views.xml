@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <record model="ir.ui.view" id="view_quant_package_delivery_batch_kanban">
-        <field name="name">stock.quant.package.kanban</field>
+        <field name="name">stock.quant.package.kanban.delivery</field>
         <field name="model">stock.quant.package</field>
         <field name="arch" type="xml">
             <kanban class="o_kanban_dashboard oe_background_grey">
@@ -11,12 +11,12 @@
                         <div class="oe_kanban_global_click">
                             <div class="o_kanban_record_top mb0">
                                 <div class="o_kanban_manage_button_section">
-                                    <button type="object" name="add_package_to_batch" string="Add to batch" attrs="{'invisible': [('in_batch', '=', True)]}" class="o_kanban_manage_toggle_button"><i class="fa fa-plus"/></button>
-                                    <button type="object" name="delete_package_from_batch" string="Remove from batch"  attrs="{'invisible': [('in_batch', '!=', True)]}" class="o_kanban_manage_toggle_button"><i class="fa fa-minus"/></button>
+                                    <button type="object" name="add_package_to_batch" string="Add to batch" attrs="{'invisible': [('batch_picking_id', '=', True)]}" class="o_kanban_manage_toggle_button"><i class="fa fa-plus"/></button>
+                                    <button type="object" name="delete_package_from_batch" string="Remove from batch"  attrs="{'invisible': [('batch_picking_id', '!=', True)]}" class="o_kanban_manage_toggle_button"><i class="fa fa-minus"/></button>
                                 </div>
                                 <strong class="o_kanban_record_title"><field name="name"/></strong>
                                 <field name="batch_picking_id" invisible="1"/>
-                                <field name="in_batch" invisible="1"/>
+
                                 <field name="id" invisible="1"/>
                             </div>
                         </div>
@@ -47,8 +47,8 @@
         <field name="name">Packages</field>
         <field name="res_model">stock.quant.package</field>
         <field name="view_mode">kanban</field>
-        <field name="view_id" ref="stock_batch_picking_lr.view_quant_package_delivery_batch_kanban"/>
-        <field name="search_view_id" ref="stock_batch_picking_lr.quant_package_delivery_batch_search_view"/>
+        <field name="view_id" ref="stock_move_selection_wzd.view_quant_package_delivery_batch_kanban"/>
+        <field name="search_view_id" ref="stock_move_selection_wzd.quant_package_delivery_batch_search_view"/>
         <field name="context">{
             <!--"search_default_filter_batch_picking_id":1,
             'default_batch_picking_id': active_id,
@@ -69,7 +69,6 @@
         <!--field eval="10" name="priority"/-->
         <field name="arch" type="xml">
             <xpath expr="//field[@name='location_id']" position="after">
-
                 <field name="batch_picking_id"/>
 
             </xpath>

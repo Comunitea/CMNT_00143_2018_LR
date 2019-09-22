@@ -76,7 +76,7 @@ class StockQuantPackage(models.Model):
                 
                 if flag == True:
                     package.write({
-                        'sga_state': 'P'
+                        'sga_state': 'pending'
                     })                
                     
             except Exception as error:                  
@@ -93,12 +93,13 @@ class StockQuantPackage(models.Model):
                     flag_type = 2
                 elif ulma_obj.mmmcmdref == 'ERR':
                     package.write({
+                        'sga_state': 'import_error',
                         'ulma_error': ulma_obj.mmmresmsj
                     })
                     flag_type = 1
                 elif ulma_obj.mmmcmdref == 'ENT':
                     package.write({
-                        'sga_state': 'P'
+                        'sga_state': 'pending'
                     })
                 return flag_type
         except Exception as error:                  

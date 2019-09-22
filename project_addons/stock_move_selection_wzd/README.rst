@@ -18,6 +18,9 @@ Lo de siempre
 delete from ir_ui_view where arch_db like '%manual_pick%';
 delete from ir_ui_view where arch_db like '%shipping_type%';
 
+update stock_move set sga_state = 'no_send' where sga_state='NE'
+update stock_move set sga_state = 'no_integrated' where sga_state='NI'
+
 4º Arrancar con ...
 ----------------------
 

@@ -73,6 +73,13 @@ class StockBatchPicking(models.Model):
         for batch in self:
             batch.group_code = batch.picking_type_id.group_code
 
+    @api.onchange('picking_ids')
+    def onchange_picking_ids(self):
+        for batch in self:
+            if all(pick.picking_type_id == batch.picking_type_id for pick in batch.picking_ids):
+                continue
+            raise UserError ("Todos los albaranes deben de ser del mismo tipo ({})".format(batch.picking_type_id.name))
+
     @api.multi
     def write(self, vals):
         picking_type_id = vals.get('picking_type_id', False) ##and not vals.get('shipping_type')

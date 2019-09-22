@@ -10,11 +10,11 @@
                     <group>
                         <field name="sga_state"/>
                         <button name="create_new_adaia_file_button" context="{'file_type': 'adaia_partner_code', 'mod_type': 'AG', 'version': 0}" string="Adaia New file" type="object" class="oe_stat_button"
-                         icon="fa-shopping-cart" attrs="{'invisible': [('sga_state','in',('EE','NE','PE'))]}"/>
+                         icon="fa-shopping-cart" attrs="{'invisible': [('sga_state','in',('export_error','no_send','ready'))]}"/>
                         <button name="create_new_adaia_file_button" context="{'file_type': 'adaia_partner_code', 'mod_type': 'MO', 'version': 0}" string="Adaia Modification file" type="object" class="oe_stat_button"
-                         icon="fa-shopping-cart" attrs="{'invisible': [('sga_state','in',('NI'))]}"/>
+                         icon="fa-shopping-cart" attrs="{'invisible': [('sga_state','in',('no_integrated'))]}"/>
                         <button name="create_new_adaia_file_button" context="{'file_type': 'adaia_partner_code', 'mod_type': 'DE', 'version': 0}" string="Adaia remove file" type="object" class="oe_stat_button"
-                         icon="fa-shopping-cart" attrs="{'invisible': [('sga_state','in',('NI'))]}"/>
+                         icon="fa-shopping-cart" attrs="{'invisible': [('sga_state','in',('no_integrated'))]}"/>
                     </group>
                 </page>
             </notebook>

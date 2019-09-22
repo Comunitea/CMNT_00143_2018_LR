@@ -13,11 +13,8 @@ class StockPicking(models.Model):
     _inherit = 'stock.picking'
 
     sga_integrated = fields.Boolean('Sga', help='Marcar si tiene un tipo de integración con el sga')
-    sga_state = fields.Selection(SGA_STATES, default='NI', string="SGA Estado")
+    sga_state = fields.Selection(SGA_STATES, default='no_integrated', string="SGA Estado", copy=False)
     #state = fields.Selection(selection_add=[('packaging', 'Empaquetado')])
-
-
-
 
     def create_second_pick(self, second_moves=[]):
         """ Copy of create backorder
@@ -50,7 +47,7 @@ class StockPicking(models.Model):
                 raise ValidationError (_("More than 1 pick for '%s'") % vals.get('name', False))
             vals.update(picking_type_id=picking_type_id.id,
                         sga_integrated=picking_type_id.get_sga_integrated(),
-                        sga_state = 'NE' if picking_type_id.get_sga_integrated() else 'NI',
+                        sga_state = 'no_send' if picking_type_id.get_sga_integrated() else 'no_integrated',
                         location_id=picking_type_id.default_location_src_id.id,
                         location_dest_id=picking_type_id.default_location_dest_id.id)
             vals.pop('name')
@@ -69,7 +66,6 @@ class StockPicking(models.Model):
 
     @api.multi
     def send_to_sga(self):
-
         ##PARA HEREDAR EN ULMA Y ADAIA
         return True
 

@@ -56,7 +56,7 @@
             <xpath expr="//header" position="inside">
                 <button class="oe_stat_button" name="action_cancel_delivery_batch_assigment" string="Desalbaranar" type="object" widget="statinfo" icon="fa-arrows-v"
                 attrs="{'invisible':[('batch_delivery_id','=',False)]}"/>
-                <field name="sga_state" widget="statusbar" statusbar_visible="NE,PS,SR"/>
+                <field name="sga_state" widget="statusbar" statusbar_visible="no_send,pending,done"/>
             </xpath>
             <xpath expr="//field[@name='location_id']" position="after">
                 <field name="partner_id" readonly="1"/>
@@ -67,6 +67,25 @@
             <xpath expr="//div[@name='button_box']" position="inside">
                 <button class="oe_stat_button" name="action_view_moves_line" string="Movimientos de stock" type="object" widget="statinfo" icon="fa-list-ul"/>
             </xpath>
+            <field name="quant_ids" position="after">
+                <field name="packaging_line_ids" >
+
+                    <tree editable="bottom">
+                        <field name="product_id"></field>
+                        <field name="qty"></field>
+                        <button name="action_add_pack"
+                        string="+"
+                        type="object"
+                        icon="fa-plus-square-o " class="fa-2x"
+                        />
+                        <button name="action_minus_pack"
+                        string="-"
+                        type="object"
+                        icon="fa-minus-square-o" class="fa-2x"
+                        />
+                    </tree>
+                </field>
+            </field>
         </field>
     </record>
 

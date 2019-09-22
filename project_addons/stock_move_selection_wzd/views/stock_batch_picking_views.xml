@@ -7,11 +7,29 @@
         <field name="model">stock.batch.picking</field>
         <field name="inherit_id" ref="stock_batch_picking.stock_batch_picking_form"/>
         <field name="arch" type="xml">
+
             <xpath expr="//button[@name='action_cancel']" position="after">
+                <!--button name="action_transfer" string="Validar" type="object" class="oe_highlight" attrs="{'invisible': [('draft_move_lines', '=', [])]}"/-->
                 <button name="batch_printing" string="Print" type="object" class="oe_highlight"/>
+                <button name="alternate_draft_ready" string="Pasar a Borrador"
+                        states="ready"
+                        type="object" class="oe_highlight"/>
+                <button name="alternate_draft_ready" string="Pasar a Disponible"
+                        states="ready"
+                        type="object" class="oe_highlight"/>
+
+
+            </xpath>
+
+            <xpath expr="//button[@name='action_cancel']" position="after">
+                <button name="action_send_to_sga" string="Enviar a SGA" type="object" class="oe_highlight"
+                        attrs="{'invisible': [('sga_state', 'not in', ('export_error', 'import_error', 'no_send'))]}"/>
             </xpath>
             <xpath expr="//field[@name='picker_id']" position="after">
+                    <field name="partner_id" attrs="{'invisible': [('partner_id', '=',False)]}"></field>
                     <field name="picking_type_id"/>
+                <field name="sga_state" widget="statusbar" statusbar_visible="no_send,pending,done" attrs="{'invisible': [('sga_integrated', '!=', True)]}"/>
+                    <field name="sga_integrated" invisible="1"/>
             </xpath>
              <field name="picking_ids" position="attributes">
                 <attribute name="domain">[
@@ -30,16 +48,17 @@
             </xpath>
             <xpath expr="//page[1]" position="before">
                 <page string="Movimientos">
-                    <!--field name="effective_move_lines"
+                    <!--field name="draft_move_lines"
                            context="{'tree_view_ref': 'stock_move_selection_wzd.view_move_line_tree_sel'}"
                            readonly="1" options="{'reload_on_button': true}"/-->
 
-                    <field name="effective_move_lines">
+                    <field name="draft_move_lines">
                         <tree>
                             <field name="partner_id"/>
                             <field name="product_id"/>
                             <field name="product_uom_qty"/>
                             <field name="reserved_availability"/>
+                            <field name="quantity_done"/>
                             <field name="picking_type_id" invisible="1"/>
                             <field name="sga_integrated" invisible="1"/>
                             <field name="group_code" invisible="1"/>
@@ -70,6 +89,7 @@
 
         <field name="arch" type="xml">
             <field name="name" position="after">
+                <field name="picking_type_id"/>
                 <field name="partner_id"/>
                 <!--field name="picking_ids" widget="many2many_tags"/-->
             </field>

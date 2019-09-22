@@ -9,9 +9,10 @@
                 <field name="sga_integrated"></field>
             </field>
             <notebook position="inside">
-                <page string="Integración SGA" attrs="{'invisible': [('sga_state','=', 'NI')]}">
+                <page string="Integración SGA" attrs="{'invisible': [('sga_state','=', 'no_integrated')]}">
                     <header>
-                            <field name="sga_state" widget="statusbar" statusbar_visible="NE,PS,SD" statusbar_colors='{"EE":"red", "EI":"red", "PS":"blue", "SD":"green"}'/>
+                            <field name="sga_state" widget="statusbar" statusbar_visible="no_send,pending,done"
+                                   statusbar_colors='{"import_error":"red", "export_error":"red", "pending":"blue", "done":"green"}'/>
                     </header>
                     <group>
                         <group>
@@ -37,7 +38,7 @@
             <field name="state" position="after">
                 <field name="sga_state" invisible="context.get('hide_sga_state', True)"/>
                 <button name="action_send_to_sga"
-                        attrs="{'invisible': [('sga_state','!=', 'NE')]}"
+                        attrs="{'invisible': [('sga_state','!=', 'no_send')]}"
                         string="Enviar a SGA"
                         icon="fa-rss-square"
                         type="object"
@@ -55,9 +56,9 @@
             </field>
             <filter name="picking_type" position="after">
                 <filter name="sga_integrated" string="SGA" domain="[('sga_integrated','=', True)]"/>
-                <filter name="waiting" string="SGA. Enviado" domain="[('sga_state','=', 'PS')]"/>
-                <filter name="error" string="SGA. Error" domain="[('sga_state','in', ['EI', 'EE'])]"/>
-                <filter name="processed" string="SGA. Completado" domain="[('sga_state','=', 'MT')]"/>
+                <filter name="waiting" string="SGA. Enviado" domain="[('sga_state','=', 'pending')]"/>
+                <filter name="error" string="SGA. Error" domain="[('sga_state','in', ['import_error', 'export_error'])]"/>
+                <filter name="processed" string="SGA. Completado" domain="[('sga_state','=', 'done')]"/>
             </filter>
         </field>
     </record>

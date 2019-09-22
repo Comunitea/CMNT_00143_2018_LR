@@ -4,21 +4,22 @@
 
 from odoo import _, api, fields, models
 
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError,ValidationError
 
 
 class StockBatchDelivery(models.Model):
-    """ This object allow to manage multiple stock.batch.picking
+    """ This object allow to manage multiple stock.batch.delivery
     """
 
-    _inherit = ['info.route.mixin']
+    _inherit = ['info.route.mixin', 'mail.thread', 'mail.activity.mixin']
     _name = 'stock.batch.delivery'
 
     @api.depends('move_lines.date_expected')
     @api.multi
     def _get_dates(self):
         for batch in self:
-            batch.date_expected = min(move.date_expected for move in batch.move_lines)
+            if batch.move_lines:
+                batch.date_expected = min((move.date_expected or move.date) for move in batch.move_lines)
 
     @api.onchange('date_expected')
     def _set_dates(self):
@@ -33,7 +34,6 @@ class StockBatchDelivery(models.Model):
 
         else:
             domain=[('state', 'in', ('assigned', 'done'))]
-        print (domain)
         return domain
 
     name = fields.Char(
@@ -81,13 +81,13 @@ class StockBatchDelivery(models.Model):
         },
         help='the user who prepare this batch'
     )
-    carrier_id = fields.Many2one("delivery.carrier", string="Forma de envío")
     batch_ids = fields.One2many('stock.batch.picking', 'batch_delivery_id', 'Grupo',
                                 states={
                                     'draft': [('readonly', False)],
                                     'ready': [('readonly', False)]
                                 },
                                 readonly=True,
+                                compute = '_get_picking_ids',
                                 domain=_get_batch_domain)
     picking_ids = fields.One2many(
         'stock.picking', string='Albaranes',
@@ -124,12 +124,58 @@ class StockBatchDelivery(models.Model):
                                       domain="[('route_driver', '=', True)]")
     plate_id = fields.Many2one('delivery.plate', string='Matrícula', help='Plate for this batch picking.')
 
+    carrier_id = fields.Many2one("delivery.carrier", string="Carrier", compute='compute_route_fields',
+                                 inverse='set_route_fields', store=True)
+    shipping_type = fields.Selection(compute='compute_route_fields', inverse='set_route_fields', store=True)
+    delivery_route_path_id = fields.Many2one('delivery.route.path', compute='compute_route_fields',
+                                             inverse='set_route_fields', store=True)
+
+    @api.multi
+    @api.depends('state', 'move_lines.shipping_type', 'move_lines.delivery_route_path_id', 'move_lines.carrier_id')
+    def compute_route_fields(self):
+        for batch in self:
+            moves = batch.move_lines
+            if moves:
+                shipping_type_ids = []
+                for move in moves:
+                    if move.shipping_type in shipping_type_ids:
+                        continue
+                    shipping_type_ids.append(move.shipping_type)
+                if shipping_type_ids[0] and len(shipping_type_ids) == 1:
+                    batch.shipping_type = shipping_type_ids[0]
+                delivery_route_path_ids = moves.mapped('delivery_route_path_id')
+                if len(delivery_route_path_ids) == 1:
+                    batch.delivery_route_path_id = delivery_route_path_ids[0]
+                carrier_ids = moves.mapped('carrier_id')
+                if len(carrier_ids) == 1:
+                    batch.carrier_id = carrier_ids[0]
+
+    def check_allow_change_route_fields(self):
+        if any(move.state == 'done' for move in self.move_lines) and not self._context.get(
+                'force_route_vals', False):
+            raise ValidationError(_('No puedes cambiar en movimientos de una orden de carga'))
+        return True
+
+    @api.multi
+    def set_route_fields(self):
+        ctx = self._context.copy()
+        ctx.update(force_route_vals=True)
+        for batch in self.with_context(ctx):
+            batch.check_allow_change_route_fields()
+            moves = batch.move_lines
+            moves.write({
+                'shipping_type': batch.shipping_type,
+                'delivery_route_path_id': batch.delivery_route_path_id.id,
+                'carrier_id': batch.carrier_id.id
+            })
+
     @api.multi
     def _get_picking_ids(self):
         for out_batch in self:
 
             out_batch.move_lines = self.env['stock.move'].search([('batch_delivery_id', '=', out_batch.id)])
             out_batch.picking_ids = out_batch.move_lines.mapped('picking_id')
+            out_batch.batch_ids = out_batch.move_lines.mapped('batch_id')
             out_batch.move_lines_ids = out_batch.move_lines.mapped('move_line_ids')
             out_batch.partner_ids = out_batch.move_lines.mapped('partner_id')
 
@@ -140,16 +186,16 @@ class StockBatchDelivery(models.Model):
     @api.multi
     def action_transfer(self):
         for batch in self:
-            batch.package_ids.action_done()
-            batch.picking_ids.action_done()
+            batch.batch_ids.action_transfer()
+            batch.state = 'done'
 
     @api.multi
-    def action_transfer(self):
+    def action_transfer_bis(self):
         """ Make the transfer for all active pickings in these batches
         and set state to done all picking are done.
         """
-        batches = self.get_not_empties()
-        for batch in batches:
+        #batches = self.get_not_empties()
+        for batch in self:
             if not batch.verify_state():
                 batch.active_picking_ids.force_transfer(
                     force_qty=all(
@@ -159,19 +205,10 @@ class StockBatchDelivery(models.Model):
                 )
 
 
-    @api.multi
-    def action_view_batch_ids(self):
-        """This function returns an action that display existing pickings of
-        given batch picking.
-        """
-        self.ensure_one()
 
-        action = self.env.ref('stock_batch_picking.action_stock_batch_picking_tree').read([])[0]
-        action['domain'] = [('id', 'in', self.batch_ids.ids)]
-        return action
 
     @api.multi
-    def action_view_packages_ids(self):
+    def action_view_stock_package(self):
         """This function returns an action that display existing packages of
         given batch picking.
         """
@@ -179,6 +216,23 @@ class StockBatchDelivery(models.Model):
         action = self.env.ref('stock.action_package_view').read([])[0]
         action['domain'] = [('id', 'in', self.package_ids.ids)]
         return action
+
+    @api.multi
+    def action_view_stock_batch_picking(self):
+        batch_ids = self.move_lines.mapped("draft_batch_picking_id")
+        self.ensure_one()
+        action = self.env.ref('stock_batch_picking.action_stock_batch_picking_tree').read([])[0]
+        action['domain'] = [('id', 'in', batch_ids.ids)]
+        return action
+
+    @api.multi
+    def action_view_stock_move(self):
+        self.ensure_one()
+        action = self.env.ref('stock_move_selection_wzd.stock_move_sel_action2').read([])[0]
+        action['domain'] = [('id', 'in', self.move_lines.ids)]
+        action['context'] = self.move_lines and self.move_lines[0].picking_type_id.update_context() or {}
+        return action
+
 
     @api.multi
     def print_rda_delivery(self):

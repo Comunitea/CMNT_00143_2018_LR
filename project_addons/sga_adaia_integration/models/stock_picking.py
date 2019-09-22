@@ -33,15 +33,15 @@ class StockPickingSGA(models.Model):
     sga_integration_type = fields.Selection(related="picking_type_id.sga_integration_type")
 
     def force_button_validate(self):
-        self.sga_state = 'SR'
+        self.sga_state = 'done'
         return self.button_validate()
 
     @api.onchange('picking_type_id', 'partner_id')
     def onchange_picking_type(self):
         if self.picking_type_id.sga_integrated:
-            self.sga_state = 'NE'
+            self.sga_state = 'no_send'
         else:
-            self.sga_state = 'NI'
+            self.sga_state = 'no_integrated'
         return super(StockPickingSGA, self).onchange_picking_type()
 
     @api.model
@@ -50,9 +50,9 @@ class StockPickingSGA(models.Model):
             picking_type = self.env['stock.picking.type'].browse(vals['picking_type_id'])
             if picking_type:
                 if picking_type.sga_integrated:
-                    vals['sga_state'] = "NE"
+                    vals['sga_state'] = "no_send"
                 else:
-                    vals['sga_state'] = "NI"
+                    vals['sga_state'] = "no_integrated"
         pick = super(StockPickingSGA, self).create(vals)
         return pick
 
@@ -62,7 +62,7 @@ class StockPickingSGA(models.Model):
                            'recompute_pack_op')
 
         fields_list = sorted(list(set(vals).intersection(set(fields_to_check))))
-        if len(self.filtered(lambda x: x.sga_state == 'PS')) and fields_list:
+        if len(self.filtered(lambda x: x.sga_state == 'pending')) and fields_list:
             return True
         return False
 
@@ -83,8 +83,8 @@ class StockPickingSGA(models.Model):
 
     @api.multi
     def move_to_done(self):
-        picks = self.filtered(lambda x: x.sga_state != 'NI')
-        picks.write({'sga_state': 'SR'})
+        picks = self.filtered(lambda x: x.sga_state != 'no_integrated')
+        picks.write({'sga_state': 'done'})
 
 
     def button_move_to_NE(self):
@@ -92,9 +92,9 @@ class StockPickingSGA(models.Model):
 
     @api.multi
     def move_to_NE(self):
-        sga_states_to_NE = ('PS', 'EI', 'EE', 'SR', 'SC', False)
+        sga_states_to_NE = ('pending', 'import_error', 'export_error', 'done', 'cancel', False)
         picks = self.filtered(lambda x: x.sga_integrated and x.sga_state in sga_states_to_NE)
-        picks.write({'sga_state': 'NE'})
+        picks.write({'sga_state': 'no_send'})
 
     def button_new_adaia_file(self, ctx):
         return self.with_context(ctx).new_adaia_file()
@@ -107,7 +107,7 @@ class StockPickingSGA(models.Model):
         for pick in self:
             pick.new_adaia_file(file_type, ctx['mod_type'], ctx['version'])
             if ctx['mod_type'] == 'DE':
-                self.env['stock.picking'].browse(pick.id).write({'sga_state': 'NI'})
+                self.env['stock.picking'].browse(pick.id).write({'sga_state': 'no_integrated'})
 
     @api.multi    
     def new_adaia_file(self, sga_file_type='INR0', operation=False, code_type=0):
@@ -118,7 +118,7 @@ class StockPickingSGA(models.Model):
         if 'ACCION' not in ctx:
             ctx['ACCION'] = 'AG'
 
-        self = self.filtered(lambda x: x.sga_state == 'NE')
+        self = self.filtered(lambda x: x.sga_state == 'no_send')
         states_to_check = ('confirmed', 'partially_available')
         states_to_send = 'assigned'
         picks = []
@@ -150,7 +150,7 @@ class StockPickingSGA(models.Model):
                 picks.append(pick.id)
 
         if picks:
-            self.env['stock.picking'].browse(picks).write({'sga_state': 'PS'})
+            self.env['stock.picking'].browse(picks).write({'sga_state': 'pending'})
         else:
             raise ValidationError("No hay albaranes para enviar a Adaia")
         return True
@@ -217,7 +217,7 @@ class StockPickingSGA(models.Model):
             if TIPEREG == 'CECA':                    
 
                 actual_pick = self.env['stock.picking'].search([('name', '=', EXPORDREF), ('state', 'in', ['assigned', 'waiting', 'confirmed']),
-                 ('sga_state', 'in', ['PS'])])
+                 ('sga_state', 'in', ['pending'])])
 
                 if not actual_pick:
                     bool_error = False
@@ -303,7 +303,7 @@ class StockPickingSGA(models.Model):
             for pick in pick_pool:
                 pick_id = self.env['stock.picking'].browse(pick.id)
                 pick_id.write({
-                    'sga_state': 'SR'
+                    'sga_state': 'done'
                 })
                 pick_id.button_validate()
 

@@ -18,9 +18,9 @@ class StockBatchPickingSGA(models.Model):
     @api.multi
     def move_to_done(self):
         pickings = self.mapped('picking_ids')
-        picks = pickings.filtered(lambda x: x.sga_state != 'NI')
-        picks.write({'sga_state': 'SR'})
-        self.write({'sga_state': 'SR'})
+        picks = pickings.filtered(lambda x: x.sga_state != 'no_integrated')
+        picks.write({'sga_state': 'done'})
+        self.write({'sga_state': 'done'})
 
 
     def button_move_to_NE(self):
@@ -28,11 +28,11 @@ class StockBatchPickingSGA(models.Model):
 
     @api.multi
     def move_to_NE(self):
-        sga_states_to_NE = ('PS', 'EI', 'EE', 'SR', 'SC', False)
+        sga_states_to_NE = ('pending', 'import_error', 'export_error', 'done', 'cancel', False)
         pickings = self.mapped('picking_ids')
         picks = pickings.filtered(lambda x: x.sga_integrated and x.sga_state in sga_states_to_NE)
-        self.write({'sga_state': 'NE'})
-        picks.write({'sga_state': 'NE'})
+        self.write({'sga_state': 'no_send'})
+        picks.write({'sga_state': 'no_send'})
 
     def button_new_adaia_file(self, ctx):
         return self.with_context(ctx).new_adaia_file()
@@ -45,7 +45,7 @@ class StockBatchPickingSGA(models.Model):
         if 'operation' not in ctx:
             ctx['operation'] = 'A'
         pickings = self.mapped('picking_ids')
-        picks_in_batch = pickings.filtered(lambda x: x.sga_state == 'NE')
+        picks_in_batch = pickings.filtered(lambda x: x.sga_state == 'no_send')
         states_to_check = ('confirmed', 'partially_available')
         states_to_send = 'assigned'
         picks = []
@@ -76,8 +76,8 @@ class StockBatchPickingSGA(models.Model):
                 picks.append(pick.id)
 
         if picks:
-            self.write({'sga_state': 'PS'})
-            self.env['stock.picking'].browse(picks).write({'sga_state': 'SR'})
+            self.write({'sga_state': 'pending'})
+            self.env['stock.picking'].browse(picks).write({'sga_state': 'done'})
         else:
             raise ValidationError("No hay albaranes para enviar a Adaia")
         return True
