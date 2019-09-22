@@ -1,345 +1,5 @@
 webpackJsonp([1],{
 
-/***/ 124:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return StockProvider; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__odoo_odoo__ = __webpack_require__(125);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_ionic_angular__ = __webpack_require__(41);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__ionic_storage__ = __webpack_require__(65);
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-
-
-
-
-/*
-  Generated class for the StockProvider provider.
-
-  See https://angular.io/guide/dependency-injection for more info on providers
-  and Angular DI.
-*/
-var StockProvider = /** @class */ (function () {
-    function StockProvider(odooCon, alertCtrl, storage) {
-        this.odooCon = odooCon;
-        this.alertCtrl = alertCtrl;
-        this.storage = storage;
-        this.STOCK_FIELDS = {
-            'stock.move.line': {
-                'tree': ['id', 'origin', 'name', 'result_package_id', 'move_id', 'product_qty', 'state', 'package_id', 'shipping_type'],
-            },
-            'stock.quant.package': {
-                'tree': ['id', 'name', 'move_line_ids', 'shipping_type', 'delivery_carrier_id']
-            },
-            'stock.warehouse': {
-                'form': ['id', 'name', 'company_id']
-            },
-            'delivery.carrier': {
-                'tree': ['id', 'name']
-            }
-        };
-        this.STOCK_STATES = {
-            'draf': 'Borrador',
-            'waiting': 'Esperando',
-            'confirmed': 'En espera',
-            'assigned': 'Reservado',
-            'partially_available': 'Parcialmente',
-            'done': 'Hecho',
-            'cancel': 'Cancelado'
-        };
-        this.STATE_ICONS = {
-            'cancel': 'trash',
-            'error': 'alert',
-            'done': 'checkmark-circle',
-            'waiting': 'clock',
-            'confirmed': 'checkmark',
-            'partially_available': 'checkmark',
-            'assigned': 'done-all',
-            'draft': 'close-circle'
-        };
-        console.log('Hello StockProvider Provider');
-    }
-    // Package manager
-    StockProvider.prototype.update_object = function (model, action, move_line_ids, package_id, result_package_id, partner_id) {
-        if (model === void 0) { model = "stock.move.line"; }
-        if (action === void 0) { action = false; }
-        if (move_line_ids === void 0) { move_line_ids = []; }
-        if (package_id === void 0) { package_id = false; }
-        if (result_package_id === void 0) { result_package_id = false; }
-        if (partner_id === void 0) { partner_id = false; }
-        var self = this;
-        var values = {
-            'move_line_ids': move_line_ids,
-            'package_id': package_id,
-            'result_package_id': result_package_id,
-            'action': action,
-            'partner_id': partner_id
-        };
-        var promise = new Promise(function (resolve, reject) {
-            self.odooCon.execute(model, 'update_object_from_apk', values).then(function (done) {
-                console.log(done);
-                resolve(done);
-            })
-                .catch(function (err) {
-                console.log(err);
-                reject(false);
-                console.log("Error al validar");
-            });
-        });
-        return promise;
-    };
-    StockProvider.prototype.get_package_info = function (id) {
-        var self = this;
-        var domain = [['id', '=', id]];
-        var model = 'stock.quant.package';
-        var fields = this.STOCK_FIELDS[model]['tree'];
-        var promise = new Promise(function (resolve, reject) {
-            self.odooCon.search_read(model, domain, fields, 0, 0).then(function (data) {
-                for (var sm_id in data) {
-                    data[sm_id]['model'] = model;
-                }
-                resolve(data);
-            })
-                .catch(function (err) {
-                reject(err);
-            });
-        });
-        return promise;
-    };
-    StockProvider.prototype.get_package_lines = function (package_id) {
-        var self = this;
-        var model;
-        var values = {
-            'package': package_id
-        };
-        model = 'stock.quant.package';
-        var promise = new Promise(function (resolve, reject) {
-            self.odooCon.execute(model, 'get_lines_info_apk', values).then(function (done) {
-                resolve(done);
-            })
-                .catch(function (err) {
-                reject(false);
-                console.log("Error al validar");
-            });
-        });
-        return promise;
-    };
-    StockProvider.prototype.delete_package = function (package_id) {
-        var self = this;
-        var model;
-        var values = {
-            'package': package_id
-        };
-        model = 'stock.quant.package';
-        var promise = new Promise(function (resolve, reject) {
-            self.odooCon.execute(model, 'delete_package_from_apk', values).then(function (done) {
-                resolve(done);
-            })
-                .catch(function (err) {
-                reject(false);
-                console.log("Error al validar");
-            });
-        });
-        return promise;
-    };
-    StockProvider.prototype.set_package_shipping_type = function (values) {
-        var self = this;
-        var model;
-        model = 'stock.quant.package';
-        var promise = new Promise(function (resolve, reject) {
-            self.odooCon.execute(model, 'change_shipping_type', values).then(function (done) {
-                resolve(done);
-            })
-                .catch(function (err) {
-                reject(false);
-                console.log("Error al validar");
-            });
-        });
-        return promise;
-    };
-    // Home warehouse selection
-    StockProvider.prototype.get_available_warehouse_info = function (company_ids, type) {
-        if (type === void 0) { type = 'form'; }
-        var self = this;
-        var model = 'stock.warehouse';
-        var domain = [['company_id', 'in', company_ids]];
-        var fields = this.STOCK_FIELDS[model][type];
-        var promise = new Promise(function (resolve, reject) {
-            self.odooCon.search_read(model, domain, fields, 0, 0).then(function (sp_ids) {
-                for (var sm_id in sp_ids) {
-                    sp_ids[sm_id]['model'] = model;
-                }
-                resolve(sp_ids);
-            })
-                .catch(function (err) {
-                reject(false);
-                console.log("Error buscando " + model);
-            });
-        });
-        return promise;
-    };
-    // Move lines
-    StockProvider.prototype.get_stock_move_lines_list_apk = function (partner_id, location_dest_id) {
-        var self = this;
-        var model;
-        var values = {
-            'location_dest_id': location_dest_id,
-            'partner_id': partner_id
-        };
-        model = 'stock.move.line';
-        var promise = new Promise(function (resolve, reject) {
-            self.odooCon.execute(model, 'get_apk_info_full', values).then(function (done) {
-                resolve(done);
-            })
-                .catch(function (err) {
-                reject(false);
-                console.log("Error al validar");
-            });
-        });
-        return promise;
-    };
-    StockProvider.prototype.get_move_line_info = function (id) {
-        var self = this;
-        var domain = [['id', '=', id]];
-        var model = 'stock.move.line';
-        var fields = this.STOCK_FIELDS[model]['tree'];
-        var promise = new Promise(function (resolve, reject) {
-            self.odooCon.search_read(model, domain, fields, 0, 0).then(function (data) {
-                for (var sm_id in data) {
-                    data[sm_id]['model'] = model;
-                }
-                resolve(data);
-            })
-                .catch(function (err) {
-                reject(err);
-            });
-        });
-        return promise;
-    };
-    StockProvider.prototype.set_move_line_shipping_type = function (values) {
-        var self = this;
-        var model;
-        model = 'stock.move.line';
-        var promise = new Promise(function (resolve, reject) {
-            self.odooCon.execute(model, 'change_shipping_type', values).then(function (done) {
-                resolve(done);
-            })
-                .catch(function (err) {
-                reject(false);
-                console.log("Error al validar");
-            });
-        });
-        return promise;
-    };
-    // Users list
-    StockProvider.prototype.get_users_list_for_apk = function (location_dest_id) {
-        var self = this;
-        var model;
-        var values = {
-            'location_dest_id': location_dest_id
-        };
-        model = 'stock.move.line';
-        var promise = new Promise(function (resolve, reject) {
-            self.odooCon.execute(model, 'get_users_list_for_apk', values).then(function (done) {
-                resolve(done);
-            })
-                .catch(function (err) {
-                reject(false);
-                console.log("Error al validar");
-            });
-        });
-        return promise;
-    };
-    StockProvider.prototype.get_users_list_for_apk_from_search_box = function (name) {
-        var self = this;
-        var model;
-        var values = {
-            'name': name
-        };
-        model = 'stock.move.line';
-        var promise = new Promise(function (resolve, reject) {
-            self.odooCon.execute(model, 'get_users_list_for_apk_from_search_box', values).then(function (done) {
-                resolve(done);
-            })
-                .catch(function (err) {
-                reject(false);
-                console.log("Error al validar");
-            });
-        });
-        return promise;
-    };
-    // Alerts
-    StockProvider.prototype.presentAlert = function (titulo, texto) {
-        var alert = this.alertCtrl.create({
-            title: titulo,
-            subTitle: texto,
-            buttons: ['Ok'],
-        });
-        alert.present();
-    };
-    StockProvider.prototype.errorAlert = function (model, move_id, data) {
-        var subtitulo = 'No se ha podido guardar en el id ' + move_id + ' del modelo ' + model + ' el valor: ' + data;
-        var alertError = this.alertCtrl.create({
-            title: 'Error',
-            subTitle: subtitulo,
-            buttons: ['OK']
-        });
-        alertError.present();
-    };
-    // Delivery carriers
-    StockProvider.prototype.get_delivery_carriers = function (domain) {
-        var self = this;
-        var model = 'delivery.carrier';
-        var type = 'tree';
-        var fields = this.STOCK_FIELDS[model][type];
-        var promise = new Promise(function (resolve, reject) {
-            self.odooCon.search_read(model, domain, fields, 0, 0).then(function (sp_ids) {
-                resolve(sp_ids);
-            })
-                .catch(function (err) {
-                reject(false);
-                console.log("Error buscando " + model);
-            });
-        });
-        return promise;
-    };
-    // Routes
-    StockProvider.prototype.get_routes_for_apk = function () {
-        var self = this;
-        var model;
-        var values = {};
-        model = 'delivery.route.path';
-        var promise = new Promise(function (resolve, reject) {
-            self.odooCon.execute(model, 'get_routes_for_apk', values).then(function (done) {
-                resolve(done);
-            })
-                .catch(function (err) {
-                reject(false);
-                console.log("Error al validar");
-            });
-        });
-        return promise;
-    };
-    StockProvider = __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["A" /* Injectable */])(),
-        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1__odoo_odoo__["a" /* OdooProvider */], __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["b" /* AlertController */], __WEBPACK_IMPORTED_MODULE_3__ionic_storage__["b" /* Storage */]])
-    ], StockProvider);
-    return StockProvider;
-}());
-
-//# sourceMappingURL=stock.js.map
-
-/***/ }),
-
 /***/ 125:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -555,7 +215,7 @@ var OdooProvider = /** @class */ (function () {
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return StockMoveListPage; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(41);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__providers_stock_stock__ = __webpack_require__(124);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__providers_stock_stock__ = __webpack_require__(82);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__ionic_storage__ = __webpack_require__(65);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_rxjs__ = __webpack_require__(35);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_ng2_dragula__ = __webpack_require__(227);
@@ -621,6 +281,7 @@ var StockMoveListPage = /** @class */ (function () {
         this.filtered_arrival_pkg_list = [];
         this.selected_line_selected_shipping = [];
         this.current_pkg_data = [];
+        this.packaging_line_ids = [];
         this.move_status[0] = {
             'id': 0,
             'code': 'assigned',
@@ -856,6 +517,9 @@ var StockMoveListPage = /** @class */ (function () {
         this.stockInfo.get_package_lines(package_id).then(function (lineas) {
             _this.current_pkg_info = lineas['move_lines_info'];
             _this.current_pkg_data = lineas['package_info'];
+            _this.packaging_line_ids = lineas['packaging_line_info'];
+            console.log(lineas['packaging_line_info']);
+            console.log(_this.packaging_line_ids);
         }).catch(function (mierror) {
             //this.stockInfo.presentAlert('Error de conexión', 'Error al recuperar los registros'+mierror);
             _this.reload_with_data(_this.current_selected_partner, false, _this.current_shipping_type);
@@ -1152,7 +816,7 @@ var StockMoveListPage = /** @class */ (function () {
     };
     StockMoveListPage = StockMoveListPage_1 = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
-            selector: 'stock-move-list',template:/*ion-inline-start:"/home/kiko/ionic/packing_apk/src/pages/stock-move-list/stock-move-list.html"*/'<!--\n  Generated template for the PickingListPage page.\n\n  See http://ionicframework.com/docs/components/#navigation for more info on\n  Ionic pages and navigation.\n-->\n<ion-header>\n  <ion-navbar>\n    <button ion-button menuToggle>\n      <ion-icon name="menu"></ion-icon>\n    </button>\n    <ion-title *ngIf="current_selected_partner && selected_partner_name; else not_selected_partner_name">Movimientos de stock: {{ selected_partner_name }}\n    </ion-title>\n\n    <ion-buttons end>\n\n      <button tooltip="Todos" positionV="bottom" ion-button icon-only item-end [ngClass]="{\'all-type\': current_shipping_type == \'all\'}" (click)="show_shipping_type(\'all\', false)" outline icon-only>\n          <ion-icon name="clipboard" is-active="true"></ion-icon>\n        </button>\n\n      <button tooltip="Pasarán" positionV="bottom" ion-button icon-only item-end [ngClass]="{\'pasaran-type\': current_shipping_type == \'pasaran\'}" (click)="show_shipping_type(\'pasaran\', true)" outline icon-only>\n        <ion-icon name="hand" is-active="true"></ion-icon>\n      </button>\n\n      <button tooltip="Ruta" positionV="bottom" ion-button icon-only item-end [ngClass]="{\'route-type\': current_shipping_type == \'route\'}" (click)="show_shipping_type(\'route\', true)" outline icon-only>\n        <ion-icon name="git-branch" is-active="true"></ion-icon>\n      </button>\n\n      <button tooltip="Urgente" positionV="bottom" ion-button icon-only item-end [ngClass]="{\'urgent-type\': current_shipping_type == \'urgent\'}" (click)="show_shipping_type(\'urgent\', true)" outline icon-only>\n        <ion-icon name="subway" is-active="true"></ion-icon>\n      </button>\n    </ion-buttons>\n\n  </ion-navbar> \n</ion-header>\n\n<ion-content padding>\n  <ion-grid>\n    <ion-row>\n      <ion-col col-12 col-xs-12 col-sm-12 col-md-2 col-lg-2 col-xl-2>\n        <ion-row>\n          <ion-grid>\n            <ion-scroll id="users" scrollY=true>\n              <ion-row class="row header">\n                <ion-col col-12 class="col">\n                    Clientes\n                </ion-col>\n              </ion-row>\n              <ion-row class="row">\n                <ion-col col-12 class="col">\n                  <ion-searchbar (ionInput)="filter_users_list_from_server($event)"></ion-searchbar>\n                </ion-col>\n              </ion-row>\n              <ion-row class="row" *ngFor="let user of users_list">\n                <ion-col col-12 class="col fat-col" [ngClass]="{\'red-background\': user[\'id\'] == current_selected_partner}" (click)= "get_partner_move_lines_apk(user[\'id\'])">\n                    {{ user[\'name\'] }}\n                </ion-col>\n              </ion-row>\n            </ion-scroll>\n          </ion-grid>\n        </ion-row>\n      </ion-col>\n      <ion-col col-12 col-xs-12 col-sm-8 col-md-7 col-lg-6 col-xl-6>\n        <ion-grid>\n          <ion-scroll scrollY=true>\n            <ion-row class="row header filter" *ngIf="current_selected_partner && selected_partner_name">\n              <ion-col col-3>\n                <button color="default" class="button-color-first" tooltip="Movimientos" positionV="top" arrow [ngClass]="{\'active-icon\': current_list_shown == \'move_list\'}" (click)="show_partner_move_lines()" outline icon-only>\n                  <ion-icon name=\'paper\' is-active="true"></ion-icon>\n                </button>\n              </ion-col>\n              <ion-col col-3>\n                <button color="default" class="button-color-first" tooltip="Paquetes Entrantes" positionV="top" arrow [ngClass]="{\'active-icon\': current_list_shown == \'package_list\'}" (click)="show_partner_packages_arrivals()" outline icon-only>\n                  <ion-icon name=\'cube\' is-active="true"></ion-icon>\n                </button>\n              </ion-col>\n              <ion-col col-3>\n                <button color="default" class="button-color-first" tooltip="Movimientos sin asignar" positionV="top" arrow *ngIf="current_list_shown == \'move_list\'  || current_list_shown == \'filtered_assigned\'  || current_list_shown == \'filtered_unassigned\'" [ngClass]="{\'active-icon\': current_list_shown == \'filtered_unassigned\'}" (click)="moves_filter_by_assigned_pkgs(0)" outline icon-only>\n                  <ion-icon name=\'log-in\' is-active="true"></ion-icon>\n                </button>\n              </ion-col>\n              <ion-col col-3>\n                <button color="default" class="button-color-first" tooltip="Movimientos asignados" positionV="top" arrow *ngIf="current_list_shown == \'move_list\'  || current_list_shown == \'filtered_assigned\'  || current_list_shown == \'filtered_unassigned\'" [ngClass]="{\'active-icon\': current_list_shown == \'filtered_assigned\'}" (click)="moves_filter_by_assigned_pkgs(1)" outline icon-only>\n                  <ion-icon name=\'log-out\' is-active="true"></ion-icon>\n                </button>\n              </ion-col>\n            </ion-row>\n            <div if=lines_header *ngIf="current_list_shown == \'move_list\'  || current_list_shown == \'filtered_assigned\'  || current_list_shown == \'filtered_unassigned\'">\n              <ion-row class="row header">\n                <ion-col col-1 class="col">\n                  <ion-checkbox (ionChange)="multipleSelection($event)" [(ngModel)]="multipleSelectionMain"></ion-checkbox>\n                </ion-col>\n                <ion-col col-2 class="col">Pedido</ion-col>\n                <ion-col col-3 class="col">P.Entrada</ion-col>\n                <ion-col col-3 class="col">P.Salida</ion-col>\n                <ion-col col-3 class="col">\n                  Opc. \n                  <button tooltip="Añadir todo al paquete" positionV="top" class="row-button right-button" color="default" (click)="add_multiple_lines_to_package()" outline icon-only>\n                    <ion-icon name=\'add-circle\' is-active="true"></ion-icon>\n                  </button>\n                  <button tooltip="Desempaquetar todo" positionV="top" class="row-button right-button" color="default" (click)="add_multiple_lines_to_package(\'del\')" outline icon-only>\n                    <ion-icon name=\'remove-circle\' is-active="true"></ion-icon>\n                  </button>\n                </ion-col>\n              </ion-row>\n              <div dragula="move_lines_container" id="lines" [dragulaModel]="users_list">\n                <div *ngFor="let move of full_stock_moves" id="{{move[\'id\']}}" (press)="show_shipping_options_line(move[\'id\'])">\n                    <ion-row class="row" \n                    \n                    *ngIf="((move[\'shipping_type\'] && move[\'shipping_type\'] == current_shipping_type) || current_shipping_type == \'all\') && ((current_list_shown == \'filtered_unassigned\' && !move[\'result_package_id\']) || (current_list_shown == \'filtered_assigned\' && move[\'result_package_id\']) || (current_list_shown == \'move_list\'))">\n                      <ion-col col-12 \n                      [ngClass]="{\'pasaran-type\': move[\'shipping_type\'] && move[\'shipping_type\'] == \'pasaran\', \'route-type\': move[\'shipping_type\'] && move[\'shipping_type\'] == \'route\', \'urgent-type\': move[\'shipping_type\'] && move[\'shipping_type\'] == \'urgent\'}" \n                      class="col product-col"><strong>{{move[\'name\']}}</strong><strong class="product-units">{{move[\'product_qty\']}} Ud(s).</strong></ion-col>\n\n                      <ion-col col-1 class="col product-col shipping-color">\n                        <ion-checkbox (ionChange)="simpleSelection($event, move[\'id\'])" [(ngModel)]="move[\'isChecked\']"></ion-checkbox>\n                      </ion-col>\n                      <ion-col col-2 class="col product-col shipping-color">{{move[\'origin\']}}</ion-col>\n                      <ion-col col-3 class="col product-col shipping-color">{{move[\'package_id\'] && move[\'package_id\'][\'name\'] || \'N\'}}</ion-col>\n                      <ion-col *ngIf="move[\'result_package_id\'] && move[\'result_package_id\'][\'name\']; else not_result_package_id_open" \n                      col-3 class="col product-col shipping-color" [ngClass]="{\'active-icon\': move[\'result_package_id\'][\'id\'] == current_selected_pkg}" (click)="open_package(move[\'result_package_id\'][\'id\'])">{{move[\'result_package_id\'][\'name\']}}</ion-col>\n                      <ion-col col-3 class="col product-col options shipping-color">\n                        <ng-container [ngTemplateOutlet]="move[\'result_package_id\'] ?result_package_id_buttons : not_result_package_id_buttons" [ngTemplateOutletContext]="{move:move}"></ng-container>\n                      </ion-col>\n                      \n                    </ion-row>\n                  </div>\n              </div>\n            </div>\n            <div *ngIf="current_list_shown == \'package_list\'">\n              <ion-row class="row header">\n                <ion-col col-6 class="col">ID</ion-col>\n                <ion-col col-6 class="col">Nombre</ion-col>\n              </ion-row>\n              <div dragula="move_lines_container" id="arrival_pkgs" [dragulaModel]="current_partner_arrival_pkgs_list">\n                <ion-row class="row" *ngFor="let arrival_pkg of current_partner_arrival_pkgs_list" id="{{arrival_pkg[\'id\']}}">\n                  <ion-col col-6 class="col product-col">{{arrival_pkg[\'id\']}}</ion-col>\n                  <ion-col col-6 class="col product-col">\n                    {{arrival_pkg[\'name\']}}\n                    <button tooltip="Añadir al paquete" positionV="top" class="row-button right-button" color="default" (click)="add_package_content_to_package(arrival_pkg[\'id\'])" outline icon-only>\n                      <ion-icon name=\'add-circle\' is-active="true"></ion-icon>\n                    </button>\n                  </ion-col>\n                </ion-row>\n              </div>\n            </div>\n          </ion-scroll>\n        </ion-grid>\n      </ion-col>\n\n      <ion-col col-12 col-xs-12 col-sm-4 col-md-3 col-lg-4 col-xl-4>\n        <ion-row>\n          <ion-grid>\n            <ion-scroll scrollY=true>\n              <div *ngIf="current_selected_pkg == false">\n                <ion-row class="row header-reddish">\n                  <ion-col col-8 class="col pkg">\n                    Paquetes\n                  </ion-col>\n                  <ion-col col-4 class="col add">\n                    <ion-row>\n                    </ion-row>\n                  </ion-col>\n                </ion-row>\n                <ion-row class="row" dragula="move_lines_container" id="pkgs" [dragulaModel]="current_partner_pkg_list">\n                  <ion-col col-4 class="col fat-col" *ngFor="let pkg of current_partner_pkg_list" id="{{pkg[\'id\']}}" [ngClass]="{\'red-background\': pkg[\'id\'] == current_selected_pkg, \'hidden-col\': (!pkg[\'shipping_type\'] || (pkg[\'shipping_type\'] && pkg[\'shipping_type\'] != current_shipping_type)) && current_shipping_type != \'all\', \'pasaran-type\': pkg[\'shipping_type\'] == \'pasaran\', \'route-type\': pkg[\'shipping_type\'] == \'route\', \'urgent-type\': pkg[\'shipping_type\'] == \'urgent\'}" (click)="open_package(pkg[\'id\'])" (press)="show_shipping_options(pkg[\'id\'])">\n                    {{pkg[\'name\']}}\n                  </ion-col>\n                </ion-row>\n              </div>\n              <div *ngIf="current_selected_pkg != false">\n                <ion-row class="row header-reddish">\n                  <ion-col col-6 col-xs-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 class="col pkg">\n                    {{current_pkg_data[\'name\']}}\n                  </ion-col>\n                  <ion-col col-6 col-xs-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 class="col add">\n                    <ion-row>\n                      <button tooltip="Volver al listado" positionV="top" class="row-button black" icon-only (click)="reload_with_data(current_selected_partner, false, current_shipping_type)">\n                        <ion-icon name="undo"></ion-icon>\n                      </button>\n                      <button tooltip="Opciones de envío" positionV="top" class="row-button black" *ngIf="current_selected_partner && selected_partner_name && current_selected_pkg" icon-only (click)="show_shipping_options(current_selected_pkg)">\n                        <ion-icon name="cog"></ion-icon>\n                      </button>\n                      <button tooltip="Eliminar paquete" positionV="top" class="row-button black" *ngIf="current_selected_partner && selected_partner_name && current_selected_pkg" icon-only (click)="showDestroyConfirmation(current_selected_pkg)">\n                        <ion-icon name="remove-circle"></ion-icon>\n                      </button>\n                    </ion-row>\n                  </ion-col>\n                </ion-row>\n                <ion-row class="row header">\n                  <ion-col col-12 class="col add">\n                    <span *ngIf="current_selected_partner && selected_partner_name && current_selected_pkg">Envío: {{current_pkg_data[\'info_route_str\']}}</span>\n                  </ion-col>\n                </ion-row>\n                <div dragula="move_lines_container" id="pkgs_info" [dragulaModel]="current_pkg_info">\n                  <ion-row class="row" id="{{pkg_line[\'id\']}}" *ngFor="let pkg_line of current_pkg_info">\n                    <ion-col col-10 col-xs-6 col-sm-6 col-md-6 col-lg-10 col-xl-10 class="col product-col">\n                      <ion-row>{{pkg_line[\'name\']}}</ion-row>\n                    </ion-col>\n                    <ion-col col-2 col-xs-6 col-sm-6 col-md-6 col-lg-2 col-xl-2 class="col product-col">\n                      <ion-row>{{pkg_line[\'product_qty\']}} Ud(s)</ion-row>\n                    </ion-col>\n                  </ion-row>\n                </div>\n              </div>\n            </ion-scroll>\n          </ion-grid>\n        </ion-row>\n      </ion-col>\n    </ion-row>\n  </ion-grid>\n</ion-content>\n\n<!-- Else(s) -->\n\n<ng-template #not_selected_partner_name>\n  <ion-title>Movimientos de stock</ion-title>\n</ng-template>\n\n<ng-template #not_result_package_id_open>\n  <ion-col col-3 class="col product-col shipping-color">N</ion-col>\n</ng-template>\n\n<ng-template #result_package_id_buttons let-move=\'move\'>\n  <ion-row>\n    <button tooltip="Desempaquetar" class="row-button" positionV="top" arrow (click)="update_packages(move[\'id\'], false, \'unlink\')" color="default" outline icon-only>\n      <ion-icon name="remove-circle"></ion-icon>\n    </button>\n  </ion-row>\n</ng-template>\n\n<ng-template #not_result_package_id_buttons let-move=\'move\'>\n  <ion-row>\n    <button *ngIf="current_selected_pkg" tooltip="Añadir al paquete" positionV="top" class="row-button" color="default" (click)="update_packages(move[\'id\'])" outline icon-only>\n      <ion-icon name=\'add-circle\' is-active="true"></ion-icon>\n    </button>\n    <button *ngIf="!current_selected_pkg" tooltip="Opciones de envío" positionV="top" class="row-button" color="default" (click)="show_shipping_options_line(move[\'id\'])" outline icon-only>\n      <ion-icon name=\'cog\' is-active="true"></ion-icon>\n    </button>    \n  </ion-row>\n</ng-template>'/*ion-inline-end:"/home/kiko/ionic/packing_apk/src/pages/stock-move-list/stock-move-list.html"*/,
+            selector: 'stock-move-list',template:/*ion-inline-start:"/home/kiko/ionic/packing_apk/src/pages/stock-move-list/stock-move-list.html"*/'<!--\n  Generated template for the PickingListPage page.\n\n  See http://ionicframework.com/docs/components/#navigation for more info on\n  Ionic pages and navigation.\n-->\n<ion-header>\n  <ion-navbar>\n    <button ion-button menuToggle>\n      <ion-icon name="menu"></ion-icon>\n    </button>\n    <ion-title *ngIf="current_selected_partner && selected_partner_name; else not_selected_partner_name">Movimientos de stock: {{ selected_partner_name }}\n    </ion-title>\n\n    <ion-buttons end>\n\n      <button tooltip="Todos" positionV="bottom" ion-button icon-only item-end [ngClass]="{\'all-type\': current_shipping_type == \'all\'}" (click)="show_shipping_type(\'all\', false)" outline icon-only>\n          <ion-icon name="clipboard" is-active="true"></ion-icon>\n        </button>\n\n      <button tooltip="Pasarán" positionV="bottom" ion-button icon-only item-end [ngClass]="{\'pasaran-type\': current_shipping_type == \'pasaran\'}" (click)="show_shipping_type(\'pasaran\', true)" outline icon-only>\n        <ion-icon name="hand" is-active="true"></ion-icon>\n      </button>\n\n      <button tooltip="Ruta" positionV="bottom" ion-button icon-only item-end [ngClass]="{\'route-type\': current_shipping_type == \'route\'}" (click)="show_shipping_type(\'route\', true)" outline icon-only>\n        <ion-icon name="git-branch" is-active="true"></ion-icon>\n      </button>\n\n      <button tooltip="Urgente" positionV="bottom" ion-button icon-only item-end [ngClass]="{\'urgent-type\': current_shipping_type == \'urgent\'}" (click)="show_shipping_type(\'urgent\', true)" outline icon-only>\n        <ion-icon name="subway" is-active="true"></ion-icon>\n      </button>\n    </ion-buttons>\n\n  </ion-navbar> \n</ion-header>\n\n<ion-content padding>\n  <ion-grid>\n    <ion-row>\n      <ion-col col-12 col-xs-12 col-sm-12 col-md-2 col-lg-2 col-xl-2>\n        <ion-row>\n          <ion-grid>\n            <ion-scroll id="users" scrollY=true>\n              <ion-row class="row header">\n                <ion-col col-12 class="col">\n                    Clientes\n                </ion-col>\n              </ion-row>\n              <ion-row class="row">\n                <ion-col col-12 class="col">\n                  <ion-searchbar (ionInput)="filter_users_list_from_server($event)"></ion-searchbar>\n                </ion-col>\n              </ion-row>\n              <ion-row class="row" *ngFor="let user of users_list">\n                <ion-col col-12 class="col fat-col" [ngClass]="{\'red-background\': user[\'id\'] == current_selected_partner}" (click)= "get_partner_move_lines_apk(user[\'id\'])">\n                    {{ user[\'name\'] }}\n                </ion-col>\n              </ion-row>\n            </ion-scroll>\n          </ion-grid>\n        </ion-row>\n      </ion-col>\n      <ion-col col-12 col-xs-12 col-sm-8 col-md-7 col-lg-6 col-xl-6>\n        <ion-grid>\n          <ion-scroll scrollY=true>\n            <ion-row class="row header filter" *ngIf="current_selected_partner && selected_partner_name">\n              <ion-col col-3>\n                <button color="default" class="button-color-first" tooltip="Movimientos" positionV="top" arrow [ngClass]="{\'active-icon\': current_list_shown == \'move_list\'}" (click)="show_partner_move_lines()" outline icon-only>\n                  <ion-icon name=\'paper\' is-active="true"></ion-icon>\n                </button>\n              </ion-col>\n              <ion-col col-3>\n                <button color="default" class="button-color-first" tooltip="Paquetes Entrantes" positionV="top" arrow [ngClass]="{\'active-icon\': current_list_shown == \'package_list\'}" (click)="show_partner_packages_arrivals()" outline icon-only>\n                  <ion-icon name=\'cube\' is-active="true"></ion-icon>\n                </button>\n              </ion-col>\n              <ion-col col-3>\n                <button color="default" class="button-color-first" tooltip="Movimientos sin asignar" positionV="top" arrow *ngIf="current_list_shown == \'move_list\'  || current_list_shown == \'filtered_assigned\'  || current_list_shown == \'filtered_unassigned\'" [ngClass]="{\'active-icon\': current_list_shown == \'filtered_unassigned\'}" (click)="moves_filter_by_assigned_pkgs(0)" outline icon-only>\n                  <ion-icon name=\'log-in\' is-active="true"></ion-icon>\n                </button>\n              </ion-col>\n              <ion-col col-3>\n                <button color="default" class="button-color-first" tooltip="Movimientos asignados" positionV="top" arrow *ngIf="current_list_shown == \'move_list\'  || current_list_shown == \'filtered_assigned\'  || current_list_shown == \'filtered_unassigned\'" [ngClass]="{\'active-icon\': current_list_shown == \'filtered_assigned\'}" (click)="moves_filter_by_assigned_pkgs(1)" outline icon-only>\n                  <ion-icon name=\'log-out\' is-active="true"></ion-icon>\n                </button>\n              </ion-col>\n            </ion-row>\n            <div if=lines_header *ngIf="current_list_shown == \'move_list\'  || current_list_shown == \'filtered_assigned\'  || current_list_shown == \'filtered_unassigned\'">\n              <ion-row class="row header">\n                <ion-col col-1 class="col">\n                  <ion-checkbox (ionChange)="multipleSelection($event)" [(ngModel)]="multipleSelectionMain"></ion-checkbox>\n                </ion-col>\n                <ion-col col-2 class="col">Pedido</ion-col>\n                <ion-col col-3 class="col">P.Entrada</ion-col>\n                <ion-col col-3 class="col">P.Salida</ion-col>\n                <ion-col col-3 class="col">\n                  Opc. \n                  <button tooltip="Añadir todo al paquete" positionV="top" class="row-button right-button" color="default" (click)="add_multiple_lines_to_package()" outline icon-only>\n                    <ion-icon name=\'add-circle\' is-active="true"></ion-icon>\n                  </button>\n                  <button tooltip="Desempaquetar todo" positionV="top" class="row-button right-button" color="default" (click)="add_multiple_lines_to_package(\'del\')" outline icon-only>\n                    <ion-icon name=\'remove-circle\' is-active="true"></ion-icon>\n                  </button>\n                </ion-col>\n              </ion-row>\n              <div dragula="move_lines_container" id="lines" [dragulaModel]="users_list">\n                <div *ngFor="let move of full_stock_moves" id="{{move[\'id\']}}" (press)="show_shipping_options_line(move[\'id\'])">\n                    <ion-row class="row" \n                    \n                    *ngIf="((move[\'shipping_type\'] && move[\'shipping_type\'] == current_shipping_type) || current_shipping_type == \'all\') && ((current_list_shown == \'filtered_unassigned\' && !move[\'result_package_id\']) || (current_list_shown == \'filtered_assigned\' && move[\'result_package_id\']) || (current_list_shown == \'move_list\'))">\n                      <ion-col col-12 \n                      [ngClass]="{\'pasaran-type\': move[\'shipping_type\'] && move[\'shipping_type\'] == \'pasaran\', \'route-type\': move[\'shipping_type\'] && move[\'shipping_type\'] == \'route\', \'urgent-type\': move[\'shipping_type\'] && move[\'shipping_type\'] == \'urgent\'}" \n                      class="col product-col"><strong>{{move[\'name\']}}</strong><strong class="product-units">{{move[\'product_qty\']}} Ud(s).</strong></ion-col>\n\n                      <ion-col col-1 class="col product-col shipping-color">\n                        <ion-checkbox (ionChange)="simpleSelection($event, move[\'id\'])" [(ngModel)]="move[\'isChecked\']"></ion-checkbox>\n                      </ion-col>\n                      <ion-col col-2 class="col product-col shipping-color">{{move[\'origin\']}}</ion-col>\n                      <ion-col col-3 class="col product-col shipping-color">{{move[\'package_id\'] && move[\'package_id\'][\'name\'] || \'N\'}}</ion-col>\n                      <ion-col *ngIf="move[\'result_package_id\'] && move[\'result_package_id\'][\'name\']; else not_result_package_id_open" \n                      col-3 class="col product-col shipping-color" [ngClass]="{\'active-icon\': move[\'result_package_id\'][\'id\'] == current_selected_pkg}" (click)="open_package(move[\'result_package_id\'][\'id\'])">{{move[\'result_package_id\'][\'name\']}}</ion-col>\n                      <ion-col col-3 class="col product-col options shipping-color">\n                        <ng-container [ngTemplateOutlet]="move[\'result_package_id\'] ?result_package_id_buttons : not_result_package_id_buttons" [ngTemplateOutletContext]="{move:move}"></ng-container>\n                      </ion-col>\n                      \n                    </ion-row>\n                  </div>\n              </div>\n            </div>\n            <div *ngIf="current_list_shown == \'package_list\'">\n              <ion-row class="row header">\n                <ion-col col-6 class="col">ID</ion-col>\n                <ion-col col-6 class="col">Nombre</ion-col>\n              </ion-row>\n              <div dragula="move_lines_container" id="arrival_pkgs" [dragulaModel]="current_partner_arrival_pkgs_list">\n                <ion-row class="row" *ngFor="let arrival_pkg of current_partner_arrival_pkgs_list" id="{{arrival_pkg[\'id\']}}">\n                  <ion-col col-6 class="col product-col">{{arrival_pkg[\'id\']}}</ion-col>\n                  <ion-col col-6 class="col product-col">\n                    {{arrival_pkg[\'name\']}}\n                    <button tooltip="Añadir al paquete" positionV="top" class="row-button right-button" color="default" (click)="add_package_content_to_package(arrival_pkg[\'id\'])" outline icon-only>\n                      <ion-icon name=\'add-circle\' is-active="true"></ion-icon>\n                    </button>\n                  </ion-col>\n                </ion-row>\n              </div>\n            </div>\n          </ion-scroll>\n        </ion-grid>\n      </ion-col>\n\n      <ion-col col-12 col-xs-12 col-sm-4 col-md-3 col-lg-4 col-xl-4>\n        <ion-row>\n          <ion-grid>\n            <ion-scroll scrollY=true>\n              <div *ngIf="current_selected_pkg == false">\n                <ion-row class="row header-reddish">\n                  <ion-col col-8 class="col pkg">\n                    Paquetes\n                  </ion-col>\n                  <ion-col col-4 class="col add">\n                    <ion-row>\n                    </ion-row>\n                  </ion-col>\n                </ion-row>\n                <ion-row class="row" dragula="move_lines_container" id="pkgs" [dragulaModel]="current_partner_pkg_list">\n                  <ion-col col-4 class="col fat-col" *ngFor="let pkg of current_partner_pkg_list" id="{{pkg[\'id\']}}" [ngClass]="{\'red-background\': pkg[\'id\'] == current_selected_pkg, \'hidden-col\': (!pkg[\'shipping_type\'] || (pkg[\'shipping_type\'] && pkg[\'shipping_type\'] != current_shipping_type)) && current_shipping_type != \'all\', \'pasaran-type\': pkg[\'shipping_type\'] == \'pasaran\', \'route-type\': pkg[\'shipping_type\'] == \'route\', \'urgent-type\': pkg[\'shipping_type\'] == \'urgent\'}" (click)="open_package(pkg[\'id\'])" (press)="show_shipping_options(pkg[\'id\'])">\n                    {{pkg[\'name\']}}\n                  </ion-col>\n                </ion-row>\n              </div>\n              <div *ngIf="current_selected_pkg != false">\n                <ion-row class="row header-reddish">\n                  <ion-col col-6 col-xs-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 class="col pkg">\n                    {{current_pkg_data[\'name\']}}\n                  </ion-col>\n                  <ion-col col-6 col-xs-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 class="col add">\n                    <ion-row>\n                      <button tooltip="Volver al listado" positionV="top" class="row-button black" icon-only (click)="reload_with_data(current_selected_partner, false, current_shipping_type)">\n                        <ion-icon name="undo"></ion-icon>\n                      </button>\n                      <button tooltip="Opciones de envío" positionV="top" class="row-button black" *ngIf="current_selected_partner && selected_partner_name && current_selected_pkg" icon-only (click)="show_shipping_options(current_selected_pkg)">\n                        <ion-icon name="cog"></ion-icon>\n                      </button>\n                      <button tooltip="Eliminar paquete" positionV="top" class="row-button black" *ngIf="current_selected_partner && selected_partner_name && current_selected_pkg" icon-only (click)="showDestroyConfirmation(current_selected_pkg)">\n                        <ion-icon name="remove-circle"></ion-icon>\n                      </button>\n                    </ion-row>\n                  </ion-col>\n                </ion-row>\n               \n                \n                <packaging-product id="{{packaging_line[\'id\']}}" *ngFor="let packaging_line of packaging_line_ids" [packaging_line] = "packaging_line"></packaging-product>\n                \n              \n               \n                <ion-row class="row header">\n                  <ion-col col-12 class="col add">\n                    <span *ngIf="current_selected_partner && selected_partner_name && current_selected_pkg">Envío: {{current_pkg_data[\'info_route_str\']}}</span>\n                  </ion-col>\n                </ion-row>\n                <div dragula="move_lines_container" id="pkgs_info" [dragulaModel]="current_pkg_info">\n                  <ion-row class="row" id="{{pkg_line[\'id\']}}" *ngFor="let pkg_line of current_pkg_info">\n                    <ion-col col-10 col-xs-6 col-sm-6 col-md-6 col-lg-10 col-xl-10 class="col product-col">\n                      <ion-row>{{pkg_line[\'name\']}}</ion-row>\n                    </ion-col>\n                    <ion-col col-2 col-xs-6 col-sm-6 col-md-6 col-lg-2 col-xl-2 class="col product-col">\n                      <ion-row>{{pkg_line[\'product_qty\']}} Ud(s)</ion-row>\n                    </ion-col>\n                  </ion-row>\n                </div>\n              </div>\n            </ion-scroll>\n          </ion-grid>\n        </ion-row>\n      </ion-col>\n    </ion-row>\n  </ion-grid>\n</ion-content>\n\n<!-- Else(s) -->\n\n<ng-template #not_selected_partner_name>\n  <ion-title>Movimientos de stock</ion-title>\n</ng-template>\n\n<ng-template #not_result_package_id_open>\n  <ion-col col-3 class="col product-col shipping-color">N</ion-col>\n</ng-template>\n\n<ng-template #result_package_id_buttons let-move=\'move\'>\n  <ion-row>\n    <button tooltip="Desempaquetar" class="row-button" positionV="top" arrow (click)="update_packages(move[\'id\'], false, \'unlink\')" color="default" outline icon-only>\n      <ion-icon name="remove-circle"></ion-icon>\n    </button>\n  </ion-row>\n</ng-template>\n\n<ng-template #not_result_package_id_buttons let-move=\'move\'>\n  <ion-row>\n    <button *ngIf="current_selected_pkg" tooltip="Añadir al paquete" positionV="top" class="row-button" color="default" (click)="update_packages(move[\'id\'])" outline icon-only>\n      <ion-icon name=\'add-circle\' is-active="true"></ion-icon>\n    </button>\n    <button *ngIf="!current_selected_pkg" tooltip="Opciones de envío" positionV="top" class="row-button" color="default" (click)="show_shipping_options_line(move[\'id\'])" outline icon-only>\n      <ion-icon name=\'cog\' is-active="true"></ion-icon>\n    </button>    \n  </ion-row>\n</ng-template>'/*ion-inline-end:"/home/kiko/ionic/packing_apk/src/pages/stock-move-list/stock-move-list.html"*/,
         }),
         __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["b" /* AlertController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["a" /* ActionSheetController */], __WEBPACK_IMPORTED_MODULE_5_ng2_dragula__["b" /* DragulaService */],
             __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["g" /* NavController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["h" /* NavParams */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["j" /* ViewController */], __WEBPACK_IMPORTED_MODULE_3__ionic_storage__["b" /* Storage */],
@@ -1188,7 +852,7 @@ webpackEmptyAsyncContext.id = 183;
 
 var map = {
 	"../pages/stock-move-list/stock-move-list.module": [
-		453,
+		454,
 		0
 	]
 };
@@ -1252,7 +916,7 @@ var TabsPage = /** @class */ (function () {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ionic_storage__ = __webpack_require__(65);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__stock_move_list_stock_move_list__ = __webpack_require__(150);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__providers_odoo_odoo__ = __webpack_require__(125);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__providers_stock_stock__ = __webpack_require__(124);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__providers_stock_stock__ = __webpack_require__(82);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -1344,8 +1008,8 @@ var HomePage = /** @class */ (function () {
     };
     HomePage.prototype.conectarApp = function (verificar) {
         var _this = this;
-        this.cargar = true;
         if (verificar) {
+            this.cargar = true;
             this.storage.set('CONEXION', this.CONEXION).then(function () {
                 _this.check_conexion(_this.CONEXION);
             });
@@ -1511,21 +1175,23 @@ Object(__WEBPACK_IMPORTED_MODULE_0__angular_platform_browser_dynamic__["a" /* pl
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__app_component__ = __webpack_require__(439);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__ionic_storage__ = __webpack_require__(65);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_ng2_dragula__ = __webpack_require__(227);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__pages_home_home__ = __webpack_require__(272);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__pages_tabs_tabs__ = __webpack_require__(271);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__pages_stock_move_list_stock_move_list__ = __webpack_require__(150);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__ionic_native_status_bar_ngx__ = __webpack_require__(268);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__ionic_native_splash_screen_ngx__ = __webpack_require__(270);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__providers_stock_stock__ = __webpack_require__(124);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__providers_odoo_odoo__ = __webpack_require__(125);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__angular_platform_browser_animations__ = __webpack_require__(449);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14_ionic_tooltips__ = __webpack_require__(451);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_packaging_product_packaging_product__ = __webpack_require__(449);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__pages_home_home__ = __webpack_require__(272);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__pages_tabs_tabs__ = __webpack_require__(271);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__pages_stock_move_list_stock_move_list__ = __webpack_require__(150);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__ionic_native_status_bar_ngx__ = __webpack_require__(268);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__ionic_native_splash_screen_ngx__ = __webpack_require__(270);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__providers_stock_stock__ = __webpack_require__(82);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__providers_odoo_odoo__ = __webpack_require__(125);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__angular_platform_browser_animations__ = __webpack_require__(450);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15_ionic_tooltips__ = __webpack_require__(452);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+
 
 
 
@@ -1548,9 +1214,10 @@ var AppModule = /** @class */ (function () {
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["I" /* NgModule */])({
             declarations: [
                 __WEBPACK_IMPORTED_MODULE_3__app_component__["a" /* MyApp */],
-                __WEBPACK_IMPORTED_MODULE_6__pages_home_home__["a" /* HomePage */],
-                __WEBPACK_IMPORTED_MODULE_7__pages_tabs_tabs__["a" /* TabsPage */],
-                __WEBPACK_IMPORTED_MODULE_8__pages_stock_move_list_stock_move_list__["a" /* StockMoveListPage */]
+                __WEBPACK_IMPORTED_MODULE_7__pages_home_home__["a" /* HomePage */],
+                __WEBPACK_IMPORTED_MODULE_8__pages_tabs_tabs__["a" /* TabsPage */],
+                __WEBPACK_IMPORTED_MODULE_6__components_packaging_product_packaging_product__["a" /* PackagingProductComponent */],
+                __WEBPACK_IMPORTED_MODULE_9__pages_stock_move_list_stock_move_list__["a" /* StockMoveListPage */]
             ],
             imports: [
                 __WEBPACK_IMPORTED_MODULE_1__angular_platform_browser__["a" /* BrowserModule */],
@@ -1561,8 +1228,8 @@ var AppModule = /** @class */ (function () {
                 }),
                 __WEBPACK_IMPORTED_MODULE_4__ionic_storage__["a" /* IonicStorageModule */].forRoot(),
                 __WEBPACK_IMPORTED_MODULE_5_ng2_dragula__["a" /* DragulaModule */].forRoot(),
-                __WEBPACK_IMPORTED_MODULE_13__angular_platform_browser_animations__["a" /* BrowserAnimationsModule */],
-                __WEBPACK_IMPORTED_MODULE_14_ionic_tooltips__["a" /* TooltipsModule */].forRoot()
+                __WEBPACK_IMPORTED_MODULE_14__angular_platform_browser_animations__["a" /* BrowserAnimationsModule */],
+                __WEBPACK_IMPORTED_MODULE_15_ionic_tooltips__["a" /* TooltipsModule */].forRoot()
                 /* Para Android ~9 hay que poner poner websql para que funcione.
                 
                 IonicStorageModule.forRoot(
@@ -1577,15 +1244,16 @@ var AppModule = /** @class */ (function () {
             bootstrap: [__WEBPACK_IMPORTED_MODULE_2_ionic_angular__["c" /* IonicApp */]],
             entryComponents: [
                 __WEBPACK_IMPORTED_MODULE_3__app_component__["a" /* MyApp */],
-                __WEBPACK_IMPORTED_MODULE_6__pages_home_home__["a" /* HomePage */],
-                __WEBPACK_IMPORTED_MODULE_7__pages_tabs_tabs__["a" /* TabsPage */],
-                __WEBPACK_IMPORTED_MODULE_8__pages_stock_move_list_stock_move_list__["a" /* StockMoveListPage */]
+                __WEBPACK_IMPORTED_MODULE_7__pages_home_home__["a" /* HomePage */],
+                __WEBPACK_IMPORTED_MODULE_8__pages_tabs_tabs__["a" /* TabsPage */],
+                __WEBPACK_IMPORTED_MODULE_9__pages_stock_move_list_stock_move_list__["a" /* StockMoveListPage */],
+                __WEBPACK_IMPORTED_MODULE_6__components_packaging_product_packaging_product__["a" /* PackagingProductComponent */]
             ],
             providers: [
-                __WEBPACK_IMPORTED_MODULE_9__ionic_native_status_bar_ngx__["a" /* StatusBar */],
-                __WEBPACK_IMPORTED_MODULE_10__ionic_native_splash_screen_ngx__["a" /* SplashScreen */],
-                __WEBPACK_IMPORTED_MODULE_11__providers_stock_stock__["a" /* StockProvider */],
-                __WEBPACK_IMPORTED_MODULE_12__providers_odoo_odoo__["a" /* OdooProvider */],
+                __WEBPACK_IMPORTED_MODULE_10__ionic_native_status_bar_ngx__["a" /* StatusBar */],
+                __WEBPACK_IMPORTED_MODULE_11__ionic_native_splash_screen_ngx__["a" /* SplashScreen */],
+                __WEBPACK_IMPORTED_MODULE_12__providers_stock_stock__["a" /* StockProvider */],
+                __WEBPACK_IMPORTED_MODULE_13__providers_odoo_odoo__["a" /* OdooProvider */],
                 { provide: __WEBPACK_IMPORTED_MODULE_0__angular_core__["u" /* ErrorHandler */], useClass: __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["d" /* IonicErrorHandler */] }
             ]
         })
@@ -1640,6 +1308,420 @@ var MyApp = /** @class */ (function () {
 }());
 
 //# sourceMappingURL=app.component.js.map
+
+/***/ }),
+
+/***/ 449:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return PackagingProductComponent; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__providers_stock_stock__ = __webpack_require__(82);
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+
+
+var PackagingProductComponent = /** @class */ (function () {
+    function PackagingProductComponent(stockInfo, changeDetectorRef) {
+        this.stockInfo = stockInfo;
+        this.changeDetectorRef = changeDetectorRef;
+        console.log('Hello PackagingProductComponent Component');
+        this.text = 'Hello World';
+    }
+    PackagingProductComponent.prototype.change_qty = function (qty) {
+        if (qty == 1 || qty == -1) {
+            this.packaging_line.qty += qty;
+        }
+        else if (+qty >= 0) {
+            this.packaging_line.qty = qty;
+        }
+        else {
+            this.packaging_line.qty = 0;
+        }
+        this.stockInfo.set_packaging_lines(this.packaging_line).then(function (val) {
+        }).catch(function (mierror) {
+            //this.stockInfo.presentAlert('Error de conexión', 'Error al recuperar los registros'+mierror + mierror)
+            console.log(mierror);
+        });
+        this.changeDetectorRef.detectChanges();
+    };
+    __decorate([
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["D" /* Input */])(),
+        __metadata("design:type", Object)
+    ], PackagingProductComponent.prototype, "packaging_line", void 0);
+    PackagingProductComponent = __decorate([
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
+            selector: 'packaging-product',template:/*ion-inline-start:"/home/kiko/ionic/packing_apk/src/components/packaging-product/packaging-product.html"*/'<!-- Generated template for the PackagingProductComponent component -->\n\n\n\n  <ion-row>\n      <ion-col class="col">\n      <ion-label>\n        {{packaging_line.name}}\n      </ion-label>\n      </ion-col>\n  </ion-row>    \n  <ion-row>\n      <ion-col class="col tcenter remove" >\n        <button ion-button color="primary" (click)="change_qty(-1)">\n          <ion-icon name="remove-circle"></ion-icon>\n        </button>\n      </ion-col>\n      <ion-col class="col tcenter">\n        <ion-input [(ngModel)]="packaging_line.qty" (ionInput)="change_qty()" required name=\'qty\' class="tcenter" placeholder="Ingresa qty"></ion-input>\n      </ion-col>\n      <ion-col class="col add tcenter">\n        <button ion-button color="danger" (click)="change_qty(1)">\n          <ion-icon name="add-circle"></ion-icon>\n        </button>\n      </ion-col>\n  </ion-row>\n\n\n'/*ion-inline-end:"/home/kiko/ionic/packing_apk/src/components/packaging-product/packaging-product.html"*/
+        }),
+        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1__providers_stock_stock__["a" /* StockProvider */], __WEBPACK_IMPORTED_MODULE_0__angular_core__["j" /* ChangeDetectorRef */]])
+    ], PackagingProductComponent);
+    return PackagingProductComponent;
+}());
+
+//# sourceMappingURL=packaging-product.js.map
+
+/***/ }),
+
+/***/ 82:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return StockProvider; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__odoo_odoo__ = __webpack_require__(125);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_ionic_angular__ = __webpack_require__(41);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__ionic_storage__ = __webpack_require__(65);
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+
+
+
+
+/*
+  Generated class for the StockProvider provider.
+
+  See https://angular.io/guide/dependency-injection for more info on providers
+  and Angular DI.
+*/
+var StockProvider = /** @class */ (function () {
+    function StockProvider(odooCon, alertCtrl, storage) {
+        this.odooCon = odooCon;
+        this.alertCtrl = alertCtrl;
+        this.storage = storage;
+        this.STOCK_FIELDS = {
+            'stock.move.line': {
+                'tree': ['id', 'origin', 'name', 'result_package_id', 'move_id', 'product_qty', 'state', 'package_id', 'shipping_type'],
+            },
+            'stock.quant.package': {
+                'tree': ['id', 'name', 'move_line_ids', 'shipping_type', 'delivery_carrier_id']
+            },
+            'stock.warehouse': {
+                'form': ['id', 'name', 'company_id']
+            },
+            'delivery.carrier': {
+                'tree': ['id', 'name']
+            }
+        };
+        this.STOCK_STATES = {
+            'draf': 'Borrador',
+            'waiting': 'Esperando',
+            'confirmed': 'En espera',
+            'assigned': 'Reservado',
+            'partially_available': 'Parcialmente',
+            'done': 'Hecho',
+            'cancel': 'Cancelado'
+        };
+        this.STATE_ICONS = {
+            'cancel': 'trash',
+            'error': 'alert',
+            'done': 'checkmark-circle',
+            'waiting': 'clock',
+            'confirmed': 'checkmark',
+            'partially_available': 'checkmark',
+            'assigned': 'done-all',
+            'draft': 'close-circle'
+        };
+        console.log('Hello StockProvider Provider');
+    }
+    // Package manager
+    StockProvider.prototype.update_object = function (model, action, move_line_ids, package_id, result_package_id, partner_id) {
+        if (model === void 0) { model = "stock.move.line"; }
+        if (action === void 0) { action = false; }
+        if (move_line_ids === void 0) { move_line_ids = []; }
+        if (package_id === void 0) { package_id = false; }
+        if (result_package_id === void 0) { result_package_id = false; }
+        if (partner_id === void 0) { partner_id = false; }
+        var self = this;
+        var values = {
+            'move_line_ids': move_line_ids,
+            'package_id': package_id,
+            'result_package_id': result_package_id,
+            'action': action,
+            'partner_id': partner_id
+        };
+        var promise = new Promise(function (resolve, reject) {
+            self.odooCon.execute(model, 'update_object_from_apk', values).then(function (done) {
+                console.log(done);
+                resolve(done);
+            })
+                .catch(function (err) {
+                console.log(err);
+                reject(false);
+                console.log("Error al validar");
+            });
+        });
+        return promise;
+    };
+    StockProvider.prototype.get_package_info = function (id) {
+        var self = this;
+        var domain = [['id', '=', id]];
+        var model = 'stock.quant.package';
+        var fields = this.STOCK_FIELDS[model]['tree'];
+        var promise = new Promise(function (resolve, reject) {
+            self.odooCon.search_read(model, domain, fields, 0, 0).then(function (data) {
+                for (var sm_id in data) {
+                    data[sm_id]['model'] = model;
+                }
+                resolve(data);
+            })
+                .catch(function (err) {
+                reject(err);
+            });
+        });
+        return promise;
+    };
+    StockProvider.prototype.get_package_lines = function (package_id) {
+        var self = this;
+        var model;
+        var values = {
+            'package': package_id
+        };
+        model = 'stock.quant.package';
+        var promise = new Promise(function (resolve, reject) {
+            self.odooCon.execute(model, 'get_lines_info_apk', values).then(function (done) {
+                resolve(done);
+            })
+                .catch(function (err) {
+                reject(false);
+                console.log("Error al validar");
+            });
+        });
+        return promise;
+    };
+    StockProvider.prototype.delete_package = function (package_id) {
+        var self = this;
+        var model;
+        var values = {
+            'package': package_id
+        };
+        model = 'stock.quant.package';
+        var promise = new Promise(function (resolve, reject) {
+            self.odooCon.execute(model, 'delete_package_from_apk', values).then(function (done) {
+                resolve(done);
+            })
+                .catch(function (err) {
+                reject(false);
+                console.log("Error al validar");
+            });
+        });
+        return promise;
+    };
+    StockProvider.prototype.set_packaging_lines = function (val) {
+        var self = this;
+        var model;
+        model = 'stock.quant.package';
+        var promise = new Promise(function (resolve, reject) {
+            self.odooCon.execute(model, 'set_packaging_lines', val).then(function (done) {
+                resolve(done);
+            })
+                .catch(function (err) {
+                reject(false);
+                console.log("Error al actualizar set_packaging_lines");
+            });
+        });
+        return promise;
+    };
+    StockProvider.prototype.set_package_shipping_type = function (values) {
+        var self = this;
+        var model;
+        model = 'stock.quant.package';
+        var promise = new Promise(function (resolve, reject) {
+            self.odooCon.execute(model, 'change_shipping_type', values).then(function (done) {
+                resolve(done);
+            })
+                .catch(function (err) {
+                reject(false);
+                console.log("Error al validar");
+            });
+        });
+        return promise;
+    };
+    // Home warehouse selection
+    StockProvider.prototype.get_available_warehouse_info = function (company_ids, type) {
+        if (type === void 0) { type = 'form'; }
+        var self = this;
+        var model = 'stock.warehouse';
+        var domain = [['company_id', 'in', company_ids]];
+        var fields = this.STOCK_FIELDS[model][type];
+        var promise = new Promise(function (resolve, reject) {
+            self.odooCon.search_read(model, domain, fields, 0, 0).then(function (sp_ids) {
+                for (var sm_id in sp_ids) {
+                    sp_ids[sm_id]['model'] = model;
+                }
+                resolve(sp_ids);
+            })
+                .catch(function (err) {
+                reject(false);
+                console.log("Error buscando " + model);
+            });
+        });
+        return promise;
+    };
+    // Move lines
+    StockProvider.prototype.get_stock_move_lines_list_apk = function (partner_id, location_dest_id) {
+        var self = this;
+        var model;
+        var values = {
+            'location_dest_id': location_dest_id,
+            'partner_id': partner_id
+        };
+        model = 'stock.move.line';
+        var promise = new Promise(function (resolve, reject) {
+            self.odooCon.execute(model, 'get_apk_info_full', values).then(function (done) {
+                resolve(done);
+            })
+                .catch(function (err) {
+                reject(false);
+                console.log("Error al validar");
+            });
+        });
+        return promise;
+    };
+    StockProvider.prototype.get_move_line_info = function (id) {
+        var self = this;
+        var domain = [['id', '=', id]];
+        var model = 'stock.move.line';
+        var fields = this.STOCK_FIELDS[model]['tree'];
+        var promise = new Promise(function (resolve, reject) {
+            self.odooCon.search_read(model, domain, fields, 0, 0).then(function (data) {
+                for (var sm_id in data) {
+                    data[sm_id]['model'] = model;
+                }
+                resolve(data);
+            })
+                .catch(function (err) {
+                reject(err);
+            });
+        });
+        return promise;
+    };
+    StockProvider.prototype.set_move_line_shipping_type = function (values) {
+        var self = this;
+        var model;
+        model = 'stock.move.line';
+        var promise = new Promise(function (resolve, reject) {
+            self.odooCon.execute(model, 'change_shipping_type', values).then(function (done) {
+                resolve(done);
+            })
+                .catch(function (err) {
+                reject(false);
+                console.log("Error al validar");
+            });
+        });
+        return promise;
+    };
+    // Users list
+    StockProvider.prototype.get_users_list_for_apk = function (location_dest_id) {
+        var self = this;
+        var model;
+        var values = {
+            'location_dest_id': location_dest_id
+        };
+        model = 'stock.move.line';
+        var promise = new Promise(function (resolve, reject) {
+            self.odooCon.execute(model, 'get_users_list_for_apk', values).then(function (done) {
+                resolve(done);
+            })
+                .catch(function (err) {
+                reject(false);
+                console.log("Error al validar");
+            });
+        });
+        return promise;
+    };
+    StockProvider.prototype.get_users_list_for_apk_from_search_box = function (name) {
+        var self = this;
+        var model;
+        var values = {
+            'name': name
+        };
+        model = 'stock.move.line';
+        var promise = new Promise(function (resolve, reject) {
+            self.odooCon.execute(model, 'get_users_list_for_apk_from_search_box', values).then(function (done) {
+                resolve(done);
+            })
+                .catch(function (err) {
+                reject(false);
+                console.log("Error al validar");
+            });
+        });
+        return promise;
+    };
+    // Alerts
+    StockProvider.prototype.presentAlert = function (titulo, texto) {
+        var alert = this.alertCtrl.create({
+            title: titulo,
+            subTitle: texto,
+            buttons: ['Ok'],
+        });
+        alert.present();
+    };
+    StockProvider.prototype.errorAlert = function (model, move_id, data) {
+        var subtitulo = 'No se ha podido guardar en el id ' + move_id + ' del modelo ' + model + ' el valor: ' + data;
+        var alertError = this.alertCtrl.create({
+            title: 'Error',
+            subTitle: subtitulo,
+            buttons: ['OK']
+        });
+        alertError.present();
+    };
+    // Delivery carriers
+    StockProvider.prototype.get_delivery_carriers = function (domain) {
+        var self = this;
+        var model = 'delivery.carrier';
+        var type = 'tree';
+        var fields = this.STOCK_FIELDS[model][type];
+        var promise = new Promise(function (resolve, reject) {
+            self.odooCon.search_read(model, domain, fields, 0, 0).then(function (sp_ids) {
+                resolve(sp_ids);
+            })
+                .catch(function (err) {
+                reject(false);
+                console.log("Error buscando " + model);
+            });
+        });
+        return promise;
+    };
+    // Routes
+    StockProvider.prototype.get_routes_for_apk = function () {
+        var self = this;
+        var model;
+        var values = {};
+        model = 'delivery.route.path';
+        var promise = new Promise(function (resolve, reject) {
+            self.odooCon.execute(model, 'get_routes_for_apk', values).then(function (done) {
+                resolve(done);
+            })
+                .catch(function (err) {
+                reject(false);
+                console.log("Error al validar");
+            });
+        });
+        return promise;
+    };
+    StockProvider = __decorate([
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["A" /* Injectable */])(),
+        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1__odoo_odoo__["a" /* OdooProvider */], __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["b" /* AlertController */], __WEBPACK_IMPORTED_MODULE_3__ionic_storage__["b" /* Storage */]])
+    ], StockProvider);
+    return StockProvider;
+}());
+
+//# sourceMappingURL=stock.js.map
 
 /***/ })
 

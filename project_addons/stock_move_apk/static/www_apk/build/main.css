@@ -25764,6 +25764,18 @@ ion-navbar.toolbar {
   filter: alpha(opacity=20);
 }
 
+packaging-product .add {
+  color: #1da805;
+}
+
+packaging-product .remove {
+  color: #e49217;
+}
+
+packaging-product .tcenter {
+  text-align: center;
+}
+
 stock-move-list {
   /* .product-col, .fat-col, .row.header.filter .col {
         background-image: linear-gradient(white, white, lightgrey);
