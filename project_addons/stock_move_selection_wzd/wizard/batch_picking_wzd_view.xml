@@ -27,7 +27,7 @@
                     <field name="id"/>
                     <field name="batch_picking_id" domain="[('picking_type_id', '=', picking_type_id)]"/>
                     <field name="picking_type_id" required="1"/>
-                    <field name="sga_integrated"/>
+                    <field name="sga_integrated" invisible="1"/>
                     <field name="date"/>
                     <field name="picker_id"/>
                 </group>
@@ -94,8 +94,9 @@
                     </page>
                 </notebook>
                 <footer>
-                    <button name="action_create_batch" string="Crear grupo" type="object" class="oe_highlight" attrs="{'invisible': [('batch_picking_id','!=', False)]}"/>
-                    <button name="action_assign_batch" string="Asignar grupo" type="object" class="oe_highlight" attrs="{'invisible': [('batch_picking_id','=', False)]}"/>
+                    <button name="action_create_batch" string="Crear batch" type="object" class="oe_highlight" attrs="{'invisible': [('batch_picking_id','!=', False)]}"/>
+                    <button name="action_create_send_batch" string="Crear y enviar a Sga" type="object" attrs="{'invisible': ['|', ('sga_integrated','=', False), ('batch_picking_id','!=', False)]}"/>
+                    <button name="action_assign_batch" string="Asignar grupo" type="object" attrs="{'invisible': [('batch_picking_id','=', False)]}"/>
                     <button string="Cancel" class="oe_link" special="cancel"/>
                 </footer>
             </form>

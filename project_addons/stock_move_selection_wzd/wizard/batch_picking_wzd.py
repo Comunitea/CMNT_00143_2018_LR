@@ -42,6 +42,7 @@ class StockBatchPickingWzd(models.TransientModel):
     carrier_id = fields.Many2one("delivery.carrier", string="Forma de envío")
     sga_integrated = fields.Boolean(related='picking_type_id.sga_integrated')
 
+
     def create_from(self, model='stock.move', ids=[]):
         vals = self.get_vals(model, ids=ids)
         wzd_id = self.create(vals)
@@ -162,7 +163,11 @@ class StockBatchPickingWzd(models.TransientModel):
         }
 
     @api.multi
-    def action_create_batch(self):
+    def action_create_send_batch(self):
+        return self.action_create_batch(send=True)
+
+    @api.multi
+    def action_create_batch(self, send=False):
 
         if len(self.mapped('picking_type_id'))>1:
             raise ValueError(_('No puedes crear un batch de con movimientos de distiont tipo'))
@@ -192,9 +197,14 @@ class StockBatchPickingWzd(models.TransientModel):
                         note = '{}\n{}\n{}'.format(note, pick.name, pick.note)
                     else:
                         note = '{}\n{}'.format(note, pick.name)
+        if send:
+            new_batchs.send_to_sga()
+
         action = self.env.ref('stock_batch_picking.action_stock_batch_picking_tree').read()[0]
         action['domain'] = [('id', 'in', new_batchs.ids)]
         return action
+
+
 
     @api.multi
     def unlink(self):
@@ -207,3 +217,8 @@ class StockBatchPickingWzd(models.TransientModel):
         if self.batch_picking_id:
             self.move_ids.write({'draft_batch_picking_id': self.batch_picking_id.id})
         return self.batch_picking_id.get_formview_action()
+
+
+    @api.multi
+    def write(self, vals):
+        return super().write(vals)

@@ -1,5 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
+        <record model="ir.ui.view" id="stock_picking_move_change_quant_wzd">
+        <field name="name">stock.picking.form</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form" />
+        <field name="arch" type="xml">
+            <button name="action_show_details" position="before">
+                <button name="button_reasignar_origen_wzd"
+                            string="(RE) Asignar origen"
+                            type="object"
+                            icon="fa-tags"
+                            groups="base.group_user"
+                            attrs="{'invisible':['|',('picking_code','=','incoming'),('state','not in',('confirmed','assigned','partially_available'))]}"/>
+            </button>
+        </field>
+    </record>
+
     <delete id="stock_move_selection_wzd.action_moves_assign_batch" model="ir.actions.server"/>
     <!--record id="action_moves_assign_batch" model="ir.actions.server">
         <field name="name">Asignar carta de porte</field>
@@ -131,12 +148,19 @@
                         attrs="{'invisible': ['|', ('batch_delivery_id', '!=', False), ('state', 'not in', ('assigned', 'partially_available'))]}"
                         />
                 <field name="product_uom_qty"/>
-                <field name="quantity_done"/>
+                <field name="quantity_done" options='{"fg_color": "green: quantity_done &gt; 0.00"}'/>
+                <button name="button_reasignar_origen_wzd"
+                            string="(RE) Asignar origen"
+                            type="object"
+                            icon="fa-tags"
+                            groups="base.group_user"
+                            attrs="{'invisible':['|',('code','=','incoming'),('state','not in',('confirmed','assigned','partially_available'))]}"/>
                 <field name="show_details_visible" invisible="1"/>
                 <button name="action_show_details" string="Registrar detalles del movimiento"
                         type="object" icon="fa-list" class="fa-2x"
                         attrs="{'invisible': [('show_details_visible', '=', False)]}"
                         />
+
                 <field name="state"/>
                 <field name="sga_state" invisible="not context.get('group_code', False) in ('picking', 'internal', 'location', 'reposition')"/>
                 <field name="company_id" invisible="1"/>

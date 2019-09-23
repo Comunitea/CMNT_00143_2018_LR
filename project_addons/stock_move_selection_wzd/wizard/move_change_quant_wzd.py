@@ -51,10 +51,13 @@ class MoveChangeQuantWzd(models.TransientModel):
     _order = 'sequence'
 
     move_id = fields.Many2one('stock.move', 'Movimiento')
+    product_id = fields.Many2one(related='move_id.product_id')
     state = fields.Selection(related="move_id.state")
     move_line_ids= fields.One2many(related="move_id.move_line_ids", string='Stock seleccionado')
     quant_ids = fields.Many2many('change.quant.wzd', string='Stock disponibles')
     override_qty = fields.Boolean('Permite cambiar cantidad total', default=False)
+    reserved_move_ids = fields.Many2many('stock.move',  string="Otras reservas")
+
     def _prepare_quant(self, quant):
         return {'quant_id': quant.id,
                 'selection': False,
@@ -63,7 +66,8 @@ class MoveChangeQuantWzd(models.TransientModel):
                 'lot_id': quant.lot_id.id,
                 'quantity': quant.quantity,
                 'reserved_quantity': quant.reserved_quantity
-                                }
+     }
+
 
     @api.model
     def default_get(self, fields):
@@ -71,10 +75,15 @@ class MoveChangeQuantWzd(models.TransientModel):
         move = self._context.get('active_id', False)
         move_id = self.env['stock.move'].browse(move)
         warehouse_id = move_id.picking_type_id.warehouse_id
-        location_id = warehouse_id.lot_stock_id
-
+        if move_id.location_id.picking_type_id and move_id.location_id.picking_type_id != move_id.location_id.location_id.picking_type_id:
+            location_id = move_id.location_id.location_id
+        else:
+            location_id = move_id.location_id
+        #location_id = warehouse_id.lot_stock_id
+        move_domain = [('location_id', 'child_of', location_id.id), ('product_id', '=', move_id.product_id.id), ('state', 'in', ('assigned', 'partially_availbale'))]
+        reserved_move_ids = self.env['stock.move'].search(move_domain)
         quants = self.env['stock.quant']._gather(product_id=move_id.product_id, location_id=location_id)
-
+        defaults['reserved_move_ids'] = [(0, 0, reserved_move_ids.ids)]
         defaults['quant_ids'] = [(0, 0, self._prepare_quant(x)) for x in quants]
         defaults['move_id'] = move
         return defaults
@@ -82,11 +91,9 @@ class MoveChangeQuantWzd(models.TransientModel):
 
     def _prepare_move_split_vals(self, qty):
         vals = super()._prepare_move_split_vals(qty)
-
         return vals
 
     def action_apply_quant(self):
-
         precision_digits = self.env[
             'decimal.precision'].precision_get('Product Unit of Measure')
         self.move_id.do_unreserve_for_pda()

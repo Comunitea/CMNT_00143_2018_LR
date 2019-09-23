@@ -29,7 +29,10 @@ class StockBatchPicking(models.Model):
     draft_move_lines = fields.One2many('stock.move', 'draft_batch_picking_id', string='Movimientos')
     sga_integrated = fields.Boolean(related='picking_type_id.sga_integrated')
     sga_state = fields.Selection(SGA_STATES, default='no_integrated', string="SGA Estado", compute="get_sga_state")
-
+    company_id = fields.Many2one(
+        'res.company', 'Company',
+        default=lambda self: self.env['res.company']._company_default_get('stock.move'),
+        index=True, required=True)
 
     @api.multi
     def alternate_draft_ready(self):
@@ -222,4 +225,5 @@ class StockBatchPicking(models.Model):
                 "Se ha enviado a los sistemas de SGA "
                 "<a href=# data-oe-model=stock.batch.picking data-oe-id=%d>%s</a> <ul>") % (self.id, self.name)
             batch.message_post(message)
+            batch.sga_state = 'pending'
         return True

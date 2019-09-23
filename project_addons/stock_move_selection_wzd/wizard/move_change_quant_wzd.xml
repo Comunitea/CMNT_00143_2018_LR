@@ -9,34 +9,49 @@
                      <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,assigned,done"/>
                 </header>
                 <separator string="Movimiento"/>
-                <label string="Selecciona una ubicación/cantidad para asignar al movimeinto"/>
+                <label string="Permite reasignar una stock (ubicación/cantidad) para asignar al movimiento"/>
                 <br/>
-                <group>
-                    <field name="move_id"/>
+                <group string="Artículo">
+                    <field name="move_id" invisible="1"/>
+                    <field name="product_id" readonly="1" string="Artículo"/>
                     <field name="override_qty"/>
                 </group>
-                <field name="move_line_ids">
+                <group string="Reserva actual">
+                <field name="move_line_ids" nolabel="1">
                     <tree edit="0" create="0">
                         <field name="location_id"/>
                         <field name="product_uom_qty"/>
                         <field name="state"/>
                     </tree>
                 </field>
-                <field name="quant_ids" >
-                    <tree editable="bottom" create="0">
-                        <field name="selection"/>
-                        <field name="sequence" widget="handle"/>
-                        <field name="quant_id" invisible="1"/>
-                        <field name="location_id" readonly="1"/>
-                        <field name="package_id"  readonly="1"/>
-                        <field name="lot_id"  readonly="1"/>
-                        <field name="quantity" readonly="1"/>
-                        <field name="reserved_quantity"  readonly="1"/>
-                        <field name="new_quantity"/>
-                    </tree>
-                </field>
-
-
+                </group>
+                <group string="Stock disponible:">
+                    <field name="quant_ids"  nolabel="1" >
+                        <tree editable="bottom" create="0" decoration-success="reserved_quantity &gt; 0">
+                            <!--field name="selection"/-->
+                            <!--field name="sequence" widget="handle"/-->
+                            <field name="quant_id" invisible="1"/>
+                            <field name="location_id" readonly="1"/>
+                            <field name="package_id"  readonly="1"/>
+                            <field name="lot_id"  readonly="1"/>
+                            <field name="quantity" readonly="1"/>
+                            <field name="reserved_quantity"  readonly="1"/>
+                            <field name="new_quantity"/>
+                        </tree>
+                    </field>
+                </group>
+                <group string="Otras reservas" >
+                    <field name="reserved_move_ids"  nolabel="1" readonly="1" >
+                        <tree decoration-success="reserved_availability == product_uom_qty">
+                            <field name="state.,um"/>
+                            <field name="sale_id"/>
+                            <field name="location_id"/>
+                            <field name="partner_id"/>
+                            <field name="product_uom_qty" string="Demanda" />
+                            <field name="reserved_availability" string="Reservado" />
+                        </tree>
+                    </field>
+                </group>
                 <footer>
                     <button name="action_apply_quant" string="Asignar" type="object" class="oe_highlight"/>
                     <button string="Cancel" class="oe_link" special="cancel"/>

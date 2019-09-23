@@ -128,7 +128,11 @@ class StockBatchDelivery(models.Model):
                                  inverse='set_route_fields', store=True)
     shipping_type = fields.Selection(compute='compute_route_fields', inverse='set_route_fields', store=True)
     delivery_route_path_id = fields.Many2one('delivery.route.path', compute='compute_route_fields',
-                                             inverse='set_route_fields', store=True)
+                                           inverse='set_route_fields', store=True)
+    company_id = fields.Many2one(
+        'res.company', 'Company',
+        default=lambda self: self.env['res.company']._company_default_get('stock.move'),
+        index=True, required=True)
 
     @api.multi
     @api.depends('state', 'move_lines.shipping_type', 'move_lines.delivery_route_path_id', 'move_lines.carrier_id')

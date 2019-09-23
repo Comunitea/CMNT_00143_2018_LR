@@ -206,6 +206,7 @@ class StockMove(models.Model):
 
     @api.multi
     def button_reasignar_origen_wzd(self):
+
         action = self.env.ref(
             'stock_move_selection_wzd.act_view_move_change_quant_wzd').read()[0]
         return action
