@@ -43,7 +43,6 @@
                 <group string="Otras reservas" >
                     <field name="reserved_move_ids"  nolabel="1" readonly="1" >
                         <tree decoration-success="reserved_availability == product_uom_qty">
-                            <field name="state.,um"/>
                             <field name="sale_id"/>
                             <field name="location_id"/>
                             <field name="partner_id"/>
