@@ -173,6 +173,7 @@ class StockBatchPicking(models.Model):
                         message = "{}{}".format(message, pick_message)
                     message = "{}</ul>".format(message)
                 batch.message_post(message)
+                batch.state='done'
 
         if normal.mapped('picking_ids'):
             return super(StockBatchPicking, normal).action_transfer()

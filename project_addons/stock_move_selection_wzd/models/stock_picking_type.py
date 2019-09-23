@@ -187,26 +187,26 @@ class PickingType(models.Model):
             record.rate_move_backorders = record.count_move and record.count_move_backorders * 100 / record.count_move or 0
 
 
-    def get_type_domain(self, type=''):
-        return []
-
     def get_ready_state(self):
 
         ## todo: MEJORAR ESTO
         ready_domain = {}
 
         #internal moves
-        int_dom = [('picking_type_id.code', '=', 'internal'),
+        int_dom = ['&', '&', ('picking_type_id.code', '=', 'internal'),
+                   ('sga_state', 'in', ('no_send', 'no_integrated')),
                    ('state', 'in', ('partially_available', 'assigned'))]
         #recepciones
-        in_dom = [('picking_type_id.code', '=', 'incoming'),
-                  ('state', 'in', ('partially_available', 'assigned'))]
+        ready_dom = [('state', 'in', ('partially_available', 'assigned')) , '|', '|',
+                   ('picking_type_id.code', '=', 'incoming'),
+                  '&', ('picking_type_id.code', '=', 'internal'), ('sga_state', 'in', ('no_send', 'no_integrated')),
+                  '&', ('picking_type_id.code', '=', 'outgoing'), ('result_package_id', '!=', False)]
         #salidas
-        out_dom = [('picking_type_id.code', '=', 'outgoing'),
+        out_dom = ['&', '&', ('picking_type_id.code', '=', 'outgoing'),
                    ('state', 'in', ('partially_available', 'assigned')),
                    ('result_package_id', '!=', False)]
 
-        ready_domain['move'] = expression.OR([int_dom, in_dom, out_dom])
+        ready_domain['move'] = ready_dom
         #ready_domain['move'] = [('state', 'in', ('partially_available', 'assigned'))]
         int_dom = [('picking_type_id.code', '=', 'internal'), ('state', '=', 'assigned')]
         # recepciones
@@ -221,7 +221,7 @@ class PickingType(models.Model):
         return ready_domain
 
     def get_moves_domain(self):
-        c_dom = self.get_type_domain('moves')
+        c_dom = []
         context_domain = self.get_context_domain()
         if c_dom:
             context_domain = expression.AND([c_dom, context_domain])
@@ -259,15 +259,15 @@ class PickingType(models.Model):
             'count_move_unpacked': context_domain + [('result_package_id', '=', False), ('state', 'in', ('partially_available', 'assigned'))],
             'count_move_ready': context_domain + ready_state['move'],
             'count_move': context_domain + to_do_state,
-            'count_move_to_pick': context_domain + ready_state['move'] + without_pick,
+            'count_move_to_pick': context_domain  + without_pick + ready_state['move'],
             'count_move_late': context_domain + to_do_state + late,
             'count_move_backorders': context_domain + to_do_state + [('origin_returned_move_id', '!=', False)],
-            'count_sga_send': [('sga_state', '=', 'pending')],
-            'count_sga_done': [('sga_state', '=', 'pending'), ('quantity_done', '=', 0)],
-            'count_sga_error': [('sga_state', 'in', ('export_error', 'import_error'))]
+            'count_sga_send': context_domain +[('sga_state', '=', 'pending')],
+            'count_sga_done': context_domain +[('sga_state', '=', 'pending'), ('quantity_done', '=', 0)],
+            'count_sga_error': context_domain +[('sga_state', 'in', ('export_error', 'import_error'))]
 
         }
-        context_domain = self.get_context_domain('scheduled_date')
+        context_domain = []#self.get_context_domain('scheduled_date')
         picking_domains = {
             'count_picking_draft': context_domain + draft,
             'count_picking_waiting': context_domain + [('state', 'in', ('confirmed', 'waiting'))],
@@ -369,16 +369,25 @@ class PickingType(models.Model):
             tomorrow = (datetime.now() + timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT)
             yesterday = (datetime.now() - timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT)
             if f_day =='today':
-                domain += [(date_expected, '<', tomorrow),(date_expected, '>', yesterday)]
+                domain += [(date_expected, '<', tomorrow),(date_expected, '>=', today)]
             elif f_day=='tomorrow':
                 domain += [(date_expected, '>=', tomorrow)]
-            elif f_day=='yesterday':
+            elif f_day=='late':
                 domain += [(date_expected, '<=', today)]
 
         if self._context.get('search_partner_id', False):
             partner_id = self.env['res.partner'].search([('display_name', 'ilike', self._context['search_partner_id'])])
             if partner_id:
-                domain += [('partner_id', '=', partner_id.id)]
+                domain += [('partner_id', 'in', partner_id.ids)]
+        if self._context.get('search_shipping_type', False):
+            domain += [('shipping_type', '=', self._context.get('search_shipping_type', False) )]
+
+        tomorrow = (datetime.now() + timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT)
+        yesterday = (datetime.now() - timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT)
+        today = datetime.now().strftime(DEFAULT_SERVER_DATE_FORMAT)
+
+        print('{} {}'.format("Contet domain", domain))
+
 
         return domain or []
 
@@ -398,12 +407,14 @@ class PickingType(models.Model):
         context.update({'group_code': self.group_code})
         if self.group_code == 'picking':
             context.update({
-                'search_default_by_partner_id': True,
+                'search_default_by_shipping_type': True,
+                'search_default_by_delivery_route_path_id': True,
             })
 
         elif self.group_code == 'outgoing':
             context.update({
-                'search_default_by_shipping_partner_id': True,
+                'search_default_by_partner_id': True,
+                'search_default_by_shipping_type': True,
             })
         elif self.group_code == 'incoming':
             context.update({

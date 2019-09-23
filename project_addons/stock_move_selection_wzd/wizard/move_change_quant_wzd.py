@@ -68,25 +68,29 @@ class MoveChangeQuantWzd(models.TransientModel):
                 'reserved_quantity': quant.reserved_quantity
      }
 
-
-    @api.model
-    def default_get(self, fields):
-        defaults = super().default_get(fields)
-        move = self._context.get('active_id', False)
-        move_id = self.env['stock.move'].browse(move)
-        warehouse_id = move_id.picking_type_id.warehouse_id
+    def return_move_vals(self, move_id):
+        vals = {}
         if move_id.location_id.picking_type_id and move_id.location_id.picking_type_id != move_id.location_id.location_id.picking_type_id:
             location_id = move_id.location_id.location_id
         else:
             location_id = move_id.location_id
-        #location_id = warehouse_id.lot_stock_id
-        move_domain = [('location_id', 'child_of', location_id.id), ('product_id', '=', move_id.product_id.id), ('state', 'in', ('assigned', 'partially_availbale'))]
+        move_domain = [('id', '!=', move_id.id), ('location_id', 'child_of', location_id.id), ('product_id', '=', move_id.product_id.id), ('state', 'in', ('assigned', 'partially_availbale'))]
         reserved_move_ids = self.env['stock.move'].search(move_domain)
         quants = self.env['stock.quant']._gather(product_id=move_id.product_id, location_id=location_id)
-        defaults['reserved_move_ids'] = [(0, 0, reserved_move_ids.ids)]
-        defaults['quant_ids'] = [(0, 0, self._prepare_quant(x)) for x in quants]
-        defaults['move_id'] = move
+        vals['reserved_move_ids'] = [(6, 0, reserved_move_ids.ids)]
+        vals['quant_ids'] = [(0, 0, self._prepare_quant(x)) for x in quants]
+        vals['move_id'] = move_id.id
+        return vals
+
+    @api.model
+    def default_get(self, fields):
+        defaults = super().default_get(fields)
         return defaults
+        move = self._context.get('active_id', False)
+        move_id = self.env['stock.move'].browse(move)
+        defaults.update(self.return_move_vals(move_id))
+        return defaults
+
 
 
     def _prepare_move_split_vals(self, qty):
@@ -94,12 +98,16 @@ class MoveChangeQuantWzd(models.TransientModel):
         return vals
 
     def action_apply_quant(self):
+        quant_ids = self.quant_ids.filtered(lambda x: x.new_quantity>0.00)
+        if not quant_ids:
+            return
         precision_digits = self.env[
             'decimal.precision'].precision_get('Product Unit of Measure')
         self.move_id.do_unreserve_for_pda()
         route_vals = self.move_id.update_info_route_vals()
         moves = self.env['stock.move']
-        for quant_id in self.quant_ids.filtered(lambda x: x.new_quantity>0.00):
+
+        for quant_id in quant_ids:
             quant = quant_id.quant_id
             ##SI CAMBIA EL PICKING_TYPE_ID DEL MOVMIMIENTOS SEGÚN LA NUEVA UBICACION
             if self.move_id.picking_type_id.code == 'incoming':

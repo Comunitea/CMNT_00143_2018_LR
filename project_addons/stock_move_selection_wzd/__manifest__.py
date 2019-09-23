@@ -16,6 +16,7 @@
     ],
     'data': [
         'data/stock_batch_picking_sequence.xml',
+        'data/stock_batch_delivery.xml',
         'security/ir.model.access.csv',
         'report/report_delivery_batch_views.xml',
         'views/stock_batch_delivery.xml',

@@ -133,7 +133,6 @@ class StockBatchDeliveryWzd(models.TransientModel):
     @api.model
     def default_get(self, fields):
         moves = self.env['stock.move'].browse(self._context.get('active_ids'))
-
         moves |= moves.mapped('result_package_id').mapped('move_line_ids').mapped('move_id')
         not_moves = moves.filtered(lambda x: x.picking_type_id.code != 'outgoing')
         if not_moves:

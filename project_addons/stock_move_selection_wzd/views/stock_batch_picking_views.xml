@@ -59,9 +59,19 @@
                             <field name="product_uom_qty"/>
                             <field name="reserved_availability"/>
                             <field name="quantity_done"/>
+
+                            <button name="button_reasignar_origen_wzd"
+                            string="(RE) Asignar origen"
+                            type="object"
+                            icon="fa-tags"
+                            groups="base.group_user"
+                            attrs="{'invisible':['|',
+                                    ('code','=','incoming'),
+                                    ('state','not in',('confirmed','assigned','partially_available'))]}"/>
                             <field name="picking_type_id" invisible="1"/>
                             <field name="sga_integrated" invisible="1"/>
                             <field name="group_code" invisible="1"/>
+                            <field name="code" invisible="1"/>
                             <field name="sale_id" string="Venta" column_invisible="[('parent.picking_type_id.group_code', 'in', ('picking', 'outgoing'))]"/>
                             <field name="purchase_id" string="Compra" column_invisible="[('parent.picking_type_id.group_code', 'in', ('location', 'incoming'))]"/>
                             <field name="result_package_id" column_invisible="[('parent.picking_type_id.group_code', '!=', 'outgoing')]"/>

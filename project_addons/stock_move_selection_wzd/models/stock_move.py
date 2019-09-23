@@ -41,18 +41,18 @@ class StockMove(models.Model):
     package_id = fields.Many2one('stock.quant.package', 'Paquete origen',
                                  inverse='set_package_id_to_lines',
                                  compute="get_package_id_from_line",
-                                 store=True)
+                                 store=True, copy=False)
     result_package_id = fields.Many2one('stock.quant.package', 'Paquete destino',
                                         inverse='set_result_package_id_to_lines',
                                         compute="get_result_package_id_from_line",
-                                        store=True)
+                                        store=True, copy=False)
     lot_id = fields.Many2one('stock.production.lot', 'Lote')
     dunmy_picking_id = fields.Many2one('stock.picking', 'Transfer Reference', store=False)
     sga_integrated = fields.Boolean(related="picking_type_id.sga_integrated")
-    sga_state = fields.Selection(SGA_STATES, default='no_integrated', string="SGA Estado")
-    batch_delivery_id = fields.Many2one('stock.batch.delivery', string='Orden de carga', store=True)
+    sga_state = fields.Selection(SGA_STATES, default='no_integrated', string="SGA Estado", copy=False)
+    batch_delivery_id = fields.Many2one('stock.batch.delivery', string='Orden de carga', copy=False, store=True)
     batch_picking_id = fields.Many2one(related='picking_id.batch_picking_id', string='Grupo', store=True)
-    draft_batch_picking_id = fields.Many2one('stock.batch.picking', string='Grupo')
+    draft_batch_picking_id = fields.Many2one('stock.batch.picking', string='Grupo', copy=False)
     batch_id = fields.Many2one('stock.batch.picking', compute="get_effective_batch_id", inverse='set_effective_batch_id', string='Grupo')
     code = fields.Selection(related='picking_type_id.code')
     group_code = fields.Selection(related='picking_type_id.group_code')
@@ -140,7 +140,10 @@ class StockMove(models.Model):
         ## Cuando selecciono un movimiento o varios debo seleccionar todos los que van en el mismo paquete
 
         result_package_ids = self.filtered(lambda x: x.state not in ('draft', 'cancel')).mapped("move_line_ids").mapped('result_package_id')
-        return result_package_ids.mapped("move_line_ids").mapped('move_id')
+        if result_package_ids:
+            return result_package_ids.mapped("move_line_ids").mapped('move_id')
+        else:
+            return self
 
     def action_add_moves_to_batch_picking(self):
         moves_ids = self.get_affected_moves()
@@ -163,8 +166,8 @@ class StockMove(models.Model):
 
     @api.multi
     def action_add_to_batch_picking(self):
-        to_add = self.filtered(lambda x: not x.draft_batch_picking_id).get_affected_moves()
-        to_remove = self.filtered(lambda x: x.draft_batch_picking_id).get_affected_moves()
+        to_add = self.filtered(lambda x: x.state != 'done' and not x.draft_batch_picking_id).get_affected_moves()
+        to_remove = self.filtered(lambda x: x.state != 'done' and  x.draft_batch_picking_id).get_affected_moves()
         if to_add and to_remove:
             raise ValidationError (_('Selección inconsiste. Hay movimientos con y sin batch'))
         if to_remove:
@@ -178,8 +181,6 @@ class StockMove(models.Model):
             action = wzd_id.get_formview_action()
             action['target'] = 'new'
             return action
-
-
             action = self.env.ref('stock_move_selection_wzd.open_view_create_batch_picking').read()[0]
             action['res_id'] = wzd_id.id
             return action
@@ -190,7 +191,6 @@ class StockMove(models.Model):
         if self._context.get('object') == 'move':
             self.get_affected_moves().filtered(lambda x:x.batch_delivery_id).write({'batch_delivery_id': False})
             return
-            object='move'
         elif self._context.get('object') == 'package':
             if self.result_package_id and self.batch_delivery_id:
                 ctx = self._context.copy()
@@ -200,15 +200,25 @@ class StockMove(models.Model):
                 package.move_line_ids.write({'batch_delivery_id': False})
 
                 return
-
             object = 'package'
         return action
 
     @api.multi
     def button_reasignar_origen_wzd(self):
-
+        self.ensure_one()
         action = self.env.ref(
             'stock_move_selection_wzd.act_view_move_change_quant_wzd').read()[0]
+        if self.id:
+            wzd_obj = self.env['move.change.quant.wzd']
+            vals = wzd_obj.return_move_vals(self)
+            wzd_id = wzd_obj.create(vals)
+            ctx = {
+                    'lang': 'es_ES',
+                    'tz': 'Europe/Madrid',
+                    'uid': 5}
+            action = wzd_id.with_context(ctx).get_formview_action()
+            action['target'] = 'new'
+
         return action
 
     @api.multi
@@ -328,6 +338,11 @@ class StockMove(models.Model):
         return domain
 
     def _action_done(self):
-        return super()._action_done()
+
+        res = super()._action_done()
+        for move in self:
+            if move.sga_state != 'done':
+                move.sga_state = 'done'
+        return res
 
 

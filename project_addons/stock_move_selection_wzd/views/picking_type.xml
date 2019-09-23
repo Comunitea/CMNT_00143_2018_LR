@@ -405,19 +405,17 @@
 
             </field>
             <xpath expr="//filter[@name='inactive']" position="after">
+                <separator/>
+                <filter string="Urgente" name="filter_urgent" context = "{'search_shipping_type':'urgent' }" />
+                <filter string="Ruta" name="filter_ruta" context = "{'search_shipping_type':'rute' }" />
+                <filter string="Pasarán" name="filter_pasaran" context = "{'search_shipping_type':'pasaran' }" />
+                <separator/>
 
-                <separator/>
-                <filter string="Empresa" name="filter_partner" domain="[('partner_id','child_of',self)]"/>
-                <separator/>
-                <filter string="Urgente" name="filter_urgent" domain="[('shipping_type','=','urgent')]"/>
-                <filter string="Ruta" name="filter_ruta" domain="[('shipping_type','=','route')]"/>
-                <filter string="Pasarán" name="filter_pasaran" domain="[('shipping_type','=','pasaran')]"/>
-                <separator/>
                 <filter string="Ver todos" name="ver_todos" context="{'search1_all': True}" domain="[('active','=',True)]"/>
                 <separator/>
-                <filter string="Hoy" name="filter_today" context="{'filter_day': 'today'}"/>
-                <filter string="A Futuro" name="filter_futuro" context="{'filter_day': 'tomorrow'}"/>
-                <filter string="Retrasado" name="filter_yesterday" context="{'filter_day': 'yesterday'}"/>
+                <filter string="Hoy" name="filter_today" context = "{'filter_day': 'today' }" />
+                <filter string="A Futuro" name="filter_tomorrow" context="{'filter_day': 'tomorrow'}"/>
+                <filter string="Retrasado" name="filter_late" context="{'filter_day': 'late'}"/>
                 <separator/>
                 <filter string="Picking" name="picking" domain="[('group_code','=','picking')]"/>
                 <filter string="Internal" name="internal" domain="[('group_code','=','internal')]"/>
