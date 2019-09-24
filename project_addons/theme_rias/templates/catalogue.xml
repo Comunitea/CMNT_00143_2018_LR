@@ -445,25 +445,25 @@
 	</template>
 
     <template id="dynamic_category_menu" inherit_id="theme_rias.dynamic_category" name="Category dynamic menu">
-        <xpath expr="//a[@class='first-level-category-a ']" position="attributes">
+        <xpath expr="//a[hasclass('first-level-category-a')]" position="attributes">
             <attribute name="t-att-href">'/catalogue/category/%s' %category_individual.slug if category_individual.slug else '/catalogue/category/%s' %slug(category_individual)</attribute>
         </xpath>
-        <xpath expr="//li[@class='first-level-category-li dropdown-submenu']/span" position="attributes">
+        <xpath expr="//li[hasclass('first-level-category-li','dropdown-submenu')]/span" position="attributes">
             <attribute name="t-if">category_individual.child_id</attribute>
         </xpath>
-        <xpath expr="//a[@class='second-level-a menu_heading ']" position="attributes">
+        <xpath expr="//a[hasclass('second-level-a','menu_heading')]" position="attributes">
             <attribute name="t-att-href">'/catalogue/category/%s' %c.slug if c.slug else '/catalogue/category/%s' %slug(c)</attribute>
         </xpath>
-        <xpath expr="//a[@class='sub_menu_list']" position="attributes">
+        <xpath expr="//a[hasclass('sub_menu_list')]" position="attributes">
             <attribute name="t-att-href">'/catalogue/category/%s' %child.slug if child.slug else '/catalogue/category/%s' %slug(child)</attribute>
         </xpath>
-        <xpath expr="//div[@class='first-level-category-image']" position="replace">
+        <xpath expr="//div[hasclass('first-level-category-image')]" position="replace">
             <div class="first-level-category-image">
                 <img t-att-alt="category_individual.name" t-att-title="category_individual.name"
                      t-attf-src="/web/image/product.public.category/{{category_individual.id}}/image/200x64"/>
             </div>
         </xpath>
-        <xpath expr="//li[@class='dropdown-submenu sub-menu-ul-heading']/span" position="attributes">
+        <xpath expr="//li[hasclass('dropdown-submenu','sub-menu-ul-heading')]/span" position="attributes">
             <attribute name="t-if">c.child_id</attribute>
         </xpath>
     </template>

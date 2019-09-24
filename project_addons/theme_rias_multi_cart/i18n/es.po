@@ -154,8 +154,8 @@ msgstr "Nuevo carrito <i class=\"fa fa-plus-circle\"/>"
 
 #. module: theme_rias_multi_cart
 #: model:ir.ui.view,arch_db:theme_rias_multi_cart.product_grid_las
-msgid "Options"
-msgstr "Opciones"
+msgid "Opt."
+msgstr "Opt."
 
 #. module: theme_rias_multi_cart
 #: model:ir.ui.view,name:theme_rias_multi_cart.portal_my_home_with_campaign
