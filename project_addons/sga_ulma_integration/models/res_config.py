@@ -201,7 +201,7 @@ class ConfigUlmaData(models.TransientModel):
             table_mod = 'table_name'
             primary_mod = 'integer NOT NULL'
 
-        ## Create foreign table mmminp
+        ## Create foreign table packinglist
         self.env.cr.execute("""CREATE FOREIGN TABLE ulma_packinglist (mmmexpordref character varying(15), estado character varying(1), mmmsesid numeric(9,0), 
         mmmbatch numeric(9,0), status character varying(1), id %s, mmmres character varying(9), mmmcmdref character varying(9)) 
         SERVER %s OPTIONS (%s '%s')""" % (primary_mod, self.ulma_database, table_mod, self.packing_table))

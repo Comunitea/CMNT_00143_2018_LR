@@ -53,5 +53,6 @@ class UlmaMmmout(models.Model):
 
     @api.model
     def create(self, vals):
+        print(vals)
         return super().create(vals)
 
