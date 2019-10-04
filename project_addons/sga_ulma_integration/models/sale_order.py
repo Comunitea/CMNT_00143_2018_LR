@@ -12,6 +12,7 @@ class SaleOrder(models.Model):
         partner_id = self.partner_id
         vals = batch.picking_type_id.get_ulma_vals('sale')
         update_vals = {
+            'mmmacccolcod': self.id,
             'mmmentdes': '{} ({})'.format(self.partner_id.name, self.name),
             'mmmexpordref': 'N' + self.name,
             'mmmsesid': 2,

@@ -17,7 +17,6 @@ class StockBatchPicking(models.Model):
             'momcre': fields.datetime.now().date().strftime('%Y-%m-%d'),
             'mmmbatch': self.name[6:],
             'mmmmomexp': self.date,
-            'mmmacccolcod': self.id,
         }
         vals.update(update_vals)
         return vals
@@ -56,18 +55,19 @@ class StockBatchPicking(models.Model):
 
     @api.multi
     def get_from_ulma(self):
-        batchs = self.env['stock.batch.picking'].search([('picking_type_id.sga_integration_type', '=', 'sga_ulma')])
+        batchs = self.env['stock.batch.picking'].search([('picking_type_id.sga_integration_type', '=', 'sga_ulma'), ('sga_state', '=', 'pending')])
         for batch in batchs:
-            if batch.sga_state == 'pending':
-                data = self.env['ulma.mmminp'].search([('mmmacccolcod', '=', batch.id), ('mmmres', '=', 'FIN')])
-                ulma_obj = self.env['ulma.mmminp'].browse(data.id)
-                    
+            line_ids = batch.draft_move_lines.filtered(lambda x: x.sga_state == 'pending')
+            sale_ids = line_ids.mapped('sale_id')
+            for sale in sale_ids:
+                sale_order = self.env['sale.order'].search([('mmmexpordref', '=', 'N' + sale.name), ('mmmres', '=', 'FIN')])
+                
                 if ulma_obj.mmmcmdref == 'ERR':
                     batch.write({
                         'ulma_error': ulma_obj.mmmresmsj
                     })
                 elif ulma_obj.mmmcmdref == 'SAL':
-                    moves_ids = self.env['ulma.mmminp'].search([('mmmacccolcod', '=', batch.id), ('mmmres', 'not in', ['FIN'])])
+                    moves_ids = self.env['ulma.mmminp'].search([('mmmexpordref', '=', 'N' + sale.name), ('mmmres', 'not in', ['FIN'])])
                     for ulma_move in moves_ids:
                         index = int(ulma_move.id)
                         move_line = self.env['stock.move.line'].browse(index)
