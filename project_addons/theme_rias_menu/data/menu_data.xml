@@ -94,8 +94,8 @@
             <field name="sequence" type="int">20</field>
             <field name="menu_icon">fa-question-circle-o</field>
             <field name="website_id" ref="website.default_website"/>
-            <field name="user_logged">True</field>
-            <field name="user_not_logged">True</field>
+            <field name="user_logged">False</field>
+            <field name="user_not_logged">False</field>
         </record>
 
         <record id="website_slides.website_menu_slides" model="website.menu">
@@ -113,6 +113,16 @@
             <field name="url" eval="'/blog/'+str(ref('website_blog.blog_blog_1'))"/>
             <field name="parent_id" ref="website.main_menu"/>
             <field name="sequence" type="int">40</field>
+            <field name="website_id" ref="website.default_website"/>
+            <field name="user_logged">False</field>
+            <field name="user_not_logged">False</field>
+        </record>
+
+        <record id="website.menu_contactus" model="website.menu">
+            <field name="name">Contact us</field>
+            <field name="url">/contactus</field>
+            <field name="parent_id" ref="website.main_menu"/>
+            <field name="sequence" type="int">60</field>
             <field name="website_id" ref="website.default_website"/>
             <field name="user_logged">False</field>
             <field name="user_not_logged">False</field>

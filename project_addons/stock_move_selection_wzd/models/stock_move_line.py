@@ -28,3 +28,10 @@ class StockMoveLine(models.Model):
                 move.package_id.mapped('quant_ids').write({'package_id': False})
                 move.write({'package_id': False})
         return True
+
+    @api.multi
+    def _set_quantity_done(self, quantity):
+        for line in self:
+            line.update({
+                'qty_done': quantity
+            })

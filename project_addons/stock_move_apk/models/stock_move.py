@@ -182,6 +182,7 @@ class StockMoveLine(models.Model):
             new_package_ids += new_result_package_id
         return new_package_ids
 
+    @api.model
     def change_shipping_type(self, vals):
 
         move_line_id = vals.get('move_line', False)

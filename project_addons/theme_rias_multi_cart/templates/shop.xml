@@ -11,10 +11,10 @@
                         <th class='td-product_name'>Product</th>
                         <th class='td-qty'>Quantity</th>
                         <th class="text-right td-price">Unit Price</th>
-                        <th class="text-right">Stock</th>
+                        <!-- <th class="text-right">Stock</th> -->
                         <th class="text-right">Image</th>
-                        <th class="text-right">Barcode</th>
-                        <th class="text-right">Options</th>
+                        <!-- <th class="text-right">Barcode</th> -->
+                        <th class="text-center">Opt.</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -62,20 +62,21 @@
                                         <td class="text-right td-price" name="price">
                                             <span t-field="product.list_price" style="white-space: nowrap;" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}" groups="sale.group_show_price_subtotal" />
                                         </td>
-                                        <td class="text-right">
-                                            <!-- <span t-field="product.qty_available"/> -->
-                                        </td>
+                                        <!-- <td class="text-right">
+                                            <span t-field="product.qty_available"/>
+                                        </td> -->
                                         <td class="text-right td-img">
                                             <a t-if="product.image" href="#" class="image-call">
-                                                <img src="/theme_rias_multi_cart/static/img/ui/image-icon.gif"/>
+                                                <span t-if="product.image" t-field="product.image_small" t-options='{"widget": "image"}'/>
+                                                <!-- <img src="/theme_rias_multi_cart/static/img/ui/image-icon.gif"/> -->
                                             </a>
                                         </td>
-                                        <td class="text-right">
+                                        <!-- <td class="text-right">
                                             <a t-if="product.barcode" href="#" class="barcode-call">
                                                 <img src="/theme_rias_multi_cart/static/img/ui/barcode-icon.jpg"/>
                                             </a>
-                                        </td>
-                                        <td class="text-right">
+                                        </td> -->
+                                        <td>
                                             <div class="col-md-6">
                                                 <a title="Ir o crear pedido de campaña." t-if="class_allowed['status'] == 'warning' and class_allowed['campaign_id']" t-attf-href="/my/campaigns/select/#{ class_allowed['campaign_id'] }" class="btn btn-primary">
                                                     <i class="fa fa-shopping-cart"/>
@@ -127,20 +128,22 @@
                                             <td class="text-right td-price" name="price">
                                                 <span t-field="variant_id.list_price" style="white-space: nowrap;" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}" groups="sale.group_show_price_subtotal" />
                                             </td>
-                                            <td class="text-right">
-                                                <!-- <span t-field="variant_id.qty_available"/> -->
-                                            </td>
+                                            <!-- <td class="text-right">
+                                                <span t-field="variant_id.qty_available"/>
+                                            </td> -->
                                             <td class="text-right td-img">
                                                 <a t-if="variant_id.image or product.image" href="#" class="image-call">
-                                                    <img src="/theme_rias_multi_cart/static/img/ui/image-icon.gif"/>
+                                                    <span t-if="variant_id.image" t-field="product.image_small" t-options='{"widget": "image"}'/>
+                                                    <span t-else="product.image" t-field="product.image_small" t-options='{"widget": "image"}'/>
+                                                    <!-- <img src="/theme_rias_multi_cart/static/img/ui/image-icon.gif"/> -->
                                                 </a>
                                             </td>
-                                            <td class="text-right">
+                                            <!-- <td class="text-right">
                                                 <a t-if="variant_id.barcode or product.barcode" href="#" class="barcode-call">
                                                     <img src="/theme_rias_multi_cart/static/img/ui/barcode-icon.jpg"/>
                                                 </a>
-                                            </td>
-                                            <td class="text-right">
+                                            </td> -->
+                                            <td>
                                                 <div class="col-md-6">
                                                     <a title="Ir o crear pedido de campaña." t-if="class_allowed['status'] == 'warning' and class_allowed['campaign_id']" t-attf-href="/my/campaigns/select/#{ class_allowed['campaign_id'] }" class="btn btn-primary">
                                                         <i class="fa fa-shopping-cart"/>

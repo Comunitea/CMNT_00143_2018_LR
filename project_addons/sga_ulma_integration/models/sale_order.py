@@ -23,7 +23,8 @@ class SaleOrder(models.Model):
             'mmmentdir3': partner_id.state_id.name,
             'mmmentdir4': partner_id.zip,
             'mmmbatch': batch.id,
-            'mmmmomexp': self.efective_date,
+            'mmmacccolcod': batch.id,
+            'mmmmomexp': self.effective_date,
             'mmmurgnte': '' if batch.urgent else 'N',
             'mmmtraref': str(batch.shipping_type) + '-N'
             }

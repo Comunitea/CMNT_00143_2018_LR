@@ -6,7 +6,7 @@ from odoo import fields, models, api, _
 from odoo.addons.stock_move_selection_wzd.models.stock_picking_type import SGA_STATES
 from odoo.exceptions import Warning, UserError
 
-ULMA_PARAMS = ['ulma_user', 'ulma_pass', 'ulma_host', 'ulma_port', 'ulma_sid',  'ulma_database', 'mmmout_table', 'packing_table', 'fdw', 'oracle_extension', 'oracle_server', 'oracle_mmmout', 'oracle_mmminp', 'oracle_packing']
+ULMA_PARAMS = ['ulma_user', 'ulma_pass', 'ulma_host', 'ulma_port', 'ulma_sid',  'ulma_database', 'mmmout_table', 'mmminp_table', 'packing_table', 'fdw', 'oracle_extension', 'oracle_server', 'oracle_mmmout', 'oracle_mmminp', 'oracle_packing']
 
 
 class ConfigUlmaData(models.TransientModel):
@@ -201,7 +201,7 @@ class ConfigUlmaData(models.TransientModel):
             table_mod = 'table_name'
             primary_mod = 'integer NOT NULL'
 
-        ## Create foreign table mmminp
+        ## Create foreign table packinglist
         self.env.cr.execute("""CREATE FOREIGN TABLE ulma_packinglist (mmmexpordref character varying(15), estado character varying(1), mmmsesid numeric(9,0), 
         mmmbatch numeric(9,0), status character varying(1), id %s, mmmres character varying(9), mmmcmdref character varying(9)) 
         SERVER %s OPTIONS (%s '%s')""" % (primary_mod, self.ulma_database, table_mod, self.packing_table))

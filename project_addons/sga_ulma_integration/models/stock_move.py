@@ -22,7 +22,6 @@ class StockMoveLine(models.Model):
         vals = self.move_id.picking_type_id.get_ulma_vals('move')
 
         update_vals = {
-            'mmmacccolcod': sale_id.id,
             'mmmartdes':  self.product_id.display_name[:40],
             'mmmartref': self.product_id.default_code,
             'mmmcanuni': self.product_uom_qty,
@@ -30,7 +29,8 @@ class StockMoveLine(models.Model):
             'mmmsecada': self.id,
             'momcre': datetime.datetime.strptime(self.move_id.date, "%Y-%m-%d %H:%M:%S").strftime('%Y-%m-%d'),
             'mmmacccod': cont,
-            'mmmbatch': self.batch_picking_id.name,
+            'mmmbatch': self.draft_batch_picking_id.name[6:],
+            'mmmacccolcod': self.draft_batch_picking_id.id,
             'mmmmomexp': datetime.datetime.strptime(self.move_id.date_expected, "%Y-%m-%d %H:%M:%S").strftime('%Y-%m-%d'),
             'mmmfeccad': datetime.datetime.strptime(self.move_id.date_expected, "%Y-%m-%d %H:%M:%S").strftime('%Y-%m-%d'),
             }

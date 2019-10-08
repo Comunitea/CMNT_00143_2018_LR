@@ -18,6 +18,7 @@
     ],
     'data': ['views/res_config_views.xml',
         #'views/stock_batch_picking_views.xml',
+        'data/sga_data.xml',
         'views/stock_picking_views.xml',
         'views/ulma_mmmout.xml',
         'views/ulma_mmminp.xml',

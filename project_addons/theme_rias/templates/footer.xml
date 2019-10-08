@@ -1,22 +1,52 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
 
-    <template id="website_blog_header_footer_custom" name="Automatic Footer Rias Template" inherit_id="website_blog.header_footer_custom">
-        <xpath expr="//div[@id='footer']//div[hasclass('row')]" position="replace">
-            <div class="row">
+    <!-- <template id="website_blog_header_footer_custom" name="Automatic Footer Rias Template" inherit_id="website.footer_default">
+        <xpath expr="//div[@id='footer']//div[hasclass('row')]/div[3]" position="replace">
+            <div class="col-md-4 col-lg-5 col-lg-offset-1">
                 <div class="col-md-12">
-                    <div class="text-center row mt32 mb16">
+                    <div class="text-center row mb16">
                         <img t-att-src="'/theme_rias/static/img/logos/logo_transp.png'" alt="res_company.name"/>
                     </div>
                     <div class="text-center row mb16">
                         <t t-esc="res_company.name"/>
                     </div>
-                    <div class="text-center row mb32">
+                    <div class="text-center row mb16">
                         <a href="https://goo.gl/maps/GDHmgREq3oNuDYGs7" target="_blank" alt="Open en Google Maps" title="Open en Google Maps" rel="nofollow">
                             <t t-esc="res_company.street"/>,
                             <t t-esc="res_company.zip"/>,
                             <t t-esc="res_company.city"/>,
                         </a>
+                    </div>
+                    <div class="text-center row mb8">
+                        <a href="/contactus" alt="Contáctenos" title="Contáctenos" rel="nofollow">Contáctenos</a> - 
+                        <a href="/aboutus" alt="Sobre nosotros" title="Sobre nosotros" rel="nofollow">Sobre nosotros</a>
+                    </div>
+                </div>                
+            </div>
+        </xpath>
+    </template> -->
+
+    <template id="website_blog_header_footer_custom" name="Automatic Footer Rias Template" inherit_id="website_blog.header_footer_custom">
+        <xpath expr="//div[@id='footer']//div[hasclass('row')]" position="replace">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="text-center row mb16">
+                        <img t-att-src="'/theme_rias/static/img/logos/logo_transp.png'" alt="res_company.name"/>
+                    </div>
+                    <div class="text-center row mb16">
+                        <t t-esc="res_company.name"/>
+                    </div>
+                    <div class="text-center row mb16">
+                        <a href="https://goo.gl/maps/GDHmgREq3oNuDYGs7" target="_blank" alt="Open en Google Maps" title="Open en Google Maps" rel="nofollow">
+                            <t t-esc="res_company.street"/>,
+                            <t t-esc="res_company.zip"/>,
+                            <t t-esc="res_company.city"/>,
+                        </a>
+                    </div>
+                    <div class="text-center row mb8">
+                        <a href="/contactus" alt="Contáctenos" title="Contáctenos" rel="nofollow">Contáctenos</a> - 
+                        <a href="/aboutus" alt="Sobre nosotros" title="Sobre nosotros" rel="nofollow">Sobre nosotros</a>
                     </div>
                 </div>                
             </div>

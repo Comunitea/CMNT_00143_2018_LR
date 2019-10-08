@@ -140,7 +140,7 @@ class StockQuantPackage(models.Model):
 
     @api.onchange('delivery_route_path_id', 'shipping_type', 'carrier_id')
     def onchange_route_fields(self):
-        if self.context.get('force_route_fields', False) and (self.batch_picking_id or self.batch_delivery_id):
+        if self._context.get('force_route_fields', False) and (self.batch_picking_id or self.batch_delivery_id):
             raise exceptions.ValidationError ('No puedes cambiar los datos de envío si el paquete está en un grupo')
 
     @api.onchange('batch_delivery_id')

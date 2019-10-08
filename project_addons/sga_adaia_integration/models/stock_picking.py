@@ -189,7 +189,8 @@ class StockPickingSGA(models.Model):
 
     def import_adaia_OUT(self, file_id):
         res = False
-        pick_obj = self.env['stock.picking']
+        #pick_obj = self.env['stock.picking']
+        pick_obj = self.env['stock.batch.picking']
         sga_file_obj = self.env['sga.file'].browse(file_id)
         sga_file = open(sga_file_obj.sga_file, 'r')
         sga_file_lines = sga_file.readlines()
@@ -215,9 +216,10 @@ class StockPickingSGA(models.Model):
             n_line += 1
             
             if TIPEREG == 'CECA':                    
-
-                actual_pick = self.env['stock.picking'].search([('name', '=', EXPORDREF), ('state', 'in', ['assigned', 'waiting', 'confirmed']),
-                 ('sga_state', 'in', ['pending'])])
+                actual_pick = self.env['stock.batch.picking'].search([('name', '=', EXPORDREF), ('state', 'in', ['assigned', 'waiting', 'confirmed']),
+                ('sga_state', 'in', ['pending'])])
+                #actual_pick = self.env['stock.picking'].search([('name', '=', EXPORDREF), ('state', 'in', ['assigned', 'waiting', 'confirmed']),
+                 #('sga_state', 'in', ['pending'])])
 
                 if not actual_pick:
                     bool_error = False
@@ -301,7 +303,8 @@ class StockPickingSGA(models.Model):
 
         if pick_pool:
             for pick in pick_pool:
-                pick_id = self.env['stock.picking'].browse(pick.id)
+                #pick_id = self.env['stock.picking'].browse(pick.id)
+                pick_id = self.env['stock.batch.picking'].browse(pick.id)
                 pick_id.write({
                     'sga_state': 'done'
                 })

@@ -198,8 +198,8 @@ class AdaiaFileHeader(models.Model):
 
         #archive_files(delete=False)
 
-        icp = self.env['ir.config_parameter']
-        path = icp.get_param('path_files', 'path_files')
+        ICP = self.env['ir.config_parameter'].sudo()
+        path = ICP.get_param('sga_adaia_integration.path_files', False)
         log_path = path + '/log'
         path_archive = u'%s/%s'%(path, 'archive')
         error_archive = u'%s/%s'%(path, 'error')
@@ -220,7 +220,7 @@ class AdaiaFileHeader(models.Model):
         if sga_filename:
             file_prefix = sga_filename.rsplit('.', 1)[0]
             if file_prefix == 'TREXP':
-                return 'OUT'
+                return 'SBP'
         else:
             return False
 
@@ -322,8 +322,8 @@ class AdaiaFileHeader(models.Model):
             if not log_name:
                 log_name = u"%04d%02d%02d.log" % (datetime.now().year, datetime.now().month, datetime.now().day)
 
-            icp = self.env['ir.config_parameter']
-            path = icp.get_param('path_files', 'path_files')
+            ICP =self.env['ir.config_parameter'].sudo()
+            path = ICP.get_param('sga_adaia_integration.path_files', False)
             log_folder = path + '/log'
             log_path = u'%s/%s'%(log_folder, log_name)            
 
@@ -352,9 +352,8 @@ class AdaiaFileHeader(models.Model):
         return True
 
     def get_global_path(self):
-
-        icp = self.env['ir.config_parameter']
-        path = icp.get_param('path_files', 'path_files')
+        ICP =self.env['ir.config_parameter'].sudo()
+        path = ICP.get_param('sga_adaia_integration.path_files', False)
         return path
 
     def create_new_sga_file_error(self, error_str):
@@ -463,9 +462,10 @@ class AdaiaFileHeader(models.Model):
         process = []
         proc_error = False
         try:
-            if self.file_code == "OUT":
-                self.write_log("Desde adaia picking OUT ...")
-                process = self.env['stock.picking'].import_adaia_OUT(self.id)
+            if self.file_code == "SBP":
+                self.write_log("Desde adaia picking SBP ...")
+                #process = self.env['stock.picking'].import_adaia_OUT(self.id)
+                process = self.env['stock.batch.picking'].import_adaia_OUT(self.id)
 
             if process:
                 self.move_file('archive', self.name)

@@ -15,15 +15,21 @@ class StockBatchPicking(models.Model):
         vals = self.picking_type_id.get_ulma_vals('pick')
         update_vals= {
             'momcre': fields.datetime.now().date().strftime('%Y-%m-%d'),
-            'mmmbatch': self.name,
-            'mmmmomexp': self.date
+            'mmmbatch': self.name[6:],
+            'mmmmomexp': self.date,
         }
         vals.update(update_vals)
         return vals
 
+    @api.multi
     def send_to_sga(self):
+        for batch in self:
+            if batch.picking_type_id.sga_integration_type == 'sga_ulma':
+                batch.new_ulma_record()
+        return super().send_to_sga()
+
+    def new_ulma_record(self):
         ulma_out = self.env['ulma.mmmout']
-        res = super().send_to_sga()
         for batch in self.filtered(lambda x: x.picking_type_id.sga_integration_type == 'sga_ulma'):
             cont = 0
             #creo la cabecera del batch
@@ -31,7 +37,7 @@ class StockBatchPicking(models.Model):
             batch_out = self.env['ulma.mmmout'].create(vals)
             if not batch_out:
                 raise ValueError ('Error al enviar la cabecera del batch')
-            line_ids = batch.draft_move_lines.filtered(lambda x: x.state == ('assigned', 'partially_available') and x.sga_state == 'no_send').mapped('move_line_ids')
+            line_ids = batch.draft_move_lines.filtered(lambda x: (x.state == 'assigned' or x.state == 'partially_available') and x.sga_state == 'no_send')
             sale_ids = line_ids.mapped('sale_id')
             for sale in sale_ids:
                 #creo la cabecera del pedido
@@ -39,14 +45,50 @@ class StockBatchPicking(models.Model):
                 ulma_sale = ulma_out.create(vals)
                 if not ulma_sale:
                     raise ValueError ('Error al enviar la cabecera del pedido')
-                sale_vals = sale.get_ulma_vals()
-                for move in line_ids.filtered(lambda x: x.sale_id == sale):
+                for move in line_ids.filtered(lambda x: x.sale_id == sale).mapped('move_line_ids'):
                     vals = move.get_move_line_ulma_vals(cont=cont)
                     ulma_move = ulma_out.create(vals)
                     cont += 1
                 line_ids.write({'sga_state': 'pending'})
             batch.sga_state = batch.picking_type_id.get_parent_state(line_ids)
         return super().send_to_sga()
+
+    @api.multi
+    def get_from_ulma(self):
+        batchs = self.env['stock.batch.picking'].search([('picking_type_id.sga_integration_type', '=', 'sga_ulma'), ('sga_state', '=', 'pending')])
+        for batch in batchs:
+            line_ids = batch.draft_move_lines.filtered(lambda x: x.sga_state == 'pending')
+            sale_ids = line_ids.mapped('sale_id')
+            for sale in sale_ids:
+                sale_order = self.env['sale.order'].search([('mmmexpordref', '=', 'N' + sale.name), ('mmmres', '=', 'FIN')])
+                
+                if ulma_obj.mmmcmdref == 'ERR':
+                    batch.write({
+                        'ulma_error': ulma_obj.mmmresmsj
+                    })
+                elif ulma_obj.mmmcmdref == 'SAL':
+                    moves_ids = self.env['ulma.mmminp'].search([('mmmexpordref', '=', 'N' + sale.name), ('mmmres', 'not in', ['FIN'])])
+                    for ulma_move in moves_ids:
+                        index = int(ulma_move.id)
+                        move_line = self.env['stock.move.line'].browse(index)
+                        if move_line.ordered_qty == ulma_move.mmmcanuni:
+                            if move_line.ordered_qty != ulma_move.mmmcanuni:
+                                move_line._set_quantity_done(ulma_move.mmmcanuni)
+                            else:
+                                actual_move = self.env['stock.move'].search([('origin_returned_move_id', '=', move_line.move_id.id)])
+                                actual_move._prepare_move_line_vals(ulma_move.mmmcanuni)
+                        
+                        else:
+                            diference = move_line.ordered_qty - ulma_move.mmmcanuni
+                            move_line.move_id._split(diference)
+                            move_line._set_quantity_done(ulma_move.mmmcanuni)
+                            move_line.write({
+                                'sga_state': 'pending'
+                            })
+
+                    batch.write({
+                        'sga_state': 'pending'
+                    })
 
 
 
