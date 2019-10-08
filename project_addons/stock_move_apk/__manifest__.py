@@ -16,5 +16,8 @@
         'sale',
         'shipping_type'
     ],
-    'data': []
+    'data': [
+        'views/move_apk_views.xml',
+        'security/ir.model.access.csv'
+    ]
 }
