@@ -9,7 +9,27 @@
             <field name="view_mode">tree,kanban,pivot,form</field>
             <field name="view_id" ref="view_move_line_tree_sel"/>
             <field name="search_view_id" ref="stock_move_view_sel_search"/>
-            <field name="context">{'search_default_todo': 1}</field>
+            <field name="context">{}</field>
+    </record>
+    <record id="stock_move_to_orders_action" model="ir.actions.act_window">
+            <field name="name">Sale orders</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="pick_tree_custom"/>
+            <!--field name="search_view_id" ref="stock_move_view_sel_search"/-->
+            <field name="context">{}</field>
+    </record>
+    <record id="stock_move_to_batch_action" model="ir.actions.act_window">
+            <field name="name">Batch pickings</field>
+            <field name="res_model">stock.batch.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="batch_pick_tree_custom"/>
+            <!--field name="search_view_id" ref="stock_move_view_sel_search"/-->
+            <field name="context">{}</field>
     </record>
 
     <!-- MENUS PICKING TYPE KANBAN >> MONITOR DE ALMACEN -->
@@ -40,6 +60,7 @@
             <field name="model_id" ref="model_stock_picking_type"/>
             <field name="type">ir.actions.server</field>
             <field name="state">code</field>
+            <field name="context">{}</field>
             <field name="code">
                 action = env['stock.picking.type']._return_action_show_types('picking')
             </field>
@@ -56,6 +77,7 @@
             <field name="model_id" ref="model_stock_picking_type"/>
             <field name="type">ir.actions.server</field>
             <field name="state">code</field>
+            <field name="context">{}</field>
             <field name="code">
                 action = env['stock.picking.type']._return_action_show_types('incoming')
             </field>

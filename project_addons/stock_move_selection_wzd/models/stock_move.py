@@ -57,8 +57,16 @@ class StockMove(models.Model):
     code = fields.Selection(related='picking_type_id.code')
     group_code = fields.Selection(related='picking_type_id.group_code')
     decoration = fields.Char(compute = get_color_status)
+    ghost_qty_done = fields.Integer(string="Cant. actual hecha",
+                                    store=False,
+                                    help='Se usa para buscar movimientos con qty done hecha en bd')
 
+    visible_count_move_to_pick = fields.Boolean(related='picking_type_id.visible_count_move_to_pick')
+    visible_count_move_unpacked = fields.Boolean(related='picking_type_id.visible_count_move_unpacked')
 
+    @api.model
+    def create(self, vals):
+        return super().create(vals)
 
     def check_allow_change_route_fields(self):
         super().check_allow_change_route_fields()
@@ -184,6 +192,30 @@ class StockMove(models.Model):
             action = self.env.ref('stock_move_selection_wzd.open_view_create_batch_picking').read()[0]
             action['res_id'] = wzd_id.id
             return action
+
+
+    @api.model
+    def search(self, args, offset=0, limit=None, order=None, count=False):
+        new_args = args.copy()
+
+        move_lines = False
+        for arg in new_args:
+            if arg[0] == 'ghost_qty_done':
+                arg[0] = 'product_uom_qty'
+                arg[1] = '>='
+                arg[2] = '0'
+                print (new_args)
+                move_lines = True
+
+        if move_lines:
+            moves = self.env['stock.move'].search_read(new_args, ['id'])
+            line_ids = [('id', 'in', [x['id'] for x in moves]), ('qty_done', '>', 0)]
+            moves = self.env['stock.move.line'].search_read(line_ids, ['move_id'])
+            new_args = [('id', 'in', [x['move_id'][0] for x in moves])]
+
+        print (new_args)
+        return super().search(new_args, offset=offset, limit=limit, order=order, count=count)
+
 
     @api.multi
     def action_add_to_batch_delivery(self):

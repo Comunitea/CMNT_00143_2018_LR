@@ -17,7 +17,7 @@ SHIPPING_TYPE_SEL =  [
 class InfoRouteMixin(models.AbstractModel):
     _name = 'info.route.mixin'
 
-    shipping_type = fields.Selection(SHIPPING_TYPE_SEL, default=DEFAULT_SHIPPING_TYPE, string=STRING_SHIPPING_TYPE,
+    shipping_type = fields.Selection(SHIPPING_TYPE_SEL, string=STRING_SHIPPING_TYPE,
                                      help=HELP_SHIPPING_TYPE)
     delivery_route_path_id = fields.Many2one('delivery.route.path', string="Ruta de transporte")
     info_route_str = fields.Char('Info ruta', compute='get_info_route')
@@ -36,20 +36,15 @@ class InfoRouteMixin(models.AbstractModel):
     @api.multi
     def write(self, vals):
         return super().write(vals)
-        if self._context.get('no_propagate_route_vals', True):
-            vals.update(self.get_write_route_vals(vals))
-        return super().write(vals)
 
     def get_write_route_vals(self, vals):
-        ##en los write se
+        print (vals)
+
         child_vals = {}
         if 'shipping_type' in vals:
             child_vals.update(shipping_type=vals['shipping_type'])
         if 'delivery_route_path_id' in vals:
             child_vals.update(delivery_route_path_id=vals['delivery_route_path_id'])
-        #if 'urgent' in vals:
-        #    child_vals.update(urgent=vals['urgent'])
-
         if 'carrier_id' in vals and 'carrier_id' in self.fields_get_keys():
             child_vals.update(carrier_id=vals['carrier_id'])
         if 'campaign_id' in vals and 'campaign_id' in self.fields_get_keys():

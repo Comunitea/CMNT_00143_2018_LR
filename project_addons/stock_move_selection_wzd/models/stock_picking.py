@@ -16,6 +16,8 @@ class StockPicking(models.Model):
     sga_state = fields.Selection(SGA_STATES, default='no_integrated', string="SGA Estado", copy=False)
     #state = fields.Selection(selection_add=[('packaging', 'Empaquetado')])
 
+    draft_batch_picking_id = fields.Many2one('stock.batch.picking')
+
     def create_second_pick(self, second_moves=[]):
         """ Copy of create backorder
         """
@@ -53,13 +55,6 @@ class StockPicking(models.Model):
             vals.pop('name')
         return super().create(vals)
 
-    def get_new_vals(self):
-        vals = {'shipping_type': self.shipping_type,
-                'delivery_route_path_id': self.delivery_route_path_id.id,
-                'urgent': self.urgent,
-                'carrier_id': self.carrier_id.id
-                }
-        return vals
 
     def action_send_to_sga(self):
         return self.send_to_sga()
@@ -69,4 +64,8 @@ class StockPicking(models.Model):
         ##PARA HEREDAR EN ULMA Y ADAIA
         return True
 
-
+    @api.multi
+    def button_validate(self):
+        if any(x.batch_picking_id or x.draft_batch_picking_id for x in self):
+            raise ValidationError (_("No puedes validar un albarán asigado a un batch"))
+        return super().button_validate()

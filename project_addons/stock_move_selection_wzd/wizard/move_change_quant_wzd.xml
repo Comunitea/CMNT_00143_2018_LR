@@ -27,7 +27,7 @@
                 </group>
                 <group string="Stock disponible:" >
                     <field name="quant_ids"  nolabel="1" >
-                        <tree editable="bottom" create="0" decoration-success="reserved_quantity &gt; 0">
+                        <tree editable="bottom" delete="0" create="0" decoration-success="reserved_quantity &gt; 0" decoration-danger="reserved_quantity &lt; quantity">
                             <!--field name="selection"/-->
                             <!--field name="sequence" widget="handle"/-->
                             <field name="quant_id" invisible="1"/>
@@ -42,7 +42,7 @@
                 </group>
                 <group string="Otras reservas" attrs="{'invisible': [('reserved_move_ids','=', [])]}">
                     <field name="reserved_move_ids"  nolabel="1" readonly="1" >
-                        <tree decoration-success="reserved_availability == product_uom_qty">
+                        <tree decoration-success="reserved_availability == product_uom_qty" decoration-danger="reserved_availability &lt; product_uom_qty">
                             <field name="sale_id"/>
                             <field name="location_id"/>
                             <field name="partner_id"/>

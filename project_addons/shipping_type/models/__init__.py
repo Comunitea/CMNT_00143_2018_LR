@@ -10,3 +10,4 @@ from . import procurement
 from . import sale_order
 from . import delivery_route
 from . import stock_batch_picking
+from . import stock_picking

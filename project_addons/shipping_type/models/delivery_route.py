@@ -12,7 +12,6 @@ class DeliveryCarrier(models.Model):
 
     route_ids = fields.Many2many('delivery.route.path', string="Routes")
 
-
 class DeliveryRoutePathDay(models.Model):
 
     _name = "delivery.route.path.day"

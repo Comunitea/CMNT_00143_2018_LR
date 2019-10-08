@@ -42,3 +42,20 @@ class SaleOrder(models.Model):
             'stock_move_selection_wzd.action_stock_batch_delivery_tree').read()[0]
         action['domain'] = [('id', 'in', self.batch_delivery_ids.ids)]
         return action
+
+    @api.multi
+    def action_view_move_lines(self):
+
+
+        self.ensure_one()
+        action = self.env.ref(
+            'stock_move_selection_wzd.stock_move_action').read()[0]
+        action['domain'] = self.get_moves_domain()
+        action['context'] = {
+            'group_code': 'picking',
+            'search_default_by_type': True
+            }
+
+
+        return action
+

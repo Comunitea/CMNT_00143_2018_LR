@@ -39,7 +39,7 @@ class StockBatchDeliveryWzd(models.TransientModel):
     moves_to_batch_ids = fields.Many2many('stock.move', string='Movimientos sin batch', compute='get_child_vals')
     picking_ids = fields.Many2many('stock.picking', string='Pedidos asociados', compute='get_child_vals')
     packages_ids = fields.Many2many('stock.quant.package', string='Paquetes', compute='get_child_vals')
-
+    moves_to_not_include = fields.Many2many('stock.move', string='Movimientos no incluidos')
     def set_moves_to_pack_ids(self):
         return
 
@@ -132,7 +132,18 @@ class StockBatchDeliveryWzd(models.TransientModel):
 
     @api.model
     def default_get(self, fields):
-        moves = self.env['stock.move'].browse(self._context.get('active_ids'))
+
+        active_ids = self._context.get('active_ids')
+        if not active_ids:
+            raise ValidationError(_('No hay nada seleccionado'))
+        if self._context.get('active_model', 'stock_move') == 'stock.picking':
+            domain = [('picking_id', 'in', active_ids), ('state', 'in', ('assigned', 'partially_available'))]
+            moves = self.env['stock.move'].search(domain)
+
+            domain = [('picking_id', 'in', active_ids), ('state', 'in', ('waiting', 'confirmed'))]
+            moves_to_not_include = self.env['stock.move'].search(domain)
+        else:
+            moves = self.env['stock.move'].browse(active_ids)
         moves |= moves.mapped('result_package_id').mapped('move_line_ids').mapped('move_id')
         not_moves = moves.filtered(lambda x: x.picking_type_id.code != 'outgoing')
         if not_moves:
@@ -144,9 +155,13 @@ class StockBatchDeliveryWzd(models.TransientModel):
 
         vals = {}
         domain=[('state', 'in', ('draft', 'ready'))]
-        if len(dict.fromkeys(moves.mapped('shipping_type')).keys()) == 1:
-            vals.update(default_shipping_type=moves[0].shipping_type)
-            domain += [('shipping_type', '=',moves[0].shipping_type )]
+        st_ids = []
+        for x in moves.mapped('shipping_type'):
+            if x and x not in st_ids:
+                st_ids.append(x)
+        if len(st_ids) == 1:
+            vals.update(default_shipping_type=st_ids[0])
+            domain += [('shipping_type', '=', st_ids[0] )]
 
         if len(moves.mapped('delivery_route_path_id')) == 1:
             vals.update(default_delivery_route_path_id=moves[0].delivery_route_path_id.id)
@@ -166,6 +181,8 @@ class StockBatchDeliveryWzd(models.TransientModel):
         vals.update(default_moves_to_pack_ids=[(6, 0, moves.filtered(lambda x: not x.result_package_id).ids)])
         vals.update(default_batch_delivery_ids=[(6, 0, moves.mapped('batch_delivery_id').ids)])
         vals.update(default_moves_to_batch_ids=[(6, 0, moves.filtered(lambda x: not x.batch_id).ids)])
+        if moves_to_not_include:
+            vals.update(default_moves_to_not_include=[(6, 0, moves_to_not_include.ids)])
 
         ctx = self._context.copy()
         ctx.update(vals)

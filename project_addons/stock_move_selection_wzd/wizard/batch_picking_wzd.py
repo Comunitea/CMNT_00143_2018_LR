@@ -41,7 +41,7 @@ class StockBatchPickingWzd(models.TransientModel):
     delivery_route_path_id = fields.Many2one('delivery.route.path', string="Ruta de entrega")
     carrier_id = fields.Many2one("delivery.carrier", string="Forma de envío")
     sga_integrated = fields.Boolean(related='picking_type_id.sga_integrated')
-
+    picking_ids = fields.Many2many('stock.picking', string="Albaranes")
 
     def create_from(self, model='stock.move', ids=[]):
         vals = self.get_vals(model, ids=ids)
@@ -55,9 +55,10 @@ class StockBatchPickingWzd(models.TransientModel):
             picking_ids = moves.mapped('picking_id')
         elif model=='stock.picking':
             picking_ids = self.env[model].browse(ids)
-            moves = self.mapped('move_lines')
+            moves = picking_ids.mapped('move_lines')
         else:
             return {}
+
         picking_type_id = moves.mapped('picking_type_id')
         if len(picking_type_id)>1:
             raise UserError(_('No se pueden agrupar alabranes de distinto tipo'))
@@ -98,6 +99,9 @@ class StockBatchPickingWzd(models.TransientModel):
             #'moves_to_sga': [(6, 0, moves_to_sga.ids)],
             #'moves_not_sga': [(6, 0, moves_not_sga.ids)]
             }
+        if model=='stock.picking':
+            vals.update(picking_ids=[(6,0,picking_ids.ids)])
+
         return vals
 
     @api.model
@@ -162,13 +166,9 @@ class StockBatchPickingWzd(models.TransientModel):
             'state': 'assigned'
         }
 
-    @api.multi
-    def action_create_send_batch(self):
-        return self.action_create_batch(send=True)
 
     @api.multi
-    def action_create_batch(self, send=False):
-
+    def action_create_batch(self):
         if len(self.mapped('picking_type_id'))>1:
             raise ValueError(_('No puedes crear un batch de con movimientos de distiont tipo'))
 
@@ -190,16 +190,16 @@ class StockBatchPickingWzd(models.TransientModel):
                     batch = self.env['stock.batch.picking'].create(vals)
                     move.draft_batch_picking_id = batch
                     new_batchs += batch
-            for batch in new_batchs:
-                note = 'Notas de los albaranes asociados'
-                for pick in batch.draft_move_lines.mapped('picking_id'):
-                    if pick.note:
-                        note = '{}\n{}\n{}'.format(note, pick.name, pick.note)
-                    else:
-                        note = '{}\n{}'.format(note, pick.name)
-        if send:
+        for batch in new_batchs:
+            note = 'Notas de los albaranes asociados'
+            for pick in batch.draft_move_lines.mapped('picking_id'):
+                pick.draft_batch_picking_id = batch.id
+                if pick.note:
+                    note = '{}\n{}\n{}'.format(note, pick.name, pick.note)
+                else:
+                    note = '{}\n{}'.format(note, pick.name)
+        if self._context.get('send', True):
             new_batchs.send_to_sga()
-
         action = self.env.ref('stock_batch_picking.action_stock_batch_picking_tree').read()[0]
         action['domain'] = [('id', 'in', new_batchs.ids)]
         return action
@@ -216,6 +216,7 @@ class StockBatchPickingWzd(models.TransientModel):
     def action_assign_batch(self):
         if self.batch_picking_id:
             self.move_ids.write({'draft_batch_picking_id': self.batch_picking_id.id})
+            self.move_ids.mapped('picking_id').write({'draft_batch_picking_id': self.batch_picking_id.id})
         return self.batch_picking_id.get_formview_action()
 
 

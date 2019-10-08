@@ -64,18 +64,19 @@ class StockMove(models.Model):
         res.update(self.update_info_route_vals())
         return res
 
-
-
     def _prepare_extra_move_vals(self, qty):
+        import ipdb;
+        ipdb.set_trace()
         res = super()._prepare_extra_move_vals(qty=qty)
         res.update(self.update_info_route_vals())
         return res
 
     def _prepare_move_split_vals(self, qty):
+        import ipdb;
+        ipdb.set_trace()
         res = super()._prepare_move_split_vals(qty=qty)
         res.update(self.update_info_route_vals())
         return res
-
 
 
     @api.multi

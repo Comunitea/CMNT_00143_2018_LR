@@ -19,11 +19,9 @@
                             <field name="sga_integrated" invisible="0"></field>
                         </group>
                         <group name="buttons">
-
                         </group>
                     </group>
                     <group string="Lineas SGA" name="sga_lines">
-
                     </group>
                 </page>
             </notebook>
@@ -47,20 +45,64 @@
         </field>
     </record>
     <record id="view_picking_internal_search_sga" model="ir.ui.view">
-        <field name="name">view.picking.internal.search.ulma</field>
+        <field name="name">view.picking.internal.search</field>
         <field name="model">stock.picking</field>
         <field name="inherit_id" ref="stock.view_picking_internal_search"/>
         <field name="arch" type="xml">
             <field name="group_id" position="after">
                 <field name="sga_state"/>
+
             </field>
             <filter name="picking_type" position="after">
                 <filter name="sga_integrated" string="SGA" domain="[('sga_integrated','=', True)]"/>
                 <filter name="waiting" string="SGA. Enviado" domain="[('sga_state','=', 'pending')]"/>
                 <filter name="error" string="SGA. Error" domain="[('sga_state','in', ['import_error', 'export_error'])]"/>
                 <filter name="processed" string="SGA. Completado" domain="[('sga_state','=', 'done')]"/>
+                 <separator/>
+                <filter string="Pasarán" name="pasaran_route" domain="[('shipping_type','=', 'pasaran')]"/>
+                <filter string="Urgente" name="urgent_route" domain="[('shipping_type','=', 'urgent')]"/>
+                <filter string="Ruta" name="route_route" domain="[('shipping_type','=', 'route')]"/>
+                <separator/>
+
+                <filter string="With pick" name="with_batch" domain="[('draft_batch_picking_id','!=', False)]"/>
+                <filter string="To pick" name="to_batch" domain="[('draft_batch_picking_id','=', False)]"/>
+            </filter>
+
+            <filter name="picking_type" position="after">
+                <filter string="Tipo de envío" name="by_shipping_type" domain="[]"  context="{'group_by':'shipping_type'}"/>
+                <filter string="Partner" name="by_partner_id" domain="[]"  context="{'group_by':'partner_id'}"/>
+                <filter string="Ruta de transporte" name="by_delivery_path_route_id" domain="[]"  context="{'group_by':'delivery_route_path_id'}"/>
+                <filter string="Forma de envío" name="by_carrier_id" domain="[]"  context="{'group_by':'carrier_id'}"/>
             </filter>
         </field>
     </record>
+
+    <record id="pick_tree_custom" model="ir.ui.view">
+            <field name="name">stock.picking.tree.custom</field>
+            <field name="model">stock.picking</field>
+            <field name="arch" type="xml">
+                <tree decoration-info="state == 'draft'"
+                      decoration-muted="state == 'cancel'"
+                      decoration-danger="state not in ('cancel', 'done') and scheduled_date &lt; current_date"
+                      string="Picking list">
+                    <field name="origin"/>
+                    <field name="shipping_type"/>
+                    <field name="delivery_route_path_id"/>
+                    <field name="carrier_id"/>
+                    <field name="name"/>
+                    <field name="draft_batch_picking_id"/>
+                    <field name="location_dest_id" groups="stock.group_stock_multi_locations"/>
+                    <field name="partner_id"/>
+                    <field name="date" invisible="1"/>
+                    <field name="scheduled_date"/>
+                    <field name="origin"/>
+                    <field name="group_id" invisible="1"/>
+                    <field name="backorder_id"/>
+                    <field name="state"/>
+                    <field name="priority" invisible="1"/>
+                    <field name="picking_type_id" invisible="1"/>
+                </tree>
+            </field>
+        </record>
 </odoo>
 

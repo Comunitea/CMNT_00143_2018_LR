@@ -11,7 +11,7 @@ from .stock_picking_type import SGA_STATES
 
 class StockBatchPicking(models.Model):
 
-    _inherit = ['stock.batch.picking','mail.thread','mail.activity.mixin']
+    _inherit = ['stock.batch.picking', 'mail.thread', 'mail.activity.mixin']
     _name = 'stock.batch.picking'
 
     @api.multi
@@ -27,6 +27,7 @@ class StockBatchPicking(models.Model):
     batch_delivery_id = fields.Many2one('stock.batch.delivery', string="Delivery batch")
     picking_type_id = fields.Many2one('stock.picking.type', string='Picking type', required=True, readonly=True, states={'draft': [('readonly', False)]},)
     draft_move_lines = fields.One2many('stock.move', 'draft_batch_picking_id', string='Movimientos')
+    draft_picking_ids = fields.One2many('stock.picking', 'draft_batch_picking_id', string='Albaranes')
     sga_integrated = fields.Boolean(related='picking_type_id.sga_integrated')
     sga_state = fields.Selection(SGA_STATES, default='no_integrated', string="SGA Estado", compute="get_sga_state")
     company_id = fields.Many2one(
@@ -173,7 +174,8 @@ class StockBatchPicking(models.Model):
                         message = "{}{}".format(message, pick_message)
                     message = "{}</ul>".format(message)
                 batch.message_post(message)
-                batch.state='done'
+                batch.write({'state': 'done',
+                             'date': fields.Date.today()})
 
         if normal.mapped('picking_ids'):
             return super(StockBatchPicking, normal).action_transfer()
@@ -224,7 +226,30 @@ class StockBatchPicking(models.Model):
             ##PARA HEREDAR EN ULMA Y ADAIA
             message = _(
                 "Se ha enviado a los sistemas de SGA "
-                "<a href=# data-oe-model=stock.batch.picking data-oe-id=%d>%s</a> <ul>") % (self.id, self.name)
-            batch.message_post(message)
+                "<a href=# data-oe-model=stock.batch.picking data-oe-id=%d>%s</a> <ul>") % (batch.id, batch.name)
+
+            batch_message = message
+            for pick in batch.draft_picking_ids:
+                batch_message = '{} <li> El albarán {} ha sido incluido en el lote</li>'.format(batch_message, "<a href=# data-oe-model=stock.picking data-oe-id=%d>%s</a> (%s)"%(pick.id, pick.name, pick.origin))
+
+
+                not_sga_lines = pick.move_lines.filtered(lambda x: x.state != 'pending')
+                if not_sga_lines:
+                    continue
+                lines_str = '<ul>'
+                for line in not_sga_lines:
+                    lines_str = '{} <li> La línea de {} no se ha enviado al SGA </li>'.format(lines_str, "<a href=# data-oe-model=stock.batch.picking data-oe-id=%d>%s</a>"%(line.id, line.name))
+                lines_str = '{}</ul>'.format(lines_str)
+                pick.message_post('{}{}'.format(message, lines_str))
+
+
+            batch_message = '{}</ul>'.format(batch_message)
+            batch.message_post(batch_message)
+            batch.draft_picking_ids.write({'sga_state': 'pending'})
             batch.sga_state = 'pending'
+
+        return True
+
+    @api.multi
+    def read_from_sga(self):
         return True

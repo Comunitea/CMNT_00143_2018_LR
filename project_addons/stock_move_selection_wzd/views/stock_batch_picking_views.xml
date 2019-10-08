@@ -1,6 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+        <record id="batch_pick_tree_custom" model="ir.ui.view">
+            <field name="name">stock.batch.picking.tree.custom</field>
+            <field name="model">stock.batch.picking</field>
+            <field name="arch" type="xml">
+                <tree decoration-info="state == 'draft'"
+                      decoration-muted="state == 'cancel'"
+                      decoration-danger="state not in ('cancel', 'done')"
+                      string="Picking list">
 
+                    <field name="name"/>
+                    <field name="shipping_type"/>
+                    <field name="delivery_route_path_id"/>
+                    <field name="carrier_id"/>
+                    <field name="partner_id"/>
+                    <field name="date" />
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
     <!-- stock.batch.picking form view -->
     <record model="ir.ui.view" id="stock_move_selection_wzd_form">
         <field name="name">stock.move.selection.wzr.form</field>
@@ -90,6 +108,14 @@
             <xpath expr="//page/field[@name='move_line_ids']/.." position="attributes">
                 <attribute name="invisible">1</attribute>
             </xpath>
+            <xpath expr="//sheet" position="after">
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </xpath>
+
         </field>
     </record>
     <record id="stock_batch_picking_tree" model="ir.ui.view">
@@ -116,6 +142,12 @@
                 <field name="picking_type_id"/>
             </field>
 
+
+            <xpath expr="//filter[@name='picker_id']" position="before">
+                <filter name="todo" string="Por hacer" domain="[('state', 'in', ('draft', 'assigned'))]"/>
+                <filter name="last_day" string="Ultimos" domain="['|', ('state', '=', 'assigned'), ('date','&gt;', (context_today() - datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d') )]"/>
+                <filter name="last_week" string="Esta semana" domain="['|', ('state', '=', 'assigned'),('date','&gt;', (context_today() - datetime.timedelta(weeks=1)).strftime('%%Y-%%m-%%d') )]"/>
+            </xpath>
             <xpath expr="//filter[@name='picker_id']" position="after">
                 <filter name="picking_type_id" string="Picking type" context="{'group_by':'picking_type_id'}"/>
             </xpath>

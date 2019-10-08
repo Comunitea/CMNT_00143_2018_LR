@@ -11,17 +11,17 @@
                 <group>
                     <field name="state"/>
                     <field name="batch_delivery_id" domain="[
-                    ('delivery_route_path_id', '=', delivery_route_path_id),
-                    ('shipping_type', '=', shipping_type),
-                    ('carrier_id', '=', carrier_id),
-                    ('state', 'in', ('draft', 'ready'))]"/>
-                    <field name="batch_delivery_ids" widget="many2many_tags" readonly="1"/>
+                        ('delivery_route_path_id', '=', delivery_route_path_id),
+                        ('shipping_type', '=', shipping_type),
+                        ('carrier_id', '=', carrier_id),
+                        ('state', 'in', ('draft', 'ready'))]" create="0"/>
+                    <field name="batch_delivery_ids" widget="many2many_tags" attrs="{'invisible': [('batch_delivery_ids','=', [])]}" readonly="1"/>
                     <field name="date"/>
                     <field name="picker_id"/>
                 </group>
                 <group>
                     <field name="shipping_type" required="True"/>
-                    <field name="delivery_route_path_id"/>
+                    <field name="delivery_route_path_id" create="0"/>
                     <field name="carrier_id"/>
                     <field name="driver_id"/>
                     <field name="plate_id"/>
@@ -30,6 +30,20 @@
                 <label for="notes"/>
                 <field name="notes"/>
                 <notebook>
+                    <page string="Movimientos no incluidos"  attrs="{'invisible': [('moves_to_not_include','=', [])]}" readonly="1">
+                        <h2>
+                            Lista de movimientos que se NO se añaden a la orden de carga
+                        </h2>
+                        <field name="moves_to_not_include" readonly="1">
+                            <tree>
+                                <field name="name"/>
+                                <field name="product_uom_qty"/>
+                                <field name="sale_id"/>
+                                <field name="partner_id"/>
+                            </tree>
+                        </field>
+
+                    </page>
                     <page string="Paquetes en la orden">
                         <h2>Lista de paquetes que se añaden a la orden de carga</h2>
                         <field name="packages_ids" readonly="1" >
@@ -108,6 +122,14 @@
             </form>
         </field>
     </record>
+
+    <act_window name="Ordenes de carga"
+                res_model="stock.batch.delivery.wzd"
+                src_model="stock.picking"
+                view_mode="form"
+                target="new"
+                key2="client_action_multi"
+                id="batch_delivery_wzd_act_window_for_picks"/>
 
     <act_window name="Ordenes de carga"
                 res_model="stock.batch.delivery.wzd"

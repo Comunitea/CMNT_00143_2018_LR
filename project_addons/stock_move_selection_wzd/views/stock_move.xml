@@ -46,6 +46,8 @@
         </field>
     </record>
 
+
+
     <record id="view_move_form_wzd_change_quant" model="ir.ui.view">
         <field name="name">stock.move.change_quant_wzd</field>
         <field name="inherit_id" ref="stock_picking_group.view_move_form"/>
@@ -58,6 +60,10 @@
             </field>
             <field name="picking_id" position="after">
                 <field name="batch_delivery_id"/>
+            </field>
+            <field name="reference" position="before">
+                <field name="sga_state" widget="statusbar" statusbar_visible="no_send,pending,done" attrs="{'invisible': [('sga_integrated', '!=', True)]}"/>
+                <field name="sga_integrated" invisible="1"/>
             </field>
         </field>
     </record>
@@ -77,26 +83,27 @@
                   create="0"
                   default_order="date">
                 <field name="decoration" invisible="1"/>
-                <field name="shipping_type" invisible="context.get('group_code', False) in ('reposition', 'incoming', 'location')"/>
-                <field name="delivery_route_path_id" invisible="not context.get('group_code', False) in ('outgoing', 'dropship')"/>
-                <field name="carrier_id" invisible="not context.get('group_code', False) in ('outgoing', 'dropship')"/>
+                <field name="shipping_type" invisible="not context.get('group_code', False) in ('picking', 'outgoing', 'dropship')"/>
+                <field name="delivery_route_path_id" invisible="not context.get('group_code', False) in ('picking', 'outgoing', 'dropship')"/>
+                <field name="carrier_id" invisible="not context.get('group_code', False) in ('picking', 'outgoing', 'dropship')"/>
                 <field name="batch_delivery_id" invisible="not context.get('group_code', False) in ('outgoing', 'dropship')"/>
                 <button name="action_add_to_batch_delivery"
                         string="Enviar"
                         type="object"
                         context="{'object': 'move'}"
-                        icon="fa-truck" class="fa-2x"
-                        attrs="{'invisible': ['|','|',('group_code', 'not in', ('outgoing', 'dropship')), ('result_package_id', '!=', False), ('state', 'not in', ('assigned', 'partially_available'))]}"
+                        icon="fa-truck"
+                        attrs="{'invisible': ['|','|',('group_code', 'not in', ('outgoing', 'dropship')),
+                                                        ('result_package_id', '!=', False), ('state', 'not in', ('assigned', 'partially_available'))]}"
                         />
-                <field name="batch_id"/>
+                <field name="batch_id" attrs="{'invisible': [('visible_count_move_to_pick', '=', False)]}"/>
                 <field name="batch_picking_id" invisible="1"/>
                 <field name="draft_batch_picking_id" invisible="1"/>
                 <button name="action_add_to_batch_picking"
                         string="(Des)Asignar batch"
                         type="object"
                         context="{'model': 'move'}"
-                        icon="fa-tasks" class="fa-2x"
-                        attrs="{'invisible': ['|', ('state', 'not in', ('assigned', 'partially_available')), ('batch_delivery_id', '!=', False)]}"
+                        icon="fa-tasks"
+                        attrs="{'invisible': [ '|','|', ('visible_count_move_to_pick', '=', False), ('state', 'not in', ('assigned', 'partially_available')), ('batch_delivery_id', '!=', False)]}"
                         />
 
                 <!--button name="action_set_envio_sga"
@@ -119,6 +126,8 @@
 
                 <field name="id" groups="base.group_no_one" invisible="1"/>
                 <field name="picking_type_id" invisible="1"/>
+                <field name="visible_count_move_to_pick" invisible="1"/>
+                <field name="visible_count_move_unpacked" invisible="1"/>
                 <field name="sga_integrated" invisible="1"/>
                 <field name="code" invisible="1"/>
                 <field name="group_code" invisible="1"/>
@@ -131,20 +140,20 @@
                 <field name="location_id" invisible="context.get('group_code', False) in ('outgoing', 'incoming')"/>
                 <field name="package_id" invisible="1"/>
                 <field name="location_dest_id" invisible="not context.get('group_code', False) in ('picking', 'internal', 'location', 'reposition')"/>
-                <field name="result_package_id" invisible="not context.get('group_code', False) in ('outgoing', 'other')"/>
+                <field name="result_package_id" attrs="{'invisible': [('visible_count_move_unpacked', '=', False)]}"/>
 
 
                 <button name="action_add_to_batch_delivery"
                         string="(Des) Cargar"
                         type="object"
                         context="{'object': 'package'}"
-                        icon="fa-truck" class="fa-2x"
+                        icon="fa-truck"
                         attrs="{'invisible': ['|', ('group_code', '!=', 'outgoing'),('state', 'not in', ('assigned', 'partially_available'))]}"
                         />
                 <button name="action_tree_manage_pack"
                         string="(Des) Empaquetar"
                         type="object"
-                        icon="fa-dropbox" class="fa-2x"
+                        icon="fa-dropbox"
                         attrs="{'invisible': ['|', ('batch_delivery_id', '!=', False), ('state', 'not in', ('assigned', 'partially_available'))]}"
                         />
                 <field name="product_uom_qty"/>
@@ -157,7 +166,7 @@
                             attrs="{'invisible':['|',('code','=','incoming'),('state','not in',('confirmed','assigned','partially_available'))]}"/>
                 <field name="show_details_visible" invisible="1"/>
                 <button name="action_show_details" string="Registrar detalles del movimiento"
-                        type="object" icon="fa-list" class="fa-2x"
+                        type="object" icon="fa-list"
                         attrs="{'invisible': [('show_details_visible', '=', False)]}"
                         />
 
@@ -167,6 +176,9 @@
                 <field name="move_dest_ids" widget="many2many_tags" invisible="context.get('group_code', False) in ('incoming', 'picking')"/>
                 <!--field name="wh_state"/-->
 
+                 <button name="action_cancel_move" string="Cancelar el movimiento y sus asociados" type="object"  icon="fa-window-close-o "
+                        class ="text-danger"
+                        attrs="{'invisible': ['|', ('move_dest_ids', '=', []), ('state', 'in', ('cancel', 'done'))]}"/>
             </tree>
         </field>
     </record>
@@ -210,8 +222,8 @@
                 <filter string="SGA" name="sga_integrated" domain="[('sga_integrated','=', True)]"/>
                 <separator/>
                 <!--filter string="Urgente" name="urgent" domain="[('urgent','=', True)]"/-->
-                <filter string="With pick" name="with_pick" domain="[('picking_id','!=', False)]"/>
-                <filter string="To pick" name="without_pick" domain="[('picking_id','=', False)]"/>
+                <filter string="With pick" name="with_batch" domain="[('draft_batch_picking_id','!=', False)]"/>
+                <filter string="To pick" name="to_batch" domain="[('draft_batch_picking_id','=', False)]"/>
                 <separator/>
                 <filter string="Campaña" name="with_campaign_id" domain="[('campaign_id','!=', False)]"/>
                 <filter string="Normal" name="no_campaign_id" domain="[('campaign_id','=', False)]"/>
@@ -228,8 +240,8 @@
                 <filter string="With package" name="with_package" domain="[('result_package_id','!=', False)]"/>
                 <filter string="With no package" name="with_no_package" domain="[('result_package_id','=', False)]"/>
                 <separator/>
-                <filter string="Sin carta de porte" name="batch_picking_id_false" domain="[('picking_id.batch_picking_id','=', False)]"/>
-                <filter string="Con carte de porte" name="batch_picking_id_true" domain="[('picking_id.batch_picking_id','=', True)]"/>
+                <filter string="Sin carta de porte" name="batch_picking_id_false" domain="[('batch_delivery_id','=', False)]"/>
+                <filter string="Con carte de porte" name="batch_picking_id_true" domain="[('batch_delivery_id','=', True)]"/>
                 <separator/>
                 <filter string="Pasarán" name="pasaran_route" domain="[('shipping_type','=', 'pasaran')]"/>
                 <filter string="Urgente" name="urgent_route" domain="[('shipping_type','=', 'urgent')]"/>
@@ -237,6 +249,7 @@
                 <separator/>
                 <filter name="sga_integrated" string="SGA" domain="[('sga_integrated','=', True)]"/>
                 <filter name="waiting" string="SGA. Enviado" domain="[('sga_state','=', 'pending')]"/>
+                <filter name="waiting_sga" string="SGA. Realizado" domain="[('sga_integrated','=', True),('ghost_qty_done', '&gt;', 0)]"/>
                 <filter name="error" string="SGA. Error" domain="[('sga_state','in', ['import_error', 'export_error'])]"/>
                 <filter name="processed" string="SGA. Completado" domain="[('sga_state','=', 'done')]"/>
                 <group expand="0" string="Group By">
@@ -337,7 +350,18 @@
                 </kanban>
             </field>
         </record>
-
+          <record id="stock_move_action" model="ir.actions.act_window">
+            <field name="name">Stock Moves</field>
+            <field name="res_model">stock.move</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree', 'view_id': ref('view_move_line_tree_sel')}),
+                (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_move_sel_kanban')})]"/>
+            <field name="search_view_id" ref="stock_move_view_sel_search"/>
+            <field name="context">{}</field>
+    </record>
 
 </odoo>
 
