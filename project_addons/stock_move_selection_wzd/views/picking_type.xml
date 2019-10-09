@@ -141,6 +141,7 @@
                     <field name="rate_packed_undone"/>
                     <field name="rate_undone"/>
                     <field name="rate_late"/>
+                    <field name="affected_excess"/>
 
 
                     <field name="description"/>
@@ -240,6 +241,21 @@
                                                             <h3 class="text-muted">Ordenes de carga</h3>
                                                         </div>
                                                     </div>
+                                                    <div class="row">
+                                                        <div class="col-xs-6 text-primary" title="Pendientes (Todos)">
+                                                            <a name="get_action_tree" type="object" context="{'dest_model': 'stock.batch.delivery',
+                                                                                                              'default_domain': [('state', 'in', ('done', 'ready'))],
+                                                                                                              'search_default_last_day': 1,
+                                                                                                              'search_default_to_do': 1}">
+                                                                Pendientes
+                                                            </a>
+                                                        </div>
+
+                                                        <!--div class="col-xs-3">
+                                                            <span><t t-esc="record.count_batch_ready.value"/> de <t t-esc="record.count_batch.value"/></span>
+                                                        </div-->
+                                                    </div>
+
                                                 </div>
 
                                                 <div name="batch_picking" t-if="record.need_batch_picking.raw_value == true">
@@ -547,6 +563,21 @@
                                                 <div class="o_kanban_card_manage_title">
                                                     <span>Otra info</span>
                                                 </div>
+                                                <div class="col-xs-6 text-primary" title="Pendientes (Todos)">
+                                                    <a name="get_action_tree" type="object" context="{'dest_model': 'stock.batch.picking',
+                                                                                                      'batch_domain': 'affected_excess',
+                                                                                                      'search_default_groupby_partner_id':1,
+                                                                                                      'code': 'outgoing',
+                                                                                                      'this_context':True
+                                                                                                      }">
+                                                        Estado Franquicia
+                                                    </a>
+                                                </div>
+                                                        <div class="col-xs-3">
+                                                            <span><t t-esc="record.affected_excess.value"/> de <t t-esc="record.count_batch.value"/></span>
+                                                        </div>
+
+
                                             </div>
                                         </div>
 
@@ -566,10 +597,10 @@
 
                 </kanban>
             </field>
-   </record>
+    </record>
 
 
-     <record id="view_pickingtype_filter" model="ir.ui.view">
+    <record id="view_pickingtype_filter" model="ir.ui.view">
         <field name="name">stock.picking.type.filter</field>
         <field name="model">stock.picking.type</field>
         <field name="inherit_id" ref="stock.view_pickingtype_filter"/>

@@ -10,9 +10,10 @@
                 <header>
                     <!--button name="action_assign" class="oe_highlight" string="Reserve All"
                             states="draft" type="object"/-->
-                    <button name="action_transfer" states="draft, ready" string="Validar" type="object"/>
-                    <button name="action_cancel" states="draft,assigned" confirm="All pickings will be cancelled, Are you sure?" string="Cancel" type="object"/>
-                    <button name="generar_adr" string="ADR" type="object"/>
+                    <button name="action_transfer" states="ready" string="Validar" type="object"/>
+                    <button name="action_confirm" states="draft" string="Confirmar" type="object"/>
+                    <button name="action_cancel" states="draft,ready" confirm="All pickings will be cancelled, Are you sure?" string="Cancel" type="object"/>
+                    <button name="generar_adr" string="ADR"  states="done,ready" type="object"/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,confirm"/>
 
                 </header>
@@ -118,6 +119,11 @@
                     <filter name="date_expected" string="Order Date" context="{'group_by':'date'}"/>
                     <filter name="shippint_type" string="Shipping type" context="{'group_by':'shipping_type'}"/>
                 </group>
+                <filter name="to_do" string="Preparados" domain="[('state','=', 'ready')]"/>
+                <filter name="last_day" string="Ultimos"
+                        domain="['|', ('state', '=', 'ready'),
+
+                        ('date_done','&gt;', (context_today() - datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d') )]"/>
                 <filter name="no_picker_id" string="Unassigned" domain="[('picker_id','=', False)]"/>
                 <filter name="no_route" string="Sin ruta" domain="[('delivery_route_path_id','=', False)]"/>
                 <filter name="no_carrier" string="Sin transportista" domain="[('carrier_id','=', False)]"/>

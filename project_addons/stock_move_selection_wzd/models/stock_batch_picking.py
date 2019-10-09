@@ -6,6 +6,8 @@ from odoo import models, fields, api, _
 
 from odoo.exceptions import ValidationError
 
+from datetime import datetime, timedelta
+from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT, DEFAULT_SERVER_DATE_FORMAT
 
 from .stock_picking_type import SGA_STATES
 
@@ -36,6 +38,47 @@ class StockBatchPicking(models.Model):
         'res.company', 'Company',
         default=lambda self: self.env['res.company']._company_default_get('stock.move'),
         index=True, required=True)
+    code = fields.Selection(related='picking_type_id.code')
+    excess = fields.Boolean(string='Franquicia')
+
+    def get_excess_domain(self):
+        from_time = (datetime.now() - timedelta(hours=96)).strftime(DEFAULT_SERVER_DATE_FORMAT)
+        domain = [('date', '>=', from_time),
+                  ('state', 'in', ('ready', 'done'))]
+        return domain
+
+    def get_excess_affected(self, partner_id=False, type_id=False):
+        domain = self.get_excess_domain + [('partner_id', '=', partner_id), ('picking_type_id', '=', type_id)]
+        picks = self.search(domain, order='state desc, date desc')
+        return picks
+
+    @api.multi
+    def get_transport_excess(self):
+        def check_excess(picks):
+            if len(picks) == 1:
+                picks.excess = True
+            else:
+                picks.write({'excess': False})
+                picks[0].write({'excess': True})
+
+        partner_ids = self.mapped('partner_id')
+        picking_type_id = self.mapped('picking_type_id')
+        for partner_id in partner_ids:
+            pick_ids = self.get_excess_affected(partner_id.id, picking_type_id.id)
+            check_excess(pick_ids)
+
+    @api.multi
+    def action_assign(self):
+
+        res = super().action_assign()
+        self.filtered(lambda x: x.code == 'outgoing').get_transport_excess()
+        return res
+
+    @api.multi
+    def action_transfer(self):
+        res = super().action_done()
+        self.filtered(lambda x: x.code == 'outgoing').get_transport_excess()
+        return res
 
     @api.multi
     def alternate_draft_ready(self):
@@ -79,7 +122,6 @@ class StockBatchPicking(models.Model):
 
     @api.multi
     def set_route_fields(self):
-
         ctx = self._context.copy()
         ctx.update(force_route_vals=True)
         for batch in self.with_context(ctx):
@@ -130,14 +172,10 @@ class StockBatchPicking(models.Model):
 
         rs = super().unlink()
 
-
-
     @api.multi
     def action_transfer(self):
         """
-
         """
-
         effective = self.filtered(lambda x: x.draft_move_lines)
         normal = self.filtered(lambda x: not x.draft_move_lines and x.state != 'done')
         if effective:

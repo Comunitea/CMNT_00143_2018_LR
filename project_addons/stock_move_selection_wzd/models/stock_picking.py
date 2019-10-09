@@ -2,11 +2,15 @@
 # © 2019 Comunitea Servicios Tecnológicos S.L.
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
+from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT, DEFAULT_SERVER_DATE_FORMAT
+
+
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
+from datetime import datetime, timedelta
+from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT, DEFAULT_SERVER_DATE_FORMAT
 
 
-from .stock_picking_type import PICKING_TYPE_GROUP
 from .stock_picking_type import SGA_STATES
 
 class StockPicking(models.Model):
@@ -15,8 +19,20 @@ class StockPicking(models.Model):
     sga_integrated = fields.Boolean('Sga', help='Marcar si tiene un tipo de integración con el sga')
     sga_state = fields.Selection(SGA_STATES, default='no_integrated', string="SGA Estado", copy=False)
     #state = fields.Selection(selection_add=[('packaging', 'Empaquetado')])
+    batch_delivery_id = fields.Many2one('stock.batch.delivery', string='Orden de carga', copy=False, store=False, compute="get_batch_delivery_id")
+    draft_batch_picking_id = fields.Many2one('stock.batch.picking', 'Batch')
 
-    draft_batch_picking_id = fields.Many2one('stock.batch.picking')
+    excess = fields.Boolean(string='Franquicia')
+
+    @api.multi
+    def get_batch_delivery_id(self):
+        for pick in self:
+            batch_delivery_id = pick.move_lines.mapped('batch_delivery_id')
+            if len(batch_delivery_id) == 1:
+                pick.batch_delivery_id = batch_delivery_id
+            else:
+                pick.batch_delivery_id = False
+
 
     def create_second_pick(self, second_moves=[]):
         """ Copy of create backorder

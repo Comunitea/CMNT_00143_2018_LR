@@ -18,6 +18,7 @@
                     <field name="batch_delivery_ids" widget="many2many_tags" attrs="{'invisible': [('batch_delivery_ids','=', [])]}" readonly="1"/>
                     <field name="date"/>
                     <field name="picker_id"/>
+                    <field name="cancel_delivery" invisible="1"/>
                 </group>
                 <group>
                     <field name="shipping_type" required="True"/>
@@ -30,7 +31,7 @@
                 <label for="notes"/>
                 <field name="notes"/>
                 <notebook>
-                    <page string="Movimientos no incluidos"  attrs="{'invisible': [('moves_to_not_include','=', [])]}" readonly="1">
+                    <!--page string="Movimientos no incluidos"  attrs="{'invisible': [('moves_to_not_include','=', [])]}" readonly="1">
                         <h2>
                             Lista de movimientos que se NO se añaden a la orden de carga
                         </h2>
@@ -43,7 +44,7 @@
                             </tree>
                         </field>
 
-                    </page>
+                    </page-->
                     <page string="Paquetes en la orden">
                         <h2>Lista de paquetes que se añaden a la orden de carga</h2>
                         <field name="packages_ids" readonly="1" >
@@ -91,6 +92,8 @@
                                 <field name="sale_id"/>
                                 <field name="partner_id"/>
                                 <field name="state" invisible="1"/>
+
+
                             </tree>
                         </field>
                     </page>
@@ -107,7 +110,7 @@
                     </page>
                 </notebook>
                 <footer>
-                    <button name="action_create_batch" attrs="{'invisible': ['|', ('moves_to_pack_ids', '!=', []), ('batch_delivery_id', '!=', False)]}"
+                    <button name="action_create_batch" attrs="{'invisible': ['|', '|', ('cancel_delivery','=', True), ('moves_to_pack_ids', '!=', []), ('batch_delivery_id', '!=', False)]}"
                             string="Generar orden" type="object" class="oe_highlight"/>
                     <button name="action_in_batch" attrs="{'invisible': ['|', ('moves_to_pack_ids', '!=', []), ('batch_delivery_id', '=', False)]}"
                             string="Asignar orden" type="object" class="oe_highlight"/>

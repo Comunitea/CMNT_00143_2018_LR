@@ -5,13 +5,12 @@
 
 import json
 
-from datetime import datetime, timedelta
-
 from odoo.osv import expression
 from odoo.tools.safe_eval import safe_eval
 from odoo import api, fields, models, _
+from datetime import datetime, timedelta
 from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT, DEFAULT_SERVER_DATE_FORMAT
-from odoo.addons.shipping_type.models.info_route_mixin import SHIPPING_TYPE_SEL, DEFAULT_SHIPPING_TYPE, STRING_SHIPPING_TYPE,HELP_SHIPPING_TYPE
+from odoo.addons.shipping_type.models.info_route_mixin import SHIPPING_TYPE_SEL, DEFAULT_SHIPPING_TYPE, STRING_SHIPPING_TYPE, HELP_SHIPPING_TYPE
 
 
 SEARCH_F = ['urgent', 'delivery_route_path_id', 'shipping_type']
@@ -23,7 +22,6 @@ PICKING_TYPE_GROUP = [('incoming', 'Incoming'),
                       ('location', 'Location'),
                       ('reposition', 'Reposition'),
                       ('other', 'Other')]
-
 
 SGA_STATES = [('no_integrated', 'Sin integracion'),
               ('no_send', 'No enviado'),
@@ -112,7 +110,7 @@ class PickingType(models.Model):
     visible_count_picking_backorders = fields.Boolean('2º albarán')
     actual_picking_ids = fields.One2many('stock.picking', compute="_get_actual_pickings")
     count_picking_pasaran = fields.Integer(compute='_compute_picking_count', string="Pedidos pasarán")
-
+    affected_excess = fields.Integer(compute='_compute_picking_count', string="Albaranes Franquicia")
     count_move = fields.Integer(compute='_compute_picking_count', string='Movs. totales')
     rate_late = fields.Integer(compute='_compute_picking_count', string="Ratio tarde")
     rate_backorders = fields.Integer(compute='_compute_picking_count', string="Ratio de backorders")
@@ -353,6 +351,7 @@ class PickingType(models.Model):
             'count_batch': context_domain + ['|', ('state', '=', 'assigned'), '&', ('state', '!=', 'cancel'), ('date', '>', yesterday)],
             'count_batch_ready': context_domain + [('state', '=', 'assigned')],
             'count_all_batch': context_domain + [('state', 'in', ('done', 'assigned'))],
+            'affected_excess': context_domain + self.env['stock.batch.picking'].get_excess_domain()
         }
 
         return move_domains, picking_domains, batch_domains
@@ -516,7 +515,8 @@ class PickingType(models.Model):
                            (kanban and kanban.id or False, 'kanban')]
 
         ctx = self._context.copy()
-        ctx = self.update_context(ctx)
+        if not ctx.get('this_context', False):
+            ctx = self.update_context(ctx)
         ctx.update(eval(action['context']))
 
         action['name'] = self.name
@@ -535,7 +535,8 @@ class PickingType(models.Model):
         action['domain'] = [('id', 'in', picking_ids)]
 
         ctx = self._context.copy()
-        ctx = self.update_context(ctx)
+        if not ctx.get('this_context', False):
+            ctx = self.update_context(ctx)
         ctx.update(eval(action['context']))
 
         action['context'] = ctx
@@ -552,7 +553,8 @@ class PickingType(models.Model):
         action['domain'] = [('id', 'in',[x['id'] for x in batch] )]
 
         ctx = self._context.copy()
-        ctx = self.update_context(ctx)
+        if not ctx.get('this_context', False):
+            ctx = self.update_context(ctx)
         ctx.update(eval(action['context']))
 
         action['context'] = ctx
@@ -575,12 +577,14 @@ class PickingType(models.Model):
         batch_domain = self._context.get('batch_domain', [])
         if batch_domain:
             domain += batch_domains[batch_domain]
+
         ctx = self._context.copy()
         ctx.update (group_code = self.group_code)
         if self._context.get('dest_model', 'stock.move') == 'stock.picking':
             return self.with_context(ctx).return_action_show_orders(domain)
-
-        elif self._context.get('dest_model', 'stock.batch.picking') == 'stock.batch.picking':
+        elif self._context.get('dest_model', 'stock.move') == 'stock.batch.delivery':
+            return self.with_context(ctx).return_action_show_batch_picking(domain)
+        elif self._context.get('dest_model', 'stock.move') == 'stock.batch.picking':
             return self.with_context(ctx).return_action_show_batch_picking(domain)
         else:
             return self.with_context(ctx).return_action_show_moves(domain)

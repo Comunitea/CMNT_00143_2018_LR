@@ -33,7 +33,7 @@ class StockBatchDeliveryWzd(models.TransientModel):
                                       help='Conductor.',
                                       domain="[('route_driver', '=', True)]")
     plate_id = fields.Many2one('delivery.plate', string='Matrícula', help='Matrícula.')
-
+    cancel_delivery = fields.Boolean('Cancelar order de carga')
     move_ids = fields.Many2many('stock.move', string='Movimientos')
     moves_to_pack_ids = fields.Many2many('stock.move', string='Movimientos sin paquete', inverse='set_moves_to_pack_ids', compute='get_child_vals')
     moves_to_batch_ids = fields.Many2many('stock.move', string='Movimientos sin batch', compute='get_child_vals')
@@ -143,17 +143,22 @@ class StockBatchDeliveryWzd(models.TransientModel):
             domain = [('picking_id', 'in', active_ids), ('state', 'in', ('waiting', 'confirmed'))]
             moves_to_not_include = self.env['stock.move'].search(domain)
         else:
+            moves_to_not_include = self.env['stock.move']
             moves = self.env['stock.move'].browse(active_ids)
         moves |= moves.mapped('result_package_id').mapped('move_line_ids').mapped('move_id')
         not_moves = moves.filtered(lambda x: x.picking_type_id.code != 'outgoing')
-        if not_moves:
-            raise ValidationError(_('No hay movimientos de salida seleccionados'))
+        if not moves:
+            cancel_delivery = True
+        else:
+            cancel_delivery = False
+
+
         if moves.filtered(lambda x: x.batch_delivery_id) and len(moves.mapped('batch_delivery_id')) > 2:
             raise ValidationError(_('Algunos movimientos ya tienen orden de carga seleccionada'))
         if moves.filtered(lambda x: x.state != 'assigned'):
             raise ValidationError(_("Tienes movimientos en estado distinto a 'Reservado'"))
 
-        vals = {}
+        vals = {'cancel_delivery': cancel_delivery}
         domain=[('state', 'in', ('draft', 'ready'))]
         st_ids = []
         for x in moves.mapped('shipping_type'):
@@ -181,8 +186,7 @@ class StockBatchDeliveryWzd(models.TransientModel):
         vals.update(default_moves_to_pack_ids=[(6, 0, moves.filtered(lambda x: not x.result_package_id).ids)])
         vals.update(default_batch_delivery_ids=[(6, 0, moves.mapped('batch_delivery_id').ids)])
         vals.update(default_moves_to_batch_ids=[(6, 0, moves.filtered(lambda x: not x.batch_id).ids)])
-        if moves_to_not_include:
-            vals.update(default_moves_to_not_include=[(6, 0, moves_to_not_include.ids)])
+        vals.update(default_moves_to_not_include=[(6, 0, moves_to_not_include.ids)])
 
         ctx = self._context.copy()
         ctx.update(vals)

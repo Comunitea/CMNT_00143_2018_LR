@@ -85,8 +85,8 @@ class StockMovePackWzd(models.TransientModel):
 
         move_line_ids = moves.mapped('move_line_ids')
         not_moves = moves.filtered(lambda x: x.picking_type_id.code != 'outgoing')
-        if not_moves:
-            raise ValidationError(_('No hay movimientos de salida seleccionados'))
+        #if not_moves:
+        #    raise ValidationError(_('No hay movimientos de salida seleccionados'))
         if moves.filtered(lambda x: x.batch_delivery_id):
             raise ValidationError(_('Algunos movimientos ya tienen orden de carga seleccionada'))
         if moves.filtered(lambda x: x.state not in ('partially_availbale', 'assigned')):

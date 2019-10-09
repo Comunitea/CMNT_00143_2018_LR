@@ -189,7 +189,7 @@ class StockBatchDelivery(models.Model):
 
     @api.multi
     def action_transfer(self):
-        for batch in self:
+        for batch in self.filtered(lambda x:x.state=='ready'):
             batch.batch_ids.action_transfer()
             batch.state = 'done'
 
@@ -209,7 +209,9 @@ class StockBatchDelivery(models.Model):
                 )
 
 
-
+    @api.multi
+    def action_confirm(self):
+        self.write({'state': 'ready'})
 
     @api.multi
     def action_view_stock_package(self):

@@ -90,6 +90,7 @@
                     <field name="delivery_route_path_id"/>
                     <field name="carrier_id"/>
                     <field name="name"/>
+                    <field name="batch_delivery_id" invisible="context.get('group_code', False) != 'outgoing'"/>
                     <field name="draft_batch_picking_id"/>
                     <field name="location_dest_id" groups="stock.group_stock_multi_locations"/>
                     <field name="partner_id"/>

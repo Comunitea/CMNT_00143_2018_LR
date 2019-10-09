@@ -4,16 +4,8 @@
 
 
 import json
-from datetime import datetime, timedelta
-from babel.dates import format_datetime, format_date
 
 from odoo import models, api, _, fields
-from odoo.release import version
-from odoo.tools import DEFAULT_SERVER_DATE_FORMAT as DF
-from odoo.tools.misc import formatLang
-
-
-from .stock_picking import PICKING_TYPE_GROUP
 
 class StockPickingType(models.Model):
     _inherit = 'stock.picking.type'

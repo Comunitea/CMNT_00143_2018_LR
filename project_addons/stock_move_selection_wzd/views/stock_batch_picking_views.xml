@@ -12,16 +12,20 @@
                     <field name="name"/>
                     <field name="shipping_type"/>
                     <field name="delivery_route_path_id"/>
+                    <field name="batch_delivery_id" invisible="context.get('group_code', False) != 'outgoing'"/>
                     <field name="carrier_id"/>
                     <field name="partner_id"/>
                     <field name="date" />
                     <field name="state"/>
+                    <field name="code"  invisible="1"/>
+                    <field name="excess" invisible="context.get('group_code', False) != 'outgoing'"/>
+
                 </tree>
             </field>
         </record>
     <!-- stock.batch.picking form view -->
     <record model="ir.ui.view" id="stock_move_selection_wzd_form">
-        <field name="name">stock.move.selection.wzr.form</field>
+        <field name="name">stock.batch.picking.move.selection.form</field>
         <field name="model">stock.batch.picking</field>
         <field name="inherit_id" ref="stock_batch_picking.stock_batch_picking_form"/>
         <field name="arch" type="xml">
@@ -45,7 +49,10 @@
             </xpath>
             <xpath expr="//field[@name='picker_id']" position="after">
                     <field name="partner_id" attrs="{'invisible': [('partner_id', '=',False)]}"></field>
+                <field name="code"  invisible="1"/>
+                    <field name="excess" attrs="{'invisible': [('code', '!=', 'outgoing')]}"/>
                     <field name="picking_type_id"/>
+
                 <field name="sga_state" widget="statusbar" statusbar_visible="no_send,pending,done" attrs="{'invisible': [('sga_integrated', '!=', True)]}"/>
                     <field name="sga_integrated" invisible="1"/>
             </xpath>
@@ -140,16 +147,19 @@
         <field name="arch" type="xml">
             <field name="name" position="after">
                 <field name="picking_type_id"/>
+                <field name="excess"/>
             </field>
 
 
             <xpath expr="//filter[@name='picker_id']" position="before">
+                <field name="excess" string="Franquicia" domain="[('excess', '=', True)]"/>
                 <filter name="todo" string="Por hacer" domain="[('state', 'in', ('draft', 'assigned'))]"/>
                 <filter name="last_day" string="Ultimos" domain="['|', ('state', '=', 'assigned'), ('date','&gt;', (context_today() - datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d') )]"/>
                 <filter name="last_week" string="Esta semana" domain="['|', ('state', '=', 'assigned'),('date','&gt;', (context_today() - datetime.timedelta(weeks=1)).strftime('%%Y-%%m-%%d') )]"/>
             </xpath>
-            <xpath expr="//filter[@name='picker_id']" position="after">
-                <filter name="picking_type_id" string="Picking type" context="{'group_by':'picking_type_id'}"/>
+            <xpath expr="//filter[@name='picker_id']" position="before">
+                <filter name="groupby_picking_type_id" string="Tipo" context="{'group_by':'picking_type_id'}"/>
+                <filter name="groupby_partner_id" string="Empresa" context="{'group_by':'partner_id'}"/>
             </xpath>
         </field>
     </record>
