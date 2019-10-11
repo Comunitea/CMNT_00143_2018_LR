@@ -58,6 +58,8 @@ class MoveChangeQuantWzd(models.TransientModel):
     override_qty = fields.Boolean('Permite cambiar cantidad total', default=False)
     reserved_move_ids = fields.Many2many('stock.move',  string="Otras reservas")
 
+
+
     def _prepare_quant(self, quant):
         return {'quant_id': quant.id,
                 'selection': False,

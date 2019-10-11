@@ -49,9 +49,10 @@
             </xpath>
             <xpath expr="//field[@name='picker_id']" position="after">
                     <field name="partner_id" attrs="{'invisible': [('partner_id', '=',False)]}"></field>
-                <field name="code"  invisible="1"/>
+                    <field name="code"  invisible="1"/>
                     <field name="excess" attrs="{'invisible': [('code', '!=', 'outgoing')]}"/>
                     <field name="picking_type_id"/>
+                    <field name="date_done"/>
 
                 <field name="sga_state" widget="statusbar" statusbar_visible="no_send,pending,done" attrs="{'invisible': [('sga_integrated', '!=', True)]}"/>
                     <field name="sga_integrated" invisible="1"/>
@@ -86,9 +87,9 @@
                             <field name="quantity_done"/>
 
                             <button name="button_reasignar_origen_wzd"
-                            string="(RE) Asignar origen"
+                            string="Split/(Re)Asignar origen"
                             type="object"
-                            icon="fa-tags"
+                            icon="fa-code-fork"
                             groups="base.group_user"
                             attrs="{'invisible':['|',
                                     ('code','=','incoming'),
@@ -151,13 +152,21 @@
             </field>
 
 
+
+
             <xpath expr="//filter[@name='picker_id']" position="before">
-                <field name="excess" string="Franquicia" domain="[('excess', '=', True)]"/>
+                <filter name="excess" string="Franquicia" domain="[('excess', '=', True)]"/>
+                <separator/>
+
                 <filter name="todo" string="Por hacer" domain="[('state', 'in', ('draft', 'assigned'))]"/>
                 <filter name="last_day" string="Ultimos" domain="['|', ('state', '=', 'assigned'), ('date','&gt;', (context_today() - datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d') )]"/>
                 <filter name="last_week" string="Esta semana" domain="['|', ('state', '=', 'assigned'),('date','&gt;', (context_today() - datetime.timedelta(weeks=1)).strftime('%%Y-%%m-%%d') )]"/>
             </xpath>
             <xpath expr="//filter[@name='picker_id']" position="before">
+                <filter string="Tipo de envío" name="by_shipping_type" domain="[]"  context="{'group_by':'shipping_type'}"/>
+                <filter string="Partner" name="by_partner_id" domain="[]"  context="{'group_by':'partner_id'}"/>
+                <filter string="Ruta de transporte" name="by_delivery_path_route_id" domain="[]"  context="{'group_by':'delivery_route_path_id'}"/>
+                <filter string="Forma de envío" name="by_carrier_id" domain="[]"  context="{'group_by':'carrier_id'}"/>
                 <filter name="groupby_picking_type_id" string="Tipo" context="{'group_by':'picking_type_id'}"/>
                 <filter name="groupby_partner_id" string="Empresa" context="{'group_by':'partner_id'}"/>
             </xpath>

@@ -41,11 +41,12 @@ class StockMove(models.Model):
     package_id = fields.Many2one('stock.quant.package', 'Paquete origen',
                                  inverse='set_package_id_to_lines',
                                  compute="get_package_id_from_line",
-                                 store=True, copy=False)
+                                 copy=False)
     result_package_id = fields.Many2one('stock.quant.package', 'Paquete destino',
                                         inverse='set_result_package_id_to_lines',
                                         compute="get_result_package_id_from_line",
-                                        store=True, copy=False)
+                                        store=True,
+                                        copy=False)
     lot_id = fields.Many2one('stock.production.lot', 'Lote')
     dunmy_picking_id = fields.Many2one('stock.picking', 'Transfer Reference', store=False)
     sga_integrated = fields.Boolean(related="picking_type_id.sga_integrated")
@@ -111,11 +112,11 @@ class StockMove(models.Model):
             raise ValidationError(
                 'No puedes cambiar un paquete en un movimiento ya realizado')
         self.result_package_id = package
-        if package:
-            vals = package.update_info_route_vals()
-            if package.batch_delivery_id:
-                vals.update(batch_delivery_id=package.batch_delivery_id.id)
-            self.write(vals)
+        #if package:
+        #    vals = package.update_info_route_vals()
+        #    if package.batch_delivery_id:
+        #        vals.update(batch_delivery_id=package.batch_delivery_id.id)
+        #    self.write(vals)
 
     @api.multi
     def assign_package(self, package):
@@ -204,7 +205,6 @@ class StockMove(models.Model):
                 arg[0] = 'product_uom_qty'
                 arg[1] = '>='
                 arg[2] = '0'
-                print (new_args)
                 move_lines = True
 
         if move_lines:
@@ -212,8 +212,6 @@ class StockMove(models.Model):
             line_ids = [('id', 'in', [x['id'] for x in moves]), ('qty_done', '>', 0)]
             moves = self.env['stock.move.line'].search_read(line_ids, ['move_id'])
             new_args = [('id', 'in', [x['move_id'][0] for x in moves])]
-
-        print (new_args)
         return super().search(new_args, offset=offset, limit=limit, order=order, count=count)
 
 
@@ -324,6 +322,7 @@ class StockMove(models.Model):
         if self.result_package_id:
             package = self.result_package_id
             self.result_package_id = False
+            return True
         else:
             wzd_id = self.env['stock.move.pack.wzd'].create_from_moves(self)
             action = self.env.ref(
@@ -346,34 +345,49 @@ class StockMove(models.Model):
         #    self.mapped('move_line_ids').write({'picking_id': vals['picking_id']})
         return super().write(vals)
 
+    @api.multi
     def set_package_id_to_lines(self):
         for move in self:
             move.mapped('move_line_ids').write({'result_package_id': move.package_id.id})
 
+    @api.multi
     @api.depends('move_line_ids.package_id')
     def get_package_id_from_line(self):
         for move in self:
-            move.package_id = move.move_line_ids.mapped('package_id')
+            package_id = move.move_line_ids.mapped('package_id')
+            move.package_id = package_id and package_id[0] or False
 
+    @api.multi
     def set_result_package_id_to_lines(self):
+
         for move in self:
             move.mapped('move_line_ids').write({'result_package_id': move.result_package_id.id})
 
+    @api.multi
     @api.depends('move_line_ids.result_package_id')
     def get_result_package_id_from_line(self):
         for move in self:
-            move.result_package_id = move.move_line_ids.mapped('result_package_id')
+            result_package_id = move.move_line_ids.mapped('result_package_id')
+            move.result_package_id = result_package_id and result_package_id[0] or False
 
     def _get_new_picking_domain(self):
         domain = super()._get_new_picking_domain()
         return domain
 
     def _action_done(self):
-
         res = super()._action_done()
-        for move in self:
-            if move.sga_state != 'done':
-                move.sga_state = 'done'
+        for move in self.filtered(lambda x: x.sga_state != 'done'):
+            move.sga_state = 'done'
+        return res
+
+    def _prepare_move_split_vals(self, qty):
+        res = super()._prepare_move_split_vals(qty=qty)
+        if self.picking_type_id.parent_id:
+            res.update({
+                'picking_type_id': self.picking_type_id.parent_id.id,
+                'location_id': self.picking_type_id.parent_id.default_location_src_id.id,
+                'location_dest_id': self.picking_type_id.parent_id.default_location_dest_id.id,
+            })
         return res
 
 

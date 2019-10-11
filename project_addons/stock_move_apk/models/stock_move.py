@@ -161,6 +161,7 @@ class StockMoveLine(models.Model):
 
     @api.model
     def assign_package(self, vals):
+        return
         result_package_id = vals.get('result_package_id', False)
         move_ids = vals.get('move_line_ids', False)
         move_line_ids = self.browse(move_ids)

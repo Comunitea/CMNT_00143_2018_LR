@@ -40,45 +40,21 @@ class StockBatchPicking(models.Model):
         index=True, required=True)
     code = fields.Selection(related='picking_type_id.code')
     excess = fields.Boolean(string='Franquicia')
+    date_done = fields.Datetime('Realizado', copy=False, help="Fecha de transferencia")
 
     def get_excess_domain(self):
-        from_time = (datetime.now() - timedelta(hours=96)).strftime(DEFAULT_SERVER_DATE_FORMAT)
+        from_time = self.env['stock.picking.type'].get_excess_time()
         domain = [('date', '>=', from_time),
                   ('state', 'in', ('ready', 'done'))]
         return domain
 
-    def get_excess_affected(self, partner_id=False, type_id=False):
-        domain = self.get_excess_domain + [('partner_id', '=', partner_id), ('picking_type_id', '=', type_id)]
-        picks = self.search(domain, order='state desc, date desc')
-        return picks
-
-    @api.multi
-    def get_transport_excess(self):
-        def check_excess(picks):
-            if len(picks) == 1:
-                picks.excess = True
-            else:
-                picks.write({'excess': False})
-                picks[0].write({'excess': True})
-
-        partner_ids = self.mapped('partner_id')
-        picking_type_id = self.mapped('picking_type_id')
-        for partner_id in partner_ids:
-            pick_ids = self.get_excess_affected(partner_id.id, picking_type_id.id)
-            check_excess(pick_ids)
-
     @api.multi
     def action_assign(self):
-
         res = super().action_assign()
-        self.filtered(lambda x: x.code == 'outgoing').get_transport_excess()
+        #self.filtered(lambda x: x.code == 'outgoing').get_transport_excess()
         return res
 
-    @api.multi
-    def action_transfer(self):
-        res = super().action_done()
-        self.filtered(lambda x: x.code == 'outgoing').get_transport_excess()
-        return res
+
 
     @api.multi
     def alternate_draft_ready(self):
@@ -133,14 +109,12 @@ class StockBatchPicking(models.Model):
                 'carrier_id': batch.carrier_id.id
             })
 
-
     @api.multi
     @api.depends('draft_move_lines.sga_state')
     def get_sga_state(self):
         for batch in self:
             lines = batch.draft_move_lines
             batch.sga_state = self.env['stock.picking.type'].get_parent_state(lines)
-
 
     def get_batch_moves_to_transfer(self):
         return self.draft_move_lines
@@ -169,13 +143,14 @@ class StockBatchPicking(models.Model):
         if self.mapped('batch_delivery_id'):
             self.draft_move_lines.batch_delivery_id
             raise ValidationError(_('No puedes eliminar un grupo que ya está en una orden de carga. Priemro debes sacarlo de la orden de carga'))
-
         rs = super().unlink()
 
     @api.multi
     def action_transfer(self):
         """
         """
+        self.filtered(lambda x: x.picking_type_id.code == 'outgoing').compute_route_fields()
+
         effective = self.filtered(lambda x: x.draft_move_lines)
         normal = self.filtered(lambda x: not x.draft_move_lines and x.state != 'done')
         if effective:
@@ -215,7 +190,7 @@ class StockBatchPicking(models.Model):
                     message = "{}</ul>".format(message)
                 batch.message_post(message)
                 batch.write({'state': 'done',
-                             'date': fields.Date.today()})
+                             'date_done': fields.Datetime.now()})
 
         if normal.mapped('picking_ids'):
             return super(StockBatchPicking, normal).action_transfer()

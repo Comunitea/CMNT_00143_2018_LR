@@ -11,8 +11,8 @@ class ProductTemplate(models.Model):
     _inherit = "product.template"
 
     adr_idnumonu = fields.Many2one('product.adr.code', string='ADR Code')
-    adr_weight_x_kgrs_11363 = fields.Float(compute="_weight_calculator")
-    adr_weight_x_kgrs_11364 = fields.Float(compute="_weight_calculator")
+    adr_weight_x_kgrs_11363 = fields.Float(compute="_weight_calculator", string="Peso 11363")
+    adr_weight_x_kgrs_11364 = fields.Float(compute="_weight_calculator", string="Peso 11364")
 
     adr_denomtecnica = fields.Char('Denominación técnica')
     adr_peligroma = fields.Boolean('Artículo peligroso')

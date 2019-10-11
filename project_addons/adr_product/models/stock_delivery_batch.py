@@ -4,8 +4,6 @@
 
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
-from pprint import pprint
-
 
 class StockDeliveryBatch(models.Model):
     _inherit = 'stock.batch.picking'

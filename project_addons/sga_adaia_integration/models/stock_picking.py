@@ -5,7 +5,6 @@
 from odoo import fields, models, tools, api, _
 from odoo.exceptions import AccessError, UserError, ValidationError
 from .res_config import SGA_STATES
-from pprint import pprint
 
 class StockPickingSGA(models.Model):
 

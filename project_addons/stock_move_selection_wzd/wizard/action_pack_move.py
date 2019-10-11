@@ -67,6 +67,7 @@ class StockMovePackWzd(models.TransientModel):
                             'carrier_id': self.carrier_id.id}
         new_pack = self.env['stock.quant.package'].create(new_package_vals)
         self.move_ids.assign_package(new_pack)
+        return True
 
     @api.multi
     def action_assign_route(self):
@@ -89,7 +90,7 @@ class StockMovePackWzd(models.TransientModel):
         #    raise ValidationError(_('No hay movimientos de salida seleccionados'))
         if moves.filtered(lambda x: x.batch_delivery_id):
             raise ValidationError(_('Algunos movimientos ya tienen orden de carga seleccionada'))
-        if moves.filtered(lambda x: x.state not in ('partially_availbale', 'assigned')):
+        if moves.filtered(lambda x: x.state not in ('partially_available', 'assigned')):
             raise ValidationError(_("Tienes movimientos en estado distinto a 'Reservado'"))
         if moves.filtered(lambda x: x.result_package_id):
             raise ValidationError(_("Tienes movimientos ya empaquetados"))
