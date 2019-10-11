@@ -37,7 +37,6 @@ class ConfigUlmaData(models.TransientModel):
         for param in ULMA_PARAMS:
             value= ICP.get_param('sga_ulma_integration.{}'.format(param), False)
             res.update({param: value})
-        print (res)
         return res
 
     @api.multi

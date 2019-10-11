@@ -35,3 +35,14 @@ class StockMoveLine(models.Model):
             line.update({
                 'qty_done': quantity
             })
+
+    @api.multi
+    def split_move_reserved_qty(self, qty=0):
+        moves = []
+        self.ensure_one()
+        for move_line in self:
+            move = move_line.move_id
+            qty = move.product_uom_qty - move.reserved_availability
+        moves.append(move._split(qty=qty))
+        moves.append(move.id)
+        return self.env['stock.picking.type'].return_action_show_moves(domain=[('id', 'in', moves)])

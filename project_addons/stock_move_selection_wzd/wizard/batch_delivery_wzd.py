@@ -155,7 +155,7 @@ class StockBatchDeliveryWzd(models.TransientModel):
 
         if moves.filtered(lambda x: x.batch_delivery_id) and len(moves.mapped('batch_delivery_id')) > 2:
             raise ValidationError(_('Algunos movimientos ya tienen orden de carga seleccionada'))
-        if moves.filtered(lambda x: x.state != 'assigned'):
+        if moves.filtered(lambda x: x.state not in ('partially_available', 'assigned')):
             raise ValidationError(_("Tienes movimientos en estado distinto a 'Reservado'"))
 
         vals = {'cancel_delivery': cancel_delivery}
@@ -180,7 +180,7 @@ class StockBatchDeliveryWzd(models.TransientModel):
         vals.update(default_move_ids = [(6, 0, moves.ids)])
         if batch_delivery_id:
             vals.update(default_batch_delivery_id=batch_delivery_id.id)
-        vals.update(default_date=min(moves.mapped('date_expected')))
+        vals.update(default_date=moves and min(moves.mapped('date_expected')))
         vals.update(default_packages_ids=[(6, 0, moves.mapped('result_package_id').ids)])
         vals.update(default_picking_ids=[(6, 0, moves.mapped('picking_id').ids)])
         vals.update(default_moves_to_pack_ids=[(6, 0, moves.filtered(lambda x: not x.result_package_id).ids)])
@@ -193,8 +193,6 @@ class StockBatchDeliveryWzd(models.TransientModel):
         if 'active_domain' in ctx.keys():
             ctx.pop('active_domain')
         defaults = super(StockBatchDeliveryWzd, self.with_context(ctx)).default_get(fields)
-        print(ctx)
-
         return defaults
 
     def _default_picker_id(self):

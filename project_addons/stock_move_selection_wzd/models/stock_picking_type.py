@@ -47,7 +47,6 @@ class PickingType(models.Model):
         for type in self:
             domain = [('picking_type_id', '=', type.id), ('state', 'in', ('asigned', 'waiting'))]
             type.actual_picking_ids = self.env['stock.picking'].search(domain, limit=1, order='id desc')
-            print (type.actual_picking_ids)
 
     allow_unpacked = fields.Boolean('Movimientos sin paquete', help='En ordenes de carga, si no está marcado genera automaticamente un paquete para el movimiento')
     allow_unbatched = fields.Boolean('Albaranes sin grupo', help='En ordenes de carga, si no está marcado genera automaticamente un grupo para el albarán')
@@ -227,7 +226,6 @@ class PickingType(models.Model):
 
             sql = sql.replace('dtr', today)
             sql = sql.replace('pti', '{}'.format(record.id))
-            #print('\n\n{}\n\n'.format(sql))
             self._cr.execute(sql)
 
             res = self._cr.fetchall()
@@ -250,12 +248,16 @@ class PickingType(models.Model):
                 'rate_sga_undone': rate_sga_undone,
                 'rate_packed_undone': rate_packed_undone
             }
-            print('Ratios para {}: {} \n {}'.format(record.name, res, rates))
+            #print('Ratios para {}: {} \n {}'.format(record.name, res, rates))
             record.rate_late = rate_late
             record.rate_undone = rate_undone
             record.rate_sga_undone = rate_sga_undone
             record.rate_packed_undone = rate_packed_undone
 
+    def get_excess_time(self):
+        (datetime.now() + timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT)
+        from_time = (datetime.now() - timedelta(days=3)).strftime(DEFAULT_SERVER_DATE_FORMAT) + ' 00:00:01'
+        return from_time
 
     def get_moves_domain(self, default = []):
 
@@ -453,13 +455,10 @@ class PickingType(models.Model):
         if self._context.get('search_shipping_type', False):
             domain += [('shipping_type', '=', self._context.get('search_shipping_type', False) )]
 
-        tomorrow = (datetime.now() + timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT)
-        yesterday = (datetime.now() - timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT)
-        today = datetime.now().strftime(DEFAULT_SERVER_DATE_FORMAT)
-
-        print('{} {}'.format("Contet domain", domain))
-
-
+        #tomorrow = (datetime.now() + timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT)
+        #yesterday = (datetime.now() - timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT)
+        #today = datetime.now().strftime(DEFAULT_SERVER_DATE_FORMAT)
+        #print('{} {}'.format("Contet domain", domain))
         return domain or []
 
 
@@ -480,12 +479,15 @@ class PickingType(models.Model):
             context.update({
                 'search_default_by_shipping_type': True,
                 'search_default_by_delivery_route_path_id': True,
+                'search_default_by_partner_id': True,
             })
 
         elif self.group_code == 'outgoing':
             context.update({
-                'search_default_by_partner_id': True,
+
                 'search_default_by_shipping_type': True,
+                'search_default_by_delivery_route_path_id': True,
+                'search_default_by_partner_id': True,
             })
         elif self.group_code == 'incoming':
             context.update({
@@ -519,7 +521,7 @@ class PickingType(models.Model):
             ctx = self.update_context(ctx)
         ctx.update(eval(action['context']))
 
-        action['name'] = self.name
+        action['name'] = "Movimientos: {}".format(self.name)
         action['display_name'] = self.name
         action['context'] = ctx
         return action
@@ -540,7 +542,7 @@ class PickingType(models.Model):
         ctx.update(eval(action['context']))
 
         action['context'] = ctx
-        action['name'] = self.name
+        action['name'] = "Pedidos: {}".format(self.name)
         action['display_name'] = self.name
         return action
 
@@ -558,7 +560,7 @@ class PickingType(models.Model):
         ctx.update(eval(action['context']))
 
         action['context'] = ctx
-        action['name'] = self.name
+        action['name'] = "Batchs: {}".format(self.name)
         action['display_name'] = self.name
         return action
 
@@ -762,4 +764,51 @@ class PickingType(models.Model):
         name_str = [x[1] for x in PICKING_TYPE_GROUP if x[0] == group_code]
         if name_str:
             action['display_name'] = "---------> {} Moves".format(name_str[0])
+        return action
+
+    @api.multi
+    def get_batch_excess(self):
+        action = self.env.ref(
+            'stock_move_selection_wzd.batch_excess_wzd_action').read()[0]
+        return action
+
+    @api.model
+    def get_excess_domain(self,from_time=False):
+
+        picking_type_id = self._context.get('picking_type_id', False) or self.id
+        batch_domain = [('date_done', '>=', from_time),
+                        ('state', 'in', ('ready', 'done')),
+                        ('shipping_type', '=', 'urgent'),
+                        ('partner_id.associate', '=', True),
+                        ('picking_type_id', '=', picking_type_id)]
+        return batch_domain
+
+    @api.multi
+    def open_excess_wzd(self):
+        picking_type_id = self.id
+        from_time = self._context.get('from_time', False) or self.env[
+            'stock.picking.type'].get_excess_time()
+        batch_domain = self.get_excess_domain(from_time)
+        batch_ids = self.env['stock.batch.picking'].search_read(batch_domain, ['id', 'partner_id', 'name'],
+                                                                order='state desc, date desc')
+        partner_ids = []
+        excess_ids = []
+        not_excess_ids = []
+        for batch in batch_ids:
+            partner_id = batch['partner_id'][0]
+            if partner_id in partner_ids:
+                not_excess_ids.append(batch['id'])
+            else:
+                partner_ids += [partner_id]
+                excess_ids.append(batch['id'])
+
+        vals = {'date': from_time,
+                'excess_ids': [(0, 0, self.env['batch.excess.wzd'].get_line_values(x, True)) for x in excess_ids],
+                'not_excess_ids': [(0, 0, self.env['batch.excess.wzd'].get_line_values(x, False)) for x in not_excess_ids],
+                'picking_type_id': picking_type_id,
+                }
+        wzd_id = self.env['batch.excess.wzd'].create(vals)
+        action = self.env.ref(
+            'stock_move_selection_wzd.batch_excess_wzd_action').read()[0]
+        action['res_id'] = wzd_id.id
         return action

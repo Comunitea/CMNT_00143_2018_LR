@@ -12,10 +12,21 @@ class StockBatchPicking(models.Model):
     _name = 'stock.batch.picking'
 
     campaign_id = fields.Many2one('campaign', 'Campaign')
-    carrier_id = fields.Many2one("delivery.carrier", string="Carrier",compute='compute_route_fields', inverse='set_route_fields')
-    shipping_type = fields.Selection(compute='compute_route_fields', inverse='set_route_fields')
-    delivery_route_path_id = fields.Many2one('delivery.route.path', compute='compute_route_fields',
-                                             inverse='set_route_fields')
+    carrier_id = fields.Many2one("delivery.carrier", string="Carrier")
+    #shipping_type = fields.Selection(compute='compute_route_fields', inverse='set_route_fields')
+    #delivery_route_path_id = fields.Many2one('delivery.route.path', compute='compute_route_fields',
+    #                                         inverse='set_route_fields')
+
+    @api.multi
+    def set_route_fields(self):
+        for batch in self:
+            batch.check_allow_change_route_fields()
+            moves = batch.move_lines
+            moves.write({
+                'shipping_type': batch.shipping_type,
+                'delivery_route_path_id': batch.delivery_route_path_id.id,
+                'carrier_id': batch.carrier_id.id
+            })
 
     @api.multi
     @api.depends('move_lines.shipping_type', 'move_lines.delivery_route_path_id', 'move_lines.carrier_id')
@@ -44,16 +55,6 @@ class StockBatchPicking(models.Model):
             raise ValidationError(_('No puedes cambiar en movimientos ya realizados'))
         return True
 
-    @api.multi
-    def set_route_fields(self):
-        for batch in self:
-            batch.check_allow_change_route_fields()
-            moves = batch.move_lines
-            moves.write({
-                'shipping_type': batch.shipping_type,
-                'delivery_route_path_id': batch.delivery_route_path_id.id,
-                'carrier_id': batch.carrier_id.id
-            })
 
     @api.multi
     def write(self, vals):

@@ -18,6 +18,16 @@ class ProductAdrCode(models.Model):
 
     _name = "product.adr.code"
 
+
+    @api.multi
+    def name_get(self):
+        res=[]
+        for adr in self:
+            name = '%s - %s' % (adr.denomtecnica, adr.official_name or adr.numero_onu)
+            res.append((adr.id, name))
+        return res
+
+
     denomtecnica = fields.Char('Denominación técnica')
     peligroma = fields.Boolean('Artículo peligroso')
     exe22315 = fields.Boolean ('Sujeto a la exención 22315')

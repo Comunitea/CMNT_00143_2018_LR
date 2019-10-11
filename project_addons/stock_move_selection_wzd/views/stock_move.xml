@@ -7,12 +7,13 @@
         <field name="inherit_id" ref="stock.view_picking_form" />
         <field name="arch" type="xml">
             <button name="action_show_details" position="before">
+                <field name="code" invisible="1"/>
                 <button name="button_reasignar_origen_wzd"
-                            string="(RE) Asignar origen"
+                            string="Split/(Re)Asignar origen"
                             type="object"
                             icon="fa-tags"
                             groups="base.group_user"
-                            attrs="{'invisible':['|',('picking_code','=','incoming'),('state','not in',('confirmed','assigned','partially_available'))]}"/>
+                            attrs="{'invisible':['|',('code','=','incoming'),('state','not in',('confirmed','assigned','partially_available'))]}"/>
             </button>
         </field>
     </record>
@@ -55,8 +56,9 @@
         <field name="arch" type="xml">
             <field name="state" position="before">
                     <button name="button_reasignar_origen_wzd"
-                            attrs="{'invisible': [('state', 'not in', ('confirmed', 'assigned', 'partially_available'))]}"
-                            string="(RE) Asignar origen" type="object" class="oe_highlight" groups="base.group_user"/>
+                            attrs="{'invisible':['|',('code','=','incoming'),('state','not in',('confirmed','assigned','partially_available'))]}"
+
+                            string="Split/(Re)Asignar origen" type="object" class="oe_highlight" groups="base.group_user"/>
             </field>
             <field name="picking_id" position="after">
                 <field name="batch_delivery_id"/>
@@ -64,6 +66,7 @@
             <field name="reference" position="before">
                 <field name="sga_state" widget="statusbar" statusbar_visible="no_send,pending,done" attrs="{'invisible': [('sga_integrated', '!=', True)]}"/>
                 <field name="sga_integrated" invisible="1"/>
+                <field name="code" invisible="1"/>
             </field>
         </field>
     </record>
@@ -92,6 +95,7 @@
                         type="object"
                         context="{'object': 'move'}"
                         icon="fa-truck"
+                        class="text-primary"
                         attrs="{'invisible': ['|','|',('group_code', 'not in', ('outgoing', 'dropship')),
                                                         ('result_package_id', '!=', False), ('state', 'not in', ('assigned', 'partially_available'))]}"
                         />
@@ -103,6 +107,7 @@
                         type="object"
                         context="{'model': 'move'}"
                         icon="fa-tasks"
+                        class="text-primary"
                         attrs="{'invisible': [ '|','|', ('visible_count_move_to_pick', '=', False), ('state', 'not in', ('assigned', 'partially_available')), ('batch_delivery_id', '!=', False)]}"
                         />
 
@@ -148,27 +153,31 @@
                         type="object"
                         context="{'object': 'package'}"
                         icon="fa-truck"
+                        class="text-primary"
                         attrs="{'invisible': ['|', ('group_code', '!=', 'outgoing'),('state', 'not in', ('assigned', 'partially_available'))]}"
                         />
                 <button name="action_tree_manage_pack"
                         string="(Des) Empaquetar"
                         type="object"
                         icon="fa-dropbox"
+                        class="text-primary"
                         attrs="{'invisible': ['|', ('batch_delivery_id', '!=', False), ('state', 'not in', ('assigned', 'partially_available'))]}"
                         />
                 <field name="product_uom_qty"/>
+                <field name="reserved_availability"/>
                 <field name="quantity_done" options='{"fg_color": "green: quantity_done &gt; 0.00"}'/>
                 <button name="button_reasignar_origen_wzd"
-                            string="(RE) Asignar origen"
+                            string="Split/(Re)Asignar origen"
                             type="object"
-                            icon="fa-tags"
+                            icon="fa-code-fork"
+                            class="text-primary"
                             groups="base.group_user"
                             attrs="{'invisible':['|',('code','=','incoming'),('state','not in',('confirmed','assigned','partially_available'))]}"/>
                 <field name="show_details_visible" invisible="1"/>
-                <button name="action_show_details" string="Registrar detalles del movimiento"
+                <!--button name="action_show_details" string="Registrar detalles del movimiento"
                         type="object" icon="fa-list"
                         attrs="{'invisible': [('show_details_visible', '=', False)]}"
-                        />
+                        /-->
 
                 <field name="state"/>
                 <field name="sga_state" invisible="not context.get('group_code', False) in ('picking', 'internal', 'location', 'reposition')"/>
@@ -270,8 +279,6 @@
                     <filter string="Picking" name="by_picking" domain="[]"  context="{'group_by':'picking_id'}"/>
                     <filter string="Paquete" name="by_package" domain="[]"  context="{'group_by':'package_id'}"/>
                     <filter string="Dest. Paquete" name="by_dest_package" domain="[]"  context="{'group_by':'result_package_id'}"/>
-
-
                 </group>
             </search>
         </field>

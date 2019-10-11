@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_batch_excess_wzd" model="ir.ui.view">
+        <field name="name">Asistente para franquicia</field>
+        <field name="model">batch.excess.wzd</field>
+        <field name="arch" type="xml">
+            <form string="Franquicia">
+                <separator string="Fecha/Hora"/>
+                <label string="Se filtran los movimientos desde esta fecha/hora"/>
+                <h2>
+                    <field name="date"/>
+
+                </h2>
+                <br/>
+                <group string="Con franquicia">
+                    <field name="excess_ids" nolabel="1">
+                        <tree create="0" editable="bottom">
+
+                            <field name="batch_id" invisible="1"/>
+                            <field name="name"/>
+                            <field name="partner_id"/>
+                            <field name="date"/>
+                            <field name="excess"/>
+                            <field name="new_excess"/>
+                        </tree>
+                    </field>
+                </group>
+                <group string="Sin franquicia">
+                    <field name="not_excess_ids" nolabel="1">
+                        <tree create="0" editable="bottom">
+
+                            <field name="batch_id" invisible="1"/>
+                            <field name="name"/>
+                            <field name="partner_id"/>
+                            <field name="date"/>
+                            <field name="excess"/>
+                            <field name="new_excess"/>
+                        </tree>
+                    </field>
+                </group>
+
+                <footer>
+                    <button name="action_apply_changes" string="Aplicar cambios" type="object" class="oe_highlight"/>
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <act_window name="Cierre de franquicia orden de carga"
+                res_model="batch.excess.wzd"
+                src_model="stock.picking.type"
+                view_mode="form"
+                target="new"
+                key2="client_action_multi"
+                id="batch_excess_wzd_action"/>
+
+</odoo>

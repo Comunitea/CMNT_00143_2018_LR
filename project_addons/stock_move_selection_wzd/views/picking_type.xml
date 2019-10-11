@@ -586,8 +586,14 @@
                                                 <ul class="oe_kanban_colorpicker" data-field="color"/>
                                             </div>
                                             <div class="col-xs-4 text-right">
-                                                <a type="edit">Settings</a>
+                                                <a type="edit">Acciones</a>
+                                                <div>
+                                                    <button class="btn btn-primary" name="open_excess_wzd" type="object">
+                                                        <span>Cierre franquicia</span>
+                                                    </button>
+                                                </div>
                                             </div>
+
                                         </div>
                                     </div>
                                 </div>

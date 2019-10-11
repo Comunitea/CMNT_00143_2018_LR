@@ -101,7 +101,6 @@ class ProductAlternativeWzd(models.TransientModel):
         product_id = self.env['product.product'].\
             browse(self._context.get('default_product_id'))
         res.update(self.get_values(product_id))
-        print (res)
         return res
 
     @api.model

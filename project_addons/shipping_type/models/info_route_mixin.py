@@ -38,8 +38,6 @@ class InfoRouteMixin(models.AbstractModel):
         return super().write(vals)
 
     def get_write_route_vals(self, vals):
-        print (vals)
-
         child_vals = {}
         if 'shipping_type' in vals:
             child_vals.update(shipping_type=vals['shipping_type'])

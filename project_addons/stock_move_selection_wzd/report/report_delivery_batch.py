@@ -4,7 +4,7 @@
 
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
-from pprint import pprint
+
 
 class DeliveryBatchReport(models.AbstractModel):
 

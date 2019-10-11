@@ -246,7 +246,22 @@ class WebsiteSaleContext(WebsiteSale):
     ], type='http', auth="public", website=True)
     def shop(self, page=0, category=None, search='', ppg=False, **post):
         res = super(WebsiteSaleContext, self).shop(page=page, category=category, search=search, ppg=ppg, **post)
+        new_res = self.update_context_with_providers(res, page, category, search, ppg, **post)
+        return new_res
 
+        
+
+    @http.route([
+        '/category/<path:path>',
+        '/category/<path:path>/page/<int:page>'
+    ], type='http', auth='public', website=True)
+    def _shop(self, path, page=0, category=None, search='', ppg=False, **post):
+        res = super(WebsiteSaleContext, self)._shop(path=path, page=page, category=category, search=search, ppg=ppg, **post)
+        new_res = self.update_context_with_providers(res, page, category, search, ppg, **post)
+        return new_res
+
+
+    def update_context_with_providers(self, res, page, category, search, ppg, **post):
         providers = request.httprequest.args.getlist('provider')
         providers_res = []
 
@@ -265,7 +280,7 @@ class WebsiteSaleContext(WebsiteSale):
 
             url = "/shop"
             if category:
-                url = "/shop/category/%s" % slug(res.qcontext['category'])
+                url = "/shop/category/%s" % category
 
             Product = request.env['product.template']
 
@@ -299,3 +314,5 @@ class WebsiteSaleContext(WebsiteSale):
             })
 
         return res
+
+    
