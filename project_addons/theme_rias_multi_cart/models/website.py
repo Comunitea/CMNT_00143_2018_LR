@@ -149,7 +149,10 @@ class Website(models.Model):
     @api.multi
     def get_active_campaigns(self):
         today = datetime.today().strftime('%Y-%m-%d')
-        campaigns = self.env['campaign'].sudo().search([('purchases_start_date', '<=', today), ('purchases_end_date', '>=', today)])
+
+        campaigns = self.env['campaign'].sudo().search([
+            ('web_publication_date', '<=', today),
+            ('end_web_publication_date', '>=', today)])
         return campaigns
 
     @api.multi
