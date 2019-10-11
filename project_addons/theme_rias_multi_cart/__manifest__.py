@@ -9,8 +9,6 @@
     'author': "Comunitea, ",
     'depends': [
         'theme_rias',
-        #'sale_variant_configurator', Se comenta par apoder desinstalar este
-        # módulo
         'campaign',
     ],
     'data': [
