@@ -4,6 +4,7 @@
 
 from odoo import models, fields, api
 from odoo.addons import decimal_precision as dp
+from datetime import timedelta
 
 
 class Campaign(models.Model):
@@ -32,9 +33,30 @@ class Campaign(models.Model):
     days_publication = fields.Integer('Validity Days', default=15)
     sale_prices_date = fields.Date(string='Sale prices Date')
     days_prices = fields.Integer('Validity Sale Prices', default=30)
+    end_web_publication_date = fields.Date(string='End Web Publication Date',
+                                           compute="_compute_dates")
+    end_validity_date = fields.Date(string='End Validity Date',
+                                    compute="_compute_dates")
+
 
     section_ids = fields.One2many('section.term', 'campaign_id',
                                   'Terms by amount')
+
+    @api.depends('web_publication_date', 'end_web_publication_date',
+                 'end_validity_date')
+    def _compute_dates(self):
+        for campaign in self:
+            campaign.end_web_publication_date = \
+                fields.Date.to_String(fields.Date.from_string(
+                campaign.web_publication_date.to_date) + timedelta(
+                    days=campaign.days_publication))
+
+            campaign.end_validity_date = \
+                fields.Date.to_String(fields.Date.from_string(
+                    campaign.web_publication_date.to_date) + timedelta(
+                    days=campaign.days_publication + campaign.days_prices ))
+
+
 
     @api.multi
     def _count_articles(self):

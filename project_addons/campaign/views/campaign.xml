@@ -32,7 +32,7 @@
                         <field name="date_end"/>
                     </group>
                     <group colspan="2">
-                        <field name="pricelist_id"/>
+                        <field name="pricelist_id" required="True"/>
                     </group>
                     <notebook>
                         <page string="Suppliers">
