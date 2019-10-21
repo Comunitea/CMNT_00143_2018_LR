@@ -5,6 +5,15 @@
         <field name="model">stock.picking</field>
         <field name="inherit_id" ref="stock.view_picking_form"/>
         <field name="arch" type="xml">
+             <button name="action_show_details" position="before">
+                <field name="code" invisible="1"/>
+                <button name="button_reasignar_origen_wzd"
+                            string="Split/(Re)Asignar origen"
+                            type="object"
+                            icon="fa-tags"
+                            groups="base.group_user"
+                            attrs="{'invisible':['|',('code','=','incoming'),('state','not in',('confirmed','assigned','partially_available'))]}"/>
+            </button>
             <field name="picking_type_id" position="after">
                 <field name="sga_integrated"></field>
             </field>

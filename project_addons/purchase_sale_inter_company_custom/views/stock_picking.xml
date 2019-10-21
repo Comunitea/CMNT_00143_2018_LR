@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_picking_form_sga_icc" model="ir.ui.view">
+        <field name="name">view.picking.form.sga.icc</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <field name="group_id" position="after">
+                <field name="auto_purchase_order_id"/>
+                <field name="ic_pick_id"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_picking_internal_search_icc" model="ir.ui.view">
+        <field name="name">view.picking.internal.search.icc</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_internal_search"/>
+        <field name="arch" type="xml">
+            <field name="group_id" position="before">
+                <field name="auto_purchase_order_id"/>
+            </field>
+            <filter name="picking_type" position="before">
+                    <filter name="f_auto_purchase_order_id_on" string="IC" context="{'auto_purchase_order_id': True}"/>
+                    <filter name="f_auto_purchase_order_id_off" string="NO IC" context="{'auto_purchase_order_id': False}"/>
+                    <separator/>
+            </filter>
+
+        </field>
+    </record>
+
+</odoo>
+

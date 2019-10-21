@@ -13,7 +13,7 @@
                     <button name="action_transfer" states="ready" string="Validar" type="object"/>
                     <button name="action_confirm" states="draft" string="Confirmar" type="object"/>
                     <button name="action_cancel" states="draft,ready" confirm="All pickings will be cancelled, Are you sure?" string="Cancel" type="object"/>
-                    <button name="generar_adr" string="ADR"  states="done,ready" type="object"/>
+                    <!--button name="generar_adr" string="ADR"  states="done,ready" type="object"/-->
                     <field name="state" widget="statusbar" statusbar_visible="draft,confirm"/>
 
                 </header>

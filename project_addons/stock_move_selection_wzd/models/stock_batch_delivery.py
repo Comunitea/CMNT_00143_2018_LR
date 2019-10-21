@@ -5,7 +5,7 @@
 from odoo import _, api, fields, models
 
 from odoo.exceptions import UserError,ValidationError
-
+from odoo.addons.shipping_type.models.info_route_mixin import SHIPPING_TYPE_SEL, DEFAULT_SHIPPING_TYPE, STRING_SHIPPING_TYPE, HELP_SHIPPING_TYPE
 
 class StockBatchDelivery(models.Model):
     """ This object allow to manage multiple stock.batch.delivery
@@ -111,7 +111,7 @@ class StockBatchDelivery(models.Model):
     )
     partner_ids = fields.One2many('res.partner', compute='_get_picking_ids', string="Empresa")
     package_ids = fields.One2many(
-        'stock.quant.package', 'batch_delivery_id',
+        'stock.quant.package', compute='_get_picking_ids',
         string='Paquetes',
         help='Those are the entire packages of a picking shown in the view of '
              'operations',
@@ -124,19 +124,20 @@ class StockBatchDelivery(models.Model):
                                       domain="[('route_driver', '=', True)]")
     plate_id = fields.Many2one('delivery.plate', string='Matrícula', help='Plate for this batch picking.')
 
-    carrier_id = fields.Many2one("delivery.carrier", string="Carrier", compute='compute_route_fields',
-                                 inverse='set_route_fields', store=True)
-    shipping_type = fields.Selection(compute='compute_route_fields', inverse='set_route_fields', store=True)
-    delivery_route_path_id = fields.Many2one('delivery.route.path', compute='compute_route_fields',
-                                           inverse='set_route_fields', store=True)
+    carrier_id = fields.Many2one("delivery.carrier", string="Carrier")
+    #shipping_type = fields.Selection(selection=SHIPPING_TYPE_SEL, compute='compute_route_fields', inverse='set_route_fields', store=True)
+    #delivery_route_path_id = fields.Many2one('delivery.route.path', compute='compute_route_fields',
+     #                                      inverse='set_route_fields', store=True)
     company_id = fields.Many2one(
         'res.company', 'Company',
-        default=lambda self: self.env['res.company']._company_default_get('stock.move'),
+        default=lambda self: self.env['res.company']._company_default_get(),
         index=True, required=True)
+    #info_route_str = fields.Char('Info ruta')#, compute='get_info_route')
 
-    @api.multi
+
     @api.depends('state', 'move_lines.shipping_type', 'move_lines.delivery_route_path_id', 'move_lines.carrier_id')
     def compute_route_fields(self):
+
         for batch in self:
             moves = batch.move_lines
             if moves:
@@ -155,6 +156,7 @@ class StockBatchDelivery(models.Model):
                     batch.carrier_id = carrier_ids[0]
 
     def check_allow_change_route_fields(self):
+
         if any(move.state == 'done' for move in self.move_lines) and not self._context.get(
                 'force_route_vals', False):
             raise ValidationError(_('No puedes cambiar en movimientos de una orden de carga'))
@@ -162,6 +164,7 @@ class StockBatchDelivery(models.Model):
 
     @api.multi
     def set_route_fields(self):
+
         ctx = self._context.copy()
         ctx.update(force_route_vals=True)
         for batch in self.with_context(ctx):
@@ -175,14 +178,15 @@ class StockBatchDelivery(models.Model):
 
     @api.multi
     def _get_picking_ids(self):
-        for out_batch in self:
 
+        for out_batch in self:
+            print ("Batch: {}".format(out_batch.name))
             out_batch.move_lines = self.env['stock.move'].search([('batch_delivery_id', '=', out_batch.id)])
             out_batch.picking_ids = out_batch.move_lines.mapped('picking_id')
             out_batch.batch_ids = out_batch.move_lines.mapped('batch_id')
             out_batch.move_lines_ids = out_batch.move_lines.mapped('move_line_ids')
             out_batch.partner_ids = out_batch.move_lines.mapped('partner_id')
-
+            out_batch.package_ids = out_batch.move_lines_ids.mapped('result_package_id')
             out_batch.count_picking_ids = len(out_batch.picking_ids)
             out_batch.count_move_lines = len(out_batch.move_lines)
             out_batch.count_package_ids = len(out_batch.package_ids)
@@ -192,22 +196,6 @@ class StockBatchDelivery(models.Model):
         for batch in self.filtered(lambda x:x.state=='ready'):
             batch.batch_ids.action_transfer()
             batch.state = 'done'
-
-    @api.multi
-    def action_transfer_bis(self):
-        """ Make the transfer for all active pickings in these batches
-        and set state to done all picking are done.
-        """
-        #batches = self.get_not_empties()
-        for batch in self:
-            if not batch.verify_state():
-                batch.active_picking_ids.force_transfer(
-                    force_qty=all(
-                        operation.qty_done == 0
-                        for operation in batch.move_line_ids
-                    )
-                )
-
 
     @api.multi
     def action_confirm(self):
@@ -255,3 +243,19 @@ class StockBatchDelivery(models.Model):
                                                                                       pickings=pickings).report_action(
                 [])
 
+    @api.multi
+    def get_info_route(self):
+
+        for obj in self:
+            if obj.shipping_type or obj.delivery_route_path_id:
+                if 'carrier_id' in obj.fields_get_keys():
+                    carrier_id = obj.carrier_id and obj.carrier_id.name or ''
+                else:
+                    carrier_id = ''
+
+                name2 = '{} {}'.format(obj.delivery_route_path_id.name or 'Sin ruta', carrier_id)
+                shipping_type = obj._fields['shipping_type'].convert_to_export(obj.shipping_type,
+                                                                               obj) if obj.shipping_type else 'Sin envío'
+                obj.info_route_str = '{}: {}'.format(shipping_type, name2)
+            else:
+                obj.info_route_str = False

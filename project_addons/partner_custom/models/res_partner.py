@@ -3,6 +3,7 @@
 
 import uuid
 import io
+from odoo.exceptions import ValidationError
 
 from odoo import models, fields, api, _
 from datetime import date
@@ -24,6 +25,7 @@ class ResPartner(models.Model):
     id_prov = fields.Integer('Id Prov')
     cliente_id = fields.Integer('Id Cliente en WEB')
     old_customer = fields.Many2one('res.partner')
+
 
     @api.onchange('associate')
     def _onchange_associate(self):
@@ -241,7 +243,7 @@ class ResPartner(models.Model):
 
     @api.multi
     def check_associate(self, active=False):
-        for partner in self:
+        for partner in self.filtered(lambda x: x.associate):
             res = partner.get_associate_contract(active)
             if res:
                 partner.message_post("Se ha creado un nuevo contrato")

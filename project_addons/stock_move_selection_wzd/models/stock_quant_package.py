@@ -31,18 +31,24 @@ class StockQuantPackage(models.Model):
     _inherit = 'stock.quant.package'
 
     @api.multi
-    def _get_picking_ids(self):
+    def get_picking_ids(self):
+
+        company_id = self._context.get('force_company', False) or self._context.get('company_id', False) or self.env.user.company_id.id
         for pack in self:
-            pack.picking_ids = pack.move_line_ids.mapped('picking_id')
-            pack.move_lines = pack.move_line_ids.mapped('move_id')
+            domain = [('result_package_id', '=', pack.id), ('move_id.company_id', 'child_of', company_id)]
+            move_line_ids = self.env['stock.move.line'].search(domain)
+            pack.picking_ids = move_line_ids.mapped('picking_id')
+            pack.move_lines = move_line_ids.mapped('move_id')
+            print ("LINEAS {} del paquete {}".format(move_line_ids, pack.name))
+
 
     sga_state = fields.Selection(SGA_STATES, default='no_integrated', string="SGA Estado")
     batch_picking_id = fields.Many2one('stock.batch.picking', compute='get_batch_picking_id', inverse='set_batch_picking_id', string='Grupo')
     batch_delivery_id = fields.Many2one('stock.batch.delivery', compute='get_batch_delivery_id', inverse='set_batch_delivery_id', string='Orden de carga')
-    partner_id = fields.Many2one(related='move_line_ids.partner_id', store=True)
-    picking_ids = fields.One2many('stock.picking', compute=_get_picking_ids)
+    partner_id = fields.Many2one()#related='move_line_ids.partner_id', store=True)
+    picking_ids = fields.One2many('stock.picking', compute=get_picking_ids)
     packaging_line_ids = fields.One2many('stock.quant.package.pack.line', 'package_id', 'Empaquetado')
-    move_lines = fields.One2many('stock.move', compute=_get_picking_ids)
+    move_lines = fields.One2many('stock.move', compute=get_picking_ids)
 
     @api.multi
     @api.depends('move_line_ids.state', 'move_line_ids.batch_delivery_id')
@@ -70,7 +76,6 @@ class StockQuantPackage(models.Model):
     @api.depends('move_line_ids.state', 'move_line_ids.draft_batch_picking_id', 'move_line_ids.batch_picking_id')
     def get_batch_picking_id(self):
         for pack in self.filtered(lambda x: x.move_lines):
-
             batch_id = pack.move_lines.mapped('batch_id')
             if len(batch_id)>1:
                 raise ValueError (_('Error. El paquete tiene movimientos en varias batchs'))
@@ -78,6 +83,7 @@ class StockQuantPackage(models.Model):
 
 
     def get_packaging_lines(self, vals):
+
         package_id = vals.get('package_id', False)
         if package_id:
             domain = self.env['stock.quant.package.pack.line'].get_domain()
@@ -96,6 +102,7 @@ class StockQuantPackage(models.Model):
 
     @api.model
     def set_packaging_lines(self, vals):
+
         package_id = vals.get('package_id', False)
         if package_id:
             package = self.env['stock.quant.package'].browse(package_id)

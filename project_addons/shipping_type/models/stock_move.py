@@ -78,7 +78,3 @@ class StockMove(models.Model):
     @api.multi
     def write(self, vals):
         return super().write(vals)
-        if self._context.get('no_propagate_route_vals', True):
-            self.propagate_route_vals(vals)
-        super().write(vals)
-

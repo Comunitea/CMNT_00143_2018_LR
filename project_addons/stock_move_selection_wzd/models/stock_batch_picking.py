@@ -49,14 +49,6 @@ class StockBatchPicking(models.Model):
         return domain
 
     @api.multi
-    def action_assign(self):
-        res = super().action_assign()
-        #self.filtered(lambda x: x.code == 'outgoing').get_transport_excess()
-        return res
-
-
-
-    @api.multi
     def alternate_draft_ready(self):
         for batch in self:
             if batch.state == 'ready':
@@ -72,7 +64,6 @@ class StockBatchPicking(models.Model):
         done_batch = self.filtered(lambda x:x.state == 'done')
         draft_batch = self.filtered(lambda x:x.state != 'done')
         super(StockBatchPicking, done_batch).compute_route_fields()
-
         for batch in draft_batch:
             moves = batch.draft_move_lines
             if moves:
@@ -143,7 +134,7 @@ class StockBatchPicking(models.Model):
         if self.mapped('batch_delivery_id'):
             self.draft_move_lines.batch_delivery_id
             raise ValidationError(_('No puedes eliminar un grupo que ya está en una orden de carga. Priemro debes sacarlo de la orden de carga'))
-        rs = super().unlink()
+        return super().unlink()
 
     @api.multi
     def action_transfer(self):
@@ -213,7 +204,6 @@ class StockBatchPicking(models.Model):
         action = self.env.ref('stock.action_package_view').read()[0]
         packages = self.move_line_ids.mapped('result_package_id')
         action['domain'] = [('id', 'in', packages.ids)]
-
         return action
 
 

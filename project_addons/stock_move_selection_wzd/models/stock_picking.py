@@ -24,8 +24,11 @@ class StockPicking(models.Model):
 
     excess = fields.Boolean(string='Franquicia')
 
+
+
     @api.multi
     def get_batch_delivery_id(self):
+
         for pick in self:
             batch_delivery_id = pick.move_lines.mapped('batch_delivery_id')
             if len(batch_delivery_id) == 1:

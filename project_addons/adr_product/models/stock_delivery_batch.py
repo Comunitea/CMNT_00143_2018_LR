@@ -27,12 +27,13 @@ class StockBatchDelivery(models.Model):
     @api.multi
     def print_rda_delivery(self):
         self.ensure_one()
-        move_ids = self.env['stock.move'].search([('batch_delivery_id', '=', self.id), ('qty_done', '!=', 0.00)])
-
+        move_ids = self.env['stock.move'].search([('batch_delivery_id', '=', self.id)]).filtered(lambda x: x.quantity_done >0)
+        ctx = self._context.copy()
         if not move_ids:
             raise UserError(_('Nothing to print.'))
         else:
             active_ids = []
             for batch in self:
                 active_ids.append(batch.id)
-            return self.env.ref('adr_product.delivery_batch_adr_report').with_context(active_ids=active_ids, active_model='stock.batch.picking', pickings=pickings).report_action([])
+            ctx.update(active_ids=active_ids, active_model='stock.batch.delivery', pickings=self)
+            return self.env.ref('adr_product.delivery_batch_adr_report').report_action([]).with_context(ctx)

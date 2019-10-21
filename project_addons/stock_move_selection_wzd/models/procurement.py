@@ -16,6 +16,7 @@ class ProcurementRule(models.Model):
                                               origin=origin,
                                               values=values,
                                               group_id=group_id)
+
         if values.get('sale_line_id', False):
             sol = self.env['sale.order.line'].browse(values['sale_line_id'])
             vals.update({'campaign_id': sol.campaign_id and sol.campaign_id.id,

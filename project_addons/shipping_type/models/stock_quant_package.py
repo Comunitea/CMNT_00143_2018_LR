@@ -27,7 +27,7 @@ class StockQuantPackage(models.Model):
     @api.depends('move_line_ids')
     def compute_route_fields(self):
 
-        for pack in self:
+        for pack in self.sudo():
             moves = pack.move_line_ids.mapped('move_id')
             #if any(move.state == 'done' for move in moves):
             #    raise ValidationError (_('No puedes cambiar en movimientos ya realizados'))
@@ -65,6 +65,7 @@ class StockQuantPackage(models.Model):
 
     @api.multi
     def get_stock_pickings(self):
+        return
         for pack in self:
             pack.picking_ids = self.env['stock.move.line'].search([('result_package_id','=', pack.id)]).mapped('picking_id')
 

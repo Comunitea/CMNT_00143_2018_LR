@@ -27,7 +27,6 @@ class DeliveryBatchCustomReport(models.AbstractModel):
 
         categories_ids = []
         elements = []
-
         docids = docids or self.env.context.get('active_ids')
         model = self.env.context.get('active_model', 'stock.batch.picking')
         objects = self.env[model].browse(docids)

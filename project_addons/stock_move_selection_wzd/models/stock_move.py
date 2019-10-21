@@ -10,6 +10,8 @@ from .stock_picking_type import SGA_STATES
 class StockMove(models.Model):
     _inherit = 'stock.move'
 
+
+
     @api.multi
     def get_color_status(self):
         for move in self:
@@ -64,6 +66,13 @@ class StockMove(models.Model):
 
     visible_count_move_to_pick = fields.Boolean(related='picking_type_id.visible_count_move_to_pick')
     visible_count_move_unpacked = fields.Boolean(related='picking_type_id.visible_count_move_unpacked')
+
+
+    @api.depends('state', 'picking_id')
+    def _compute_is_initial_demand_editable(self):
+        ctx = self._context.copy()
+        ctx.update(planned_picking=True)
+        return super(StockMove, self.with_context(ctx))._compute_is_initial_demand_editable()
 
     @api.model
     def create(self, vals):
@@ -291,7 +300,6 @@ class StockMove(models.Model):
 
     @api.multi
     def move_assign_batch_delivery(self):
-
         ## Solo para picking_type_id
         not_moves = self.filtered(lambda x: x.picking_type_id.code != 'outgoing')
 
@@ -366,6 +374,7 @@ class StockMove(models.Model):
     @api.multi
     @api.depends('move_line_ids.result_package_id')
     def get_result_package_id_from_line(self):
+
         for move in self:
             result_package_id = move.move_line_ids.mapped('result_package_id')
             move.result_package_id = result_package_id and result_package_id[0] or False

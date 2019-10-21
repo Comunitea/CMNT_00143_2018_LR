@@ -45,8 +45,6 @@ class SaleOrder(models.Model):
 
     @api.multi
     def action_view_move_lines(self):
-
-
         self.ensure_one()
         action = self.env.ref(
             'stock_move_selection_wzd.stock_move_action').read()[0]

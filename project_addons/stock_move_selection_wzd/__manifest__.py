@@ -12,7 +12,7 @@
         'sale_stock',
         'stock_picking_imp',
         'stock_picking_group',
-        'shipping_type'
+        'shipping_type',
     ],
     'data': [
         'data/stock_batch_picking_sequence.xml',

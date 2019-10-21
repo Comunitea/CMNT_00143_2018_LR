@@ -1,23 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-        <record model="ir.ui.view" id="stock_picking_move_change_quant_wzd">
-        <field name="name">stock.picking.form</field>
-        <field name="model">stock.picking</field>
-        <field name="inherit_id" ref="stock.view_picking_form" />
+    <record model="ir.ui.view" id="stock_move_editable">
+        <field name="name">stock.move.form.editable</field>
+        <field name="model">stock.move</field>
+        <field name="inherit_id" ref="stock.view_move_form" />
+        <field name="groups_id" eval="[(4, ref('stock.group_stock_manager'))]"/>
         <field name="arch" type="xml">
-            <button name="action_show_details" position="before">
-                <field name="code" invisible="1"/>
-                <button name="button_reasignar_origen_wzd"
-                            string="Split/(Re)Asignar origen"
-                            type="object"
-                            icon="fa-tags"
-                            groups="base.group_user"
-                            attrs="{'invisible':['|',('code','=','incoming'),('state','not in',('confirmed','assigned','partially_available'))]}"/>
-            </button>
+            <field name="product_id" position="after">
+                 <field name="is_locked" invisible="1"/>
+            </field>
+             <xpath expr="//form" position="attributes">
+                <attribute name="edit">1</attribute>
+                <attribute name="attrs">{'readonly':[('state','in',('cancel', 'done', 'assigned')),('is_locked','=', False)]}</attribute>
+            </xpath>
         </field>
     </record>
-
     <delete id="stock_move_selection_wzd.action_moves_assign_batch" model="ir.actions.server"/>
     <!--record id="action_moves_assign_batch" model="ir.actions.server">
         <field name="name">Asignar carta de porte</field>
@@ -227,6 +225,9 @@
                 <filter string="Reservado" name="ready" domain="[('state','in', ['assigned', 'partially_available'])]"/>
                 <filter string="Hechos" name="done" domain="[('state','=','done')]"/>
                 <filter string="No hechos" name="not_done" domain="[('state','not in',['done', 'draft'])]"/>
+                <filter string="To cancel" name="to_cancel"
+                        domain="[('cancel_date', '&lt;=', (context_today()+datetime.timedelta(days=1)).strftime('%Y-%m-%d'))]"
+                        help="Orders to be cancelled today"/>
                 <separator/>
                 <filter string="SGA" name="sga_integrated" domain="[('sga_integrated','=', True)]"/>
                 <separator/>
