@@ -11,6 +11,14 @@ class SaleOrder(models.Model):
     def get_default_autoconfirm_ic(self):
         return self.env.user.company_id.auto_confirm_ic_ops
 
+
+    @api.multi
+    def write_ic_values(self):
+        for ic_so in self:
+
+            #lines = ic_so.order_lines
+            ic_moves = [('')]
+
     @api.multi
     def action_confirm(self):
 
@@ -24,6 +32,8 @@ class SaleOrder(models.Model):
                 ctx = self._context.copy()
                 ctx.update(force_company=ic_company)
                 po.with_context(ctx).sudo(ic_user).button_confirm()
+
+            ic_po.write_ic_values()
         return res
         ic_so = self.sudo().env['sale.order'].search([('auto_purchase_order_id', 'in', ic_po.ids)])
         if ic_so:
@@ -33,6 +43,22 @@ class SaleOrder(models.Model):
                 ctx = self._context.copy()
                 ctx.update(force_company=ic_company)
                 ic_so.with_context(ctx).sudo(ic_user).action_confirm()
+
+
+        sol = self.env['sale.order.line']
+        so = self.env['sale.order']
+        sm = self.env['stock.move']
+
+        for line in self:
+            domain = [('ic_sale_line_ic', '=', line.id)]
+            ic_pick = sm.sudo().search(domain).picking_id
+
+
+            self.picking_id.sudo().write({'ic_sale_ids': [(4, self.sudo().ic_sale_line_id.order_id.id)]})
+            sql = 'update sale_order_line where ic_sale_line_ic={} set ic'.format(line.id)
+            self.env['']
+        if self.ic_sale_line_id:
+            self.picking_id.sudo().write({'ic_sale_ids': [(4, self.sudo().ic_sale_line_id.order_id.id)]})
         return res
 
     def create(self, vals):

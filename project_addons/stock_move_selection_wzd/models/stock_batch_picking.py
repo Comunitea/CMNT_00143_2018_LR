@@ -42,6 +42,17 @@ class StockBatchPicking(models.Model):
     excess = fields.Boolean(string='Franquicia')
     date_done = fields.Datetime('Realizado', copy=False, help="Fecha de transferencia")
 
+    count_move_lines = fields.Integer('Nº líneas', compute="_get_nlines")
+
+    @api.multi
+    def _get_nlines(self):
+        for pick in self:
+            if pick.draft_move_lines and pick.state != 'done':
+                pick.count_move_lines = len(pick.draft_move_lines)
+            else:
+                pick.count_move_lines = len(pick.move_lines)
+
+
     def get_excess_domain(self):
         from_time = self.env['stock.picking.type'].get_excess_time()
         domain = [('date', '>=', from_time),

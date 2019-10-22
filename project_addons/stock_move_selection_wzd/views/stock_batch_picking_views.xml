@@ -10,6 +10,7 @@
                       string="Picking list">
 
                     <field name="name"/>
+                    <field name="count_move_lines"/>
                     <field name="shipping_type"/>
                     <field name="delivery_route_path_id"/>
                     <field name="batch_delivery_id" invisible="context.get('group_code', False) != 'outgoing'"/>

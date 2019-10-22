@@ -22,7 +22,6 @@ class StockPicking(models.Model):
     def compute_route_fields(self):
 
         for pick in self:
-
             moves = pick.move_lines
             # if any(move.state == 'done' for move in moves):
             #    raise ValidationError (_('No puedes cambiar en movimientos ya realizados'))

@@ -82,6 +82,7 @@
         <field name="arch" type="xml">
             <tree string="Batch Picking">
                 <field name="name"/>
+                <field name="count_move_lines"/>
                 <field name="date_expected"/>
                 <field name="info_route_str"/>
                 <field name="state"/>

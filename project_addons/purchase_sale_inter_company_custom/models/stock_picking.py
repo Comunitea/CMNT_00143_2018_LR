@@ -12,6 +12,11 @@ class StockMove(models.Model):
 
     ic_sale_line_id = fields.Many2one('sale.order.line', 'Sale Line')
 
+    def _assign_picking_post_process(self, new=False):
+        super(StockMove, self)._assign_picking_post_process(new=new)
+        if self.ic_sale_line_id:
+            self.picking_id.sudo().write({'ic_sale_ids': [(4, self.sudo().ic_sale_line_id.order_id.id)]})
+
     @api.model
     def _prepare_merge_moves_distinct_fields(self):
         distinct_fields = super(StockMove, self)._prepare_merge_moves_distinct_fields()
@@ -27,7 +32,6 @@ class StockMove(models.Model):
 
     def _action_done(self):
         result = super(StockMove, self)._action_done()
-
         for line in result.mapped('ic_sale_line_id').sudo():
             line.qty_delivered = line._get_delivered_qty()
         return result
@@ -51,19 +55,14 @@ class StockPicking(models.Model):
     auto_purchase_order_id = fields.Many2one(related='sale_id.auto_purchase_order_id', string="")
     ic_pick_id = fields.Char(string="IC pick", compute="compute_ic_pick_id",
                              help="Albarán de salida correspondiente")
+    ic_sale_ids = fields.Many2many('sale.order', string='IC venta')
 
     @api.multi
     def compute_ic_pick_id(self):
-        for pick in self.filtered(
-                lambda x: x.location_dest_id.usage == 'customer'):
-            purchase = pick.sudo().sale_id.auto_purchase_order_id
-            if not purchase:
-                continue
-            ic_pick_ids = pick.sudo().move_lines.mapped('sale_line_id').mapped('auto_purchase_line_id').mapped('move_ids').mapped('move_dest_ids').mapped('picking_id')
-            if ic_pick_ids:
-                ic_pick_id = "{} > {}".format(pick.name, (x.name for x in ic_pick_ids))
-                pick.write({"ic_pick_id": ic_pick_id})
-            print (ic_pick_ids)
+        for pick in self.filtered(lambda x: x.ic_sale_ids):
+            ic_sale_ids = pick.sudo().ic_sale_ids
+            if ic_sale_ids.mapped('picking_ids'):
+                pick.ic_pick_id = "{} > {}".format(pick.name, (x.name for x in ic_sale_ids.mapped('picking_ids')))
 
     @api.model
     def search(self, args, offset=0, limit=None, order=None, count=False):
@@ -78,16 +77,20 @@ class StockPicking(models.Model):
 
     @api.multi
     def action_done(self):
+        #print ("Entro action done de {}".format(self.name))
+        #import ipdb; ipdb.set_trace()
+
         res = super().action_done()
-        moves = self.filtered(lambda x: x.intercompany_picking_id).mapped('move_lines').filtered(lambda x: x.state == 'done')
-        if moves:
-            for move in moves.move_dest_ids.sudo():
-                ic_user = move.company_id.intercompany_user_id.id
-                ic_company = move.company_id.id
-                ctx = self._context.copy()
-                ctx.update(force_company=ic_company)
-                if all(x.state == 'done' for x in move.move_orig_ids):
-                    move.with_context(ctx).sudo(ic_user)._action_done()
+        if self.intercompany_picking_id:
+            dest_pick_ids = self.move_lines.filtered(lambda x: x.state == 'done').mapped('move_dest_ids').mapped('picking_id')
+            ic_user = self.company_id.intercompany_user_id.id
+            ic_company = self.company_id.id
+            ctx = self._context.copy()
+            ctx.update(force_company=ic_company)
+            for move_line in dest_pick_ids.move_line_ids:
+                move_line.qty_done = move_line.product_uom_qty
+            dest_pick_ids.with_context(ctx).sudo(ic_user).action_done()
+
         return res
 
 

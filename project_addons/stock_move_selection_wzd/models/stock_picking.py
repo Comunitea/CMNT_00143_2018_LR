@@ -23,8 +23,12 @@ class StockPicking(models.Model):
     draft_batch_picking_id = fields.Many2one('stock.batch.picking', 'Batch')
 
     excess = fields.Boolean(string='Franquicia')
+    count_move_lines = fields.Integer('Nº líneas', compute="_get_nlines")
 
-
+    @api.multi
+    def _get_nlines(self):
+        for pick in self:
+            pick.count_move_lines = len(pick.move_lines)
 
     @api.multi
     def get_batch_delivery_id(self):

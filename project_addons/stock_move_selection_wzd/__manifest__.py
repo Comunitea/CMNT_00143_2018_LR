@@ -13,6 +13,7 @@
         'stock_picking_imp',
         'stock_picking_group',
         'shipping_type',
+        'purchase_sale_inter_company_custom'
     ],
     'data': [
         'data/stock_batch_picking_sequence.xml',

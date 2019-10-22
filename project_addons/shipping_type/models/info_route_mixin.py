@@ -25,13 +25,11 @@ class InfoRouteMixin(models.AbstractModel):
 
     @api.multi
     def _partner_urgent(self):
-
         if 'partner_id' in self.fields_get_keys():
             for obj in self:
                 obj.urgent = obj.partner_id.urgent
         else:
             self.write({'urgent': True})
-
 
     @api.multi
     def write(self, vals):
