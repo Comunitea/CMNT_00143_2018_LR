@@ -27,12 +27,12 @@ class StockMoveLine(models.Model):
             'mmmcanuni': self.product_uom_qty,
             'mmmexpordref': '{}{}'.format(cte1, sale_id.name)[9:], ##pick.name
             'mmmsecada': self.id,
-            'momcre': datetime.datetime.strptime(self.move_id.date, "%Y-%m-%d %H:%M:%S").strftime('%Y-%m-%d'),
+            'momcre': datetime.datetime.now(),
             'mmmacccod': cont,
-            'mmmbatch': self.draft_batch_picking_id.name[6:],
+            'mmmbatch': self.draft_batch_picking_id.name[-9:],
             'mmmacccolcod': self.draft_batch_picking_id.id,
-            'mmmmomexp': datetime.datetime.strptime(self.move_id.date_expected, "%Y-%m-%d %H:%M:%S").strftime('%Y-%m-%d'),
-            'mmmfeccad': datetime.datetime.strptime(self.move_id.date_expected, "%Y-%m-%d %H:%M:%S").strftime('%Y-%m-%d'),
+            'mmmmomexp': datetime.datetime.strptime(self.move_id.date_expected, '%Y-%m-%d %H:%M:%S'),
+            'mmmfeccad': datetime.datetime.strptime(self.move_id.date_expected, '%Y-%m-%d %H:%M:%S'),
             }
         vals.update(update_vals)
         return vals

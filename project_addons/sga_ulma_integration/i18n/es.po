@@ -1,0 +1,898 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* sga_ulma_integration
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 11.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-10-22 08:10+0000\n"
+"PO-Revision-Date: 2019-10-22 08:10+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: sga_ulma_integration
+#: model:ir.ui.view,arch_db:sga_ulma_integration.ulma_mmmout_tree
+msgid "Albarán"
+msgstr "Albarán"
+
+#. module: sga_ulma_integration
+#: model:ir.ui.view,arch_db:sga_ulma_integration.ulma_mmmout_tree
+msgid "Artículo"
+msgstr "Artículo"
+
+#. module: sga_ulma_integration
+#: model:ir.ui.view,arch_db:sga_ulma_integration.ulma_mmmout_search
+msgid "Batch"
+msgstr "Batch"
+
+#. module: sga_ulma_integration
+#: selection:stock.picking.type,ulma_type:0
+msgid "Cajas"
+msgstr "Cajas"
+
+#. module: sga_ulma_integration
+#: model:ir.ui.view,arch_db:sga_ulma_integration.res_config_settings_ulma_form
+msgid "Check Ext."
+msgstr "Check Ext."
+
+#. module: sga_ulma_integration
+#: model:ir.ui.view,arch_db:sga_ulma_integration.ulma_mmminp_search
+#: model:ir.ui.view,arch_db:sga_ulma_integration.ulma_mmminp_tree
+msgid "Contenedor"
+msgstr "Contenedor"
+
+#. module: sga_ulma_integration
+#: model:ir.ui.view,arch_db:sga_ulma_integration.view_picking_form_ulma
+msgid "Create packages"
+msgstr "Crear paquetes"
+
+#. module: sga_ulma_integration
+#: model:ir.ui.view,arch_db:sga_ulma_integration.res_config_settings_ulma_form
+msgid "Create table MMMINP"
+msgstr "Crear tabla MMMINP"
+
+#. module: sga_ulma_integration
+#: model:ir.ui.view,arch_db:sga_ulma_integration.res_config_settings_ulma_form
+msgid "Create table MMMOUT"
+msgstr "Crear tabla MMMOUT"
+
+#. module: sga_ulma_integration
+#: model:ir.ui.view,arch_db:sga_ulma_integration.res_config_settings_ulma_form
+msgid "Create table packing"
+msgstr "Crear tabla packing"
+
+#. module: sga_ulma_integration
+#: model:ir.ui.view,arch_db:sga_ulma_integration.res_config_settings_ulma_form
+msgid "Create tables"
+msgstr "Crear tabla"
+
+#. module: sga_ulma_integration
+#: model:ir.ui.view,arch_db:sga_ulma_integration.ulma_mmmout_tree
+msgid "Date"
+msgstr "Fecha"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmminp_display_name
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmmout_display_name
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_packinglist_display_name
+msgid "Display Name"
+msgstr "Nombre mostrado"
+
+#. module: sga_ulma_integration
+#: model:ir.ui.view,arch_db:sga_ulma_integration.res_config_settings_ulma_form
+msgid "Drop mmminp table"
+msgstr "Borrar tabla mmminp"
+
+#. module: sga_ulma_integration
+#: model:ir.ui.view,arch_db:sga_ulma_integration.res_config_settings_ulma_form
+msgid "Drop mmmout table"
+msgstr "Borrar tabla mmmout"
+
+#. module: sga_ulma_integration
+#: model:ir.ui.view,arch_db:sga_ulma_integration.res_config_settings_ulma_form
+msgid "Drop packinglist table"
+msgstr "Borrar tabla packinglist"
+
+#. module: sga_ulma_integration
+#: model:ir.ui.view,arch_db:sga_ulma_integration.res_config_settings_ulma_form
+msgid "Drop tables"
+msgstr "Borrar tablas"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_stock_picking_ulma_error
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_stock_quant_package_ulma_error
+msgid "Error msg in case the Ulma integration failed"
+msgstr "Mensaje de error en caso de que la integración falle."
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_packinglist_estado
+#: model:ir.ui.view,arch_db:sga_ulma_integration.ulma_mmminp_search
+#: model:ir.ui.view,arch_db:sga_ulma_integration.ulma_mmminp_tree
+msgid "Estado"
+msgstr "Estado"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_res_config_settings_fdw
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_robots_txt_settings_fdw
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_seo_analytics_settings_fdw
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_seo_general_settings_fdw
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_sitemap_base_settings_fdw
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_web_app_settings_fdw
+msgid "FDW"
+msgstr "FDW"
+
+#. module: sga_ulma_integration
+#: model:ir.ui.view,arch_db:sga_ulma_integration.ulma_mmminp_tree
+msgid "Fecha"
+msgstr "Fecha"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,help:sga_ulma_integration.field_res_config_settings_fdw
+#: model:ir.model.fields,help:sga_ulma_integration.field_robots_txt_settings_fdw
+#: model:ir.model.fields,help:sga_ulma_integration.field_seo_analytics_settings_fdw
+#: model:ir.model.fields,help:sga_ulma_integration.field_seo_general_settings_fdw
+#: model:ir.model.fields,help:sga_ulma_integration.field_sitemap_base_settings_fdw
+#: model:ir.model.fields,help:sga_ulma_integration.field_web_app_settings_fdw
+msgid "Foreign Data Wrapper"
+msgstr "Agrupador de datos externos"
+
+#. module: sga_ulma_integration
+#: model:ir.ui.view,arch_db:sga_ulma_integration.view_picking_form_ulma
+msgid "Forzar validación"
+msgstr "Forzar validación"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,help:sga_ulma_integration.field_res_config_settings_ulma_host
+#: model:ir.model.fields,help:sga_ulma_integration.field_robots_txt_settings_ulma_host
+#: model:ir.model.fields,help:sga_ulma_integration.field_seo_analytics_settings_ulma_host
+#: model:ir.model.fields,help:sga_ulma_integration.field_seo_general_settings_ulma_host
+#: model:ir.model.fields,help:sga_ulma_integration.field_sitemap_base_settings_ulma_host
+#: model:ir.model.fields,help:sga_ulma_integration.field_web_app_settings_ulma_host
+msgid "Host needed to connect to the ULMA db"
+msgstr "Host necesario para conectar con ULMA"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmminp_id
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmmout_id
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_packinglist_id
+msgid "ID"
+msgstr "ID"
+
+#. module: sga_ulma_integration
+#: model:ir.ui.view,arch_db:sga_ulma_integration.res_config_settings_ulma_form
+msgid "Init Oracle Extension"
+msgstr "Iniciar la extensión Oracle"
+
+#. module: sga_ulma_integration
+#: model:ir.ui.view,arch_db:sga_ulma_integration.res_config_settings_ulma_form
+msgid "Init ext."
+msgstr "Iniciar ext."
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmminp___last_update
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmmout___last_update
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_packinglist___last_update
+msgid "Last Modified on"
+msgstr "Última modificación en"
+
+#. module: sga_ulma_integration
+#: model:ir.ui.view,arch_db:sga_ulma_integration.res_config_settings_ulma_form
+msgid "Link to server"
+msgstr "Conectar al servidor"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_res_config_settings_mmminp_table
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_robots_txt_settings_mmminp_table
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_seo_analytics_settings_mmminp_table
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_seo_general_settings_mmminp_table
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_sitemap_base_settings_mmminp_table
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_web_app_settings_mmminp_table
+msgid "MMMINP table"
+msgstr "Tabla MMMINP"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_res_config_settings_oracle_mmminp
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_robots_txt_settings_oracle_mmminp
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_seo_analytics_settings_oracle_mmminp
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_seo_general_settings_oracle_mmminp
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_sitemap_base_settings_oracle_mmminp
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_web_app_settings_oracle_mmminp
+msgid "MMMINP table linked"
+msgstr "Tabla MMMINP enlazada"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_res_config_settings_mmmout_table
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_robots_txt_settings_mmmout_table
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_seo_analytics_settings_mmmout_table
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_seo_general_settings_mmmout_table
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_sitemap_base_settings_mmmout_table
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_web_app_settings_mmmout_table
+msgid "MMMOUT table"
+msgstr "Tabla MMMOUT"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_res_config_settings_oracle_mmmout
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_robots_txt_settings_oracle_mmmout
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_seo_analytics_settings_oracle_mmmout
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_seo_general_settings_oracle_mmmout
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_sitemap_base_settings_oracle_mmmout
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_web_app_settings_oracle_mmmout
+msgid "MMMOUT table linked"
+msgstr "Tabla MMMOUT enlazada"
+
+#. module: sga_ulma_integration
+#: model:ir.ui.view,arch_db:sga_ulma_integration.ulma_mmminp_tree
+msgid "Mensaje"
+msgstr "Mensaje"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmmout_mmmabclog
+msgid "Mmmabclog"
+msgstr "Mmmabclog"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmmout_mmmacccod
+msgid "Mmmacccod"
+msgstr "Mmmacccod"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmminp_mmmacccolcod
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmmout_mmmacccolcod
+msgid "Mmmacccolcod"
+msgstr "Mmmacccolcod"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmmout_mmmartapi
+msgid "Mmmartapi"
+msgstr "Mmmartapi"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmmout_mmmartdes
+msgid "Mmmartdes"
+msgstr "Mmmartdes"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmmout_mmmartean
+msgid "Mmmartean"
+msgstr "Mmmartean"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmminp_mmmartref
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmmout_mmmartref
+msgid "Mmmartref"
+msgstr "Mmmartref"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmmout_mmmbatch
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_packinglist_mmmbatch
+msgid "Mmmbatch"
+msgstr "Mmmbatch"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmminp_mmmcanuni
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmmout_mmmcanuni
+msgid "Mmmcanuni"
+msgstr "Mmmcanuni"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmminp_mmmcmdref
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_packinglist_mmmcmdref
+msgid "Mmmcmdref"
+msgstr "Mmmcmdref"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmmout_mmmcntdorref
+msgid "Mmmcntdorref"
+msgstr "Mmmcntdorref"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmmout_mmmcrirot
+msgid "Mmmcrirot"
+msgstr "Mmmcrirot"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmmout_mmmdim
+msgid "Mmmdim"
+msgstr "Mmmdim"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmmout_mmmdorhue
+msgid "Mmmdorhue"
+msgstr "Mmmdorhue"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmmout_mmmentdes
+msgid "Mmmentdes"
+msgstr "Mmmentdes"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmmout_mmmentdir1
+msgid "Mmmentdir1"
+msgstr "Mmmentdir1"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmmout_mmmentdir2
+msgid "Mmmentdir2"
+msgstr "Mmmentdir2"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmmout_mmmentdir3
+msgid "Mmmentdir3"
+msgstr "Mmmentdir3"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmmout_mmmentdir4
+msgid "Mmmentdir4"
+msgstr "Mmmentdir4"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmminp_mmmexpordref
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmmout_mmmexpordref
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_packinglist_mmmexpordref
+msgid "Mmmexpordref"
+msgstr "Mmmexpordref"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmmout_mmmfeccad
+msgid "Mmmfeccad"
+msgstr "Mmmfeccad"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmminp_mmmges
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmmout_mmmges
+msgid "Mmmges"
+msgstr "Mmmges"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmmout_mmmlot
+msgid "Mmmlot"
+msgstr "Mmmlot"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmmout_mmmminudsdis
+msgid "Mmmminudsdis"
+msgstr "Mmmminudsdis"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmmout_mmmmomexp
+msgid "Mmmmomexp"
+msgstr "Mmmmomexp"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmmout_mmmmonlot
+msgid "Mmmmonlot"
+msgstr "Mmmmonlot"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmmout_mmmobs
+msgid "Mmmobs"
+msgstr "Mmmobs"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmmout_mmmrecref
+msgid "Mmmrecref"
+msgstr "Mmmrecref"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmminp_mmmres
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmmout_mmmres
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_packinglist_mmmres
+msgid "Mmmres"
+msgstr "Mmmres"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmminp_mmmresmsj
+msgid "Mmmresmsj"
+msgstr "Mmmresmsj"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmmout_mmmsecada
+msgid "Mmmsecada"
+msgstr "Mmmsecada"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmminp_mmmsesid
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmmout_mmmsesid
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_packinglist_mmmsesid
+msgid "Mmmsesid"
+msgstr "Mmmsesid"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmmout_mmmterref
+msgid "Mmmterref"
+msgstr "Mmmterref"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmmout_mmmtraref
+msgid "Mmmtraref"
+msgstr "Mmmtraref"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmmout_mmmubidesref
+msgid "Mmmubidesref"
+msgstr "Mmmubidesref"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmmout_mmmurgnte
+msgid "Mmmurgnte"
+msgstr "Mmmurgnte"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmmout_mmmzondesref
+msgid "Mmmzondesref"
+msgstr "Mmmzondesref"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmminp_momcre
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmmout_momcre
+msgid "Momcre"
+msgstr "Momcre"
+
+#. module: sga_ulma_integration
+#: model:ir.ui.view,arch_db:sga_ulma_integration.view_picking_form_ulma
+msgid "Mostrar registros en ulma"
+msgstr "Mostrar registros en ulma"
+
+#. module: sga_ulma_integration
+#: model:ir.model,name:sga_ulma_integration.model_ulma_mmminp
+msgid "Movements from Ulma"
+msgstr "Movimientos de Ulma"
+
+#. module: sga_ulma_integration
+#: model:ir.model,name:sga_ulma_integration.model_ulma_mmmout
+msgid "Movements sent to Ulma"
+msgstr "Movimientos enviados a Ulma"
+
+#. module: sga_ulma_integration
+#: model:ir.ui.view,arch_db:sga_ulma_integration.view_picking_form_ulma
+msgid "Mover a ULMA"
+msgstr "Mover a ULMA"
+
+#. module: sga_ulma_integration
+#: model:ir.ui.view,arch_db:sga_ulma_integration.view_picking_form_ulma
+msgid "Mover a no enviado"
+msgstr "Mover a no enviado"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,help:sga_ulma_integration.field_res_config_settings_mmminp_table
+#: model:ir.model.fields,help:sga_ulma_integration.field_robots_txt_settings_mmminp_table
+#: model:ir.model.fields,help:sga_ulma_integration.field_seo_analytics_settings_mmminp_table
+#: model:ir.model.fields,help:sga_ulma_integration.field_seo_general_settings_mmminp_table
+#: model:ir.model.fields,help:sga_ulma_integration.field_sitemap_base_settings_mmminp_table
+#: model:ir.model.fields,help:sga_ulma_integration.field_web_app_settings_mmminp_table
+msgid "Name of the mmminp table"
+msgstr "Nombre de la tabla mmminp"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,help:sga_ulma_integration.field_res_config_settings_mmmout_table
+#: model:ir.model.fields,help:sga_ulma_integration.field_robots_txt_settings_mmmout_table
+#: model:ir.model.fields,help:sga_ulma_integration.field_seo_analytics_settings_mmmout_table
+#: model:ir.model.fields,help:sga_ulma_integration.field_seo_general_settings_mmmout_table
+#: model:ir.model.fields,help:sga_ulma_integration.field_sitemap_base_settings_mmmout_table
+#: model:ir.model.fields,help:sga_ulma_integration.field_web_app_settings_mmmout_table
+msgid "Name of the mmmout table"
+msgstr "Nombre de la tabla mmmout"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,help:sga_ulma_integration.field_res_config_settings_packing_table
+#: model:ir.model.fields,help:sga_ulma_integration.field_robots_txt_settings_packing_table
+#: model:ir.model.fields,help:sga_ulma_integration.field_seo_analytics_settings_packing_table
+#: model:ir.model.fields,help:sga_ulma_integration.field_seo_general_settings_packing_table
+#: model:ir.model.fields,help:sga_ulma_integration.field_sitemap_base_settings_packing_table
+#: model:ir.model.fields,help:sga_ulma_integration.field_web_app_settings_packing_table
+msgid "Name of the packinglist table"
+msgstr "Nombre de la tabla packinglist"
+
+#. module: sga_ulma_integration
+#: selection:res.config.settings,fdw:0
+#: selection:robots_txt.settings,fdw:0
+#: selection:seo_analytics.settings,fdw:0
+#: selection:seo_general.settings,fdw:0
+#: selection:sitemap_base.settings,fdw:0
+#: selection:web_app.settings,fdw:0
+msgid "Oracle"
+msgstr "Oracle"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_res_config_settings_oracle_extension
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_robots_txt_settings_oracle_extension
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_seo_analytics_settings_oracle_extension
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_seo_general_settings_oracle_extension
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_sitemap_base_settings_oracle_extension
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_web_app_settings_oracle_extension
+msgid "Oracle Ext."
+msgstr "Extensión Oracle"
+
+#. module: sga_ulma_integration
+#: model:ir.ui.view,arch_db:sga_ulma_integration.ulma_mmmout_search
+msgid "Package"
+msgstr "Paquete"
+
+#. module: sga_ulma_integration
+#: model:ir.model,name:sga_ulma_integration.model_stock_move_line
+msgid "Packing Operation"
+msgstr "Operación de empaquetado"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_res_config_settings_packing_table
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_robots_txt_settings_packing_table
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_seo_analytics_settings_packing_table
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_seo_general_settings_packing_table
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_sitemap_base_settings_packing_table
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_web_app_settings_packing_table
+msgid "Packinglist table"
+msgstr "Tabla Packinglist"
+
+#. module: sga_ulma_integration
+#: selection:stock.picking.type,ulma_type:0
+msgid "Palets"
+msgstr "Palets"
+
+#. module: sga_ulma_integration
+#: model:ir.ui.view,arch_db:sga_ulma_integration.ulma_mmmout_tree
+msgid "Paquete"
+msgstr "Paquete"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,help:sga_ulma_integration.field_res_config_settings_ulma_pass
+#: model:ir.model.fields,help:sga_ulma_integration.field_robots_txt_settings_ulma_pass
+#: model:ir.model.fields,help:sga_ulma_integration.field_seo_analytics_settings_ulma_pass
+#: model:ir.model.fields,help:sga_ulma_integration.field_seo_general_settings_ulma_pass
+#: model:ir.model.fields,help:sga_ulma_integration.field_sitemap_base_settings_ulma_pass
+#: model:ir.model.fields,help:sga_ulma_integration.field_web_app_settings_ulma_pass
+msgid "Password needed to connect to the ULMA db"
+msgstr "Password necesaria para conectar con ULMA"
+
+#. module: sga_ulma_integration
+#: model:ir.ui.view,arch_db:sga_ulma_integration.ulma_mmmout_tree
+msgid "Pedido"
+msgstr "Pedido"
+
+#. module: sga_ulma_integration
+#: model:ir.model,name:sga_ulma_integration.model_stock_quant_package
+msgid "Physical Packages"
+msgstr "Paquetes físicos"
+
+#. module: sga_ulma_integration
+#: model:ir.ui.view,arch_db:sga_ulma_integration.ulma_mmminp_search
+#: model:ir.ui.view,arch_db:sga_ulma_integration.ulma_mmminp_tree
+msgid "Picking"
+msgstr "Albarán"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,help:sga_ulma_integration.field_res_config_settings_ulma_port
+#: model:ir.model.fields,help:sga_ulma_integration.field_robots_txt_settings_ulma_port
+#: model:ir.model.fields,help:sga_ulma_integration.field_seo_analytics_settings_ulma_port
+#: model:ir.model.fields,help:sga_ulma_integration.field_seo_general_settings_ulma_port
+#: model:ir.model.fields,help:sga_ulma_integration.field_sitemap_base_settings_ulma_port
+#: model:ir.model.fields,help:sga_ulma_integration.field_web_app_settings_ulma_port
+msgid "Port needed to connect to the ULMA db"
+msgstr "Puerto necesario para conectar con ULMA"
+
+#. module: sga_ulma_integration
+#: selection:res.config.settings,fdw:0
+#: selection:robots_txt.settings,fdw:0
+#: selection:seo_analytics.settings,fdw:0
+#: selection:seo_general.settings,fdw:0
+#: selection:sitemap_base.settings,fdw:0
+#: selection:web_app.settings,fdw:0
+msgid "Postgres"
+msgstr "Postgres"
+
+#. module: sga_ulma_integration
+#: model:ir.actions.server,name:sga_ulma_integration.cron_process_ulma_records_ir_actions_server
+#: model:ir.cron,cron_name:sga_ulma_integration.cron_process_ulma_records
+#: model:ir.cron,name:sga_ulma_integration.cron_process_ulma_records
+msgid "Process ULMA SGA files"
+msgstr "Procesar archivos de ULMA"
+
+#. module: sga_ulma_integration
+#: model:ir.ui.view,arch_db:sga_ulma_integration.ulma_mmmout_search
+msgid "Product"
+msgstr "Producto"
+
+#. module: sga_ulma_integration
+#: model:ir.model,name:sga_ulma_integration.model_sale_order
+msgid "Quotation"
+msgstr "Presupuesto"
+
+#. module: sga_ulma_integration
+#: model:ir.ui.view,arch_db:sga_ulma_integration.view_picking_form_ulma
+msgid "Recibir de ULMA"
+msgstr "Recibir de ULMA"
+
+#. module: sga_ulma_integration
+#: model:ir.ui.view,arch_db:sga_ulma_integration.ulma_mmmout_search
+msgid "Reference"
+msgstr "Referencia"
+
+#. module: sga_ulma_integration
+#: model:ir.ui.view,arch_db:sga_ulma_integration.ulma_mmminp_tree
+msgid "Referencia"
+msgstr "Referencia"
+
+#. module: sga_ulma_integration
+#: model:ir.ui.menu,name:sga_ulma_integration.menu_sga_ulma
+msgid "SGA ULMA"
+msgstr "SGA ULMA"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,help:sga_ulma_integration.field_res_config_settings_ulma_sid
+#: model:ir.model.fields,help:sga_ulma_integration.field_robots_txt_settings_ulma_sid
+#: model:ir.model.fields,help:sga_ulma_integration.field_seo_analytics_settings_ulma_sid
+#: model:ir.model.fields,help:sga_ulma_integration.field_seo_general_settings_ulma_sid
+#: model:ir.model.fields,help:sga_ulma_integration.field_sitemap_base_settings_ulma_sid
+#: model:ir.model.fields,help:sga_ulma_integration.field_web_app_settings_ulma_sid
+msgid "SID/database needed to connect to the ULMA db"
+msgstr "SID necesario para conectar con ULMA"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_res_config_settings_oracle_server
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_robots_txt_settings_oracle_server
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_seo_analytics_settings_oracle_server
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_seo_general_settings_oracle_server
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_sitemap_base_settings_oracle_server
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_web_app_settings_oracle_server
+msgid "Server Link"
+msgstr "Conectar servidor"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,help:sga_ulma_integration.field_res_config_settings_ulma_database
+#: model:ir.model.fields,help:sga_ulma_integration.field_robots_txt_settings_ulma_database
+#: model:ir.model.fields,help:sga_ulma_integration.field_seo_analytics_settings_ulma_database
+#: model:ir.model.fields,help:sga_ulma_integration.field_seo_general_settings_ulma_database
+#: model:ir.model.fields,help:sga_ulma_integration.field_sitemap_base_settings_ulma_database
+#: model:ir.model.fields,help:sga_ulma_integration.field_web_app_settings_ulma_database
+msgid "Server name, needed for connection."
+msgstr "Nombre del servidor"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_packinglist_status
+msgid "Status"
+msgstr "Estado"
+
+#. module: sga_ulma_integration
+#: model:ir.model,name:sga_ulma_integration.model_stock_move
+msgid "Stock Move"
+msgstr "Stock Move"
+
+#. module: sga_ulma_integration
+#: model:ir.model,name:sga_ulma_integration.model_stock_picking_type
+msgid "The operation type determines the picking view"
+msgstr "El tipo de operación determina la vista de la operación"
+
+#. module: sga_ulma_integration
+#: model:ir.ui.view,arch_db:sga_ulma_integration.ulma_mmmout_tree
+msgid "Tipo"
+msgstr "Tipo"
+
+#. module: sga_ulma_integration
+#: model:ir.model,name:sga_ulma_integration.model_stock_picking
+msgid "Transfer"
+msgstr "Transferencia"
+
+#. module: sga_ulma_integration
+#: model:ir.ui.view,arch_db:sga_ulma_integration.ulma_mmmout_search
+msgid "Type"
+msgstr "Tipo"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_stock_picking_type_ulma_type
+msgid "Typo de almacén"
+msgstr "Tipo de almacén"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_res_config_settings_ulma_sid
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_robots_txt_settings_ulma_sid
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_seo_analytics_settings_ulma_sid
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_seo_general_settings_ulma_sid
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_sitemap_base_settings_ulma_sid
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_web_app_settings_ulma_sid
+msgid "ULMA db SID"
+msgstr "ULMA db SID"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_res_config_settings_ulma_host
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_robots_txt_settings_ulma_host
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_seo_analytics_settings_ulma_host
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_seo_general_settings_ulma_host
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_sitemap_base_settings_ulma_host
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_web_app_settings_ulma_host
+msgid "ULMA db host"
+msgstr "ULMA db host"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_res_config_settings_ulma_pass
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_robots_txt_settings_ulma_pass
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_seo_analytics_settings_ulma_pass
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_seo_general_settings_ulma_pass
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_sitemap_base_settings_ulma_pass
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_web_app_settings_ulma_pass
+msgid "ULMA db password"
+msgstr "ULMA db password"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_res_config_settings_ulma_port
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_robots_txt_settings_ulma_port
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_seo_analytics_settings_ulma_port
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_seo_general_settings_ulma_port
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_sitemap_base_settings_ulma_port
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_web_app_settings_ulma_port
+msgid "ULMA db port"
+msgstr "ULMA db puerto"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_res_config_settings_ulma_user
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_robots_txt_settings_ulma_user
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_seo_analytics_settings_ulma_user
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_seo_general_settings_ulma_user
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_sitemap_base_settings_ulma_user
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_web_app_settings_ulma_user
+msgid "ULMA db user"
+msgstr "ULMA db usuario"
+
+#. module: sga_ulma_integration
+#: model:ir.ui.view,arch_db:sga_ulma_integration.stock_picking_type_sga_form
+msgid "ULMA file type"
+msgstr "ULMA tipo de archivo"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_res_config_settings_ulma_database
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_robots_txt_settings_ulma_database
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_seo_analytics_settings_ulma_database
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_seo_general_settings_ulma_database
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_sitemap_base_settings_ulma_database
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_web_app_settings_ulma_database
+msgid "ULMA server name"
+msgstr "ULMA server name"
+
+#. module: sga_ulma_integration
+#: model:ir.ui.menu,name:sga_ulma_integration.menu_sga_ulma_views_mmminp
+msgid "Ulma MMMINP"
+msgstr "Ulma MMMINP"
+
+#. module: sga_ulma_integration
+#: model:ir.actions.act_window,name:sga_ulma_integration.action_ulma_mmmout_view
+#: model:ir.ui.menu,name:sga_ulma_integration.menu_sga_ulma_views
+#: model:ir.ui.view,arch_db:sga_ulma_integration.ulma_mmmout_form
+#: model:ir.ui.view,arch_db:sga_ulma_integration.ulma_mmmout_search
+#: model:ir.ui.view,arch_db:sga_ulma_integration.ulma_mmmout_tree
+msgid "Ulma MMMOUT"
+msgstr "Ulma MMMOUT"
+
+#. module: sga_ulma_integration
+#: model:ir.ui.menu,name:sga_ulma_integration.menu_sga_ulma_views_packing
+msgid "Ulma Packinglist"
+msgstr "Ulma Packinglist"
+
+#. module: sga_ulma_integration
+#: model:ir.ui.view,arch_db:sga_ulma_integration.res_config_settings_ulma_form
+msgid "Ulma database configuration"
+msgstr "Configuración ULMA"
+
+#. module: sga_ulma_integration
+#: model:ir.actions.act_window,name:sga_ulma_integration.action_ulma_mmminp_view
+#: model:ir.ui.view,arch_db:sga_ulma_integration.ulma_mmminp_form
+#: model:ir.ui.view,arch_db:sga_ulma_integration.ulma_mmminp_search
+#: model:ir.ui.view,arch_db:sga_ulma_integration.ulma_mmminp_tree
+msgid "Ulma mmminp"
+msgstr "Ulma mmminp"
+
+#. module: sga_ulma_integration
+#: model:ir.actions.act_window,name:sga_ulma_integration.action_ulma_packinglist_view
+#: model:ir.ui.view,arch_db:sga_ulma_integration.ulma_packinglist_form
+#: model:ir.ui.view,arch_db:sga_ulma_integration.ulma_packinglist_search
+#: model:ir.ui.view,arch_db:sga_ulma_integration.ulma_packinglist_tree
+msgid "Ulma packinglist"
+msgstr "Ulma packinglist"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,help:sga_ulma_integration.field_res_config_settings_ulma_user
+#: model:ir.model.fields,help:sga_ulma_integration.field_robots_txt_settings_ulma_user
+#: model:ir.model.fields,help:sga_ulma_integration.field_seo_analytics_settings_ulma_user
+#: model:ir.model.fields,help:sga_ulma_integration.field_seo_general_settings_ulma_user
+#: model:ir.model.fields,help:sga_ulma_integration.field_sitemap_base_settings_ulma_user
+#: model:ir.model.fields,help:sga_ulma_integration.field_web_app_settings_ulma_user
+msgid "User name needed to connect to the ULMA db"
+msgstr "Usuario necesario para conectar con ULMA"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmmout_mmmcmdref
+msgid "mmmcmdref"
+msgstr "mmmcmdref"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_ulma_mmmout_mmmdisref
+msgid "mmmdisref"
+msgstr "mmmdisref"
+
+#. module: sga_ulma_integration
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_res_config_settings_oracle_packing
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_robots_txt_settings_oracle_packing
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_seo_analytics_settings_oracle_packing
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_seo_general_settings_oracle_packing
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_sitemap_base_settings_oracle_packing
+#: model:ir.model.fields,field_description:sga_ulma_integration.field_web_app_settings_oracle_packing
+msgid "packing table linked"
+msgstr "Tabla packing conectada"
+
+#. module: sga_ulma_integration
+#: model:ir.model,name:sga_ulma_integration.model_ulma_packinglist
+msgid "packinglist from ULMA"
+msgstr "packinglist from ULMA"
+
+#. module: sga_ulma_integration
+#: model:ir.model,name:sga_ulma_integration.model_res_config_settings
+msgid "res.config.settings"
+msgstr "res.config.settings"
+
+#. module: sga_ulma_integration
+#: model:ir.ui.view,name:sga_ulma_integration.res_config_settings_ulma_form
+msgid "res.config.settings.ulma.form"
+msgstr "res.config.settings.ulma.form"
+
+#. module: sga_ulma_integration
+#: model:ir.model,name:sga_ulma_integration.model_stock_batch_picking
+msgid "stock.batch.picking"
+msgstr "stock.batch.picking"
+
+#. module: sga_ulma_integration
+#: model:ir.ui.view,name:sga_ulma_integration.stock_picking_type_sga_form
+msgid "stock.picking.type.sga.form"
+msgstr "stock.picking.type.sga.form"
+
+#. module: sga_ulma_integration
+#: model:ir.ui.view,name:sga_ulma_integration.ulma_mmminp_form
+msgid "ulma.mmminp.form"
+msgstr "ulma.mmminp.form"
+
+#. module: sga_ulma_integration
+#: model:ir.ui.view,name:sga_ulma_integration.ulma_mmminp_search
+msgid "ulma.mmminp.search"
+msgstr "ulma.mmminp.search"
+
+#. module: sga_ulma_integration
+#: model:ir.ui.view,name:sga_ulma_integration.ulma_mmminp_tree
+msgid "ulma.mmminp.tree"
+msgstr "ulma.mmminp.tree"
+
+#. module: sga_ulma_integration
+#: model:ir.ui.view,name:sga_ulma_integration.ulma_mmmout_form
+msgid "ulma.mmmout.form"
+msgstr "ulma.mmmout.form"
+
+#. module: sga_ulma_integration
+#: model:ir.ui.view,name:sga_ulma_integration.ulma_mmmout_search
+msgid "ulma.mmmout.search"
+msgstr "ulma.mmmout.search"
+
+#. module: sga_ulma_integration
+#: model:ir.ui.view,name:sga_ulma_integration.ulma_mmmout_tree
+msgid "ulma.mmmout.tree"
+msgstr "ulma.mmmout.tree"
+
+#. module: sga_ulma_integration
+#: model:ir.ui.view,name:sga_ulma_integration.ulma_packinglist_form
+msgid "ulma.packinglist.form"
+msgstr "ulma.packinglist.form"
+
+#. module: sga_ulma_integration
+#: model:ir.ui.view,name:sga_ulma_integration.ulma_packinglist_search
+msgid "ulma.packinglist.search"
+msgstr "ulma.packinglist.search"
+
+#. module: sga_ulma_integration
+#: model:ir.ui.view,name:sga_ulma_integration.ulma_packinglist_tree
+msgid "ulma.packinglist.tree"
+msgstr "ulma.packinglist.tree"
+
+#. module: sga_ulma_integration
+#: model:ir.ui.view,name:sga_ulma_integration.view_picking_form_ulma
+msgid "view.picking.form.ulma"
+msgstr "view.picking.form.ulma"
+

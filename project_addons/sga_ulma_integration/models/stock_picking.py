@@ -37,9 +37,9 @@ class StockPicking(models.Model):
     def get_picking_ulma_vals(self):
         vals = self.picking_type_id.get_ulma_vals('pick')
         update_vals= {
-            'momcre': fields.datetime.now().date().strftime('%Y-%m-%d'),
-            'mmmbatch': self.name,
-            'mmmmomexp': self.date
+            'momcre': datetime.datetime.now(),
+            'mmmbatch': self.batch_picking_id.name[-9:],
+            'mmmmomexp': datetime.datetime.strptime(self.date, '%Y-%m-%d %H:%M:%S.%f'),
         }
         vals.update(update_vals)
         return vals
@@ -53,7 +53,8 @@ class StockPicking(models.Model):
 
     @api.multi
     def send_to_sga(self):
-        to_ulma = self.filtered(lambda x: x.picking_type_id.sga_integrated and self.state == 'assigned')
+        print(self)
+        to_ulma = self.filtered(lambda x: x.picking_type_id.sga_integrated and x.state == 'assigned')
         ulma_out = self.env['ulma.mmmout']
         for pick in to_ulma:
             ##ulma_out.search([('mmmbatch', '=', self.name)]).unlink()

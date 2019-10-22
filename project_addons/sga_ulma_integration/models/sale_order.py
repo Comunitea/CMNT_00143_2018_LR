@@ -12,21 +12,20 @@ class SaleOrder(models.Model):
         partner_id = self.partner_id
         vals = batch.picking_type_id.get_ulma_vals('sale')
         update_vals = {
-            'mmmacccolcod': self.id,
             'mmmentdes': '{} ({})'.format(self.partner_id.name, self.name),
             'mmmexpordref': 'N' + self.name,
-            'mmmsesid': 2,
-            'momcre': self.effective_date,
+            'mmmsesid': 1 if batch.picking_type_id.ulma_type == 'SUBUNI' else 2,
+            'momcre': datetime.datetime.now(),
             'mmmterref': partner_id.ref,
-            'mmmentdir1': str(partner_id.street) + str(partner_id.street2),
+            'mmmentdir1': str(partner_id.street) + str(partner_id.street2) or '',
             'mmmentdir2': partner_id.city,
             'mmmentdir3': partner_id.state_id.name,
             'mmmentdir4': partner_id.zip,
-            'mmmbatch': batch.id,
+            'mmmbatch': batch.name[-9:],
             'mmmacccolcod': batch.id,
-            'mmmmomexp': self.effective_date,
+            'mmmmomexp': datetime.datetime.strptime(self.effective_date, '%Y-%m-%d'),
             'mmmurgnte': '' if batch.urgent else 'N',
-            'mmmtraref': str(batch.shipping_type) + '-N'
+            'mmmtraref': str(batch.shipping_type) or '' + '-N'
             }
 
         vals.update(update_vals)
