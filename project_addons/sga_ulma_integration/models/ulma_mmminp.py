@@ -19,7 +19,7 @@ class UlmaMmminp(models.Model):
     mmmresmsj = fields.Char(max=80)
     mmmcanuni = fields.Integer(max=9)
     mmmartref = fields.Char(max=16)
-    momcre = fields.Date()
+    momcre = fields.Datetime()
 
     @api.multi
     def check_on_create(self, record_id):

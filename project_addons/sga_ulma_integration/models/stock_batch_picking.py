@@ -14,8 +14,8 @@ class StockBatchPicking(models.Model):
     def get_ulma_vals(self):
         vals = self.picking_type_id.get_ulma_vals('pick')
         update_vals= {
-            'momcre': fields.datetime.now().date().strftime('%Y-%m-%d'),
-            'mmmbatch': self.name[6:],
+            'momcre': datetime.datetime.now(),
+            'mmmbatch': self.name[-9:],
             'mmmmomexp': self.date,
         }
         vals.update(update_vals)
@@ -57,38 +57,36 @@ class StockBatchPicking(models.Model):
     def get_from_ulma(self):
         batchs = self.env['stock.batch.picking'].search([('picking_type_id.sga_integration_type', '=', 'sga_ulma'), ('sga_state', '=', 'pending')])
         for batch in batchs:
-            line_ids = batch.draft_move_lines.filtered(lambda x: x.sga_state == 'pending')
-            sale_ids = line_ids.mapped('sale_id')
-            for sale in sale_ids:
-                sale_order = self.env['sale.order'].search([('mmmexpordref', '=', 'N' + sale.name), ('mmmres', '=', 'FIN')])
-                
-                if ulma_obj.mmmcmdref == 'ERR':
-                    batch.write({
-                        'ulma_error': ulma_obj.mmmresmsj
-                    })
-                elif ulma_obj.mmmcmdref == 'SAL':
-                    moves_ids = self.env['ulma.mmminp'].search([('mmmexpordref', '=', 'N' + sale.name), ('mmmres', 'not in', ['FIN'])])
-                    for ulma_move in moves_ids:
-                        index = int(ulma_move.id)
-                        move_line = self.env['stock.move.line'].browse(index)
-                        if move_line.ordered_qty == ulma_move.mmmcanuni:
-                            if move_line.ordered_qty != ulma_move.mmmcanuni:
-                                move_line._set_quantity_done(ulma_move.mmmcanuni)
-                            else:
-                                actual_move = self.env['stock.move'].search([('origin_returned_move_id', '=', move_line.move_id.id)])
-                                actual_move._prepare_move_line_vals(ulma_move.mmmcanuni)
-                        
-                        else:
-                            diference = move_line.ordered_qty - ulma_move.mmmcanuni
-                            move_line.move_id._split(diference)
+            data = self.env['ulma.mmminp'].search([('mmmacccolcod', '=', batch.id), ('mmmres', '=', 'FIN')])
+            ulma_obj = self.env['ulma.mmminp'].browse(data.id)
+            
+            if ulma_obj.mmmcmdref == 'ERR':
+                batch.write({
+                    'ulma_error': ulma_obj.mmmresmsj
+                })
+            elif ulma_obj.mmmcmdref == 'SAL':
+                moves_ids = self.env['ulma.mmminp'].search([('mmmacccolcod', '=', batch.id), ('mmmres', 'not in', ['FIN'])])
+                for ulma_move in moves_ids:
+                    index = int(ulma_move.id)
+                    move_line = self.env['stock.move.line'].browse(index)
+                    if move_line.ordered_qty == ulma_move.mmmcanuni:
+                        if move_line.ordered_qty != ulma_move.mmmcanuni:
                             move_line._set_quantity_done(ulma_move.mmmcanuni)
-                            move_line.write({
-                                'sga_state': 'pending'
-                            })
+                        else:
+                            actual_move = self.env['stock.move'].search([('origin_returned_move_id', '=', move_line.move_id.id)])
+                            actual_move._prepare_move_line_vals(ulma_move.mmmcanuni)
+                    
+                    else:
+                        diference = move_line.ordered_qty - ulma_move.mmmcanuni
+                        move_line.move_id._split(diference)
+                        move_line._set_quantity_done(ulma_move.mmmcanuni)
+                        move_line.write({
+                            'sga_state': 'pending'
+                        })
 
-                    batch.write({
-                        'sga_state': 'pending'
-                    })
+                batch.write({
+                    'sga_state': 'pending'
+                })
 
 
 

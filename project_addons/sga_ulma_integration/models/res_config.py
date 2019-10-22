@@ -164,10 +164,10 @@ class ConfigUlmaData(models.TransientModel):
         mmmpicsal character varying(1), mmmremdes character varying(70), mmmremdir1 character varying(70), mmmremdir2 character varying(70), 
         mmmremdir3 character varying(70), mmmremdir4 character varying(70), mmmres character varying(9), mmmresmsj character varying(80), mmmsecada numeric(9,0), 
         mmmsecdis numeric(9,0), mmmsesid numeric(9,0), mmmterproref character varying(16), mmmubidesref character varying(16), mmmubioriref character varying(16), 
-        mmmzondesref character varying(4), momcre date, momlec date, mmmartean character varying(30), mmmexpordfusref character varying(15), 
+        mmmzondesref character varying(4), momcre timestamp, momlec timestamp, mmmartean character varying(30), mmmexpordfusref character varying(15), 
         mmmnecman character varying(4), mmmobs character varying(255), mmmpesfin numeric(9,3), mmmsorrut character varying(30), mmmtolpes numeric(2,0), 
         mmmubichkref character varying(16), mmmacccod numeric(9,0), mmmacpmot character varying(4), mmmartapi character varying(1), mmmbatch character varying(9), 
-        mmmdorhue character varying(1), mmmfeccad date, mmmgraocu numeric(3,0), mmmmomexp date, mmmmonlot character varying(1), mmmrecmaqref character(10), 
+        mmmdorhue character varying(1), mmmfeccad timestamp, mmmgraocu numeric(3,0), mmmmomexp timestamp, mmmmonlot character varying(1), mmmrecmaqref character(10), 
         mmmrecref character varying(15), mmmterref character varying(16), mmmtrades character varying(70), mmmtraref character varying(16), 
         mmmurgnte character varying(1)) SERVER %s OPTIONS (%s '%s')""" % (primary_mod, self.ulma_database, table_mod, self.mmmout_table))
     
@@ -185,7 +185,7 @@ class ConfigUlmaData(models.TransientModel):
         mmmcmdref character varying(9) NOT NULL, mmmcntdorref character varying(18), id %s, mmmcrirot character varying(20), 
         mmmdisref character varying(9), mmmexpordref character varying(15), mmmges character varying(9) NOT NULL, mmmlot character varying(20), 
         mmmres character varying(9), mmmresmsj character varying(80), mmmsecada numeric(9,0), mmmsecdis numeric(9,0), mmmsesid numeric(9,0), 
-        mmmubidesref character varying(16), mmmubiorief character varying(16), momcre date, momlec date, mmmacccolcod numeric(9,0), mmmobs character varying(255), 
+        mmmubidesref character varying(16), mmmubiorief character varying(16), momcre timestamp, momlec timestamp, mmmacccolcod numeric(9,0), mmmobs character varying(255), 
         mmmexpordfusref character varying(15), mmmpesfin numeric(9,3), mmmacccod numeric(9,0), mmmrecmaqref character(10), mmmacpmot character varying(4), 
         mmmcntdordes character varying(18), mmmcntdordori character varying(18), mmmrecref character varying(15)) 
         SERVER %s OPTIONS (%s '%s')""" % (primary_mod, self.ulma_database, table_mod, self.mmminp_table))

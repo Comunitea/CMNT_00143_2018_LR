@@ -1,0 +1,1408 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* sga_adaia_integration
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 11.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-10-22 08:11+0000\n"
+"PO-Revision-Date: 2019-10-22 08:11+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,help:sga_adaia_integration.field_stock_adaia_confirm_state
+msgid " * Draft: not confirmed yet and will not be scheduled until confirmed.\n"
+" * Waiting Another Operation: waiting for another move to proceed before it becomes automatically available (e.g. in Make-To-Order flows).\n"
+" * Waiting: if it is not ready to be sent because the required products could not be reserved.\n"
+" * Ready: products are reserved and ready to be sent. If the shipping policy is 'As soon as possible' this happens as soon as anything is reserved.\n"
+" * Done: has been processed, can't be modified or cancelled anymore.\n"
+" * Cancelled: has been cancelled, can't be confirmed anymore."
+msgstr " * Borrador: no confirmado aún y no se programará hasta que se confirme.\n"
+" \n"
+" * Esperando otra operación: esperando a que se realice otro movimiento antes de que esté disponible automáticamente (por ejemplo, en los flujos de Make-To-Order).\n"
+" * En espera: si no está listo para enviarse porque los productos requeridos no se pudieron reservar.\n"
+" * Listo: los productos están reservados y listos para ser enviados. Si la política de envío es 'Tan pronto como sea posible', esto ocurre tan pronto como se reserve cualquier cosa.\n"
+" * Hecho: ha sido procesado, no puede ser modificado o cancelado nunca más.\n"
+" * Cancelado: ha sido cancelado, no puede confirmarse más."
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,help:sga_adaia_integration.field_stock_move_line_sga_catch_weight
+msgid "1 Indica si se captura el peso del producto\n"
+"0 (por defecto) se coge el peso de la ficha de producto"
+msgstr "1 Indica si se captura el peso del producto\n"
+"0 (por defecto) se coge el peso de la ficha de producto"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,help:sga_adaia_integration.field_stock_move_line_sga_disable_alt_product
+msgid "1 Se deshabilita el producto alternativo\n"
+"0 (por defecto) No se deshabilita"
+msgstr "1 Se deshabilita el producto alternativo\n"
+"0 (por defecto) No se deshabilita"
+
+#. module: sga_adaia_integration
+#: model:ir.ui.view,arch_db:sga_adaia_integration.stock_picking_type_sga_form
+msgid "ADAIA file Prefix"
+msgstr "ADAIA file Prefix"
+
+#. module: sga_adaia_integration
+#: model:ir.ui.view,arch_db:sga_adaia_integration.stock_picking_type_sga_form
+msgid "ADAIA file type"
+msgstr "ADAIA file type"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sga_file_error_ack
+msgid "Ack"
+msgstr "Ack"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sgavar_file_version_active
+msgid "Active"
+msgstr "Activo"
+
+#. module: sga_adaia_integration
+#: model:ir.ui.view,arch_db:sga_adaia_integration.product_product_adaia_integration_form
+msgid "Adaia Modification barcode file"
+msgstr "Adaia Modification barcode file"
+
+#. module: sga_adaia_integration
+#: model:ir.ui.view,arch_db:sga_adaia_integration.product_product_adaia_integration_form
+#: model:ir.ui.view,arch_db:sga_adaia_integration.product_template_adaia_integration_only_form_view
+#: model:ir.ui.view,arch_db:sga_adaia_integration.view_res_partner_adaia_integration_form
+msgid "Adaia Modification file"
+msgstr "Adaia Modification file"
+
+#. module: sga_adaia_integration
+#: model:ir.ui.view,arch_db:sga_adaia_integration.product_product_adaia_integration_form
+msgid "Adaia Modification stock file"
+msgstr "Adaia Modification stock file"
+
+#. module: sga_adaia_integration
+#: model:ir.ui.view,arch_db:sga_adaia_integration.product_product_adaia_integration_form
+msgid "Adaia New barcode file"
+msgstr "Adaia New barcode file"
+
+#. module: sga_adaia_integration
+#: model:ir.ui.view,arch_db:sga_adaia_integration.product_product_adaia_integration_form
+#: model:ir.ui.view,arch_db:sga_adaia_integration.product_template_adaia_integration_only_form_view
+#: model:ir.ui.view,arch_db:sga_adaia_integration.view_res_partner_adaia_integration_form
+msgid "Adaia New file"
+msgstr "Adaia New file"
+
+#. module: sga_adaia_integration
+#: model:ir.ui.view,arch_db:sga_adaia_integration.product_product_adaia_integration_form
+msgid "Adaia New stock file"
+msgstr "Adaia New stock file"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sgavar_file_var_adaia_type
+msgid "Adaia Type"
+msgstr "Adaia Type"
+
+#. module: sga_adaia_integration
+#: model:ir.ui.view,arch_db:sga_adaia_integration.res_config_settings_sga_form
+msgid "Adaia files exchange"
+msgstr "Adaia files exchange"
+
+#. module: sga_adaia_integration
+#: model:ir.ui.view,arch_db:sga_adaia_integration.product_product_adaia_integration_form
+msgid "Adaia remove barcode file"
+msgstr "Adaia remove barcode file"
+
+#. module: sga_adaia_integration
+#: model:ir.ui.view,arch_db:sga_adaia_integration.product_product_adaia_integration_form
+#: model:ir.ui.view,arch_db:sga_adaia_integration.product_template_adaia_integration_only_form_view
+#: model:ir.ui.view,arch_db:sga_adaia_integration.view_res_partner_adaia_integration_form
+msgid "Adaia remove file"
+msgstr "Adaia remove file"
+
+#. module: sga_adaia_integration
+#: model:ir.ui.view,arch_db:sga_adaia_integration.product_product_adaia_integration_form
+msgid "Adaia remove stock file"
+msgstr "Adaia remove stock file"
+
+#. module: sga_adaia_integration
+#: model:ir.ui.view,arch_db:sga_adaia_integration.view_picking_sga_form
+msgid "Adaia stock OUT"
+msgstr "Adaia stock OUT"
+
+#. module: sga_adaia_integration
+#: model:ir.ui.view,arch_db:sga_adaia_integration.view_picking_sga_form
+msgid "Adaia stock del OUT"
+msgstr "Adaia stock del OUT"
+
+#. module: sga_adaia_integration
+#: model:ir.ui.view,arch_db:sga_adaia_integration.view_picking_sga_form
+msgid "Adaia stock edit OUT"
+msgstr "Adaia stock edit OUT"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sga_file_error_picking_id
+msgid "Albarán"
+msgstr "Albarán"
+
+#. module: sga_adaia_integration
+#: selection:sgavar.file.var,adaia_type:0
+msgid "Alfanumerico"
+msgstr "Alfanumerico"
+
+#. module: sga_adaia_integration
+#: selection:stock.picking,sga_operation:0
+msgid "Alta"
+msgstr "Alta"
+
+#. module: sga_adaia_integration
+#: model:ir.actions.server,name:sga_adaia_integration.cron_archive_sga_file_ir_actions_server
+#: model:ir.cron,cron_name:sga_adaia_integration.cron_archive_sga_file
+#: model:ir.cron,name:sga_adaia_integration.cron_archive_sga_file
+msgid "Archive SGA files"
+msgstr "Archive SGA files"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sga_file_error_product_id
+msgid "Artículo"
+msgstr "Artículo"
+
+#. module: sga_adaia_integration
+#: selection:sgavar.file.var,adaia_type:0
+msgid "Atributo/Variable"
+msgstr "Atributo/Variable"
+
+#. module: sga_adaia_integration
+#: selection:stock.picking,sga_operation:0
+msgid "Baja"
+msgstr "Baja"
+
+#. module: sga_adaia_integration
+#: model:ir.ui.view,arch_db:sga_adaia_integration.product_product_adaia_integration_form
+msgid "Barcode"
+msgstr "Código de barras"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_res_config_settings_adaia_barcode_code
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_robots_txt_settings_adaia_barcode_code
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_seo_analytics_settings_adaia_barcode_code
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_seo_general_settings_adaia_barcode_code
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sitemap_base_settings_adaia_barcode_code
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_web_app_settings_adaia_barcode_code
+msgid "Barcode SGA Code"
+msgstr "Barcode SGA Code"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_res_config_settings_adaia_barcode_prefix
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_robots_txt_settings_adaia_barcode_prefix
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_seo_analytics_settings_adaia_barcode_prefix
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_seo_general_settings_adaia_barcode_prefix
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sitemap_base_settings_adaia_barcode_prefix
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_web_app_settings_adaia_barcode_prefix
+msgid "Barcode SGA prefix"
+msgstr "Barcode SGA prefix"
+
+#. module: sga_adaia_integration
+#: selection:sgavar.file.var,adaia_type:0
+msgid "Booleano"
+msgstr "Booleano"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sgavar_file_file_bytes
+msgid "Bytes"
+msgstr "Bytes"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sgavar_file_var_name
+msgid "Campo Adaia"
+msgstr "Campo Adaia"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sgavar_file_var_odoo_name
+msgid "Campo Odoo (si existe)"
+msgstr "Campo Odoo (si existe)"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,help:sga_adaia_integration.field_sgavar_file_var_length
+msgid "Campo numérico."
+msgstr "Campo numérico."
+
+#. module: sga_adaia_integration
+#: model:ir.ui.view,arch_db:sga_adaia_integration.view_check_adaia_stock
+msgid "Cancel"
+msgstr "Cancelar"
+
+#. module: sga_adaia_integration
+#: selection:product.product,sga_state:0
+#: selection:product.template,sga_state:0
+#: selection:res.partner,sga_state:0
+msgid "Cancelado"
+msgstr "Cancelado"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sgavar_file_var_fillchar
+msgid "Caracter de relleno"
+msgstr "Caracter de relleno"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sga_file_sga_path
+msgid "Carpeta"
+msgstr "Carpeta"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,help:sga_adaia_integration.field_sga_file_sga_path
+msgid "Carpeta del archivo"
+msgstr "Carpeta del archivo"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_stock_move_line_sga_catch_weight
+msgid "Catch weight"
+msgstr "Peso"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_wiz_check_adaia_stock_categ_ids
+msgid "Categ"
+msgstr "Categ"
+
+#. module: sga_adaia_integration
+#: model:ir.ui.menu,name:sga_adaia_integration.check_all_adaia_stock
+#: model:ir.ui.view,arch_db:sga_adaia_integration.view_check_adaia_stock
+msgid "Check adaia stock"
+msgstr "Comprobar stock de ADAIA"
+
+#. module: sga_adaia_integration
+#: model:ir.actions.act_window,name:sga_adaia_integration.act_check_all_adaia_stock
+msgid "Check stock (Adaia)"
+msgstr "Comprobar stock (Adaia)"
+
+#. module: sga_adaia_integration
+#: model:ir.actions.act_window,help:sga_adaia_integration.sga_file_line_action_view
+msgid "Click to define a new Sga Line."
+msgstr "Click para crear una nueva línea."
+
+#. module: sga_adaia_integration
+#: model:ir.actions.act_window,help:sga_adaia_integration.sga_file_action_view
+msgid "Click to define a new Sga file."
+msgstr "Click para crear un nuevo archivo"
+
+#. module: sga_adaia_integration
+#: model:ir.actions.act_window,help:sga_adaia_integration.model_sgafile_var_action_view
+msgid "Click to define a sga file var."
+msgstr "Click para crear un nuevo archivo"
+
+#. module: sga_adaia_integration
+#: model:ir.actions.act_window,help:sga_adaia_integration.model_sgafile_action_view
+msgid "Click to define a sga var file."
+msgstr "Click para crear un nuevo archivo"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sga_file_error_error_code
+msgid "Codigo de error"
+msgstr "Codigo de error"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sga_file_file_code
+msgid "Codigo del fichero"
+msgstr "Codigo del fichero"
+
+#. module: sga_adaia_integration
+#: model:ir.model,name:sga_adaia_integration.model_stock_adaia_confirm
+msgid "Confirmación de Adaia"
+msgstr "Confirmación de Adaia"
+
+#. module: sga_adaia_integration
+#: model:ir.ui.view,arch_db:sga_adaia_integration.stock_adaia_confirm_wizard
+msgid "Confirmación de envío a Adaia"
+msgstr "Confirmación de envío a Adaia"
+
+#. module: sga_adaia_integration
+#: model:ir.model,name:sga_adaia_integration.model_res_partner
+msgid "Contact"
+msgstr "Contact"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_stock_adaia_confirm_do_backorder
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_stock_picking_do_backorder
+msgid "Crea entrega parcial"
+msgstr "Crea entrega parcial"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sga_file_create_uid
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sga_file_error_create_uid
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sga_file_line_create_uid
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sgavar_file_create_uid
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sgavar_file_var_create_uid
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_stock_adaia_confirm_create_uid
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_stock_picking_sgatype_create_uid
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_wiz_check_adaia_stock_create_uid
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sga_file_create_date
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sga_file_error_create_date
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sga_file_line_create_date
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sgavar_file_create_date
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sgavar_file_var_create_date
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_stock_adaia_confirm_create_date
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_stock_picking_sgatype_create_date
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_wiz_check_adaia_stock_create_date
+msgid "Created on"
+msgstr "Creado en"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sgavar_file_cte_name
+msgid "Cte name"
+msgstr "Cte name"
+
+#. module: sga_adaia_integration
+#: selection:sga.file,file_type:0
+msgid "De Adaia a Odoo"
+msgstr "De Adaia a Odoo"
+
+#. module: sga_adaia_integration
+#: selection:sga.file,file_type:0
+msgid "De Odoo a Adaia"
+msgstr "De Odoo a Adaia"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_stock_picking_sgatype_description
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_stock_picking_stock_picking_sgatype_description
+msgid "Descripcion (SGA)"
+msgstr "Descripcion (SGA)"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_stock_move_line_sga_disable_alt_product
+msgid "Disable alt product"
+msgstr "Disable alt product"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sga_file_display_name
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sga_file_error_display_name
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sga_file_line_display_name
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sgavar_file_display_name
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sgavar_file_var_display_name
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_stock_adaia_confirm_display_name
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_stock_picking_sgatype_display_name
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_wiz_check_adaia_stock_display_name
+msgid "Display Name"
+msgstr "Nombre mostrado"
+
+#. module: sga_adaia_integration
+#: selection:sga.file,state:0
+msgid "En espera"
+msgstr "En espera"
+
+#. module: sga_adaia_integration
+#: model:ir.ui.view,arch_db:sga_adaia_integration.stock_adaia_confirm_wizard
+msgid "Enviar"
+msgstr "Enviar"
+
+#. module: sga_adaia_integration
+#: selection:sga.file,state:0
+msgid "Error"
+msgstr "Error"
+
+#. module: sga_adaia_integration
+#: code:addons/sga_adaia_integration/models/sga_file.py:429
+#, python-format
+msgid "Error al acceder/crear el archivo:\n"
+"%s."
+msgstr "Error al acceder/crear el archivo:\n"
+"%s."
+
+#. module: sga_adaia_integration
+#: selection:product.product,sga_state:0
+#: selection:product.template,sga_state:0
+#: selection:res.partner,sga_state:0
+msgid "Error en exportacion"
+msgstr "Error en exportacion"
+
+#. module: sga_adaia_integration
+#: selection:product.product,sga_state:0
+#: selection:product.template,sga_state:0
+#: selection:res.partner,sga_state:0
+msgid "Error en importacion"
+msgstr "Error en importacion"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sga_file_errors
+msgid "Errores"
+msgstr "Errores"
+
+#. module: sga_adaia_integration
+#: model:ir.actions.act_window,name:sga_adaia_integration.model_sgafile_error_action_view
+#: model:ir.ui.menu,name:sga_adaia_integration.Error SGAfiles
+msgid "Errores de importacion"
+msgstr "Errores de importacion"
+
+#. module: sga_adaia_integration
+#: sql_constraint:sgavar.file:0
+msgid "Este codigo/version de archivo ya existe!"
+msgstr "Este codigo/version de archivo ya existe!"
+
+#. module: sga_adaia_integration
+#: selection:stock.move.line,sga_catch_weight:0
+#: selection:stock.move.line,sga_disable_alt_product:0
+msgid "False"
+msgstr "False"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sga_file_error_date_error
+#: selection:sgavar.file.var,adaia_type:0
+msgid "Fecha"
+msgstr "Fecha"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sga_file_file_time
+msgid "Fecha/hora del archivo"
+msgstr "Fecha/hora del archivo"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sga_file_error_file_name
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sga_file_sga_file
+msgid "Fichero"
+msgstr "Fichero"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sga_file_log_name
+msgid "Fichero log asociado"
+msgstr "Fichero log asociado"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sga_file_error_note
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sga_file_line_line
+msgid "File line"
+msgstr "File line"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_res_config_settings_path_files
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_robots_txt_settings_path_files
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_seo_analytics_settings_path_files
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_seo_general_settings_path_files
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sitemap_base_settings_path_files
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_web_app_settings_path_files
+msgid "Files Path"
+msgstr "Ruta de archivos"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sgavar_file_file_filter
+msgid "Filter"
+msgstr "Filtro"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sgavar_file_var_en
+msgid "Fin cadena"
+msgstr "Fin cadena"
+
+#. module: sga_adaia_integration
+#: model:ir.ui.view,arch_db:sga_adaia_integration.stock_adaia_confirm_wizard
+msgid "Forzado"
+msgstr "Forzado"
+
+#. module: sga_adaia_integration
+#: model:ir.ui.view,arch_db:sga_adaia_integration.view_picking_sga_form
+msgid "Forzar validación"
+msgstr "Forzar validación"
+
+#. module: sga_adaia_integration
+#: model:ir.ui.view,arch_db:sga_adaia_integration.stock_adaia_confirm_wizard
+msgid "Forzar y enviar"
+msgstr "Forzar y enviar"
+
+#. module: sga_adaia_integration
+#: selection:sgavar.file.var,adaia_type:0
+msgid "Hora"
+msgstr "Hora"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sga_file_error_id
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sga_file_id
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sga_file_line_id
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sgavar_file_id
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sgavar_file_var_id
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_stock_adaia_confirm_id
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_stock_picking_sgatype_id
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_wiz_check_adaia_stock_id
+msgid "ID"
+msgstr "ID"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sga_file_error_object_id
+msgid "Id del objeto"
+msgstr "Id del objeto"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,help:sga_adaia_integration.field_stock_warehouse_sga_integrated
+msgid "If checked, odoo export this pick type to Adaia"
+msgstr "Si se marca odoo exportará este tipo de albarán a Adaia"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sgavar_file_var_st
+msgid "Inicio cadena"
+msgstr "Inicio cadena"
+
+#. module: sga_adaia_integration
+#: model:ir.ui.view,arch_db:sga_adaia_integration.product_product_adaia_integration_form
+#: model:ir.ui.view,arch_db:sga_adaia_integration.product_template_adaia_integration_only_form_view
+#: model:ir.ui.view,arch_db:sga_adaia_integration.view_res_partner_adaia_integration_form
+msgid "Integración Adaia"
+msgstr "Integración Adaia"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_stock_warehouse_sga_integrated
+msgid "Integrado con Adaia"
+msgstr "Integrado con Adaia"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_stock_move_line_product_code
+msgid "Internal Reference"
+msgstr "Referencia interna"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sgavar_file_var_length_dec
+msgid "L. Decimal"
+msgstr "L. Decimal"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sgavar_file_var_length_int
+msgid "L. Entera"
+msgstr "L. Entera"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sga_file___last_update
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sga_file_error___last_update
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sga_file_line___last_update
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sgavar_file___last_update
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sgavar_file_var___last_update
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_stock_adaia_confirm___last_update
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_stock_picking_sgatype___last_update
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_wiz_check_adaia_stock___last_update
+msgid "Last Modified on"
+msgstr "Última modificación en"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sga_file_error_write_uid
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sga_file_line_write_uid
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sga_file_write_uid
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sgavar_file_var_write_uid
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sgavar_file_write_uid
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_stock_adaia_confirm_write_uid
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_stock_picking_sgatype_write_uid
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_wiz_check_adaia_stock_write_uid
+msgid "Last Updated by"
+msgstr "Última actualización de"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sga_file_error_write_date
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sga_file_line_write_date
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sga_file_write_date
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sgavar_file_var_write_date
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sgavar_file_write_date
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_stock_adaia_confirm_write_date
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_stock_picking_sgatype_write_date
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_wiz_check_adaia_stock_write_date
+msgid "Last Updated on"
+msgstr "Última actualización en"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sga_file_line_name
+msgid "Line name"
+msgstr "Line name"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sga_file_error_line_number
+msgid "Linea"
+msgstr "Linea"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_wiz_check_adaia_stock_location_id
+msgid "Location to regularize"
+msgstr "Location to regularize"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sgavar_file_var_length
+msgid "Longitud"
+msgstr "Longitud"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,help:sga_adaia_integration.field_sgavar_file_var_length_dec
+msgid "Longitud decimal(nº de digitos de la parte decimal en un tipo 'float')"
+msgstr "Longitud decimal(nº de digitos de la parte decimal en un tipo 'float')"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,help:sga_adaia_integration.field_sgavar_file_var_length_int
+msgid "Longitud entera(nº de digitos de la parte entera en un tipo 'float')"
+msgstr "Longitud entera(nº de digitos de la parte entera en un tipo 'float')"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sga_file_error_error_message
+msgid "Mensaje de error"
+msgstr "Mensaje de error"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sgavar_file_model
+msgid "Model Description"
+msgstr "Descripción del modelo"
+
+#. module: sga_adaia_integration
+#: model:ir.actions.act_window,name:sga_adaia_integration.model_sgafile_action_view
+#: model:ir.ui.menu,name:sga_adaia_integration.Models SGAfiles
+msgid "Model Sgafile"
+msgstr "Model Sgafile"
+
+#. module: sga_adaia_integration
+#: model:ir.actions.act_window,name:sga_adaia_integration.model_sgafile_var_action_view
+#: model:ir.ui.menu,name:sga_adaia_integration.Vars SGAfiles
+msgid "Model Sgafile Var"
+msgstr "Model Sgafile Var"
+
+#. module: sga_adaia_integration
+#: selection:stock.picking,sga_operation:0
+msgid "Modificacion"
+msgstr "Modificación"
+
+#. module: sga_adaia_integration
+#: selection:stock.picking,sga_operation:0
+msgid "Modificacion + Alta"
+msgstr "Modificacion + Alta"
+
+#. module: sga_adaia_integration
+#: model:ir.ui.view,arch_db:sga_adaia_integration.view_picking_sga_form
+msgid "Mover a no enviado"
+msgstr "Mover a no enviado"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sga_file_name
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_stock_picking_sga_company
+msgid "Name"
+msgstr "Nombre"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_wiz_check_adaia_stock_neg_qty
+msgid "Neg qty"
+msgstr "Neg qty"
+
+#. module: sga_adaia_integration
+#: selection:stock.picking,do_backorder:0
+msgid "No"
+msgstr "No"
+
+#. module: sga_adaia_integration
+#: selection:product.product,sga_state:0
+#: selection:product.template,sga_state:0
+#: selection:res.partner,sga_state:0
+msgid "No enviado"
+msgstr "No enviado"
+
+#. module: sga_adaia_integration
+#: model:ir.actions.act_window,help:sga_adaia_integration.model_sgafile_error_action_view
+msgid "No hay ficheros"
+msgstr "No hay ficheros"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_wiz_check_adaia_stock_no_zero_qty
+msgid "No zero qty"
+msgstr "No zero qty"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_stock_move_line_line_number
+msgid "Number de linea"
+msgstr "Number de linea"
+
+#. module: sga_adaia_integration
+#: selection:sgavar.file.var,adaia_type:0
+msgid "Numerico"
+msgstr "Numérico"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,help:sga_adaia_integration.field_sga_file_errors
+msgid "Numero de veces que debe aparecer el error antes de mover a error"
+msgstr "Número de veces que debe aparecer el error antes de mover a error"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sgavar_file_var_required
+msgid "Obligatorio"
+msgstr "Obligatorio"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sgavar_file_odoo_model
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sgavar_file_var_odoo_model
+msgid "Odoo Model"
+msgstr "Modelo Odoo"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sga_file_error_sga_operation
+msgid "Operacion"
+msgstr "Operacion"
+
+#. module: sga_adaia_integration
+#: model:ir.ui.view,arch_db:sga_adaia_integration.view_picking_sga_form
+msgid "Out"
+msgstr "Out"
+
+#. module: sga_adaia_integration
+#: model:ir.model,name:sga_adaia_integration.model_stock_move_line
+msgid "Packing Operation"
+msgstr "Operación de empaquetado"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sga_file_error_partner_id
+msgid "Partner"
+msgstr "Empresa"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_res_config_settings_adaia_partner_code
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_robots_txt_settings_adaia_partner_code
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_seo_analytics_settings_adaia_partner_code
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_seo_general_settings_adaia_partner_code
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sitemap_base_settings_adaia_partner_code
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_web_app_settings_adaia_partner_code
+msgid "Partner SGA Code"
+msgstr "Partner SGA Code"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_res_config_settings_adaia_partner_prefix
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_robots_txt_settings_adaia_partner_prefix
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_seo_analytics_settings_adaia_partner_prefix
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_seo_general_settings_adaia_partner_prefix
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sitemap_base_settings_adaia_partner_prefix
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_web_app_settings_adaia_partner_prefix
+msgid "Partner SGA prefix"
+msgstr "Partner SGA prefix"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_res_partner_partner_type
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_res_users_partner_type
+msgid "Partner Type"
+msgstr "Tipo de Empresa"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,help:sga_adaia_integration.field_res_config_settings_path_files
+#: model:ir.model.fields,help:sga_adaia_integration.field_robots_txt_settings_path_files
+#: model:ir.model.fields,help:sga_adaia_integration.field_seo_analytics_settings_path_files
+#: model:ir.model.fields,help:sga_adaia_integration.field_seo_general_settings_path_files
+#: model:ir.model.fields,help:sga_adaia_integration.field_sitemap_base_settings_path_files
+#: model:ir.model.fields,help:sga_adaia_integration.field_web_app_settings_path_files
+msgid "Path to SGA Adaia exchange files. Must content in, out, error, processed and history folders\n"
+"Also a scheduled action is created: Archive SGA files"
+msgstr "Ruta a la carpeta de intercambio de ADAIA. Debe tener las carpetas in, out, error, processed y carpetas  de history \n"
+"También una acción programada es creada: Archivar archivos SGA"
+
+#. module: sga_adaia_integration
+#: selection:product.product,sga_state:0
+#: selection:product.template,sga_state:0
+#: selection:res.partner,sga_state:0
+msgid "Pendiente Sga"
+msgstr "Pendiente Sga"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_stock_adaia_confirm_pick_id
+msgid "Pick a enviar"
+msgstr "Pick a enviar"
+
+#. module: sga_adaia_integration
+#: selection:stock.picking,do_backorder:0
+msgid "Por defecto"
+msgstr "Por defecto"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_stock_picking_type_sga_prefix
+msgid "Prefijo del archivo"
+msgstr "Prefijo del archivo"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_stock_picking_sga_priority
+msgid "Priority"
+msgstr "Prioridad"
+
+#. module: sga_adaia_integration
+#: selection:sga.file,state:0
+msgid "Procesado"
+msgstr "Procesado"
+
+#. module: sga_adaia_integration
+#: model:ir.actions.server,name:sga_adaia_integration.cron_process_sga_file_ir_actions_server
+#: model:ir.cron,cron_name:sga_adaia_integration.cron_process_sga_file
+#: model:ir.cron,name:sga_adaia_integration.cron_process_sga_file
+msgid "Process SGA files"
+msgstr "Procesar archivos SGA"
+
+#. module: sga_adaia_integration
+#: model:ir.model,name:sga_adaia_integration.model_product_product
+msgid "Product"
+msgstr "Producto"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_res_config_settings_adaia_product_code
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_robots_txt_settings_adaia_product_code
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_seo_analytics_settings_adaia_product_code
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_seo_general_settings_adaia_product_code
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sitemap_base_settings_adaia_product_code
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_web_app_settings_adaia_product_code
+msgid "Product SGA Code"
+msgstr "Product SGA Code"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_res_config_settings_adaia_product_prefix
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_robots_txt_settings_adaia_product_prefix
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_seo_analytics_settings_adaia_product_prefix
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_seo_general_settings_adaia_product_prefix
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sitemap_base_settings_adaia_product_prefix
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_web_app_settings_adaia_product_prefix
+msgid "Product SGA prefix"
+msgstr "Product SGA prefix"
+
+#. module: sga_adaia_integration
+#: model:ir.model,name:sga_adaia_integration.model_product_template
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_stock_move_line_product_tmpl_id
+msgid "Product Template"
+msgstr "Plantilla de producto"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_res_config_settings_adaia_stock_code
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_robots_txt_settings_adaia_stock_code
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_seo_analytics_settings_adaia_stock_code
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_seo_general_settings_adaia_stock_code
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sitemap_base_settings_adaia_stock_code
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_web_app_settings_adaia_stock_code
+msgid "Product stock SGA Code"
+msgstr "Product stock SGA Code"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_res_config_settings_adaia_stock_prefix
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_robots_txt_settings_adaia_stock_prefix
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_seo_analytics_settings_adaia_stock_prefix
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_seo_general_settings_adaia_stock_prefix
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sitemap_base_settings_adaia_stock_prefix
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_web_app_settings_adaia_stock_prefix
+msgid "Product stock SGA prefix"
+msgstr "Product stock SGA prefix"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_res_config_settings_adaia_product_template_code
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_robots_txt_settings_adaia_product_template_code
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_seo_analytics_settings_adaia_product_template_code
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_seo_general_settings_adaia_product_template_code
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sitemap_base_settings_adaia_product_template_code
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_web_app_settings_adaia_product_template_code
+msgid "Product template SGA Code"
+msgstr "Product template SGA Code"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_res_config_settings_adaia_product_template_prefix
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_robots_txt_settings_adaia_product_template_prefix
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_seo_analytics_settings_adaia_product_template_prefix
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_seo_general_settings_adaia_product_template_prefix
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sitemap_base_settings_adaia_product_template_prefix
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_web_app_settings_adaia_product_template_prefix
+msgid "Product template SGA prefix"
+msgstr "Product template SGA prefix"
+
+#. module: sga_adaia_integration
+#: selection:product.product,sga_state:0
+#: selection:product.template,sga_state:0
+#: selection:res.partner,sga_state:0
+msgid "Realizado"
+msgstr "Realizado"
+
+#. module: sga_adaia_integration
+#: selection:sgavar.file.var,adaia_type:0
+msgid "Related-Alfanumérico"
+msgstr "Related-Alfanumérico"
+
+#. module: sga_adaia_integration
+#: selection:sgavar.file.var,adaia_type:0
+msgid "Related-Numérico"
+msgstr "Related-Numérico"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,help:sga_adaia_integration.field_res_config_settings_adaia_barcode_code
+#: model:ir.model.fields,help:sga_adaia_integration.field_robots_txt_settings_adaia_barcode_code
+#: model:ir.model.fields,help:sga_adaia_integration.field_seo_analytics_settings_adaia_barcode_code
+#: model:ir.model.fields,help:sga_adaia_integration.field_seo_general_settings_adaia_barcode_code
+#: model:ir.model.fields,help:sga_adaia_integration.field_sitemap_base_settings_adaia_barcode_code
+#: model:ir.model.fields,help:sga_adaia_integration.field_web_app_settings_adaia_barcode_code
+msgid "SGA Adaia barcode file code."
+msgstr "SGA Adaia barcode file code."
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,help:sga_adaia_integration.field_res_config_settings_adaia_barcode_prefix
+#: model:ir.model.fields,help:sga_adaia_integration.field_robots_txt_settings_adaia_barcode_prefix
+#: model:ir.model.fields,help:sga_adaia_integration.field_seo_analytics_settings_adaia_barcode_prefix
+#: model:ir.model.fields,help:sga_adaia_integration.field_seo_general_settings_adaia_barcode_prefix
+#: model:ir.model.fields,help:sga_adaia_integration.field_sitemap_base_settings_adaia_barcode_prefix
+#: model:ir.model.fields,help:sga_adaia_integration.field_web_app_settings_adaia_barcode_prefix
+msgid "SGA Adaia barcode file prefix."
+msgstr "SGA Adaia barcode file prefix."
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,help:sga_adaia_integration.field_res_config_settings_adaia_partner_code
+#: model:ir.model.fields,help:sga_adaia_integration.field_robots_txt_settings_adaia_partner_code
+#: model:ir.model.fields,help:sga_adaia_integration.field_seo_analytics_settings_adaia_partner_code
+#: model:ir.model.fields,help:sga_adaia_integration.field_seo_general_settings_adaia_partner_code
+#: model:ir.model.fields,help:sga_adaia_integration.field_sitemap_base_settings_adaia_partner_code
+#: model:ir.model.fields,help:sga_adaia_integration.field_web_app_settings_adaia_partner_code
+msgid "SGA Adaia partner file code"
+msgstr "SGA Adaia partner file code"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,help:sga_adaia_integration.field_res_config_settings_adaia_partner_prefix
+#: model:ir.model.fields,help:sga_adaia_integration.field_robots_txt_settings_adaia_partner_prefix
+#: model:ir.model.fields,help:sga_adaia_integration.field_seo_analytics_settings_adaia_partner_prefix
+#: model:ir.model.fields,help:sga_adaia_integration.field_seo_general_settings_adaia_partner_prefix
+#: model:ir.model.fields,help:sga_adaia_integration.field_sitemap_base_settings_adaia_partner_prefix
+#: model:ir.model.fields,help:sga_adaia_integration.field_web_app_settings_adaia_partner_prefix
+msgid "SGA Adaia partner file prefix"
+msgstr "SGA Adaia partner file prefix"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,help:sga_adaia_integration.field_res_config_settings_adaia_product_code
+#: model:ir.model.fields,help:sga_adaia_integration.field_res_config_settings_adaia_product_template_code
+#: model:ir.model.fields,help:sga_adaia_integration.field_robots_txt_settings_adaia_product_code
+#: model:ir.model.fields,help:sga_adaia_integration.field_robots_txt_settings_adaia_product_template_code
+#: model:ir.model.fields,help:sga_adaia_integration.field_seo_analytics_settings_adaia_product_code
+#: model:ir.model.fields,help:sga_adaia_integration.field_seo_analytics_settings_adaia_product_template_code
+#: model:ir.model.fields,help:sga_adaia_integration.field_seo_general_settings_adaia_product_code
+#: model:ir.model.fields,help:sga_adaia_integration.field_seo_general_settings_adaia_product_template_code
+#: model:ir.model.fields,help:sga_adaia_integration.field_sitemap_base_settings_adaia_product_code
+#: model:ir.model.fields,help:sga_adaia_integration.field_sitemap_base_settings_adaia_product_template_code
+#: model:ir.model.fields,help:sga_adaia_integration.field_web_app_settings_adaia_product_code
+#: model:ir.model.fields,help:sga_adaia_integration.field_web_app_settings_adaia_product_template_code
+msgid "SGA Adaia product file code."
+msgstr "SGA Adaia product file code."
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,help:sga_adaia_integration.field_res_config_settings_adaia_product_prefix
+#: model:ir.model.fields,help:sga_adaia_integration.field_res_config_settings_adaia_product_template_prefix
+#: model:ir.model.fields,help:sga_adaia_integration.field_robots_txt_settings_adaia_product_prefix
+#: model:ir.model.fields,help:sga_adaia_integration.field_robots_txt_settings_adaia_product_template_prefix
+#: model:ir.model.fields,help:sga_adaia_integration.field_seo_analytics_settings_adaia_product_prefix
+#: model:ir.model.fields,help:sga_adaia_integration.field_seo_analytics_settings_adaia_product_template_prefix
+#: model:ir.model.fields,help:sga_adaia_integration.field_seo_general_settings_adaia_product_prefix
+#: model:ir.model.fields,help:sga_adaia_integration.field_seo_general_settings_adaia_product_template_prefix
+#: model:ir.model.fields,help:sga_adaia_integration.field_sitemap_base_settings_adaia_product_prefix
+#: model:ir.model.fields,help:sga_adaia_integration.field_sitemap_base_settings_adaia_product_template_prefix
+#: model:ir.model.fields,help:sga_adaia_integration.field_web_app_settings_adaia_product_prefix
+#: model:ir.model.fields,help:sga_adaia_integration.field_web_app_settings_adaia_product_template_prefix
+msgid "SGA Adaia product file prefix."
+msgstr "SGA Adaia product file prefix."
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,help:sga_adaia_integration.field_res_config_settings_adaia_stock_code
+#: model:ir.model.fields,help:sga_adaia_integration.field_robots_txt_settings_adaia_stock_code
+#: model:ir.model.fields,help:sga_adaia_integration.field_seo_analytics_settings_adaia_stock_code
+#: model:ir.model.fields,help:sga_adaia_integration.field_seo_general_settings_adaia_stock_code
+#: model:ir.model.fields,help:sga_adaia_integration.field_sitemap_base_settings_adaia_stock_code
+#: model:ir.model.fields,help:sga_adaia_integration.field_web_app_settings_adaia_stock_code
+msgid "SGA Adaia stock file code."
+msgstr "SGA Adaia stock file code."
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,help:sga_adaia_integration.field_res_config_settings_adaia_stock_prefix
+#: model:ir.model.fields,help:sga_adaia_integration.field_robots_txt_settings_adaia_stock_prefix
+#: model:ir.model.fields,help:sga_adaia_integration.field_seo_analytics_settings_adaia_stock_prefix
+#: model:ir.model.fields,help:sga_adaia_integration.field_seo_general_settings_adaia_stock_prefix
+#: model:ir.model.fields,help:sga_adaia_integration.field_sitemap_base_settings_adaia_stock_prefix
+#: model:ir.model.fields,help:sga_adaia_integration.field_web_app_settings_adaia_stock_prefix
+msgid "SGA Adaia stock file prefix."
+msgstr "SGA Adaia stock file prefix."
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,help:sga_adaia_integration.field_res_config_settings_adaia_stock_picking_in
+#: model:ir.model.fields,help:sga_adaia_integration.field_res_config_settings_adaia_stock_picking_out
+#: model:ir.model.fields,help:sga_adaia_integration.field_robots_txt_settings_adaia_stock_picking_in
+#: model:ir.model.fields,help:sga_adaia_integration.field_robots_txt_settings_adaia_stock_picking_out
+#: model:ir.model.fields,help:sga_adaia_integration.field_seo_analytics_settings_adaia_stock_picking_in
+#: model:ir.model.fields,help:sga_adaia_integration.field_seo_analytics_settings_adaia_stock_picking_out
+#: model:ir.model.fields,help:sga_adaia_integration.field_seo_general_settings_adaia_stock_picking_in
+#: model:ir.model.fields,help:sga_adaia_integration.field_seo_general_settings_adaia_stock_picking_out
+#: model:ir.model.fields,help:sga_adaia_integration.field_sitemap_base_settings_adaia_stock_picking_in
+#: model:ir.model.fields,help:sga_adaia_integration.field_sitemap_base_settings_adaia_stock_picking_out
+#: model:ir.model.fields,help:sga_adaia_integration.field_web_app_settings_adaia_stock_picking_in
+#: model:ir.model.fields,help:sga_adaia_integration.field_web_app_settings_adaia_stock_picking_out
+msgid "SGA Adaia stock picking in file code."
+msgstr "SGA Adaia stock picking in file code."
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_stock_picking_sga_integration_type
+msgid "SGA Integration type"
+msgstr "Tipo de integración SGA"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_stock_picking_type_sgavar_file_id
+msgid "SGA Type"
+msgstr "Tipo SGA"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_stock_move_line_sga_changed
+msgid "SGA modified/created"
+msgstr "SGA modificado/creado"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_stock_picking_code
+msgid "Sale order type code"
+msgstr "Sale order type code"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_stock_picking_description
+msgid "Sale order type description"
+msgstr "Sale order type description"
+
+#. module: sga_adaia_integration
+#: model:ir.ui.view,arch_db:sga_adaia_integration.view_check_adaia_stock
+msgid "Send file to Adaia"
+msgstr "Send file to Adaia"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sgavar_file_var_sequence
+msgid "Sequence"
+msgstr "Secuencia"
+
+#. module: sga_adaia_integration
+#: model:ir.ui.menu,name:sga_adaia_integration.menu_sga_adaia
+msgid "Sga Adaia"
+msgstr "Sga Adaia"
+
+#. module: sga_adaia_integration
+#: model:ir.actions.act_window,name:sga_adaia_integration.sga_file_action_view
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sga_file_error_sga_file_id
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sga_file_line_sga_file_id
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sgavar_file_var_sga_file_id
+#: model:ir.ui.menu,name:sga_adaia_integration.Processed Files
+msgid "Sga File"
+msgstr "Sga File"
+
+#. module: sga_adaia_integration
+#: model:ir.actions.act_window,name:sga_adaia_integration.sga_file_line_action_view
+#: model:ir.ui.menu,name:sga_adaia_integration.Processed Lines
+msgid "Sga File Line"
+msgstr "Sga File Line"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sgavar_file_sga_file_var_ids
+msgid "Sga File Var"
+msgstr "Sga File Var"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_stock_picking_sga_operation
+msgid "Sga Operation"
+msgstr "Sga Operation"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_product_product_sga_state
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_product_template_sga_state
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_res_partner_sga_state
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_res_users_sga_state
+msgid "Sga State"
+msgstr "Sga State"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sgavar_file_description
+msgid "Sga file description"
+msgstr "Sga file description"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sgavar_file_code
+msgid "Sga file type"
+msgstr "Sga file type"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sgavar_file_name
+msgid "Sga name"
+msgstr "Sga name"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_stock_picking_warehouse_code
+msgid "Short Name"
+msgstr "Nombre corto"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,help:sga_adaia_integration.field_stock_picking_warehouse_code
+msgid "Short name used to identify your warehouse"
+msgstr "Nombre corto usado para identificar su almacén"
+
+#. module: sga_adaia_integration
+#: selection:stock.picking,do_backorder:0
+msgid "Si"
+msgstr "Si"
+
+#. module: sga_adaia_integration
+#: model:ir.ui.view,arch_db:sga_adaia_integration.stock_adaia_confirm_wizard
+msgid "Si la envías así solo enviarás las operaciones en las que Odoo tenga stock, si quieres enviar todo debes forzar disponiblidad"
+msgstr "Si la envías así solo enviarás las operaciones en las que Odoo tenga stock, si quieres enviar todo debes forzar disponiblidad"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,help:sga_adaia_integration.field_stock_move_line_sga_sustitute_qty
+msgid "Si se informa sustitute_prod_code, es la cantidad\n"
+"de producto a sustituir"
+msgstr "Si se informa sustitute_prod_code, es la cantidad\n"
+"de producto a sustituir"
+
+#. module: sga_adaia_integration
+#: selection:product.product,sga_state:0
+#: selection:product.template,sga_state:0
+#: selection:res.partner,sga_state:0
+msgid "Sin integracion"
+msgstr "Sin integracion"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sga_file_state
+msgid "State"
+msgstr "Estado"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_stock_adaia_confirm_state
+msgid "Status"
+msgstr "Estado"
+
+#. module: sga_adaia_integration
+#: model:ir.ui.view,arch_db:sga_adaia_integration.product_product_adaia_integration_form
+msgid "Stock"
+msgstr "Stock"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sga_file_line_stock_move_id
+msgid "Stock Move"
+msgstr "Movimiento de Stock"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_res_config_settings_adaia_stock_picking_in
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_res_config_settings_adaia_stock_picking_out
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_robots_txt_settings_adaia_stock_picking_in
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_robots_txt_settings_adaia_stock_picking_out
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_seo_analytics_settings_adaia_stock_picking_in
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_seo_analytics_settings_adaia_stock_picking_out
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_seo_general_settings_adaia_stock_picking_in
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_seo_general_settings_adaia_stock_picking_out
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sitemap_base_settings_adaia_stock_picking_in
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sitemap_base_settings_adaia_stock_picking_out
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_web_app_settings_adaia_stock_picking_in
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_web_app_settings_adaia_stock_picking_out
+msgid "Stock picking IN SGA Code"
+msgstr "Stock picking IN SGA Code"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_stock_move_line_sga_sustitute_qty
+msgid "Sustitute qty"
+msgstr "Sustitute qty"
+
+#. module: sga_adaia_integration
+#: model:ir.model,name:sga_adaia_integration.model_stock_picking_type
+msgid "The operation type determines the picking view"
+msgstr "El tipo de operación determina la vista de la operación"
+
+#. module: sga_adaia_integration
+#: model:ir.ui.view,arch_db:sga_adaia_integration.view_check_adaia_stock
+msgid "This are filters if you don't need all references"
+msgstr "Estos son filtros si no necesitas todas las referencias"
+
+#. module: sga_adaia_integration
+#: model:ir.ui.view,arch_db:sga_adaia_integration.view_check_adaia_stock
+msgid "This wizard check stock with adaia"
+msgstr "Este assistente comprueba el stock con ADAIA"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_stock_picking_stock_picking_sgatype_id
+msgid "Tipo de albaran/venta (SGA)"
+msgstr "Tipo de albaran/venta (SGA)"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sga_file_file_type
+msgid "Tipo de fichero (I/O)"
+msgstr "Tipo de fichero (I/O)"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sga_file_error_object_type
+msgid "Tipo de objeto"
+msgstr "Tipo de objeto"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_stock_picking_sgatype_code
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_stock_picking_stock_picking_sgatype_code
+msgid "Tipo de venta (SGA)"
+msgstr "Tipo de venta (SGA)"
+
+#. module: sga_adaia_integration
+#: model:ir.model,name:sga_adaia_integration.model_stock_picking
+msgid "Transfer"
+msgstr "Transfer"
+
+#. module: sga_adaia_integration
+#: selection:stock.move.line,sga_catch_weight:0
+#: selection:stock.move.line,sga_disable_alt_product:0
+msgid "True"
+msgstr "True"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sgavar_file_var_default
+msgid "V. por defecto"
+msgstr "V. por defecto"
+
+#. module: sga_adaia_integration
+#: model:ir.ui.view,arch_db:sga_adaia_integration.stock_adaia_confirm_wizard
+msgid "Vas a enviar a Adaia una orden sin stock."
+msgstr "Vas a enviar a Adaia una orden sin stock."
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sgavar_file_version
+msgid "Version"
+msgstr "Version"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sga_file_version
+msgid "Version (Solo modo dev.)"
+msgstr "Version (Solo modo dev.)"
+
+#. module: sga_adaia_integration
+#: model:ir.model,name:sga_adaia_integration.model_stock_warehouse
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_stock_picking_warehouse_id
+msgid "Warehouse"
+msgstr "Almacén"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_wiz_check_adaia_stock_zero_qty
+msgid "Zero qty"
+msgstr "Zero qty"
+
+#. module: sga_adaia_integration
+#: model:ir.ui.view,arch_db:sga_adaia_integration.stock_adaia_confirm_wizard
+msgid "_Cancel"
+msgstr "_Cancelar"
+
+#. module: sga_adaia_integration
+#: selection:sgavar.file.var,adaia_type:0
+msgid "one2many"
+msgstr "one2many"
+
+#. module: sga_adaia_integration
+#: model:ir.ui.view,arch_db:sga_adaia_integration.view_check_adaia_stock
+msgid "or"
+msgstr "o"
+
+#. module: sga_adaia_integration
+#: model:ir.ui.view,name:sga_adaia_integration.product_product_adaia_integration_form
+msgid "product.product.adaia.integration.form"
+msgstr "product.product.adaia.integration.form"
+
+#. module: sga_adaia_integration
+#: model:ir.ui.view,name:sga_adaia_integration.product_template_adaia_integration_only_form_view
+msgid "product.template.adaia.integration.form"
+msgstr "product.template.adaia.integration.form"
+
+#. module: sga_adaia_integration
+#: model:ir.model,name:sga_adaia_integration.model_res_config_settings
+msgid "res.config.settings"
+msgstr "res.config.settings"
+
+#. module: sga_adaia_integration
+#: model:ir.ui.view,name:sga_adaia_integration.res_config_settings_sga_form
+msgid "res.config.settings.sga.form"
+msgstr "res.config.settings.sga.form"
+
+#. module: sga_adaia_integration
+#: model:ir.ui.view,name:sga_adaia_integration.view_res_partner_adaia_integration_form
+msgid "res.partner.adaia.integration.form"
+msgstr "res.partner.adaia.integration.form"
+
+#. module: sga_adaia_integration
+#: model:ir.model,name:sga_adaia_integration.model_sga_file
+msgid "sga.file"
+msgstr "sga.file"
+
+#. module: sga_adaia_integration
+#: model:ir.model,name:sga_adaia_integration.model_sga_file_error
+msgid "sga.file.error"
+msgstr "sga.file.error"
+
+#. module: sga_adaia_integration
+#: model:ir.ui.view,name:sga_adaia_integration.model_sgafile_error_tree_view
+msgid "sga.file.error.tree.view"
+msgstr "sga.file.error.tree.view"
+
+#. module: sga_adaia_integration
+#: model:ir.model,name:sga_adaia_integration.model_sga_file_line
+msgid "sga.file.line"
+msgstr "sga.file.line"
+
+#. module: sga_adaia_integration
+#: model:ir.model,name:sga_adaia_integration.model_sgavar_file
+msgid "sgavar.file"
+msgstr "sgavar.file"
+
+#. module: sga_adaia_integration
+#: model:ir.ui.view,name:sga_adaia_integration.model_sgafile__error_form_view
+msgid "sgavar.file.error.form.view"
+msgstr "sgavar.file.error.form.view"
+
+#. module: sga_adaia_integration
+#: model:ir.ui.view,name:sga_adaia_integration.model_sgafile_form_view
+msgid "sgavar.file.form.view"
+msgstr "sgavar.file.form.view"
+
+#. module: sga_adaia_integration
+#: model:ir.ui.view,name:sga_adaia_integration.model_sgafile_tree_view
+msgid "sgavar.file.tree.view"
+msgstr "sgavar.file.tree.view"
+
+#. module: sga_adaia_integration
+#: model:ir.model,name:sga_adaia_integration.model_sgavar_file_var
+msgid "sgavar.file.var"
+msgstr "sgavar.file.var"
+
+#. module: sga_adaia_integration
+#: model:ir.ui.view,name:sga_adaia_integration.model_sgafile_var_form_view
+msgid "sgavar.file.var.form.view"
+msgstr "sgavar.file.var.form.view"
+
+#. module: sga_adaia_integration
+#: model:ir.ui.view,name:sga_adaia_integration.model_sgafile_var_tree_view
+msgid "sgavar.file.var.tree.view"
+msgstr "sgavar.file.var.tree.view"
+
+#. module: sga_adaia_integration
+#: model:ir.ui.view,name:sga_adaia_integration.stock_adaia_confirm_wizard
+msgid "stock.adaia.confirm.wizard"
+msgstr "stock.adaia.confirm.wizard"
+
+#. module: sga_adaia_integration
+#: model:ir.model,name:sga_adaia_integration.model_stock_batch_picking
+msgid "stock.batch.picking"
+msgstr "stock.batch.picking"
+
+#. module: sga_adaia_integration
+#: model:ir.ui.view,name:sga_adaia_integration.view_picking_sga_form
+msgid "stock.picking.sga.form"
+msgstr "stock.picking.sga.form"
+
+#. module: sga_adaia_integration
+#: model:ir.model,name:sga_adaia_integration.model_stock_picking_sgatype
+msgid "stock.picking.sgatype"
+msgstr "stock.picking.sgatype"
+
+#. module: sga_adaia_integration
+#: model:ir.ui.view,name:sga_adaia_integration.stock_picking_type_sga_form
+msgid "stock.picking.type.sga.form"
+msgstr "stock.picking.type.sga.form"
+
+#. module: sga_adaia_integration
+#: model:ir.ui.view,name:sga_adaia_integration.stock_warehouse_sga_form
+msgid "stock.warehouse.sga.form"
+msgstr "stock.warehouse.sga.form"
+
+#. module: sga_adaia_integration
+#: model:ir.model.fields,field_description:sga_adaia_integration.field_sga_file_error_version
+msgid "version"
+msgstr "version"
+
+#. module: sga_adaia_integration
+#: model:ir.ui.view,name:sga_adaia_integration.view_check_adaia_stock
+msgid "view.check.adaia.stock"
+msgstr "view.check.adaia.stock"
+
+#. module: sga_adaia_integration
+#: model:ir.model,name:sga_adaia_integration.model_wiz_check_adaia_stock
+msgid "wiz.check.adaia.stock"
+msgstr "wiz.check.adaia.stock"
+
