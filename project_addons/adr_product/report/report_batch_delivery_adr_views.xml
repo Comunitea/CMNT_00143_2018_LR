@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-        <record model="report.paperformat" id="paperformat_batch_delivery_adr_report">
+    <record model="report.paperformat" id="paperformat_batch_delivery_adr_report">
         <field name="name">paperformat.batch.delivery.report</field>
         <field name="default" eval="True"/>
         <field name="format">A4</field>
@@ -15,12 +15,13 @@
         <field name="header_spacing">20</field>
         <field name="dpi">90</field>
     </record>
-    <report id="delivery_batch_delivery_adr_report"
+
+    <report id="batch_delivery_adr_report"
             model="stock.batch.delivery"
-            string="Delivery Batch ADR Report"
+            string="Batch Delivery ADR Report"
             report_type="qweb-pdf"
             name="adr_product.batch_delivery_adr_view"
-            paperformat="paperformat_delivery_batch_adr_report"
+            paperformat="paperformat_batch_delivery_adr_report"
             menu="False"/>
 
     <template id="batch_delivery_adr_view">
@@ -46,7 +47,7 @@
                     </div>
                     <div class="col-xs-4">
                         <div>
-                            Fecha: <t t-esc="doc['date']"/>
+                            Fecha: <t t-esc="doc['date_done']"/>
                         </div>
                     </div>
                 </t>
