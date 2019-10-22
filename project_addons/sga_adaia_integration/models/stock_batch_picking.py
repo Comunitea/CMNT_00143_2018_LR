@@ -11,6 +11,7 @@ class StockBatchPickingSGA(models.Model):
     _inherit = "stock.batch.picking"
 
     sga_state = fields.Selection(SGA_STATES)
+    draft_move_lines_id = fields.One2many('stock.move.line', 'draft_batch_picking_id', string='Líneas de Movimientos')
 
     def button_move_to_done(self):
         return self.move_to_done
