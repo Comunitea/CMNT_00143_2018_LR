@@ -66,7 +66,7 @@ class StockMove(models.Model):
 
     visible_count_move_to_pick = fields.Boolean(related='picking_type_id.visible_count_move_to_pick')
     visible_count_move_unpacked = fields.Boolean(related='picking_type_id.visible_count_move_unpacked')
-
+    orig_picking_id = fields.Many2one(related='move_orig_ids.picking_id', string="Expedición")
 
     @api.depends('state', 'picking_id')
     def _compute_is_initial_demand_editable(self):

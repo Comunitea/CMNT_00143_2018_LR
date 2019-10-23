@@ -42,6 +42,7 @@ class StockBatchPickingWzd(models.TransientModel):
     carrier_id = fields.Many2one("delivery.carrier", string="Forma de envío")
     sga_integrated = fields.Boolean(related='picking_type_id.sga_integrated')
     picking_ids = fields.Many2many('stock.picking', string="Albaranes")
+    payment_term_id = fields.Many2one('account.payment.term', string='Plazos de pago')
 
     def create_from(self, model='stock.move', ids=[]):
         vals = self.get_vals(model, ids=ids)
@@ -58,12 +59,18 @@ class StockBatchPickingWzd(models.TransientModel):
             moves = picking_ids.mapped('move_lines')
         else:
             return {}
-
+        
         picking_type_id = moves.mapped('picking_type_id')
         if len(picking_type_id)>1:
             raise UserError(_('No se pueden agrupar alabranes de distinto tipo'))
 
+        payment_term_id = moves.mapped('payment_term_id')
+        if len(payment_term_id)>1 and picking_type_id.code == 'outgoing':
+            raise UserError(_('No se pueden agrupar albaranes con formas de pago distintas'))
+
         batch_picking = moves.mapped('draft_batch_picking_id')
+        if len(batch_picking)>1:
+            raise UserError(_('Ya tienes seleccionados varios batchs: {}'.format(batch_picking.mapped('name'))))
         batch_picking_id = len(batch_picking) == 1 and batch_picking.id
         picker_id = batch_picking and batch_picking.picker_id and batch_picking.picker_id.id
 
@@ -93,13 +100,14 @@ class StockBatchPickingWzd(models.TransientModel):
             'batch_picking_id': batch_picking and batch_picking_id or False,
             'picker_id': picker_id and picker_id.id or False,
             'notes': note,
+            'payment_term_id': payment_term_id.id,
             #'new_picking_ids': [(6,0,new_picking_ids.ids)],
             #'batch_picking_ids': [(6,0,batch_picking_ids.ids)],
             'move_ids': [(6, 0, moves.ids)],
             #'moves_to_sga': [(6, 0, moves_to_sga.ids)],
             #'moves_not_sga': [(6, 0, moves_not_sga.ids)]
             }
-        if model=='stock.picking':
+        if model == 'stock.picking':
             vals.update(picking_ids=[(6,0,picking_ids.ids)])
 
         return vals
@@ -110,6 +118,7 @@ class StockBatchPickingWzd(models.TransientModel):
         defaults = super().default_get(fields)
         model = self._context.get('model', self._context.get('active_model', 'stock.move'))
         new_ids = self._context.get('active_ids', [])
+
         defaults.update(self.get_vals(model, ids=new_ids))
         return defaults
 
@@ -147,6 +156,7 @@ class StockBatchPickingWzd(models.TransientModel):
             'notes': self.notes,
             'picker_id': self.picker_id.id,
             'picking_type_id': self.picking_type_id.id,
+            'payment_term_id': self.payment_term_id.id
             #'carrier_id': self.carrier_id.id,
             #'delivery_route_path_id': self.delivery_route_path_id.id,
             #'shipping_type': self.shipping_type

@@ -14,8 +14,13 @@ class StockBatchPicking(models.Model):
     campaign_id = fields.Many2one('campaign', 'Campaign')
     carrier_id = fields.Many2one("delivery.carrier", string="Carrier")
     shipping_type = fields.Selection(compute='compute_route_fields', inverse='set_route_fields')
+<<<<<<< HEAD
     delivery_route_path_id = fields.Many2one('delivery.route.path', compute='compute_route_fields',
                                              inverse='set_route_fields')
+=======
+    delivery_route_path_id = fields.Many2one('delivery.route.path', compute='compute_route_fields', inverse='set_route_fields')
+
+>>>>>>> d43712b7995497459d45e997f80f52ca731bb1fc
 
     @api.multi
     def set_route_fields(self):

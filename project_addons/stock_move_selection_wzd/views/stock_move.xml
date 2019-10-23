@@ -84,6 +84,8 @@
                   create="0"
                   default_order="date">
                 <field name="decoration" invisible="1"/>
+                <field name="orig_picking_id" invisible="not context.get('group_code', False) == 'outgoing'"/>
+                <field name="payment_term_id" invisible="not context.get('group_code', False) in ('outgoing', 'picking', 'dropship')"/>
                 <field name="shipping_type" invisible="not context.get('group_code', False) in ('picking', 'outgoing', 'dropship')"/>
                 <field name="delivery_route_path_id" invisible="not context.get('group_code', False) in ('picking', 'outgoing', 'dropship')"/>
                 <field name="carrier_id" invisible="not context.get('group_code', False) in ('picking', 'outgoing', 'dropship')"/>
@@ -162,7 +164,7 @@
                         attrs="{'invisible': ['|', ('batch_delivery_id', '!=', False), ('state', 'not in', ('assigned', 'partially_available'))]}"
                         />
                 <field name="product_uom_qty"/>
-                <field name="reserved_availability"/>
+                <field name="reserved_availability" invisible="context.get('hide_reserved_availability', False)"/>
                 <field name="quantity_done" options='{"fg_color": "green: quantity_done &gt; 0.00"}'/>
                 <button name="button_reasignar_origen_wzd"
                             string="Split/(Re)Asignar origen"
@@ -177,10 +179,10 @@
                         attrs="{'invisible': [('show_details_visible', '=', False)]}"
                         /-->
 
-                <field name="state"/>
+                <field name="state" invisible="context.get('hide_state', False)"/>
                 <field name="sga_state" invisible="not context.get('group_code', False) in ('picking', 'internal', 'location', 'reposition')"/>
                 <field name="company_id" invisible="1"/>
-                <field name="move_dest_ids" widget="many2many_tags" invisible="context.get('group_code', False) in ('incoming', 'picking')"/>
+                <field name="move_dest_ids" widget="many2many_tags"  invisible="context.get('group_code', False) == 'outgoing'"/>
                 <!--field name="wh_state"/-->
 
                  <button name="action_cancel_move" string="Cancelar el movimiento y sus asociados" type="object"  icon="fa-window-close-o "
@@ -202,6 +204,7 @@
                        context="{'picking': self, 'group_by': 'picking_id'}"
                        filter_domain="['|', ('picking_id', '=', self), ('picking_id','=', False)]"/>
                 <field name="picking_type_id" string="Type"/>
+                <field name="payment_term_id" />
                 <field name="shipping_type" />
                 <field name="delivery_route_path_id"/>
                 <field name="sale_id" groups="stock.group_stock_multi_locations"/>
@@ -270,6 +273,7 @@
                     <filter string="Dirección de entrega" name="by_shipping_partner_id" domain="[]"  context="{'group_by':'partner_id'}"/>
                     <filter string="Campaña" name="by_campaign_id" domain="[]"  context="{'group_by':'campaign_id'}"/>
                     <filter string="Sale order" name="by_sale_id" domain="[]"  context="{'group_by':'sale_id'}"/>
+                    <filter string="Forma de pago" name="by_payment_term_id" domain="[]"  context="{'group_by':'payment_term_id'}"/>
                     <filter string="Ruta de transporte" name="by_delivery_path_route_id" domain="[]"  context="{'group_by':'delivery_route_path_id'}"/>
                     <filter string="Forma de envío" name="by_carrier_id" domain="[]"  context="{'group_by':'carrier_id'}"/>
                     <filter string="Orden de compra" name="by_purchase_id" domain="[]"  context="{'group_by':'purchase_id'}"/>
