@@ -6,21 +6,9 @@ from odoo import api, fields, models, _
 from odoo.exceptions import UserError
 from pprint import pprint
 
-class DeliveryBatchCustomReport(models.AbstractModel):
 
+class BatchDeliveryCustomReport(models.AbstractModel):
     _name = 'report.adr_product.batch_delivery_adr_view'
-
-    def get_partner_data(self, partner_id):
-        return {
-                            'id': partner_id.id,
-                            'name': partner_id.name,
-                            'street': partner_id.street,
-                            'street2': partner_id.street2,
-                            'zip': partner_id.zip,
-                            'city': partner_id.city,
-                            'state_id': partner_id.state_id.name,
-                            'country_id': partner_id.country_id.name
-                        }
 
     def get_report_values(self, docids, data=None):
 
@@ -39,23 +27,21 @@ class DeliveryBatchCustomReport(models.AbstractModel):
         categories_ids = []
         elements = []
 
-        docids = docids or self.env.context.get('active_ids')
+        docids = docids
         model = 'stock.batch.delivery'
         batch_delivery_id = self.env[model].browse(docids)
         batch_delivery_id.ensure_one()
 
+        moves = batch_delivery_id.move_lines.filtered(lambda x: x.quantity_done != 0.00 and x.product_tmpl_id.adr_idnumonu != False)
+        sale_picks = batch_delivery_id.picking_ids
+        partner_ids = batch_delivery_id.partner_ids
 
-        move_domain = [('batch_delivery_id', '=', batch_delivery_id), ('qty_done', '!=', 0.00), ('product_tmpl_id.adr_idnumonu', '!=', False)]
-        moves = self.env['stock.move'].search(move_domain)
-        sale_picks = moves.mapped('picking_id')
-        partner_picks = sale_picks.mapped('stock.batch.picking')
-        partner_ids = partner_picks.mapped('partner_id')
         for partner_id in partner_ids:
             partners_data.append(self.get_partner_data(partner_id))
 
-        pickings = self.env.context.get('pickings') or self.env['stock.picking'].search([('batch_picking_id', '=', docids)])
+        pickings = sale_picks
         company_id = pickings and pickings[0].company_id
-        for pick in partner_picks:
+        for pick in pickings:
 
             for line in pick.move_line_ids:
                 product_tmpl_line = line.product_id.product_tmpl_id
@@ -75,7 +61,7 @@ class DeliveryBatchCustomReport(models.AbstractModel):
                         'adr_bultodesc': product_tmpl_line.adr_idnumonu.bultodesc,
                         'packing_group': product_tmpl_line.adr_idnumonu.packing_group,
                         'official_name': product_tmpl_line.adr_idnumonu.official_name,
-                        'ranking_id': product_tmpl_line.adr_idnumonu.ranking_id,
+                        'ranking_id': product_tmpl_line.adr_idnumonu.ranking,
                         't_code': product_tmpl_line.adr_idnumonu.t_code,
                         'adr_exe22315': product_tmpl_line.adr_idnumonu.exe22315,
                         'adr_peligroma': product_tmpl_line.adr_idnumonu.peligroma,
@@ -152,3 +138,15 @@ class DeliveryBatchCustomReport(models.AbstractModel):
             'delivery_carrier_data': delivery_carrier_data
         }
         return docargs
+
+    def get_partner_data(self, partner_id):
+        return {
+            'id': partner_id.id,
+            'name': partner_id.name,
+            'street': partner_id.street,
+            'street2': partner_id.street2,
+            'zip': partner_id.zip,
+            'city': partner_id.city,
+            'state_id': partner_id.state_id.name,
+            'country_id': partner_id.country_id.name
+        }
