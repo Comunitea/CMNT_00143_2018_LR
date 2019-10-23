@@ -15,8 +15,8 @@ class StockMoveLine(models.Model):
         sale_id = sale_id or self.move_id.sale_id
         if sale_id.shipping_type == 'pasaran':
             cte1 = 'P'
-        elif sale_id.urgent:
-            cte1 = 'S'
+        elif sale_id.shipping_type == 'urgent':
+            cte1 = 'H'
         else:
             cte1 = 'N'
         vals = self.move_id.picking_type_id.get_ulma_vals('move')
@@ -30,7 +30,7 @@ class StockMoveLine(models.Model):
             'momcre': datetime.datetime.now(),
             'mmmacccod': cont,
             'mmmbatch': self.draft_batch_picking_id.name[-9:],
-            'mmmacccolcod': self.draft_batch_picking_id.id,
+            'mmmacccolcod': self.picking_id.id,
             'mmmmomexp': datetime.datetime.strptime(self.move_id.date_expected, '%Y-%m-%d %H:%M:%S'),
             'mmmfeccad': datetime.datetime.strptime(self.move_id.date_expected, '%Y-%m-%d %H:%M:%S'),
             }
