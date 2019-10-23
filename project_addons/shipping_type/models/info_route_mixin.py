@@ -37,7 +37,6 @@ class InfoRouteMixin(models.AbstractModel):
         return super().write(vals)
 
     def get_write_route_vals(self, vals):
-        import ipdb; ipdb.set_trace()
         child_vals = {}
         r_vals = ['payment_term_id', 'shipping_type', 'delivery_route_path_id', 'carrier_id', 'campaign_id']
         self_fields = self.fields_get_keys()
