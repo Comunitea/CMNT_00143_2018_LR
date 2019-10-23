@@ -28,7 +28,8 @@ class BatchExcessWzd(models.TransientModel):
     lines = fields.Many2many('batch.excess.line', string="CON franquicia")
     not_excess_ids = fields.Many2many('batch.excess.line', string="SIN franquicia", domain=[('new_excess', '=', False)])
     picking_type_id = fields.Many2one('stock.picking.type')
-
+    new_date = fields.Datetime('Nueva hora de cálculo')
+    hide_no_excess = fields.Boolean("Mostrar/coultar sin franquicia", default=True)
 
     def get_line_values(self, id, excess=False):
         batch = self.env['stock.batch.picking'].browse(id)
@@ -64,6 +65,12 @@ class BatchExcessWzd(models.TransientModel):
             return self.picking_type_id.return_action_show_batch_picking(domain=domain)
 
 
+
+    @api.multi
+    def action_apply_new_date(self):
+        ctx = self._context.copy()
+        ctx.update(from_time=self.new_date)
+        return self.with_context(ctx).picking_type_id.open_excess_wzd()
 
 
 

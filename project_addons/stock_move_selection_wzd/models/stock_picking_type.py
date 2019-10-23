@@ -473,8 +473,8 @@ class PickingType(models.Model):
                 tristates.insert(0, {'tooltip': move.name or '' + ": " + _('OK'), 'value': 1})
         self.last_done_move = json.dumps(tristates)
 
-    def update_context(self, context={}):
-        context.update({'group_code': self.group_code})
+    def update_context(self, context={}, group_code=False):
+        context.update({'group_code': group_code or self.group_code})
         if self.group_code == 'picking':
             context.update({
                 'search_default_by_shipping_type': True,
@@ -565,20 +565,21 @@ class PickingType(models.Model):
         return action
 
     def get_action_tree(self):
-        move_domains, picking_domains, batch_domains = self.get_moves_domain()
-
         domain = self._context.get('default_domain', [])
-        move_domain = self._context.get('move_domain', [])
-        if move_domain:
-            domain += move_domains[move_domain]
+        if not domain:
+            domain = self._context.get('domain', [])
+            move_domains, picking_domains, batch_domains = self.get_moves_domain()
+            move_domain = self._context.get('move_domain', False)
+            if move_domain:
+                domain += move_domains[move_domain]
 
-        pick_domain = self._context.get('pick_domain', [])
-        if pick_domain:
-            domain += picking_domains[pick_domain]
+            pick_domain = self._context.get('pick_domain', False)
+            if pick_domain:
+                domain += picking_domains[pick_domain]
 
-        batch_domain = self._context.get('batch_domain', [])
-        if batch_domain:
-            domain += batch_domains[batch_domain]
+            batch_domain = self._context.get('batch_domain', False)
+            if batch_domain:
+                domain += batch_domains[batch_domain]
 
         ctx = self._context.copy()
         ctx.update (group_code = self.group_code)

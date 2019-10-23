@@ -218,6 +218,24 @@ class StockBatchPicking(models.Model):
         return action
 
 
+    @api.multi
+    def action_see_moves(self):
+        self.ensure_one()
+        ctx = self._context.copy()
+        ctx.update({
+            'default_domain': [('batch_picking_id', '=', self.id), ('state', 'not in', ('cancel', 'draft'))],
+            'dest_model': 'stock.move',
+            'this_context': True,
+            'search_default_by_sale_id': True
+        })
+        if self.state == 'done':
+            ctx.update(hide_state=True)
+            ctx.update(hide_reserved_availability=True)
+        action = self.with_context(ctx).picking_type_id.get_action_tree()
+        action['domain'] = [('batch_picking_id', '=', self.id)]
+
+        return action
+
 
     @api.multi
     def batch_printing(self):

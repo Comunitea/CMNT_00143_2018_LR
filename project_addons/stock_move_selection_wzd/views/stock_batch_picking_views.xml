@@ -8,9 +8,10 @@
                       decoration-muted="state == 'cancel'"
                       decoration-danger="state not in ('cancel', 'done')"
                       string="Picking list">
-
                     <field name="name"/>
+
                     <field name="count_move_lines"/>
+                    <field name="payment_term_id" invisible="1"/>
                     <field name="shipping_type"/>
                     <field name="delivery_route_path_id"/>
                     <field name="batch_delivery_id" invisible="context.get('group_code', False) != 'outgoing'"/>
@@ -69,18 +70,21 @@
 
             <xpath expr="//button[@name='action_view_stock_picking']" position="before">
 
+                    <button name="action_see_moves" string="Movimientos"
+                            type="object" class="oe_stat_button" icon="fa-list"/>
                     <button name="action_see_packages" string="Packages"
                             type="object" class="oe_stat_button" icon="fa-cubes"/>
 
             </xpath>
             <xpath expr="//page[1]" position="before">
-                <page string="Movimientos">
+                <page string="Movimientos" >
                     <!--field name="draft_move_lines"
                            context="{'tree_view_ref': 'stock_move_selection_wzd.view_move_line_tree_sel'}"
                            readonly="1" options="{'reload_on_button': true}"/-->
 
                     <field name="draft_move_lines">
                         <tree>
+                            <field name="orig_picking_id"/>
                             <field name="partner_id"/>
                             <field name="product_id"/>
                             <field name="product_uom_qty"/>
@@ -150,6 +154,7 @@
             <field name="name" position="after">
                 <field name="picking_type_id"/>
                 <field name="excess"/>
+                <field name="payment_term_id"/>
             </field>
 
 
