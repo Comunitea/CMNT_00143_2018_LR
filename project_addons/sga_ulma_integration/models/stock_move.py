@@ -10,27 +10,26 @@ class StockMoveLine(models.Model):
 
     _inherit = "stock.move.line"
 
-    def get_move_line_ulma_vals(self, cont=0, sale_id=False):
+    def get_move_line_ulma_vals(self, cont=0, picking_id=False):
 
-        sale_id = sale_id or self.move_id.sale_id
-        if sale_id.shipping_type == 'pasaran':
+        if self.picking_id.shipping_type == 'pasaran':
             cte1 = 'P'
-        elif sale_id.urgent:
-            cte1 = 'S'
-        else:
+        elif self.picking_id.shipping_type == 'route':
             cte1 = 'N'
+        else:
+            cte1 = 'H'
         vals = self.move_id.picking_type_id.get_ulma_vals('move')
 
         update_vals = {
             'mmmartdes':  self.product_id.display_name[:40],
             'mmmartref': self.product_id.default_code,
             'mmmcanuni': self.product_uom_qty,
-            'mmmexpordref': '{}{}'.format(cte1, sale_id.name)[9:], ##pick.name
+            'mmmexpordref': '{}{}'.format(cte1, self.picking_id.name),
             'mmmsecada': self.id,
             'momcre': datetime.datetime.now(),
             'mmmacccod': cont,
             'mmmbatch': self.draft_batch_picking_id.name[-9:],
-            'mmmacccolcod': self.draft_batch_picking_id.id,
+            'mmmacccolcod': self.picking_id.id,
             'mmmmomexp': datetime.datetime.strptime(self.move_id.date_expected, '%Y-%m-%d %H:%M:%S'),
             'mmmfeccad': datetime.datetime.strptime(self.move_id.date_expected, '%Y-%m-%d %H:%M:%S'),
             }

@@ -16,7 +16,7 @@ class StockBatchPicking(models.Model):
         update_vals= {
             'momcre': datetime.datetime.now(),
             'mmmbatch': self.name[-9:],
-            'mmmmomexp': self.date,
+            'mmmmomexp': datetime.datetime.now(),
         }
         vals.update(update_vals)
         return vals
@@ -38,14 +38,14 @@ class StockBatchPicking(models.Model):
             if not batch_out:
                 raise ValueError ('Error al enviar la cabecera del batch')
             line_ids = batch.draft_move_lines.filtered(lambda x: (x.state == 'assigned' or x.state == 'partially_available') and x.sga_state == 'no_send')
-            sale_ids = line_ids.mapped('sale_id')
-            for sale in sale_ids:
+            picking_ids = line_ids.mapped('picking_id')
+            for pick in picking_ids:
                 #creo la cabecera del pedido
-                vals = sale.get_sale_to_ulma(batch)
-                ulma_sale = ulma_out.create(vals)
-                if not ulma_sale:
+                vals = pick.send_picking_to_ulma(batch)
+                ulma_pick = ulma_out.create(vals)
+                if not ulma_pick:
                     raise ValueError ('Error al enviar la cabecera del pedido')
-                for move in line_ids.filtered(lambda x: x.sale_id == sale).mapped('move_line_ids'):
+                for move in line_ids.filtered(lambda x: x.picking_id == pick).mapped('move_line_ids'):
                     vals = move.get_move_line_ulma_vals(cont=cont)
                     ulma_move = ulma_out.create(vals)
                     cont += 1
@@ -57,7 +57,7 @@ class StockBatchPicking(models.Model):
     def get_from_ulma(self):
         batchs = self.env['stock.batch.picking'].search([('picking_type_id.sga_integration_type', '=', 'sga_ulma'), ('sga_state', '=', 'pending')])
         for batch in batchs:
-            data = self.env['ulma.mmminp'].search([('mmmacccolcod', '=', batch.id), ('mmmres', '=', 'FIN')])
+            data = self.env['ulma.mmminp'].search([('mmmbatch', '=', batch.name), ('mmmres', '=', 'FIN')])
             ulma_obj = self.env['ulma.mmminp'].browse(data.id)
             
             if ulma_obj.mmmcmdref == 'ERR':
@@ -65,7 +65,8 @@ class StockBatchPicking(models.Model):
                     'ulma_error': ulma_obj.mmmresmsj
                 })
             elif ulma_obj.mmmcmdref == 'SAL':
-                moves_ids = self.env['ulma.mmminp'].search([('mmmacccolcod', '=', batch.id), ('mmmres', 'not in', ['FIN'])])
+                picking_ids = batch.picking_ids
+                moves_ids = self.env['ulma.mmminp'].search([('mmmacccolcod', 'in', picking_ids), ('mmmres', 'not in', ['FIN'])])
                 for ulma_move in moves_ids:
                     index = int(ulma_move.id)
                     move_line = self.env['stock.move.line'].browse(index)

@@ -14,7 +14,7 @@ class StockPickingTypeSGA(models.Model):
     def get_sga_integrated(self):
         return self.sga_integrated or super().get_sga_integrated()
 
-    def get_ulma_vals(self, type=''):
+    def get_ulma_vals(self, type='', partner_id=None, picking_id=None):
 
         if self.group_code == 'picking':
             mmmCMDREF = 'SAL'
@@ -33,6 +33,12 @@ class StockPickingTypeSGA(models.Model):
         if type =="sale":
             vals.update({
                 'mmmres': 'FIN',
+                'mmmentdes': '{} ({})'.format(partner_id.name, picking_id.name),
+                'mmmentdir1': '{} {}'.format(partner_id.street, partner_id.street2 if partner_id.street2 else ''),
+                'mmmentdir2': partner_id.city,
+                'mmmentdir3': partner_id.state_id.name if partner_id.state_id else partner_id.city,
+                'mmmentdir4': partner_id.zip,
+                'mmmacccolcod': picking_id.id
             })
 
         if type == "move":

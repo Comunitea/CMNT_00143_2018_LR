@@ -14,6 +14,7 @@ class StockBatchPicking(models.Model):
     campaign_id = fields.Many2one('campaign', 'Campaign')
     carrier_id = fields.Many2one("delivery.carrier", string="Carrier")
 
+
     @api.multi
     @api.constrains('shipping_type', 'delivery_route_path_id', 'payment_term_id', 'picking_type_id')
     def _check_delivery_info(self):
