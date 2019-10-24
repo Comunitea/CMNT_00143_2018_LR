@@ -61,9 +61,6 @@ class SaleOrder(models.Model):
             self.picking_id.sudo().write({'ic_sale_ids': [(4, self.sudo().ic_sale_line_id.order_id.id)]})
         return res
 
-    def create(self, vals):
-        return super().create(vals)
-
 
 class SaleOrderLine(models.Model):
 
