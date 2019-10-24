@@ -7,6 +7,8 @@ from odoo.exceptions import ValidationError
 class AdrCodeCategory(models.Model):
     _name = "adr.code.category"
 
+    _rec_name = 'code'
+
     code = fields.Char('Code')
     x_kgrs_11363 = fields.Integer('x Kgrs', help ="For exception 1.1.3.6.3")
     x_kgrs_11364 = fields.Integer('x Kgrs', help ="For exception 1.1.3.6.4")

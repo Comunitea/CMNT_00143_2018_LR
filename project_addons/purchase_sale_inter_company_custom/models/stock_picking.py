@@ -81,15 +81,17 @@ class StockPicking(models.Model):
         #import ipdb; ipdb.set_trace()
 
         res = super().action_done()
-        if self.intercompany_picking_id:
-            dest_pick_ids = self.move_lines.filtered(lambda x: x.state == 'done').mapped('move_dest_ids').mapped('picking_id')
-            ic_user = self.company_id.intercompany_user_id.id
-            ic_company = self.company_id.id
-            ctx = self._context.copy()
-            ctx.update(force_company=ic_company)
-            for move_line in dest_pick_ids.move_line_ids:
-                move_line.qty_done = move_line.product_uom_qty
-            dest_pick_ids.with_context(ctx).sudo(ic_user).action_done()
+        ctx = self._context.copy()
+        for pick in self:
+            if pick.intercompany_picking_id:
+                dest_pick_ids = pick.move_lines.filtered(lambda x: x.state == 'done').mapped('move_dest_ids').mapped('picking_id')
+                ic_user = pick.company_id.intercompany_user_id.id
+                ic_company = pick.company_id.id
+
+                ctx.update(force_company=ic_company)
+                for move_line in dest_pick_ids.move_line_ids:
+                    move_line.qty_done = move_line.product_uom_qty
+                dest_pick_ids.with_context(ctx).sudo(ic_user).action_done()
 
         return res
 

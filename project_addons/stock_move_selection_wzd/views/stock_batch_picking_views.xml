@@ -26,25 +26,31 @@
             </field>
         </record>
     <!-- stock.batch.picking form view -->
-    <record model="ir.ui.view" id="stock_move_selection_wzd_form">
+    <record model="ir.ui.view" id="stock_batch_picking_form">
         <field name="name">stock.batch.picking.move.selection.form</field>
         <field name="model">stock.batch.picking</field>
         <field name="inherit_id" ref="stock_batch_picking.stock_batch_picking_form"/>
         <field name="arch" type="xml">
 
             <xpath expr="//button[@name='action_cancel']" position="after">
-                <!--button name="action_transfer" string="Validar" type="object" class="oe_highlight" attrs="{'invisible': [('draft_move_lines', '=', [])]}"/-->
+                <button name="action_transfer" string="Validar" type="object" class="oe_highlight"
+                        attrs="{'invisible': ['|', ('state', '!=', 'assigned'), ('ready_to_transfer', '=', False)]}"/>
                 <button name="batch_printing" string="Print" type="object" class="oe_highlight"/>
                 <button name="alternate_draft_ready" string="Pasar a Borrador"
                         states="ready"
                         type="object" class="oe_highlight"/>
                 <button name="alternate_draft_ready" string="Pasar a Disponible"
-                        states="ready"
+                        states="draft"
                         type="object" class="oe_highlight"/>
-
-
+                <button name="force_assign_create_lines" string="Forzar disponibilidad"
+                        attrs="{'invisible': ['|', ('state', 'in', ('cancel', 'done')), ('ready_to_transfer','=', True)]}"
+                        type="object" class="btn-default" help="Fuerza todos los movimientos creando los move lines"/>
+                <field name="ready_to_transfer" invisible="1"/>
             </xpath>
-
+            <xpath expr="//button[@name='action_transfer'][2]" position="replace">
+            </xpath>
+            <xpath expr="//button[@name='action_transfer'][1]" position="replace">
+            </xpath>
             <xpath expr="//button[@name='action_cancel']" position="after">
                 <button name="action_send_to_sga" string="Enviar a SGA" type="object" class="oe_highlight"
                         attrs="{'invisible': [('sga_state', 'not in', ('export_error', 'import_error', 'no_send'))]}"/>
@@ -154,7 +160,7 @@
             <field name="name" position="after">
                 <field name="picking_type_id"/>
                 <field name="excess"/>
-                <field name="payment_term_id"/>
+
             </field>
 
 
@@ -169,12 +175,11 @@
                 <filter name="last_week" string="Esta semana" domain="['|', ('state', '=', 'assigned'),('date','&gt;', (context_today() - datetime.timedelta(weeks=1)).strftime('%%Y-%%m-%%d') )]"/>
             </xpath>
             <xpath expr="//filter[@name='picker_id']" position="before">
-                <filter string="Tipo de envío" name="by_shipping_type" domain="[]"  context="{'group_by':'shipping_type'}"/>
                 <filter string="Partner" name="by_partner_id" domain="[]"  context="{'group_by':'partner_id'}"/>
-                <filter string="Ruta de transporte" name="by_delivery_path_route_id" domain="[]"  context="{'group_by':'delivery_route_path_id'}"/>
-                <filter string="Forma de envío" name="by_carrier_id" domain="[]"  context="{'group_by':'carrier_id'}"/>
                 <filter name="groupby_picking_type_id" string="Tipo" context="{'group_by':'picking_type_id'}"/>
                 <filter name="groupby_partner_id" string="Empresa" context="{'group_by':'partner_id'}"/>
+                <filter name="group_code"  context="{'group_by':'group_code'}"/>
+
             </xpath>
         </field>
     </record>

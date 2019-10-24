@@ -42,10 +42,13 @@ class StockQuantPackage(models.Model):
                 delivery_route_path_ids = moves.mapped('delivery_route_path_id')
                 if len(delivery_route_path_ids) == 1:
                     pack.delivery_route_path_id = delivery_route_path_ids[0]
-
                 carrier_ids = moves.mapped('carrier_id')
                 if len(carrier_ids) == 1:
                     pack.carrier_id = carrier_ids[0]
+
+                payment_term_id = moves.mapped('payment_term_id')
+                if len(payment_term_id) == 1:
+                    pack.payment_term_id = payment_term_id
 
     def check_allow_change_route_fields(self):
         if any(move.state == 'done' for move in self.move_line_ids):
@@ -66,26 +69,14 @@ class StockQuantPackage(models.Model):
     @api.multi
     def get_stock_pickings(self):
         return
-        for pack in self:
-            pack.picking_ids = self.env['stock.move.line'].search([('result_package_id','=', pack.id)]).mapped('picking_id')
 
     def propagate_route_vals(self, vals):
-        return True
-        ctx = self._context.copy()
-        ctx.update(write_from_picking=True)
-        child_vals = self.get_write_route_vals(vals)
-        move_vals = {}
-        if child_vals:
-            move_vals.update(child_vals)
-            self.mapped('move_line_ids').mapped('move_id').with_context(ctx).write(move_vals)
         return True
 
     @api.multi
     def write(self, vals):
         return super().write(vals)
-        if self._context.get('no_propagate_route_vals', True):
-            self.propagate_route_vals(vals)
-        super().write(vals)
+
 
 
 

@@ -20,7 +20,6 @@ class StockPicking(models.Model):
     @api.multi
     @api.depends('move_lines.shipping_type', 'move_lines.delivery_route_path_id', 'move_lines.carrier_id')
     def compute_route_fields(self):
-
         for pick in self:
             moves = pick.move_lines
             # if any(move.state == 'done' for move in moves):
@@ -39,6 +38,8 @@ class StockPicking(models.Model):
                 carrier_ids = moves.mapped('carrier_id')
                 if len(carrier_ids) == 1:
                     pick.carrier_id = carrier_ids[0]
+
+
 
     def check_allow_change_route_fields(self):
         if any(move.state == 'done' for move in self.move_lines):

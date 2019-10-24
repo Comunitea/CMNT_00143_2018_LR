@@ -40,15 +40,16 @@ class StockBatchDeliveryWzd(models.TransientModel):
     picking_ids = fields.Many2many('stock.picking', string='Pedidos asociados', compute='get_child_vals')
     packages_ids = fields.Many2many('stock.quant.package', string='Paquetes', compute='get_child_vals')
     moves_to_not_include = fields.Many2many('stock.move', string='Movimientos no incluidos')
+
+
     def set_moves_to_pack_ids(self):
         return
-
 
     @api.multi
     def get_child_vals(self):
         self.ensure_one()
         self.packages_ids = self.move_ids.mapped('result_package_id')
-        self.moves_to_pack_ids = self.move_ids.filtered(lambda x: not x.result_package_id)
+        self.moves_to_pack_ids = self.move_ids.filtered(lambda x: x.state not in ('assigned', 'partially_available') and not x.result_package_id)
         self.picking_ids = self.move_ids.mapped('picking_id')
         self.moves_to_batch_ids = self.move_ids.filtered(lambda x: not x.batch_id)
 
@@ -133,6 +134,7 @@ class StockBatchDeliveryWzd(models.TransientModel):
     @api.model
     def default_get(self, fields):
 
+
         active_ids = self._context.get('active_ids')
         if not active_ids:
             raise ValidationError(_('No hay nada seleccionado'))
@@ -155,6 +157,7 @@ class StockBatchDeliveryWzd(models.TransientModel):
 
         if moves.filtered(lambda x: x.batch_delivery_id) and len(moves.mapped('batch_delivery_id')) > 2:
             raise ValidationError(_('Algunos movimientos ya tienen orden de carga seleccionada'))
+
         if moves.filtered(lambda x: x.state not in ('partially_available', 'assigned')):
             raise ValidationError(_("Tienes movimientos en estado distinto a 'Reservado'"))
 

@@ -37,7 +37,6 @@ class InfoRouteMixin(models.AbstractModel):
         return super().write(vals)
 
     def get_write_route_vals(self, vals):
-        import ipdb; ipdb.set_trace()
         child_vals = {}
         r_vals = ['payment_term_id', 'shipping_type', 'delivery_route_path_id', 'carrier_id', 'campaign_id']
         self_fields = self.fields_get_keys()
@@ -46,7 +45,6 @@ class InfoRouteMixin(models.AbstractModel):
         return child_vals
 
     def update_info_route_vals(self):
-
         child_vals = {}
         r_vals = ['payment_term_id', 'shipping_type', 'delivery_route_path_id', 'carrier_id', 'campaign_id']
         self_fields = self.fields_get_keys()
@@ -61,16 +59,16 @@ class InfoRouteMixin(models.AbstractModel):
     @api.multi
     def get_info_route(self):
         for obj in self:
-            if obj.shipping_type or obj.delivery_route_path_id:
-                if 'carrier_id' in obj.fields_get_keys():
-                    carrier_id = obj.carrier_id and obj.carrier_id.name or ''
-                else:
-                    carrier_id = ''
+            if obj.shipping_type == 'pasaran':
+                name = 'Pasarán'
+            elif obj.shipping_type == 'urgent':
+                name = 'Urgente'
+                if 'carrier_id' in obj.fields_get_keys() and obj.carrier_id:
+                    name = '{}: {}'.format(name, obj.carrier_id.name)
 
-                name2 = '{} {}'.format(obj.delivery_route_path_id.name or 'Sin ruta', carrier_id)
-                shipping_type = obj._fields['shipping_type'].convert_to_export(obj.shipping_type, obj) if obj.shipping_type else 'Sin envío'
-                obj.info_route_str = '{}: {}/[{}]'.format(shipping_type, name2, obj.payment_term_id.display_name)
-
+            elif obj.shipping_type == 'route':
+                name = 'Ruta: {}'.format(obj.delivery_route_path_id and obj.delivery_route_path_id.name)
             else:
-                obj.info_route_str = False
+                name = 'No definido'
+            obj.info_route_str = '{} / {}'.format(name, obj.payment_term_id and obj.payment_term_id.display_name or '')
 

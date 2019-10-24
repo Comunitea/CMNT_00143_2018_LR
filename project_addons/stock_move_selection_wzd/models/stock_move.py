@@ -399,4 +399,21 @@ class StockMove(models.Model):
             })
         return res
 
+    @api.multi
+    def _force_assign_create_lines(self):
+        moves = self.filtered(lambda x: x.state in ('confirmed', 'partially_available'))
+        for move in moves:
+            move._do_unreserve()
+            move._action_assign()
+            if move.state == 'assigned':
+                continue
+            missing_reserved_uom_quantity = move.product_uom_qty - move.reserved_availability
+            missing_reserved_quantity = move.product_uom._compute_quantity(missing_reserved_uom_quantity,
+                                                                           move.product_id.uom_id,
+                                                                           rounding_method='HALF-UP')
+            self.env['stock.move.line'].create(move._prepare_move_line_vals(quantity=missing_reserved_quantity))
+            move.write({'state': 'assigned'})
+
+
+
 

@@ -517,7 +517,7 @@ class PickingType(models.Model):
                            (kanban and kanban.id or False, 'kanban')]
 
         ctx = self._context.copy()
-        if not ctx.get('this_context', False):
+        if ctx.get('this_context', False):
             ctx = self.update_context(ctx)
         ctx.update(eval(action['context']))
 
@@ -565,6 +565,7 @@ class PickingType(models.Model):
         return action
 
     def get_action_tree(self):
+
         domain = self._context.get('default_domain', [])
         if not domain:
             domain = self._context.get('domain', [])

@@ -40,7 +40,6 @@ class StockPicking(models.Model):
             else:
                 pick.batch_delivery_id = False
 
-
     def create_second_pick(self, second_moves=[]):
         """ Copy of create backorder
         """

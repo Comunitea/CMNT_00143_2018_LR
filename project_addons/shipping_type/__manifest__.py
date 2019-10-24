@@ -24,7 +24,7 @@
         'views/stock_quant_package.xml',
         'views/stock_picking.xml',
         'views/stock_move.xml',
-        #'views/stock_batch_picking.xml',
+        'views/stock_batch_picking.xml',
         #'views/delivery_route_path.xml'
     ],
 }
