@@ -22,16 +22,15 @@ class InfoRouteMixin(models.AbstractModel):
     delivery_route_path_id = fields.Many2one('delivery.route.path', string="Ruta de transporte")
     info_route_str = fields.Char('Info ruta', compute='get_info_route')
     urgent = fields.Boolean('Urgent', help='Default urgent for partner orders\nPlus 3.20%', compute='_partner_urgent')
+    payment_term_id = fields.Many2one('account.payment.term', string='Plazos de pago')
 
     @api.multi
     def _partner_urgent(self):
-
         if 'partner_id' in self.fields_get_keys():
             for obj in self:
                 obj.urgent = obj.partner_id.urgent
         else:
             self.write({'urgent': True})
-
 
     @api.multi
     def write(self, vals):
@@ -39,39 +38,37 @@ class InfoRouteMixin(models.AbstractModel):
 
     def get_write_route_vals(self, vals):
         child_vals = {}
-        if 'shipping_type' in vals:
-            child_vals.update(shipping_type=vals['shipping_type'])
-        if 'delivery_route_path_id' in vals:
-            child_vals.update(delivery_route_path_id=vals['delivery_route_path_id'])
-        if 'carrier_id' in vals and 'carrier_id' in self.fields_get_keys():
-            child_vals.update(carrier_id=vals['carrier_id'])
-        if 'campaign_id' in vals and 'campaign_id' in self.fields_get_keys():
-            child_vals.update(campaign_id=vals['campaign_id'])
-
+        r_vals = ['payment_term_id', 'shipping_type', 'delivery_route_path_id', 'carrier_id', 'campaign_id']
+        self_fields = self.fields_get_keys()
+        for vl in list(set(r_vals) & set(self_fields)):
+            child_vals.update({vl: vals[vl]})
         return child_vals
 
     def update_info_route_vals(self):
-        route_vals = {'shipping_type': self.shipping_type,
-                      'delivery_route_path_id': self.delivery_route_path_id and self.delivery_route_path_id.id,
-                      }
-        if 'carrier_id' in self.fields_get_keys() and self.carrier_id:
-            route_vals['carrier_id'] = self.carrier_id.id
-        if 'campaign_id' in self.fields_get_keys() and self.campaign_id:
-            route_vals['campaign_id'] = self.campaign_id.id
-        return route_vals
+        child_vals = {}
+        r_vals = ['payment_term_id', 'shipping_type', 'delivery_route_path_id', 'carrier_id', 'campaign_id']
+        self_fields = self.fields_get_keys()
+        for vl in list(set(r_vals) & set(self_fields)):
+            if self[vl]:
+                if self.fields_get()[vl]['type'] == 'many2one':
+                    child_vals.update({vl: self[vl].id})
+                else:
+                    child_vals.update({vl: self[vl]})
+        return child_vals
 
     @api.multi
     def get_info_route(self):
         for obj in self:
-            if obj.shipping_type or obj.delivery_route_path_id:
-                if 'carrier_id' in obj.fields_get_keys():
-                    carrier_id = obj.carrier_id and obj.carrier_id.name or ''
-                else:
-                    carrier_id = ''
+            if obj.shipping_type == 'pasaran':
+                name = 'Pasarán'
+            elif obj.shipping_type == 'urgent':
+                name = 'Urgente'
+                if 'carrier_id' in obj.fields_get_keys() and obj.carrier_id:
+                    name = '{}: {}'.format(name, obj.carrier_id.name)
 
-                name2 = '{} {}'.format(obj.delivery_route_path_id.name or 'Sin ruta', carrier_id)
-                shipping_type = obj._fields['shipping_type'].convert_to_export(obj.shipping_type, obj) if obj.shipping_type else 'Sin envío'
-                obj.info_route_str = '{}: {}'.format(shipping_type, name2)
+            elif obj.shipping_type == 'route':
+                name = 'Ruta: {}'.format(obj.delivery_route_path_id and obj.delivery_route_path_id.name)
             else:
-                obj.info_route_str = False
+                name = 'No definido'
+            obj.info_route_str = '{} / {}'.format(name, obj.payment_term_id and obj.payment_term_id.display_name or '')
 

@@ -66,7 +66,7 @@ class StockMove(models.Model):
 
     visible_count_move_to_pick = fields.Boolean(related='picking_type_id.visible_count_move_to_pick')
     visible_count_move_unpacked = fields.Boolean(related='picking_type_id.visible_count_move_unpacked')
-
+    orig_picking_id = fields.Many2one(related='move_orig_ids.picking_id', string="Expedición")
 
     @api.depends('state', 'picking_id')
     def _compute_is_initial_demand_editable(self):
@@ -398,5 +398,22 @@ class StockMove(models.Model):
                 'location_dest_id': self.picking_type_id.parent_id.default_location_dest_id.id,
             })
         return res
+
+    @api.multi
+    def _force_assign_create_lines(self):
+        moves = self.filtered(lambda x: x.state in ('confirmed', 'partially_available'))
+        for move in moves:
+            move._do_unreserve()
+            move._action_assign()
+            if move.state == 'assigned':
+                continue
+            missing_reserved_uom_quantity = move.product_uom_qty - move.reserved_availability
+            missing_reserved_quantity = move.product_uom._compute_quantity(missing_reserved_uom_quantity,
+                                                                           move.product_id.uom_id,
+                                                                           rounding_method='HALF-UP')
+            self.env['stock.move.line'].create(move._prepare_move_line_vals(quantity=missing_reserved_quantity))
+            move.write({'state': 'assigned'})
+
+
 
 

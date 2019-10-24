@@ -203,7 +203,7 @@
                                                         <div class="col-xs-6 text-primary" title="Movimientos de SGA (Totales)">
                                                             <a name="get_action_tree" type="object" context="{'dest_model': 'stock.move',
                                                                                                               'move_domain': 'count_sga_send',
-                                                                                                              'default_domain': [('sga_integrated', '=', True)],
+                                                                                                              'domain': [('sga_integrated', '=', True)],
                                                                                                               'search_default_waiting_sga': 1}">
                                                                 Pendientes de SGA
                                                             </a>
@@ -261,7 +261,11 @@
                                                 <div name="batch_picking" t-if="record.need_batch_picking.raw_value == true">
                                                      <div class="row">
                                                         <div class="col-xs-9 text-muted" >
-                                                            <h3 class="text-muted">Batchs</h3>
+                                                            <h3 class="text-muted">
+                                                                <span t-if="record.code.raw_value =='outgoing'">Albaranes</span>
+                                                                <span t-if="record.code.raw_value =='internal'">Expediciones</span>
+                                                                <span t-if="record.code.raw_value == 'incoming'">Batchs</span>
+                                                            </h3>
                                                         </div>
                                                     </div>
                                                     <div class="row">
@@ -270,7 +274,7 @@
                                                                                                               'batch_domain': 'count_all_batch',
                                                                                                               'search_default_last_day': 1,
                                                                                                               'search_default_todo': 1}">
-                                                                Pendientes
+                                                                Pendientes(Totales)
                                                             </a>
                                                         </div>
                                                         <div class="col-xs-3">
@@ -294,7 +298,7 @@
                                                                                                               'search_default_by_shipping_type':1,
                                                                                                               'search_default_by_delivery_path_route_id':1,
                                                                                                               'search_default_by_partner_id':1,}">
-                                                                Todos
+                                                                Pendientes(Totales)
                                                             </a>
                                                         </div>
                                                         <div class="col-xs-3">
@@ -311,7 +315,48 @@
                                                                                                               'search_default_by_shipping_type':1,
                                                                                                               'search_default_by_delivery_path_route_id':1,
                                                                                                               'search_default_by_partner_id':1,}">
-                                                                Sin batch
+                                                                Sin
+                                                                <span t-if="record.code.raw_value =='outgoing'"> albaran</span>
+                                                                <span t-if="record.code.raw_value =='internal'"> expedicion</span>
+                                                                <span t-if="record.code.raw_value == 'incoming'"> batch</span>
+                                                            </a>
+                                                        </div>
+                                                        <div class="col-xs-3">
+                                                            <span><t t-esc="record.count_pick_to_batch.value"/></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div name="purchase_orders" t-if="record.code.raw_value == 'internal'">
+                                                    <div class="row">
+                                                    <div class="col-xs-9 text-muted" >
+                                                        <h3 class="text-muted">Compras</h3>
+                                                    </div>
+                                                      </div>
+                                                    <div t-if="record.visible_count_picking_ready.raw_value == true" class="row">
+                                                        <div class="col-xs-6 text-primary" title="Pedidos pendientes">
+                                                            <a name="get_action_tree" type="object" context="{'dest_model': 'stock.picking',
+                                                                                                              'pick_domain': 'count_picking',
+                                                                                                              'search_default_available': 1,
+                                                                                                              'search_default_by_partner_id':1,}">
+                                                                Pendientes(Totales)
+                                                            </a>
+                                                        </div>
+                                                        <div class="col-xs-3">
+                                                            <span><t t-esc="record.count_picking_ready.value"/> de <t t-esc="record.count_picking.value"/></span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div t-if="record.need_batch_picking.raw_value == true" class="row">
+                                                        <div class="col-xs-6 text-primary" title="Pedidos sin batch">
+                                                            <a name="get_action_tree" type="object" context="{'dest_model': 'stock.picking',
+                                                                                                              'pick_domain': 'count_picking',
+                                                                                                              'search_default_to_batch': 1,
+                                                                                                              'search_default_available': 1,
+                                                                                                              'search_default_by_partner_id':1,}">
+                                                                Sin
+                                                                <span t-if="record.code.raw_value =='outgoing'"> albaran</span>
+                                                                <span t-if="record.code.raw_value =='internal'"> expedicion</span>
+                                                                <span t-if="record.code.raw_value == 'incoming'"> batch</span>
                                                             </a>
                                                         </div>
                                                         <div class="col-xs-3">
@@ -326,17 +371,17 @@
                                                             <h3 class="text-muted">Movimientos</h3>
                                                         </div>
                                                     </div>
-                                                     <div class="col-xs-6 text-primary" title="Movimientos de SGA (Totales)">
+                                                     <!--div class="col-xs-6 text-primary" title="Movimientos de SGA (Totales)">
                                                             <a name="get_action_tree" type="object" context="{'dest_model': 'stock.move',
                                                                                                               'move_domain': 'count_sga_send',
-                                                                                                              'default_domain': [('sga_integrated', '=', True)],
+                                                                                                              'domain': [('sga_integrated', '=', True)],
                                                                                                               'search_default_waiting_sga': 1}">
                                                                 Pendientes de SGA
                                                             </a>
                                                         </div>
                                                         <div class="col-xs-3">
                                                             <span><t t-esc="record.count_sga_undone.value"/>(<t t-esc="record.count_sga_send.value"/>)</span>
-                                                        </div>
+                                                        </div-->
                                                     <div t-if="record.visible_count_move_unpacked.raw_value == true" class="row">
                                                         <div class="col-xs-6 text-primary" title="Para empaquetar">
                                                             <a name="get_action_tree" type="object" context="{'dest_model': 'stock.move',
@@ -486,7 +531,7 @@
                                                     <div class="col-xs-5 text-primary" title="Movimientos de SGA (Totales)">
                                                         <a name="get_action_tree" type="object" context="{'dest_model': 'stock.move',
                                                                                                           'move_domain': 'count_move_ready',
-                                                                                                          'default_domain': [('sga_integrated', '=', True)],
+                                                                                                          'domain': [('sga_integrated', '=', True)],
                                                                                                           'search_default_waiting_sga': 1}">
                                                             Pendientes de SGA
                                                         </a>
@@ -512,7 +557,7 @@
                                                     <div class="col-xs-5 text-primary" title="Para empaquetar  (Totales)">
                                                         <a name="get_action_tree" type="object" context="{'dest_model': 'stock.move',
                                                                                                           'move_domain': 'count_move_ready',
-                                                                                                          'default_domain': [('sga_integrated', '=', True)],
+                                                                                                          'domain': [('sga_integrated', '=', True)],
                                                                                                           'search_default_waiting_sga': 1}">
                                                             Para empaquetar
                                                         </a>
@@ -585,7 +630,7 @@
                                             <div class="col-xs-8">
                                                 <ul class="oe_kanban_colorpicker" data-field="color"/>
                                             </div>
-                                            <div class="col-xs-4 text-right">
+                                            <div class="col-xs-4 text-right" t-if="record.code.raw_value == 'outgoing'">
                                                 <a type="edit">Acciones</a>
                                                 <div>
                                                     <button class="btn btn-primary" name="open_excess_wzd" type="object">

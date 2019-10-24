@@ -1,15 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <record model="ir.ui.view" id="stock_batch_picking_form_shipping_type">
+        <field name="name">stock.batch.picking.form.shipping.type</field>
+        <field name="model">stock.batch.picking</field>
+        <field name="inherit_id" ref="stock_batch_picking.stock_batch_picking_form"/>
+        <field name="arch" type="xml">
+            <field name="picker_id" position="before">
+                <field name="info_route_str"/>
+            </field>
+            <xpath expr="//notebook" position="before">
+                <group string="Info envío">
+                    <field name="shipping_type"/>
+                    <field name="delivery_route_path_id"/>
+                    <field name="payment_term_id"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+    <record id="stock_batch_picking_tree" model="ir.ui.view">
+        <field name="name">batch.picking.tree</field>
+        <field name="model">stock.batch.picking</field>
+        <field name="inherit_id" ref="stock_batch_picking.stock_batch_picking_tree"/>
+        <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field name="shipping_type" invisible="1"/>
+                <field name="delivery_route_path_id" invisible="1"/>
+                <field name="payment_term_id" invisible="1"/>
+                <field name="carrier_id" invisible="1"/>
+                <field name="info_route_str"/>
+            </field>
 
+        </field>
+    </record>
     <record id="stock_batch_picking_search" model="ir.ui.view">
         <field name="name">batch.picking.search</field>
         <field name="model">stock.batch.picking</field>
         <field name="inherit_id" ref="stock_batch_picking.stock_batch_picking_search"/>
         <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field name="shipping_type"/>
+                <field name="delivery_route_path_id"/>
+                <field name="payment_term_id"/>
+                <field name="carrier_id"/>
+            </field>
 
-            <xpath expr="//filter[@name='picker_id']" position="after">
-                <filter name="group_code"  context="{'group_by':'group_code'}"/>
-                <filter name="picking_type_id" context="{'group_by':'picking_type_id'}"/>
+            <xpath expr="//filter[@name='picker_id']" position="before">
+                <filter string="Tipo de envío" name="by_shipping_type" domain="[]"  context="{'group_by':'shipping_type'}"/>
+                <filter string="Ruta de transporte" name="by_delivery_path_route_id" domain="[]"  context="{'group_by':'delivery_route_path_id'}"/>
+                <filter string="Forma de envío" name="by_carrier_id" domain="[]"  context="{'group_by':'carrier_id'}"/>
+                <filter string="Plazos de pago" name="group_by_payment_term" context="{'group_by':'payment_term_id'}"/>
             </xpath>
         </field>
     </record>

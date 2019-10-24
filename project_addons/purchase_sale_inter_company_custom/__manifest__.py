@@ -13,9 +13,8 @@
     'license': 'AGPL-3',
     'installable': True,
     'depends': [
-        'purchase_sale_inter_company',
         'stock_dropshipping',
-        'stock_move_selection_wzd'
+        'purchase_sale_inter_company'
     ],
     'data': [
     'views/stock_picking.xml'

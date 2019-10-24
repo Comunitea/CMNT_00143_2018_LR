@@ -137,7 +137,6 @@ class StockBatchDelivery(models.Model):
 
     @api.depends('state', 'move_lines.shipping_type', 'move_lines.delivery_route_path_id', 'move_lines.carrier_id')
     def compute_route_fields(self):
-
         for batch in self:
             moves = batch.move_lines
             if moves:
@@ -240,11 +239,9 @@ class StockBatchDelivery(models.Model):
                 active_ids.append(batch.id)
             return self.env.ref('adr_product.delivery_batch_adr_report').with_context(active_ids=active_ids,
                                                                                       active_model='stock.batch.picking',
-                                                                                      pickings=pickings).report_action(
-                [])
-
+                                                                                      pickings=pickings).report_action([])
     @api.multi
-    def get_info_route(self):
+    def get_info_route_batch_delivery(self):
 
         for obj in self:
             if obj.shipping_type or obj.delivery_route_path_id:

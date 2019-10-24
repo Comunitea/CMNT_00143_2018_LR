@@ -52,6 +52,13 @@ class StockMove(models.Model):
     carrier_id = fields.Many2one("delivery.carrier", string="Carrier")
     campaign_id = fields.Many2one('campaign', 'Campaign')
 
+    def _get_new_picking_values(self):
+        vals = super(StockMove, self)._get_new_picking_values()
+        if self.payment_term_id:
+            vals.update(payment_term_id=self.payment_term_id.id)
+        return vals
+
+
     def _get_new_picking_domain(self):
         return super()._get_new_picking_domain()
 
@@ -73,7 +80,6 @@ class StockMove(models.Model):
         res = super()._prepare_move_split_vals(qty=qty)
         res.update(self.update_info_route_vals())
         return res
-
 
     @api.multi
     def write(self, vals):

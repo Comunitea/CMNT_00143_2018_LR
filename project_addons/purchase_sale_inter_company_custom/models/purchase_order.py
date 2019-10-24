@@ -16,6 +16,13 @@ class PurchaseOrder(models.Model):
             direct_delivery_address = self.from_sale_id.partner_shipping_id
         return super()._prepare_sale_order_data(name=name, partner=partner, dest_company=dest_company,direct_delivery_address=direct_delivery_address)
 
+    @api.multi
+    def write_ic_values(self):
+        for ic_po in self:
+            #lines = ic_po.order_lines
+            ic_moves = [('')]
+
+
 
 class PurchaseOrderLine(models.Model):
     _inherit = 'purchase.order.line'
@@ -23,7 +30,7 @@ class PurchaseOrderLine(models.Model):
     def get_ic_lines(self):
         not_ic_lines = ic_lines = self.env['purchase.order.line']
         for line in self:
-            ic_domain = [('auto_purchase_line_id','=', self.id)]
+            ic_domain = [('auto_purchase_line_id','=', line.id)]
             if self.env['sale.order.line'].search(ic_domain):
                 ic_lines |= line
             else:
