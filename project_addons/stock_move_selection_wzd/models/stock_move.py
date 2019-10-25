@@ -199,10 +199,6 @@ class StockMove(models.Model):
             action = wzd_id.get_formview_action()
             action['target'] = 'new'
             return action
-            action = self.env.ref('stock_move_selection_wzd.open_view_create_batch_picking').read()[0]
-            action['res_id'] = wzd_id.id
-            return action
-
 
     @api.model
     def search(self, args, offset=0, limit=None, order=None, count=False):
@@ -385,7 +381,7 @@ class StockMove(models.Model):
 
     def _action_done(self):
         res = super()._action_done()
-        for move in self.filtered(lambda x: x.sga_state != 'done'):
+        for move in self.filtered(lambda x: x.sga_state not in ('no_integrated', 'done')):
             move.sga_state = 'done'
         return res
 

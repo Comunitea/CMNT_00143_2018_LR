@@ -110,7 +110,7 @@ class StockBatchPicking(models.Model):
     @api.multi
     def set_as_sga_done(self):
         for batch in self:
-            moves = batch.get_batch_moves_to_transfer()
+            moves = batch.get_batch_moves_to_transfer().filtered(lambda x: x.quantity_done > 0.00)
             moves.write({'sga_state': 'done'})
 
     @api.depends('picking_ids.partner_id', 'draft_move_lines.partner_id')
@@ -152,7 +152,6 @@ class StockBatchPicking(models.Model):
             batch.move_lines._force_assign_create_lines()
 
 
-
     @api.multi
     def action_transfer(self):
         """
@@ -177,6 +176,7 @@ class StockBatchPicking(models.Model):
                 picks_to_transfer.write({'batch_picking_id': batch.id,
                                          'draft_batch_picking_id': False})
                 batch.verify_state()
+
                 back_domain = [('backorder_id', 'in', picks_to_transfer.ids), ('state', '!=', 'cancel')]
                 backorders = self.env['stock.picking'].search(back_domain)
                 message = _(

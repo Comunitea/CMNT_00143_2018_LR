@@ -123,6 +123,7 @@ class PickingType(models.Model):
 
     shipping_type = fields.Selection(SHIPPING_TYPE_SEL, default=DEFAULT_SHIPPING_TYPE, string=STRING_SHIPPING_TYPE,
                                      help=HELP_SHIPPING_TYPE, store=False)
+    payment_term_id = fields.Many2one('account.payment.term', string='Plazos de pago', store=False)
     delivery_route_path_id = fields.Many2one('delivery.route.path', string="Route path", store=False)
     urgent = fields.Selection([('urgent', 'Urgente'), ('no_urgent', 'No uergente')], help='Default urgent for partner orders\nPlus 3.20%', store=False)
     context_domain = fields.Char()
@@ -167,6 +168,7 @@ class PickingType(models.Model):
         move_domains, picking_domains, batch_domains = self.get_moves_domain()
 
         for field in move_domains:
+
             domain = move_domains[field] + [('picking_type_id', 'in', self.ids)]
             data = self.env['stock.move'].read_group(domain, ['picking_type_id'], ['picking_type_id'])
             count = {
@@ -175,33 +177,41 @@ class PickingType(models.Model):
             }
             for record in self:
                 record[field] = count.get(record.id, 0)
-
+                print("{} >> {}: {} in move_domains".format(record.name, field, record[field]))
         for field in picking_domains:
             domain = picking_domains[field] + [('picking_type_id', 'in', self.ids)]
-            moves = self.env['stock.move'].search_read(domain, ['picking_id'])
 
-            picking_ids = [x['picking_id'][0] for x in moves]
-            d1 = [('id', 'in', picking_ids)]
-            data = self.env['stock.picking'].read_group(d1,
-                ['picking_type_id'], ['picking_type_id'])
-            count = {
-                x['picking_type_id'][0]: x['picking_type_id_count']
-                for x in data if x['picking_type_id']
-            }
-            for record in self:
-                record[field] = count.get(record.id, 0)
-
+            moves = self.env['stock.move'].read_group(domain, ['picking_id'], ['picking_id'])
+            if moves:
+                picking_ids = [x['picking_id'][0] for x in moves]
+                d1 = [('id', 'in', picking_ids)]
+                data = self.env['stock.picking'].read_group(d1,
+                    ['picking_type_id'], ['picking_type_id'])
+                count = {
+                    x['picking_type_id'][0]: x['picking_type_id_count']
+                    for x in data if x['picking_type_id']
+                }
+                for record in self:
+                    record[field] = count.get(record.id, 0)
+                    print("{} >> {}: {} in pick_domains".format(record.name, field, record[field]))
         for field in batch_domains:
-            data = self.env['stock.batch.picking'].read_group(batch_domains[field] +
-                [('picking_type_id', 'in', self.ids)],
-                ['picking_type_id'], ['picking_type_id'])
-            count = {
-                x['picking_type_id'][0]: x['picking_type_id_count']
-                for x in data if x['picking_type_id']
-            }
-            for record in self:
-                record[field] = count.get(record.id, 0)
+            domain = batch_domains[field] + [('picking_type_id', 'in', self.ids)]
+            moves = self.env['stock.move'].search_read(domain, ['draft_batch_picking_id', 'batch_picking_id'])
 
+            if moves:
+                batch_picking_ids = [x['batch_picking_id'][0] for x in moves if x['batch_picking_id']]
+                draft_batch_picking_ids = [x['draft_batch_picking_id'][0] for x in moves if x['draft_batch_picking_id']]
+
+                d1 = [('id', 'in', batch_picking_ids + draft_batch_picking_ids)]
+                data = self.env['stock.batch.picking'].read_group(d1,
+                                                            ['picking_type_id'], ['picking_type_id'])
+                count = {
+                    x['picking_type_id'][0]: x['picking_type_id_count']
+                    for x in data if x['picking_type_id']
+                }
+                for record in self:
+                    record[field] = count.get(record.id, 0)
+                    print("{} >> {}: {} in batch_domains".format(record.name, field, record[field]))
         for record in self:
             today = datetime.now().strftime(DEFAULT_SERVER_DATE_FORMAT)
 
@@ -254,17 +264,34 @@ class PickingType(models.Model):
             record.rate_sga_undone = rate_sga_undone
             record.rate_packed_undone = rate_packed_undone
 
+
     def get_excess_time(self):
         (datetime.now() + timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT)
         from_time = (datetime.now() - timedelta(days=3)).strftime(DEFAULT_SERVER_DATE_FORMAT) + ' 00:00:01'
         return from_time
 
+    def date_domain(self, date_field = 'date_expected'):
+        date_domain = []
+        if self._context.get('filter_day', False):
+            f_day = self._context['filter_day']
+            today = datetime.now().strftime(DEFAULT_SERVER_DATE_FORMAT)
+            tomorrow = (datetime.now() + timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT)
+            yesterday = (datetime.now() - timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT)
+            if f_day =='today':
+                date_domain = [(date_field, '<', tomorrow),(date_field, '>=', today)]
+            elif f_day=='tomorrow':
+                date_domain = [(date_field, '>=', tomorrow)]
+            elif f_day=='late':
+                date_domain = [(date_field, '<=', today)]
+
+        return date_domain
+
     def get_moves_domain(self, default = []):
 
         context_domain = self.get_context_domain()
-        hide_state = [('state', 'not in', ('draft', 'cancel'))]
-        context_domain += hide_state
-
+        #hide_state = [('state', 'not in', ('draft', 'cancel'))]
+        #context_domain += hide_state
+        context_domain += self.date_domain('date_expected')
 
         today = datetime.now().strftime(DEFAULT_SERVER_DATE_FORMAT)
         tomorrow = (datetime.now() + timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT)
@@ -296,8 +323,6 @@ class PickingType(models.Model):
         pasaran = [('shipping_type', '=', 'pasaran')]
 
         move_line_ids = self.env['stock.move.line']
-
-
         line_domain = context_domain + [('sga_state', 'in', ('pending', 'export_error', 'import_error'))]
         sga_send_ids = move_line_ids.search_read(line_domain, ['move_id'])
         count_sga_send = [('id', 'in', [x['move_id'][0] for x in sga_send_ids])]
@@ -314,6 +339,7 @@ class PickingType(models.Model):
         sga_send_ids = move_line_ids.search_read(line_domain, ['move_id'])
         count_sga_error = [('id', 'in', [x['move_id'][0] for x in sga_send_ids])]
 
+        context_domain = context_domain
         move_domains = {
             'count_move_todo_today': context_domain + to_do_today,
             'count_move_done': context_domain + done + [('date', '>', yesterday)],
@@ -331,8 +357,7 @@ class PickingType(models.Model):
             'count_sga_undone': count_sga_undone,
             'count_sga_error': count_sga_error
         }
-
-        context_domain = [('picking_id', '!=', False)]
+        context_domain =  [('picking_id', '!=', False)] + context_domain
 
         #moves = self.env['stock.move']
         #pasaran_picking_ids = moves.search_read(move_domains['count_move_pasaran'], ['picking_id'])
@@ -348,7 +373,8 @@ class PickingType(models.Model):
             'count_pick_to_batch': context_domain + without_pick + ready_state,
             'count_picking_pasaran': context_domain + pasaran,
         }
-        context_domain = []
+        context_domain = ['|', ('draft_batch_picking_id', '!=', False), ('batch_picking_id', '!=', False)] + context_domain
+
         batch_domains = {
             'count_batch': context_domain + ['|', ('state', '=', 'assigned'), '&', ('state', '!=', 'cancel'), ('date', '>', yesterday)],
             'count_batch_ready': context_domain + [('state', '=', 'assigned')],
@@ -372,14 +398,17 @@ class PickingType(models.Model):
             args, offset=offset, limit=limit, order=order, count=count,
         )
 
+    def get_context_domain(self, date_expected = 'date_expected'):
+        def return_id(model, name):
+            ids = self.env[model].search_read([('name', '=', name)], ['id'])
+            if ids:
+                return ids and ids[0]['id']
 
-
-    def get_context_domain(self, date_expected ='date_expected'):
         def delete(domain, var, new_token):
             if domain:
-                ##EPETIDO
+                ##REPETIDO
                 for token in domain:
-                    ## Si ya lo tengo devulevo el mismo domainio
+                    ## Si ya lo tengo devulevo el mismo dominio
                     if token == new_token[0]:
                         return domain
                 ##HAGO UN OR CON ALGUNO QUE YA HAY
@@ -392,9 +421,7 @@ class PickingType(models.Model):
                             domain.remove(token)
                             domain += ['|', old_token, new_token[0]]
                             return domain
-
             ##NO LO ENCUENTRO ES UN AND
-
             domain += new_token
             return domain
 
@@ -411,7 +438,7 @@ class PickingType(models.Model):
         except:
             pass
 
-        clear=True
+        clear = True
 
         for f in SEARCH_F:
             if self._context.get('f_{}'.format(f), False):
@@ -419,19 +446,23 @@ class PickingType(models.Model):
 
         shipping_type = self._context.get('search1_shipping_type', False)
         if shipping_type:
-            clear=False
+            clear = False
             delete(domain, 'shipping_type', [('shipping_type', '=', shipping_type)])
 
         delivery_route_path_id = self._context.get('search1_delivery_route_path_id', False)
         if delivery_route_path_id:
             clear = False
-            delete(domain, 'delivery_route_path_id', [('delivery_route_path_id', '=', delivery_route_path_id)])
+            delete(domain, 'delivery_route_path_id', [('delivery_route_path_id', '=', return_id('delivery.route.path', delivery_route_path_id))])
+
+        payment_term_id = self._context.get('search1_payment_term_id', False)
+        if payment_term_id:
+            clear = False
+            delete(domain, 'payment_term_id', [('payment_term_id', '=', return_id('account.payment.term', payment_term_id))])
 
         urgent = self._context.get('search1_urgent', False)
         if urgent:
             clear = False
             delete(domain, 'urgent', [('urgent', '=', urgent == 'urgent')])
-
 
         if clear:
             domain=[]
@@ -442,11 +473,13 @@ class PickingType(models.Model):
             tomorrow = (datetime.now() + timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT)
             yesterday = (datetime.now() - timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT)
             if f_day =='today':
-                domain += [(date_expected, '<', tomorrow),(date_expected, '>=', today)]
+                date_domain = [(date_expected, '<', tomorrow),(date_expected, '>=', today)]
             elif f_day=='tomorrow':
-                domain += [(date_expected, '>=', tomorrow)]
+                date_domain = [(date_expected, '>=', tomorrow)]
             elif f_day=='late':
-                domain += [(date_expected, '<=', today)]
+                date_domain = [(date_expected, '<=', today)]
+
+
 
         if self._context.get('search_partner_id', False):
             partner_id = self.env['res.partner'].search([('display_name', 'ilike', self._context['search_partner_id'])])
@@ -455,10 +488,7 @@ class PickingType(models.Model):
         if self._context.get('search_shipping_type', False):
             domain += [('shipping_type', '=', self._context.get('search_shipping_type', False) )]
 
-        #tomorrow = (datetime.now() + timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT)
-        #yesterday = (datetime.now() - timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT)
-        #today = datetime.now().strftime(DEFAULT_SERVER_DATE_FORMAT)
-        #print('{} {}'.format("Contet domain", domain))
+        print ("CONTEXT DOMAIN {}".format(domain))
         return domain or []
 
 
@@ -502,7 +532,6 @@ class PickingType(models.Model):
                 'search_default_by_location_id': True,
                 'search_default_by_location_dest_id': True,
             })
-
         return context
 
     @api.multi
@@ -522,7 +551,7 @@ class PickingType(models.Model):
         ctx.update(eval(action['context']))
 
         action['name'] = "Movimientos: {}".format(self.name)
-        action['display_name'] = self.name
+        action['display_name'] = "Movimientos: {}".format(self.name)
         action['context'] = ctx
         return action
 
@@ -543,7 +572,8 @@ class PickingType(models.Model):
 
         action['context'] = ctx
         action['name'] = "Pedidos: {}".format(self.name)
-        action['display_name'] = self.name
+        action['display_name'] = "Pedidos: {}".format(self.name)
+
         return action
 
     @api.multi
@@ -561,7 +591,7 @@ class PickingType(models.Model):
 
         action['context'] = ctx
         action['name'] = "Batchs: {}".format(self.name)
-        action['display_name'] = self.name
+        action['display_name'] = "Batchs: {}".format(self.name)
         return action
 
     def get_action_tree(self):
@@ -592,164 +622,6 @@ class PickingType(models.Model):
             return self.with_context(ctx).return_action_show_batch_picking(domain)
         else:
             return self.with_context(ctx).return_action_show_moves(domain)
-
-    def get_action_tree_ready(self):
-        move_domains, picking_domains, batch_domains = self.get_moves_domain()
-        domain = move_domains['count_move_late']
-        if self._context.get('dest_model', 'stock.move') == 'stock.picking':
-            return self.return_action_show_orders(domain, self._context)
-        else:
-            return self.return_action_show_moves(domain, self._context)
-
-    def get_action_tree_late(self):
-        move_domains, picking_domains, batch_domains = self.get_moves_domain()
-        domain = move_domains['count_move_late']
-        if self._context.get('dest_model', 'stock.move') == 'stock.picking':
-            return self.return_action_show_orders(domain, self._context)
-        else:
-            return self.return_action_show_moves(domain, self._context)
-
-    def get_action_tree_backorder(self):
-        move_domains, picking_domains, batch_domains = self.get_moves_domain()
-        domain = move_domains['count_move_backorders']
-        if self._context.get('dest_model', 'stock.move') == 'stock.picking':
-            return self.return_action_show_orders(domain, self._context)
-        else:
-            return self.return_action_show_moves(domain, self._context)
-
-    def get_action_move_to_sga_ready(self):
-
-        move_domains, picking_domains, batch_domains = self.get_moves_domain()
-        domain = move_domains['count_move_ready']
-        context = {
-                   'search_default_picking_type_id': self.id}
-        return self.return_action_show_moves(domain, context)
-
-
-    def get_action_move_tree_waiting(self):
-        move_domains, picking_domains, batch_domains = self.get_moves_domain()
-        domain = move_domains['count_move_waiting']
-        context = {
-            'search_default_picking_type_id': self.id}
-        return self.return_action_show_moves(domain, context)
-
-
-    def get_action_move_tree_ready(self):
-
-        move_domains, picking_domains, batch_domains = self.get_moves_domain()
-        domain = move_domains['count_move_ready']
-        context = {
-            'search_default_picking_type_id': self.id,}
-
-        return self.return_action_show_moves(domain, context)
-
-    def get_action_move_tree_all_done(self):
-        move_domains, picking_domains, batch_domains = self.get_moves_domain()
-        context = {
-            'search_default_picking_type_id': self.id,
-            'search_default_done': 1}
-
-        return self.return_action_show_moves(move_domains, context)
-
-    def get_action_move_tree_all_not_done(self):
-        move_domains, picking_domains, batch_domains = self.get_moves_domain()
-        context = {
-            'search_default_picking_type_id': self.id,
-            'search_default_not_done': 1}
-
-        return self.return_action_show_moves(move_domains, context)
-
-    def get_action_picking_tree_ready(self):
-
-        move_domains, picking_domains, batch_domains = self.get_moves_domain()
-        action = self.env.ref('stock.action_picking_tree_ready').read()[0]
-        action['domain'] = self.get_context_domain('scheduled_date')
-        if self.sga_integrated:
-            action['context'] ={'search_default_picking_type_id': [self.id],
-                                'default_picking_type_id': self.id,
-                                'contact_display': 'partner_address',
-                                'search_default_available': 1,
-                                'hide_sga_state': False}
-        if self:
-            action['display_name'] = self.display_name
-        return action
-
-    def get_action_batch_picking_tree_ready(self):
-
-        move_domains, picking_domains, batch_domains = self.get_moves_domain()
-        action = self.env.ref('stock_batch_picking.action_stock_batch_picking_tree').read()[0]
-        action['domain'] = batch_domains['count_batch_ready'] + [('picking_type_id', '=', self.id)]
-        if self:
-            action['display_name'] = self.display_name
-        return action
-
-    def get_action_move_tree_sga_error (self):
-        move_domains, picking_domains, batch_domains = self.get_moves_domain()
-        domain = move_domains['count_sga_error']
-        context = {
-            'search_default_picking_type_id': self.id,
-        }
-        return self.return_action_show_moves(domain, context)
-
-    def get_action_move_tree_send_sga (self):
-        move_domains, picking_domains, batch_domains = self.get_moves_domain()
-        domain = move_domains['count_sga_send']
-        context = {
-            'search_default_picking_type_id': self.id,
-        }
-        return self.return_action_show_moves(domain, context)
-
-    def get_stock_move_action_move_type_today(self):
-        move_domains, picking_domains, batch_domains = self.get_moves_domain()
-        domain = move_domains['count_move_todo_today']
-        context = {
-            'search_default_picking_type_id': self.id,
-        }
-        return self.return_action_show_moves(domain, context)
-
-    def get_stock_move_action_move_type(self):
-        domain = self.get_context_domain() + [('state', '!=', 'draft')]
-        context = {
-            'search_default_picking_type_id': self.id,
-            }
-        return self.return_action_show_moves(domain, context)
-
-    def get_action_move_tree_no_pick(self):
-        domain = self.get_context_domain()
-        context = {
-            'search_default_picking_type_id': self.id,
-            'search_default_todo': 1,
-            'search_default_without_pick': 1
-            }
-        return self.return_action_show_moves(domain, context)
-
-    def get_action_move_tree_no_package(self):
-        move_domains, picking_domains, batch_domains = self.get_moves_domain()
-        domain = move_domains['count_move_unpacked']
-        context = {
-            'search_default_picking_type_id': self.id,
-            }
-        return self.return_action_show_moves(domain, context)
-
-    def get_action_move_tree_pasaran(self):
-        domain = self.get_context_domain()
-        context = {
-            'search_default_picking_type_id': self.id,
-            'search_default_todo': 1,
-            'search_default_without_pick': 1,
-            'search_default_pasaran_route': 1
-        }
-        return self.return_action_show_moves(domain, context)
-
-    def get_action_move_tree_todo_today(self):
-        domain = self.get_context_domain() +  [
-                  ('date_expected', '<', (datetime.now() + timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT)),
-                  ('date_expected', '>', datetime.now().strftime(DEFAULT_SERVER_DATE_FORMAT))]
-        context = {
-            'search_default_picking_type_id': self.id,
-            'search_default_ready': 1,
-        }
-        return self.return_action_show_moves(domain, context)
 
     @api.multi
     def _return_action_show_types(self, group_code=''):

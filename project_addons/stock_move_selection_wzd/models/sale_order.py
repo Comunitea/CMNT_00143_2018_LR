@@ -3,6 +3,12 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import models, fields, api, _
+import odoo.addons.decimal_precision as dp
+
+class SaleOrderLine(models.Model):
+    _inherit = 'sale.order.line'
+
+    qty_available_global = fields.Float(related='product_id.qty_available_global')
 
 class SaleOrder(models.Model):
     _inherit = 'sale.order'

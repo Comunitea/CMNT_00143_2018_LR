@@ -66,7 +66,7 @@
             </form>
         </field>
     </record>
-    <delete id="stock_move_selection_wzd.action_assign_batch_delivery" model="ir.actions.server"/>
+    <!--delete id="stock_move_selection_wzd.action_assign_batch_delivery" model="ir.actions.server"/-->
     <!--record id="action_assign_batch_delivery" model="ir.actions.server">
         <field name="name">Generar orden de carga</field>
         <field name="model_id" ref="stock.model_stock_move"/>

@@ -157,7 +157,8 @@
                                                 <span t-if="record.sga_integrated.raw_value" class="badge">
                                                     <i class="fa fa-fw fa-rss-square"/>
                                                 </span>
-                                                <a type="object" name="get_stock_move_action_move_type">
+                                                <a name="get_action_tree" type="object" context="{'dest_model': 'stock.move',
+                                                                                                              'domain': [('state', '!=', 'draft')],}">
                                                     <field name="name"/>
                                                 </a>
                                             </div>
@@ -660,6 +661,7 @@
             <field name="name" position="after">
                 <field name="shipping_type" widget="selection" context="{'search1_shipping_type': self}"/>
                 <field name="delivery_route_path_id" widget="selection" context="{'search1_delivery_route_path_id': self}"/>
+                <field name="payment_term_id" widget="selection" context="{'search1_payment_term_id': self}"/>
                 <!--field name="urgent" widget="selection" context="{'search1_urgent': self}"/-->
             </field>
             <field name="warehouse_id" position="after">
@@ -686,7 +688,7 @@
                 <filter string="A Futuro" name="filter_tomorrow" context="{'filter_day': 'tomorrow'}"/>
                 <filter string="Retrasado" name="filter_late" context="{'filter_day': 'late'}"/>
                 <separator/>
-                <filter string="Picking" name="picking" domain="[('group_code','=','picking')]"/>
+                <filter string="Picking"  name="picking" domain="[('group_code','=','picking')]"/>
                 <filter string="Internal" name="internal" domain="[('group_code','=','internal')]"/>
                 <filter string="Incoming" name="incoming" domain="[('group_code','=','incoming')]"/>
                 <filter string="Outgoing" name="outgoing" domain="[('group_code','=','outgoing')]"/>
