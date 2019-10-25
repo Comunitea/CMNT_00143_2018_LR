@@ -182,4 +182,5 @@ class StockPicking(models.Model):
         else:
             self.create_package_from_selection(type_selecction_list[0:8])
             self.create_package_from_selection(type_selecction_list[8:])
-
+    
+    
