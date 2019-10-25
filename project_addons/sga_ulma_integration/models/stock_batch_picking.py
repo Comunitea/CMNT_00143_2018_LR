@@ -55,43 +55,34 @@ class StockBatchPicking(models.Model):
 
     @api.multi
     def get_from_ulma(self):
-        batchs = self.env['stock.batch.picking'].search([('picking_type_id.sga_integration_type', '=', 'sga_ulma'), ('sga_state', '=', 'pending')])
-        for batch in batchs:
-            data = self.env['ulma.mmminp'].search([('mmmbatch', '=', batch.name), ('mmmres', '=', 'FIN')])
+        ulma_confirmed_pickings = self.env['ulma.packinglist'].search([('status', '=', 'P')])
+        for pick in ulma_confirmed_pickings:            
+            data = self.env['ulma.mmminp'].search([('mmmacccolcod', '=', pick.id), ('mmmres', '=', 'FIN')])
             ulma_obj = self.env['ulma.mmminp'].browse(data.id)
+            real_picking = self.env['stock.picking'].browse(pick.id)
             
             if ulma_obj.mmmcmdref == 'ERR':
-                batch.write({
-                    'ulma_error': ulma_obj.mmmresmsj
+                real_picking.update({
+                    'sga_state': 'import_error'
                 })
             elif ulma_obj.mmmcmdref == 'SAL':
-                picking_ids = batch.picking_ids
-                moves_ids = self.env['ulma.mmminp'].search([('mmmacccolcod', 'in', picking_ids), ('mmmres', 'not in', ['FIN'])])
-                for ulma_move in moves_ids:
-                    index = int(ulma_move.id)
-                    move_line = self.env['stock.move.line'].browse(index)
-                    if move_line.ordered_qty == ulma_move.mmmcanuni:
-                        if move_line.ordered_qty != ulma_move.mmmcanuni:
+                ulma_move_lines_ids = self.env['ulma.mmminp'].search([('mmmacccolcod', '=', pick.id), ('mmmres', 'not in', ['FIN', 'FINCNT'])])
+                for ulma_move in ulma_move_lines_ids:
+                    move_line = self.env['stock.move.line'].browse(ulma_move.mmmsecada)
+                    if move_line.sga_state not in ['done', 'cancel']:
+                        if move_line.ordered_qty == ulma_move.mmmcanuni:
                             move_line._set_quantity_done(ulma_move.mmmcanuni)
+                            move_line.update({
+                                'sga_state': 'done'
+                            })
+                        
                         else:
-                            actual_move = self.env['stock.move'].search([('origin_returned_move_id', '=', move_line.move_id.id)])
-                            actual_move._prepare_move_line_vals(ulma_move.mmmcanuni)
-                    
-                    else:
-                        diference = move_line.ordered_qty - ulma_move.mmmcanuni
-                        move_line.move_id._split(diference)
-                        move_line._set_quantity_done(ulma_move.mmmcanuni)
-                        move_line.write({
-                            'sga_state': 'pending'
-                        })
-
-                batch.write({
-                    'sga_state': 'pending'
-                })
-
-
-
-
-
-
-
+                            diference = move_line.ordered_qty - ulma_move.mmmcanuni
+                            move_line.move_id._split(diference)
+                            move_line._set_quantity_done(ulma_move.mmmcanuni)
+                            move_line.update({
+                                'sga_state': 'done'
+                            })
+            pick.update({
+                'status': '2'
+            })

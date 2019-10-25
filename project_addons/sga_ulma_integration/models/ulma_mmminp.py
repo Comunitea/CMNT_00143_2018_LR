@@ -17,6 +17,7 @@ class UlmaMmminp(models.Model):
     mmmsesid = fields.Integer(max=9)
     mmmacccolcod = fields.Integer(max=9)
     mmmresmsj = fields.Char(max=80)
+    mmmsecada = fields.Integer(max=9)
     mmmcanuni = fields.Integer(max=9)
     mmmartref = fields.Char(max=16)
     momcre = fields.Datetime()
