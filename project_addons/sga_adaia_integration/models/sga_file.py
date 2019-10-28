@@ -602,6 +602,9 @@ class AdaiaFileHeader(models.Model):
                         if val.name == "num_lim" and not val.odoo_name:
                             value = cont
                         elif val.odoo_name:
+                            print(model)
+                            print(val)
+                            print(val.odoo_name)
                             value = model[val.odoo_name.name]
                             if val.adaia_type == "R-A" or val.adaia_type == "R-N":
                                 value = value[val.default]
@@ -697,6 +700,8 @@ class AdaiaFileHeader(models.Model):
             else:
                 new_val = '%s' %(value or default)
                 val = new_val.ljust(length_int, fillchar)
+            # We need to replace all the line breaks
+            val = val.replace('\n', ' ').replace('\r', '')
             return val
 
         def type_B(value):
