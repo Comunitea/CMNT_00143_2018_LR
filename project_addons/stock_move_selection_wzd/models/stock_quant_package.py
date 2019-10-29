@@ -53,11 +53,10 @@ class StockQuantPackage(models.Model):
     @api.multi
     @api.depends('move_line_ids.state', 'move_line_ids.batch_delivery_id')
     def get_batch_delivery_id(self):
-
         for pack in self.filtered(lambda x: x.move_lines):
             batch_id = pack.move_lines.mapped('batch_delivery_id')
-            if len(batch_id)>1:
-                raise ValueError (_('Error. El paquete tiene movimientos en varias ordenes de carga'))
+            if len(batch_id) > 1:
+                raise exceptions.ValidationError (_('Error. El paquete tiene movimientos en varias ordenes de carga'))
             pack.batch_delivery_id = batch_id
 
     @api.multi
@@ -75,10 +74,11 @@ class StockQuantPackage(models.Model):
     @api.multi
     @api.depends('move_line_ids.state', 'move_line_ids.draft_batch_picking_id', 'move_line_ids.batch_picking_id')
     def get_batch_picking_id(self):
+
         for pack in self.filtered(lambda x: x.move_lines):
             batch_id = pack.move_lines.mapped('batch_id')
-            if len(batch_id)>1:
-                raise ValueError (_('Error. El paquete tiene movimientos en varias batchs'))
+            if len(batch_id) > 1:
+                raise exceptions.ValidationError (_('Error. El paquete tiene movimientos en varios albaranes y son incompatibles'))
             pack.batch_picking_id = batch_id
 
 
@@ -254,10 +254,10 @@ class StockQuantPackage(models.Model):
 
         for pack in self:
             if any(move.state in ('done', 'cancel') for move in pack.move_line_ids):
-                raise ValueError('No puedes cambiar en un movimiento hecho o cancelado')
+                raise exceptions.ValidationError('No puedes cambiar en un movimiento hecho o cancelado')
 
             if pack.batch_delivery_id :
-                raise ValueError('No puedes cambiar en un paquete que ya está en una orden de carga')
+                raise exceptions.ValidationError('No puedes cambiar en un paquete que ya está en una orden de carga')
 
             moves = pack.move_line_ids.mapped('move_id')
             moves.write(vals)

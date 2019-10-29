@@ -65,9 +65,13 @@ class StockBatchDeliveryWzd(models.TransientModel):
     def action_assign_partner_batch(self):
 
         if len(self.move_ids.mapped('picking_type_id')) > 1:
-            raise ValueError(_('No puedes crear un batch de con movimientos de distiont tipo'))
+            raise ValueError(_('No puedes crear un batch de con movimientos de distinto tipo'))
+
+        if any(self.move_ids.mapped('picking_type_id').mapped('code'))!='outgoing':
+            raise ValueError(_('Solo puedes crear batch de tipo cliente (Albaranes de cliente)'))
+
+
         picking_type_id = self.move_ids.mapped('picking_type_id')
-            # self.move_line_ids.mapped('move_id').ids
         fields = picking_type_id.grouped_batch_field_ids
         new_batchs = self.env['stock.batch.picking']
         if not fields:

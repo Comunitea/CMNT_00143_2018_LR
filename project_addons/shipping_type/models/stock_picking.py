@@ -16,7 +16,8 @@ class StockPicking(models.Model):
     shipping_type = fields.Selection(compute='compute_route_fields', inverse='set_route_fields', store=True)
     delivery_route_path_id = fields.Many2one('delivery.route.path', compute='compute_route_fields',
                                              inverse='set_route_fields', store=True)
-
+    payment_term_id = fields.Many2one('account.payment.term', string='Plazos de pago', compute='compute_route_fields',
+                                             inverse='set_route_fields', store=True)
     @api.multi
     @api.depends('move_lines.shipping_type', 'move_lines.delivery_route_path_id', 'move_lines.carrier_id')
     def compute_route_fields(self):
@@ -38,8 +39,9 @@ class StockPicking(models.Model):
                 carrier_ids = moves.mapped('carrier_id')
                 if len(carrier_ids) == 1:
                     pick.carrier_id = carrier_ids[0]
-
-
+                payment_term_ids = moves.mapped('payment_term_id')
+                if len(payment_term_ids) == 1:
+                    pick.payment_term_id = payment_term_ids[0]
 
     def check_allow_change_route_fields(self):
         if any(move.state == 'done' for move in self.move_lines):
@@ -53,8 +55,9 @@ class StockPicking(models.Model):
             moves = pick.move_lines
             moves.write({
                 'shipping_type': pick.shipping_type,
-                'delivery_route_path_id': pick.delivery_route_path_id.id,
-                'carrier_id': pick.carrier_id.id
+                'delivery_route_path_id': pick.delivery_route_path_id and pick.delivery_route_path_id.id or False,
+                'carrier_id':pick.carrier_id and  pick.carrier_id.id or False,
+                'payment_term_id':pick.payment_term_id and  pick.payment_term_id.id or False
             })
 
     @api.multi

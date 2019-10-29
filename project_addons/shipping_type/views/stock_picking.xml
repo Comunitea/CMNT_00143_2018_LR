@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-     <!--record id="view_picking_shipping_type" model="ir.ui.view">
+     <record id="view_picking_shipping_type" model="ir.ui.view">
         <field name="name">stock.picking.shipping.type</field>
         <field name="model">stock.picking</field>
-        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="inherit_id" ref="delivery.view_picking_withcarrier_out_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//group/field[@name='picking_type_id']" position="after">
-                <field name="shipping_type"/>
-                <field name="delivery_route_path_id"/>
+            <xpath expr="//group/field[@name='carrier_id']" position="before">
+
+                <field name="info_route_str"/>
+                <field name="shipping_type" readonly="1"/>
+                <field name="delivery_route_path_id" readonly="1"/>
+                <field name="payment_term_id" readonly="1"/>
+
             </xpath>
         </field>
-    </record-->
+    </record>
      <record id="stock_picking_type_shipping_typr" model="ir.ui.view">
         <field name="name">stock.picking.type.shipping.type</field>
         <field name="inherit_id" ref="stock.view_picking_type_form"/>
