@@ -58,6 +58,7 @@ class InfoRouteMixin(models.AbstractModel):
 
     @api.multi
     def get_info_route(self):
+
         for obj in self:
             if obj.shipping_type == 'pasaran':
                 name = 'Pasarán'
@@ -70,5 +71,7 @@ class InfoRouteMixin(models.AbstractModel):
                 name = 'Ruta: {}'.format(obj.delivery_route_path_id and obj.delivery_route_path_id.name)
             else:
                 name = 'No definido'
-            obj.info_route_str = '{} / {}'.format(name, obj.payment_term_id and obj.payment_term_id.display_name or '')
-
+            if obj.payment_term_id:
+                obj.info_route_str = '{} / {}'.format(name, obj.payment_term_id.display_name)
+            else:
+                obj.info_route_str = name

@@ -83,11 +83,17 @@ class StockQuantPackage(models.Model):
         for pack in self:
             pack.check_allow_change_route_fields()
             moves = pack.move_line_ids.mapped('move_id')
-            moves.write({
-                'shipping_type': pack.shipping_type,
-                'delivery_route_path_id': pack.delivery_route_path_id.id,
-                'carrier_id': pack.carrier_id.id
-            })
+
+            vals = {}
+            if pack.shipping_type:
+                vals.update({'shipping_type': pack.shipping_type})
+            if pack.delivery_route_path_id:
+                vals.update({'delivery_route_path_id': pack.delivery_route_path_id.id})
+            if pack.carrier_id:
+                vals.update({'carrier_id': pack.carrier_id.id})
+            if pack.payment_term_id:
+                vals.update({'payment_term_id': pack.payment_term_id.id})
+            moves.write(vals)
 
     @api.multi
     def get_stock_pickings(self):

@@ -30,7 +30,6 @@ class StockBatchPicking(models.Model):
     picking_type_id = fields.Many2one('stock.picking.type', string='Picking type', required=True, readonly=True, states={'draft': [('readonly', False)]},)
     draft_move_lines = fields.One2many('stock.move', 'draft_batch_picking_id', string='Movimientos')
     draft_picking_ids = fields.One2many('stock.picking', 'draft_batch_picking_id', string='Albaranes')
-    #draft_move_lines_id = fields.One2many('stock.move.line', 'draft_batch_picking_id', string='Líneas de Movimientos')
 
     sga_integrated = fields.Boolean(related='picking_type_id.sga_integrated')
     sga_state = fields.Selection(SGA_STATES, default='no_integrated', string="SGA Estado", compute="get_sga_state")
@@ -44,6 +43,13 @@ class StockBatchPicking(models.Model):
     ready_to_transfer = fields.Boolean('Listo para transferir', compute="compute_ready_to_transfer")
     count_move_lines = fields.Integer('Nº líneas', compute="_get_nlines")
 
+    @api.depends('picking_ids', 'draft_picking_ids')
+    def _compute_move_lines(self):
+        for batch in self.filtered(lambda x: not x.draft_move_lines):
+            batch.move_lines = batch.picking_ids.mapped("move_lines")
+
+        for batch in self.filtered(lambda x: x.draft_move_lines):
+            batch.move_lines = batch.draft_move_lines
 
     @api.multi
     def compute_ready_to_transfer(self):
@@ -84,18 +90,7 @@ class StockBatchPicking(models.Model):
             raise ValidationError(_('No puedes cambiar en movimientos de una orden de carga'))
         return True
 
-    @api.multi
-    def set_route_fields(self):
-        ctx = self._context.copy()
-        ctx.update(force_route_vals=True)
-        for batch in self.with_context(ctx):
-            batch.check_allow_change_route_fields()
-            moves = batch.move_lines + batch.draft_move_lines
-            moves.write({
-                'shipping_type': batch.shipping_type,
-                'delivery_route_path_id': batch.delivery_route_path_id.id,
-                'carrier_id': batch.carrier_id.id
-            })
+
 
     @api.multi
     @api.depends('draft_move_lines.sga_state')

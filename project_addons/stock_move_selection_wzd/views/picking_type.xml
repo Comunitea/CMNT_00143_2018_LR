@@ -119,6 +119,7 @@
                     <field name="visible_bargraph"/>
                     <field name="visible_ratio"/>
 
+                    <field name="count_batch_delivery"/>
                     <field name="count_sga_done"/>
                     <field name="count_sga_undone"/>
                     <field name="count_sga_send"/>
@@ -245,16 +246,16 @@
                                                     <div class="row">
                                                         <div class="col-xs-6 text-primary" title="Pendientes (Todos)">
                                                             <a name="get_action_tree" type="object" context="{'dest_model': 'stock.batch.delivery',
-                                                                                                              'default_domain': [('state', 'in', ('done', 'ready'))],
+                                                                                                              'default_domain': [('state', 'in', ('draft', 'assigned'))],
                                                                                                               'search_default_last_day': 1,
                                                                                                               'search_default_to_do': 1}">
                                                                 Pendientes
                                                             </a>
                                                         </div>
 
-                                                        <!--div class="col-xs-3">
-                                                            <span><t t-esc="record.count_batch_ready.value"/> de <t t-esc="record.count_batch.value"/></span>
-                                                        </div-->
+                                                        <div class="col-xs-3">
+                                                            <span><t t-esc="record.count_batch_delivery.value"/></span>
+                                                        </div>
                                                     </div>
 
                                                 </div>
@@ -272,7 +273,7 @@
                                                     <div class="row">
                                                         <div class="col-xs-6 text-primary" title="Pendientes (Todos)">
                                                             <a name="get_action_tree" type="object" context="{'dest_model': 'stock.batch.picking',
-                                                                                                              'batch_domain': 'count_all_batch',
+                                                                                                              'batch_domain': 'count_batch',
                                                                                                               'search_default_last_day': 1,
                                                                                                               'search_default_todo': 1}">
                                                                 Pendientes(Totales)

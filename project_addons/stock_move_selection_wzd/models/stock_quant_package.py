@@ -77,9 +77,8 @@ class StockQuantPackage(models.Model):
 
         for pack in self.filtered(lambda x: x.move_lines):
             batch_id = pack.move_lines.mapped('batch_id')
-            if len(batch_id) > 1:
-                raise exceptions.ValidationError (_('Error. El paquete tiene movimientos en varios albaranes y son incompatibles'))
-            pack.batch_picking_id = batch_id
+            if batch_id and len(batch_id)  == 1:
+                pack.batch_picking_id = batch_id
 
 
     def get_packaging_lines(self, vals):

@@ -98,7 +98,7 @@ class PickingType(models.Model):
     count_sga_done = fields.Integer(compute='_compute_picking_count', string="Movs. hechos en SGA")
     count_sga_undone = fields.Integer(compute='_compute_picking_count', string="Movs. pendientes de SGA")
     count_sga_error = fields.Integer(compute='_compute_picking_count', string="Errores de SGA")
-
+    count_batch_delivery = fields.Integer(compute='_compute_picking_count', string="Ordenes de carga pendientes")
     visible_bargraph = fields.Boolean('Barras inferiores')
     visible_ratio = fields.Boolean('Ratio')
 
@@ -135,6 +135,7 @@ class PickingType(models.Model):
                                      help="Si está marcado, se visualiza la opción de compras")
     partner_id = fields.Many2one('res.partner', 'Cliente/Proveedor', store=False)
     description = fields.Char("Descripción")
+
 
     def get_sga_integrated(self):
         return self.sga_integrated
@@ -263,7 +264,8 @@ class PickingType(models.Model):
             record.rate_undone = rate_undone
             record.rate_sga_undone = rate_sga_undone
             record.rate_packed_undone = rate_packed_undone
-
+            domain = [('state', 'in', ('draft', 'assigned'))]
+            record.count_batch_delivery = len(self.env['stock.batch.delivery'].search_read(domain, ['id']))
 
     def get_excess_time(self):
         (datetime.now() + timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT)
@@ -578,11 +580,13 @@ class PickingType(models.Model):
 
     @api.multi
     def return_action_show_batch_picking(self, domain=[], context={}, group_code=''):
+
         action = self.env.ref(
             'stock_move_selection_wzd.stock_move_to_batch_action').read()[0]
         domain += [('picking_type_id', '=', self.id)]
-        batch = self.env['stock.batch.picking'].search_read(domain, ['id'])
-        action['domain'] = [('id', 'in',[x['id'] for x in batch] )]
+        batch = self.env['stock.move'].search_read(domain,['draft_batch_picking_id'])
+
+        action['domain'] = [('id', 'in',[x['draft_batch_picking_id'][0] for x in batch if x['draft_batch_picking_id']])]
 
         ctx = self._context.copy()
         if not ctx.get('this_context', False):
@@ -594,8 +598,28 @@ class PickingType(models.Model):
         action['display_name'] = "Batchs: {}".format(self.name)
         return action
 
-    def get_action_tree(self):
+    @api.multi
+    def return_action_show_batch_delivery(self, domain=[], context={}, group_code=''):
 
+        action = self.env.ref(
+            'stock_move_selection_wzd.action_stock_batch_delivery_tree').read()[0]
+        domain += [('picking_type_id', '=', self.id)]
+        batch = self.env['stock.move'].search_read(domain, ['batch_delivery_id'])
+
+        action['domain'] = [
+            ('id', 'in', [x['batch_delivery_id'][0] for x in batch if x['batch_delivery_id']])]
+
+        ctx = self._context.copy()
+        if not ctx.get('this_context', False):
+            ctx = self.update_context(ctx)
+        ctx.update(eval(action['context']))
+
+        action['context'] = ctx
+        action['name'] = "Ordenes de carga: {}".format(self.name)
+        action['display_name'] = "Ordenes de carga: {}".format(self.name)
+        return action
+
+    def get_action_tree(self):
         domain = self._context.get('default_domain', [])
         if not domain:
             domain = self._context.get('domain', [])
@@ -617,7 +641,7 @@ class PickingType(models.Model):
         if self._context.get('dest_model', 'stock.move') == 'stock.picking':
             return self.with_context(ctx).return_action_show_orders(domain)
         elif self._context.get('dest_model', 'stock.move') == 'stock.batch.delivery':
-            return self.with_context(ctx).return_action_show_batch_picking(domain)
+            return self.with_context(ctx).return_action_show_batch_delivery(domain)
         elif self._context.get('dest_model', 'stock.move') == 'stock.batch.picking':
             return self.with_context(ctx).return_action_show_batch_picking(domain)
         else:
