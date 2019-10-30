@@ -1,32 +1,59 @@
 # © 2019 Comunitea
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
-from odoo import models
+from odoo import models, api, fields
 from datetime import date
 
 
-class StockMove(models.Model):
+class StockMoveLine(models.Model):
 
-    _inherit = 'stock.move'
+    _inherit = "stock.move.line"
 
-    def _action_done(self):
+    computed_discount = fields.Float(compute="_compute_computed_discount")
 
-        result = super(StockMove, self)._action_done()
-        for move in self.filtered(lambda x: x.state == 'done' and x.sale_line_id):
-            qty=0.0
-            line = move.sale_line_id
-            if move.location_dest_id.usage == "customer":
-                if not move.origin_returned_move_id or \
-                        (move.origin_returned_move_id and
-                            move.to_refund):
-                    qty = move.product_uom._compute_quantity(
-                        move.product_uom_qty, move.product_uom)
-            elif move.location_dest_id.usage != "customer" and \
-                    move.to_refund:
-                qty = -move.product_uom._compute_quantity(
-                    move.product_uom_qty, move.product_uom)
-            self.env['sale.order.line.delivery'].create({
-                'line_id': line.id,
-                'quantity': qty,
-                'delivery_date': date.today(),
-            })
-        return result
+    def _compute_computed_discount(self):
+        for line in self:
+            discount = line.sale_discount
+            discount -= line.move_id.company_id.get_discount_decrease_shipping(
+                line.batch_picking_id.shipping_type
+            )
+            if line.sale_line.order_id.financiable_payment:
+                discount -= (
+                    line.move_id.company_id.discount_decrease_financiable
+                )
+            line.computed_discount = discount
+
+    @api.multi
+    def _compute_sale_order_line_fields(self):
+        """This is computed with sudo for avoiding problems if you don't have
+        access to sales orders (stricter warehouse users, inter-company
+        records...).
+        """
+        for line in self:
+            discount = line.computed_discount
+            sale_line = line.sale_line
+            price_unit = line.sale_price_unit * (1 - (discount or 0.0) / 100.0)
+            taxes = line.sale_tax_id.compute_all(
+                price_unit=price_unit,
+                currency=line.currency_id,
+                quantity=line.qty_done or line.product_qty,
+                product=line.product_id,
+                partner=sale_line.order_id.partner_shipping_id,
+            )
+            if sale_line.company_id.tax_calculation_rounding_method == (
+                "round_globally"
+            ):
+                price_tax = sum(
+                    t.get("amount", 0.0) for t in taxes.get("taxes", [])
+                )
+            else:
+                price_tax = taxes["total_included"] - taxes["total_excluded"]
+            line.update(
+                {
+                    "sale_tax_description": ", ".join(
+                        t.name or t.description for t in line.sale_tax_id
+                    ),
+                    "sale_price_subtotal": taxes["total_excluded"],
+                    "sale_price_tax": price_tax,
+                    "sale_price_total": taxes["total_included"],
+                }
+            )

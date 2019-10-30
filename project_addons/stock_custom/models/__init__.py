@@ -6,3 +6,7 @@ from . import sale
 from . import stock
 from . import stock_rotation_history
 from . import stock_warehouse
+from . import stock_batch_picking
+from . import res_company
+from . import account_invoice
+from . import res_config_settings

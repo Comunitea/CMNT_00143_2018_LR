@@ -5,13 +5,19 @@ from odoo import models, fields
 
 class SaleInvoiceOnDate(models.TransientModel):
 
-    _name = 'sale.invoice.on.date'
+    _name = "sale.invoice.on.date"
 
     invoice_until_date = fields.Date()
 
     def view_invoiceable_orders(self):
-        action = self.env.ref('sale.action_orders').read()[0]
-        action['context'] = {
-            'search_default_invoiceable_sales': True,
-            'search_default_invoice_until': self.invoice_until_date}
+        batchs = self.env["stock.batch.picking"].search(
+            [
+                ("invoiced", "!=", True),
+                ("date_done", "<", self.invoice_until_date),
+                ("picking_type_id.code", "=", "outgoing")
+            ]
+        )
+        invoiceable_sales = batchs.mapped("sale_ids")
+        action = self.env.ref("sale.action_orders").read()[0]
+        action["domain"] = [('id', 'in', invoiceable_sales._ids)]
         return action
