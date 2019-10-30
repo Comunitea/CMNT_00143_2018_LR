@@ -205,6 +205,9 @@ class ConfigUlmaData(models.TransientModel):
         mmmbatch numeric(9,0), status character varying(1), id %s, mmmres character varying(9), mmmcmdref character varying(9)) 
         SERVER %s OPTIONS (%s '%s')""" % (primary_mod, self.ulma_database, table_mod, self.packing_table))
 
+        #ADD Key to enable table editing
+        self.env.cr.execute("""ALTER FOREIGN TABLE ulma_packinglist ALTER "id" OPTIONS (ADD key 'true');""")
+
 
     def drop_tables(self):
         ## Deletes the tables
