@@ -86,3 +86,6 @@ class StockBatchPicking(models.Model):
             pick.update({
                 'status': '2'
             })
+            ctx = pick._context.copy()
+            ctx.update(from_sga=True)
+            pick.with_context(ctx).button_validate()

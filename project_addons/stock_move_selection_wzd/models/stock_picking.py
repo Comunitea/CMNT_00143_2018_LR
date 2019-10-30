@@ -88,7 +88,7 @@ class StockPicking(models.Model):
 
     @api.multi
     def button_validate(self):
-        if any(x.batch_picking_id or x.draft_batch_picking_id for x in self):
+        if not self._context.get('from_sga', False) and any(x.batch_picking_id or x.draft_batch_picking_id for x in self):
             raise ValidationError (_("No puedes validar un albarán asigado a un batch"))
         return super().button_validate()
 
