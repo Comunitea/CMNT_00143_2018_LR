@@ -257,22 +257,27 @@ class AdaiaFileHeader(models.Model):
 
         length, length_int, length_dec = length_in
         value = value or fillchar
-        if not value:
-            val = "0" * length
-            return val
+        # Comment if fill option
+        value = str(value).split(".")
 
-        if length_dec == 0:
+        return value[0]
+        # Uncomment to fill
+        #if not value:
+        #    val = "0" * length
+        #    return val
+
+        #if length_dec == 0:
             # Formato entero
-            val = '%s' % int(value)
-            val = val.rjust(length, fillchar)
-        else:
+        #    val = '%s' % int(value)
+        #    val = val.rjust(length, fillchar)
+        #else:
             # Formato decimal
-            value = float(value)
-            int_ = int(value)
-            dec_ = int((value - int_) * 10 ** length_dec)
-            val = str(int_).rjust(length_int, fillchar)
-            val += str(dec_).ljust(length_dec, fillchar)
-        return val
+        #    value = float(value)
+        #    int_ = int(value)
+        #    dec_ = int((value - int_) * 10 ** length_dec)
+        #    val = str(int_).rjust(length_int, fillchar)
+        #    val += str(dec_).ljust(length_dec, fillchar)
+        #return val
 
     def format_from_adaia_number(self, value, length_in=(12, 7, 5), default=False, fillchar='0'):
         length, length_int, length_dec = length_in
@@ -602,12 +607,14 @@ class AdaiaFileHeader(models.Model):
                         if val.name == "num_lim" and not val.odoo_name:
                             value = cont
                         elif val.odoo_name:
-                            print(model)
-                            print(val)
-                            print(val.odoo_name)
                             value = model[val.odoo_name.name]
                             if val.adaia_type == "R-A" or val.adaia_type == "R-N":
-                                value = value[val.default]
+                                if val.name == 'TERREF' and code == 'INS':
+                                    print(value)
+                                    print(value[val.default])
+                                    value = '{}{}'.format(8, value[val.default]),
+                                else:
+                                    value = value[val.default]
 
                         if not value and val.required:
                                 value = val.default
@@ -626,7 +633,8 @@ class AdaiaFileHeader(models.Model):
                         var_str = self.odoo_to_adaia(value, length, val.adaia_type, val.default, val.fillchar)
                         line_ids = True
 
-                    model_str += var_str.strip()+'|'
+                    if not line_ids:
+                        model_str += var_str.strip()+'|'
                     # Esta es para el formato seguido sin separador.
                     #model_str += var_str 
                 res += model_str + '\n'
@@ -699,7 +707,9 @@ class AdaiaFileHeader(models.Model):
                 val = " " * length_int
             else:
                 new_val = '%s' %(value or default)
-                val = new_val.ljust(length_int, fillchar)
+                # Uncomment to fill with 0
+                val = new_val
+                #val = new_val.ljust(length_int, fillchar)
             # We need to replace all the line breaks
             val = val.replace('\n', ' ').replace('\r', '')
             return val
@@ -715,7 +725,6 @@ class AdaiaFileHeader(models.Model):
             return new_val
 
         def type_N(value):
-
             val = self.format_to_adaia_float(value, length_in, fillchar)
             return val
 

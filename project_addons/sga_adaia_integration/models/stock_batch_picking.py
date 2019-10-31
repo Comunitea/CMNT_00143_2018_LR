@@ -12,6 +12,35 @@ class StockBatchPickingSGA(models.Model):
 
     sga_state = fields.Selection(SGA_STATES)
     draft_move_lines_id = fields.One2many('stock.move.line', 'draft_batch_picking_id', string='Líneas de Movimientos')
+    adaia_code = fields.Char(compute="compute_route_fields")
+    adaia_dock = fields.Integer(compute="compute_route_fields")    
+    adaia_group = fields.Char(compute="compute_adaia_group")
+    adaia_import_partner_ref = fields.Char(compute="import_partner_ref")
+
+    @api.multi
+    @api.depends('move_lines.shipping_type', 'move_lines.delivery_route_path_id', 'move_lines.carrier_id')
+    def compute_route_fields(self):
+        super(StockBatchPickingSGA, self).compute_route_fields()
+        for batch in self:
+            if batch.shipping_type == 'route':
+                batch.adaia_code = 'NORM'
+                batch.adaia_dock = 110
+            elif batch.shipping_type == 'pasaran':
+                batch.adaia_code = 'PAS'
+                batch.adaia_dock = 107
+            else:
+                batch.adaia_code = 'AG'
+                batch.adaia_dock = 106
+
+    @api.multi
+    @api.depends('move_lines')
+    def compute_adaia_group(self):
+        for batch in self:
+            if len(batch.move_lines) < 4:
+                batch.adaia_group = 'MP'
+            else:
+                batch.adaia_group = ''
+
 
     def button_move_to_done(self):
         return self.move_to_done
@@ -85,7 +114,6 @@ class StockBatchPickingSGA(models.Model):
         return True
     
 
-    ## REVISAR ESTO
     @api.multi    
     def new_adaia_file(self, sga_file_type='SBP0', operation=False, code_type=0):
         ctx = dict(self.env.context)
@@ -93,7 +121,7 @@ class StockBatchPickingSGA(models.Model):
         if operation:
             ctx['ACCION'] = operation
         if 'ACCION' not in ctx:
-            ctx['ACCION'] = 'AG'
+            ctx['ACCION'] = 'MO'
 
         ctx['PREFIX'] = self.picking_type_id.sga_prefix
         
