@@ -413,3 +413,7 @@ class StockMove(models.Model):
 
 
 
+    def get_batch_domain(self):
+        domain = super()._get_batch_domain()
+        domain += [('batch_delivery_id', '=', False)]
+        return domain

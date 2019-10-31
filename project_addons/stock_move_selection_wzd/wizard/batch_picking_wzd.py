@@ -60,24 +60,27 @@ class StockBatchPickingWzd(models.TransientModel):
             return {}
 
         picking_type_id = moves.mapped('picking_type_id')
-        if len(picking_type_id)>1:
+        if len(picking_type_id) != 1:
             raise UserError(_('No se pueden agrupar alabranes de distinto tipo'))
 
         delivery_route_path_id = moves.mapped('delivery_route_path_id')
-        if len(delivery_route_path_id) == 1:
+        if len(delivery_route_path_id) != 1:
             delivery_route_path_id = False
 
-        payment_term_id = moves.mapped('payment_term_id')
-        if len(payment_term_id)>1:
-            if picking_type_id.code == 'outgoing':
-                raise UserError(_('No se pueden agrupar albaranes con formas de pago distintas'))
-            payment_term_id = self.env['account.payment.term']
+        carrier_id = moves.mapped('carrier_id')
+        if len(carrier_id) != 1:
+            carrier_id = False
 
-        batch_picking = moves.mapped('draft_batch_picking_id')
-        if len(batch_picking)>1:
-            raise UserError(_('Ya tienes seleccionados varios batchs: {}'.format(batch_picking.mapped('name'))))
-        batch_picking_id = len(batch_picking) == 1 and batch_picking.id
-        picker_id = batch_picking and batch_picking.picker_id and batch_picking.picker_id.id
+        payment_term_id = moves.mapped('payment_term_id')
+        if len(payment_term_id) != 1:
+            payment_term_id = False
+
+        batch_picking_id = moves.mapped('draft_batch_picking_id')
+
+        if len(batch_picking_id) > 1:
+            raise UserError(_('Ya tienes seleccionados varios batchs: {}'.format(batch_picking_id.mapped('name'))))
+
+        picker_id = batch_picking_id and batch_picking_id.picker_id or False
 
         note = 'Notas de los albaranes asociados'
         for pick in picking_ids:
@@ -106,15 +109,14 @@ class StockBatchPickingWzd(models.TransientModel):
         vals = {
             'date':date,
             'picking_type_id': picking_type_id and picking_type_id.id or False,
-            'batch_picking_id': batch_picking and batch_picking_id or False,
-            'picker_id': picker_id and picker_id.id or False,
+            'batch_picking_id': batch_picking_id and batch_picking_id.id or False,
+            'picker_id': picker_id and picker_id.id  or False,
             'notes': note,
             'payment_term_id': payment_term_id and payment_term_id.id or False,
-            'carrier_id': self.carrier_id and self.carrier_id.id or False,
+            'carrier_id': carrier_id and carrier_id.id  or False,
             'move_ids': [(6, 0, moves.ids)],
-
-            'delivery_route_path_id': delivery_route_path_id and delivery_route_path_id.id or False,
-            }
+            'delivery_route_path_id': delivery_route_path_id and delivery_route_path_id.id  or False,
+        }
         shipping_type = []
         for move in moves:
 
@@ -134,6 +136,7 @@ class StockBatchPickingWzd(models.TransientModel):
         model = self._context.get('model', self._context.get('active_model', 'stock.move'))
         new_ids = self._context.get('active_ids', [])
         defaults.update(self.get_vals(model, ids=new_ids))
+        print(defaults)
         return defaults
 
     def _default_picker_id(self):
@@ -187,7 +190,7 @@ class StockBatchPickingWzd(models.TransientModel):
             'notes': self.notes,
             'picker_id': self.picker_id.id,
             'picking_type_id': self.picking_type_id.id,
-            'state': 'assigned',
+            'state': 'draft',
             'payment_term_id': self.payment_term_id and self.payment_term_id.id or False,
             'carrier_id': self.carrier_id and self.carrier_id.id or False,
             'delivery_route_path_id': self.delivery_route_path_id and self.delivery_route_path_id.id or False,
