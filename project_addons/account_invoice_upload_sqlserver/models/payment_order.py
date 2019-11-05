@@ -30,7 +30,7 @@ class AccountPaymentOrder(models.Model):
         ])
         if not sql_server_config:
             raise ValidationError(_('Sql server configuration not found'))
-        sql_server_config.delete_payment(self)
+        #sql_server_config.delete_payment(self)
 
     def generate_move(self):
         res = super().generate_move()
