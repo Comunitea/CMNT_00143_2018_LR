@@ -82,6 +82,7 @@ class MoveChangeQuantWzd(models.TransientModel):
         vals['reserved_move_ids'] = [(6, 0, reserved_move_ids.ids)]
         vals['quant_ids'] = [(0, 0, self._prepare_quant(x)) for x in quants]
         vals['move_id'] = move_id.id
+        print (vals)
         return vals
 
     @api.model

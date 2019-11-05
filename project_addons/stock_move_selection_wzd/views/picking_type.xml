@@ -11,6 +11,7 @@
             </field>
             <field name="warehouse_id" position="after">
                 <field name="description"/>
+                <field name="batch_name"/>
                 <field name="sga_integrated"/>
                 <field name="sga_integration_type" attrs="{'invisible': [('sga_integrated','=',False)]}" />
 
@@ -146,6 +147,7 @@
 
 
                     <field name="description"/>
+                    <field name="batch_name"/>
                     <field name="count_move_pasaran"/>
                     <templates>
                         <t t-name="kanban-box">
@@ -176,30 +178,14 @@
                                     <div class="container o_kanban_card_content">
                                         <div class="row">
                                             <div class="col-xs-8 o_kanban_primary_left">
-                                                <!--div name='sga'>
-                                                    <div class="row col-xs-9"
-                                                         title="Reservas de pedidos: Preparados (Retrasados)"
-                                                         t-if="record.visible_count_picking_ready.raw_value == true">
-                                                        <button
-                                                                class="btn btn-primary" name="get_action_picking_tree_ready" type="object">
-                                                                <span><t t-esc="record.count_picking_ready.value"/></span>
-                                                                <span t-if="record.count_picking_late.raw_value &gt; 0 and False">(<t t-esc="record.count_picking_late.value"/>)</span>
-                                                                <span t-if="record.group_code.raw_value =='incoming'">Recepciones</span>
-                                                                <span t-if="record.group_code.raw_value =='outgoing'">Reservas de pedidos</span>
-                                                                <span t-if="record.group_code.raw_value =='picking'">Batch</span>
-                                                                <span t-if="record.group_code.raw_value =='internal'">Internos </span>
-                                                                <span t-if="record.group_code.raw_value =='location'">Ubicaciones </span>
-                                                                <span t-if="record.group_code.raw_value =='reposition'">Reposiciones </span>
-                                                                <span t-if="record.group_code.raw_value =='other'">Albaranes </span>
-                                                        </button>
-                                                    </div>
-                                                </div-->
+
 
                                                 <div name="sga_state" t-if="record.sga_integrated.raw_value == true">
                                                      <div class="row">
-                                                        <div class="col-xs-9 text-muted" >
-                                                            <h3 class="text-muted">Movimientos SGA</h3>
+                                                           <div class="col-xs-6 text-muted">
+                                                            <span class="text-muted h3">Mov. SGA</span>
                                                         </div>
+
                                                     </div>
                                                     <div class="row">
                                                         <div class="col-xs-6 text-primary" title="Movimientos de SGA (Totales)">
@@ -211,16 +197,17 @@
                                                             </a>
                                                         </div>
                                                         <div class="col-xs-3">
-                                                            <span><t t-esc="record.count_sga_undone.value"/> de <t t-esc="record.count_sga_send.value"/></span>
+                                                            <span><t t-esc="record.count_sga_undone.value"/> de <t t-esc="record.count_sga_send.value"/> líneas</span>
                                                         </div>
                                                     </div>
                                                 </div>
 
                                                 <div name="pack_state" t-if="record.visible_count_move_unpacked.raw_value == true">
                                                      <div class="row">
-                                                        <div class="col-xs-9 text-muted" >
-                                                            <h3 class="text-muted">Estado Empaquetado</h3>
+                                                         <div class="col-xs-6 text-muted">
+                                                            <span class="text-muted h3">Movs. Paquetes</span>
                                                         </div>
+
                                                     </div>
                                                     <div t-if="record.visible_count_move_unpacked.raw_value == true" class="row">
                                                         <div class="col-xs-6 text-primary" title="Para empaquetar">
@@ -232,15 +219,15 @@
                                                             </a>
                                                         </div>
                                                         <div class="col-xs-3">
-                                                            <span><t t-esc="record.count_move_unpacked.value"/> de <t t-esc="record.count_move_ready.value"/></span>
+                                                            <span><t t-esc="record.count_move_unpacked.value"/> de <t t-esc="record.count_move_ready.value"/> líneas</span>
                                                         </div>
                                                     </div>
                                                 </div>
 
                                                 <div name="batch_delivery" t-if="record.need_batch_delivery.raw_value == true">
                                                      <div class="row">
-                                                        <div class="col-xs-9 text-muted" >
-                                                            <h3 class="text-muted">Ordenes de carga</h3>
+                                                          <div class="col-xs-6 text-muted">
+                                                            <span class="text-muted h3">O. de carga</span>
                                                         </div>
                                                     </div>
                                                     <div class="row">
@@ -252,24 +239,27 @@
                                                                 Pendientes
                                                             </a>
                                                         </div>
-
                                                         <div class="col-xs-3">
-                                                            <span><t t-esc="record.count_batch_delivery.value"/></span>
+                                                            <span><t t-esc="record.count_batch_delivery.value"/> Carga</span>
                                                         </div>
                                                     </div>
 
                                                 </div>
 
                                                 <div name="batch_picking" t-if="record.need_batch_picking.raw_value == true">
-                                                     <div class="row">
-                                                        <div class="col-xs-9 text-muted" >
-                                                            <h3 class="text-muted">
-                                                                <span t-if="record.code.raw_value =='outgoing'">Albaranes</span>
-                                                                <span t-if="record.code.raw_value =='internal'">Expediciones</span>
-                                                                <span t-if="record.code.raw_value == 'incoming'">Batchs</span>
-                                                            </h3>
+                                                    <div class="row">
+                                                        <div class="col-xs-6 text-muted">
+                                                          <span class="text-muted h3">
+                                                            <t t-esc="record.batch_name.value"/>
+                                                          </span>
+                                                        </div>
+                                                        <div class="col-xs-3">
+                                                          <button class="btn btn-primary badge" name="action_open_new_batch" type="object">
+                                                                +
+                                                            </button>
                                                         </div>
                                                     </div>
+
                                                     <div class="row">
                                                         <div class="col-xs-6 text-primary" title="Pendientes (Todos)">
                                                             <a name="get_action_tree" type="object" context="{'dest_model': 'stock.batch.picking',
@@ -280,7 +270,8 @@
                                                             </a>
                                                         </div>
                                                         <div class="col-xs-3">
-                                                            <span><t t-esc="record.count_batch_ready.value"/> de <t t-esc="record.count_batch.value"/></span>
+                                                            <span><t t-esc="record.count_batch_ready.value"/> de <t t-esc="record.count_batch.value"/> <t t-esc="record.batch_name.value"/>
+                                                            </span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -288,9 +279,10 @@
 
                                                 <div name="sale_orders" t-if="record.need_sale_order.raw_value == true">
                                                     <div class="row">
-                                                    <div class="col-xs-9 text-muted" >
-                                                        <h3 class="text-muted">Pedidos</h3>
-                                                    </div>
+                                                         <div class="col-xs-6 text-muted">
+                                                            <span class="text-muted h3">Pedidos</span>
+                                                        </div>
+
                                                       </div>
                                                     <div t-if="record.visible_count_picking_ready.raw_value == true" class="row">
                                                         <div class="col-xs-6 text-primary" title="Pedidos pendientes">
@@ -311,16 +303,14 @@
                                                     <div t-if="record.need_batch_picking.raw_value == true" class="row">
                                                         <div class="col-xs-6 text-primary" title="Pedidos sin batch">
                                                             <a name="get_action_tree" type="object" context="{'dest_model': 'stock.picking',
-                                                                                                              'pick_domain': 'count_picking',
+                                                                                                              'pick_domain': 'count_pick_to_batch',
                                                                                                               'search_default_to_batch': 1,
                                                                                                               'search_default_available': 1,
                                                                                                               'search_default_by_shipping_type':1,
                                                                                                               'search_default_by_delivery_path_route_id':1,
                                                                                                               'search_default_by_partner_id':1,}">
                                                                 Sin
-                                                                <span t-if="record.code.raw_value =='outgoing'"> albaran</span>
-                                                                <span t-if="record.code.raw_value =='internal'"> expedicion</span>
-                                                                <span t-if="record.code.raw_value == 'incoming'"> batch</span>
+                                                                <t t-esc="record.batch_name.value"/>
                                                             </a>
                                                         </div>
                                                         <div class="col-xs-3">
@@ -328,11 +318,12 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div name="purchase_orders" t-if="record.code.raw_value == 'internal'">
+                                                <div name="purchase_orders" t-if="record.group_code.raw_value == 'location'">
                                                     <div class="row">
-                                                    <div class="col-xs-9 text-muted" >
-                                                        <h3 class="text-muted">Compras</h3>
-                                                    </div>
+                                                         <div class="col-xs-6 text-muted">
+                                                            <span class="text-muted h3">Compras</span>
+                                                        </div>
+
                                                       </div>
                                                     <div t-if="record.visible_count_picking_ready.raw_value == true" class="row">
                                                         <div class="col-xs-6 text-primary" title="Pedidos pendientes">
@@ -351,14 +342,12 @@
                                                     <div t-if="record.need_batch_picking.raw_value == true" class="row">
                                                         <div class="col-xs-6 text-primary" title="Pedidos sin batch">
                                                             <a name="get_action_tree" type="object" context="{'dest_model': 'stock.picking',
-                                                                                                              'pick_domain': 'count_picking',
+                                                                                                              'pick_domain': 'count_pick_to_batch',
                                                                                                               'search_default_to_batch': 1,
                                                                                                               'search_default_available': 1,
                                                                                                               'search_default_by_partner_id':1,}">
                                                                 Sin
-                                                                <span t-if="record.code.raw_value =='outgoing'"> albaran</span>
-                                                                <span t-if="record.code.raw_value =='internal'"> expedicion</span>
-                                                                <span t-if="record.code.raw_value == 'incoming'"> batch</span>
+                                                                <t t-esc="record.batch_name.value"/>
                                                             </a>
                                                         </div>
                                                         <div class="col-xs-3">
@@ -369,21 +358,12 @@
 
                                                 <div name="moves" t-if="record.need_purchase_order.raw_value == true">
                                                     <div class="row">
-                                                        <div class="col-xs-9 text-muted" >
-                                                            <h3 class="text-muted">Movimientos</h3>
+                                                         <div class="col-xs-6 text-muted">
+                                                            <span class="text-muted h3">Movimientos</span>
                                                         </div>
+
                                                     </div>
-                                                     <!--div class="col-xs-6 text-primary" title="Movimientos de SGA (Totales)">
-                                                            <a name="get_action_tree" type="object" context="{'dest_model': 'stock.move',
-                                                                                                              'move_domain': 'count_sga_send',
-                                                                                                              'domain': [('sga_integrated', '=', True)],
-                                                                                                              'search_default_waiting_sga': 1}">
-                                                                Pendientes de SGA
-                                                            </a>
-                                                        </div>
-                                                        <div class="col-xs-3">
-                                                            <span><t t-esc="record.count_sga_undone.value"/>(<t t-esc="record.count_sga_send.value"/>)</span>
-                                                        </div-->
+
                                                     <div t-if="record.visible_count_move_unpacked.raw_value == true" class="row">
                                                         <div class="col-xs-6 text-primary" title="Para empaquetar">
                                                             <a name="get_action_tree" type="object" context="{'dest_model': 'stock.move',

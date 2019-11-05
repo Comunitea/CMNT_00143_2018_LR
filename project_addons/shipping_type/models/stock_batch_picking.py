@@ -21,7 +21,6 @@ class StockBatchPicking(models.Model):
                                       inverse='set_route_fields', store=True)
 
     @api.multi
-    @api.depends('move_lines.shipping_type', 'move_lines.delivery_route_path_id', 'move_lines.carrier_id')
     def compute_route_fields(self):
         for pick in self:
             moves = pick.move_lines

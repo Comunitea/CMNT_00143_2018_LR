@@ -13,14 +13,26 @@ from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT, DEFAULT_SERVER_DATE_FORMA
 
 from .stock_picking_type import SGA_STATES
 from odoo.osv import expression
+
 class StockPicking(models.Model):
     _inherit = 'stock.picking'
+
+    @api.multi
+    def get_draft_batch_picking_id(self):
+
+        for pick in self:
+            draft_batch_picking_id = pick.move_lines.mapped('draft_batch_picking_id')
+            if len(draft_batch_picking_id) == 1:
+                pick.draft_batch_picking_id = draft_batch_picking_id
+            else:
+                pick.draft_batch_picking_id = False
+
 
     sga_integrated = fields.Boolean('Sga', help='Marcar si tiene un tipo de integración con el sga')
     sga_state = fields.Selection(SGA_STATES, default='no_integrated', string="SGA Estado", copy=False)
     #state = fields.Selection(selection_add=[('packaging', 'Empaquetado')])
     batch_delivery_id = fields.Many2one('stock.batch.delivery', string='Orden de carga', copy=False, store=False, compute="get_batch_delivery_id")
-    draft_batch_picking_id = fields.Many2one('stock.batch.picking', 'Batch')
+    draft_batch_picking_id = fields.Many2one('stock.batch.picking', 'Batch', compute="get_draft_batch_picking_id")
 
     excess = fields.Boolean(string='Franquicia')
     count_move_lines = fields.Integer('Nº líneas', compute="_get_nlines")
@@ -110,3 +122,15 @@ class StockPicking(models.Model):
             print (args)
 
         return super().search(args, offset=offset, limit=limit, order=order, count=count)
+
+    @api.multi
+    def _add_delivery_cost_to_so(self):
+        return True
+
+
+    @api.multi
+    def button_unlink_from_batch(self):
+        draft_batch_picking_id = self._context.get('draft_batch_picking_id', False)
+        if draft_batch_picking_id:
+            moves = self.mapped('move_lines').filtered(lambda x: x.draft_batch_picking_id==draft_batch_picking_id)
+            moves.button_unlink_from_batch()

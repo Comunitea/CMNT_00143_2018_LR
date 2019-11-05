@@ -135,7 +135,7 @@ class PickingType(models.Model):
                                      help="Si está marcado, se visualiza la opción de compras")
     partner_id = fields.Many2one('res.partner', 'Cliente/Proveedor', store=False)
     description = fields.Char("Descripción")
-
+    batch_name = fields.Char('Nombre de los lotes', default='Batch')
 
     def get_sga_integrated(self):
         return self.sga_integrated
@@ -170,18 +170,18 @@ class PickingType(models.Model):
 
         for field in move_domains:
 
-            domain = move_domains[field] + [('picking_type_id', 'in', self.ids)]
+            domain = expression.AND([move_domains[field],[('picking_type_id', 'in', self.ids)]])
             data = self.env['stock.move'].read_group(domain, ['picking_type_id'], ['picking_type_id'])
             count = {
                 x['picking_type_id'][0]: x['picking_type_id_count']
                 for x in data if x['picking_type_id']
             }
+            print(">>>>>>>>>>>COUNT: \n {}".format(count))
             for record in self:
                 record[field] = count.get(record.id, 0)
                 print("{} >> {}: {} in move_domains".format(record.name, field, record[field]))
         for field in picking_domains:
-            domain = picking_domains[field] + [('picking_type_id', 'in', self.ids)]
-
+            domain = expression.AND([picking_domains[field], [('picking_type_id', 'in', self.ids)]])
             moves = self.env['stock.move'].read_group(domain, ['picking_id'], ['picking_id'])
             if moves:
                 picking_ids = [x['picking_id'][0] for x in moves]
@@ -192,11 +192,13 @@ class PickingType(models.Model):
                     x['picking_type_id'][0]: x['picking_type_id_count']
                     for x in data if x['picking_type_id']
                 }
+                print(">>>>>>>>>>>COUNT: \n {}".format(count))
                 for record in self:
                     record[field] = count.get(record.id, 0)
                     print("{} >> {}: {} in pick_domains".format(record.name, field, record[field]))
+
         for field in batch_domains:
-            domain = batch_domains[field] + [('picking_type_id', 'in', self.ids)]
+            domain = expression.AND([batch_domains[field], [('picking_type_id', 'in', self.ids)]])
             moves = self.env['stock.move'].search_read(domain, ['draft_batch_picking_id', 'batch_picking_id'])
 
             if moves:
@@ -210,9 +212,11 @@ class PickingType(models.Model):
                     x['picking_type_id'][0]: x['picking_type_id_count']
                     for x in data if x['picking_type_id']
                 }
+                print (">>>>>>>>>>>COUNT: \n {}".format(count))
                 for record in self:
                     record[field] = count.get(record.id, 0)
                     print("{} >> {}: {} in batch_domains".format(record.name, field, record[field]))
+
         for record in self:
             today = datetime.now().strftime(DEFAULT_SERVER_DATE_FORMAT)
 
@@ -290,92 +294,89 @@ class PickingType(models.Model):
 
     def get_moves_domain(self, default = []):
 
-        context_domain = self.get_context_domain()
+        #context_domain = self.get_context_domain()
         #hide_state = [('state', 'not in', ('draft', 'cancel'))]
         #context_domain += hide_state
-        context_domain += self.date_domain('date_expected')
-
+        #context_domain += self.date_domain('date_expected')
+        context_domain = expression.AND([[('picking_id', '!=', False)], self.get_context_domain(),  self.date_domain('date_expected')])
         today = datetime.now().strftime(DEFAULT_SERVER_DATE_FORMAT)
         tomorrow = (datetime.now() + timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT)
         yesterday = (datetime.now() - timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT)
-
+        print ("Fechas:\n Hoy {}\nAyer {}\n Mañana{}".format(today, yesterday, tomorrow))
         draft = [('state', '=', 'draft')]
         done = [('state', '=', 'done')]
         today = [('date_expected', '<', tomorrow)]
         to_do_state = [('state', 'in', ('partially_available', 'assigned', 'waiting', 'confirmed'))]
-        to_do_today = today + to_do_state
+        to_do_today = expression.AND([today, to_do_state])
 
-        waiting_state = [('state', 'in', ('waiting', 'partially_available', 'confirmed'))]
+        waiting_state = expression.AND([[('state', 'in', ('waiting', 'partially_available', 'confirmed'))], today])
         no_stock_state = [('state', 'in', ('partially_available', 'confirmed'))]
-        ready_state = [('state', 'in', ('partially_available', 'assigned'))]
-
+        ready_state = expression.AND([[('state', 'in', ('partially_available', 'assigned'))], today])
+        done_today = expression.AND([done, [('date', '>', yesterday)]])
+        count_move = expression.AND([context_domain, expression.OR([done_today, to_do_today])])
 
         with_pick = ['|', ('draft_batch_picking_id', '!=', False), ('batch_picking_id', '!=', False)]
-        without_pick = [('draft_batch_picking_id', '=', False), ('batch_picking_id', '=', False)]
-
+        without_pick = ['&', ('draft_batch_picking_id', '=', False), ('batch_picking_id', '=', False)]
 
         with_delivery = [('batch_delivery_id', '!=', False)]
         without_delivery = [('batch_delivery_id', '=', False)]
 
-        with_result_package = [('result_package_id', '!=',False )]
+        with_result_package = [('result_package_id', '!=', False )]
         without_result_package = [('result_package_id', '=', False)]
-
-        before_tomorrow = [('date_expected', '<', tomorrow)]
-        later = [('date_expected', '<', yesterday)]
+        later = expression.AND([to_do_state, [('date_expected', '<', yesterday)]])
         pasaran = [('shipping_type', '=', 'pasaran')]
 
         move_line_ids = self.env['stock.move.line']
-        line_domain = context_domain + [('sga_state', 'in', ('pending', 'export_error', 'import_error'))]
-        sga_send_ids = move_line_ids.search_read(line_domain, ['move_id'])
-        count_sga_send = [('id', 'in', [x['move_id'][0] for x in sga_send_ids])]
 
-        line_domain = context_domain + [('sga_integrated', '=', True), ('qty_done', '>', 0)]
+        line_domain = expression.AND([context_domain, ['&', ('sga_state', '=', 'pending'), ('qty_done', '>', 0)]])
         sga_send_ids = move_line_ids.search_read(line_domain, ['move_id'])
         count_sga_done = [('id', 'in', [x['move_id'][0] for x in sga_send_ids])]
 
-        line_domain = context_domain + [('sga_state', 'in', ('pending', 'export_error', 'import_error')), ('qty_done', '=', 0)]
+        line_domain = expression.AND([context_domain, ['&', ('sga_state', '=', 'pending'), ('qty_done', '=', 0)]])
         sga_send_ids = move_line_ids.search_read(line_domain, ['move_id'])
         count_sga_undone = [('id', 'in', [x['move_id'][0] for x in sga_send_ids])]
+        count_sga_send = count_sga_done + count_sga_undone
 
         line_domain = context_domain + [('sga_state', 'in', ('export_error', 'import_error'))]
         sga_send_ids = move_line_ids.search_read(line_domain, ['move_id'])
         count_sga_error = [('id', 'in', [x['move_id'][0] for x in sga_send_ids])]
 
-        context_domain = context_domain
+        to_do_today = expression.AND([context_domain, to_do_today])
+
         move_domains = {
-            'count_move_todo_today': context_domain + to_do_today,
-            'count_move_done': context_domain + done + [('date', '>', yesterday)],
-            'count_move_draft': context_domain + draft,
-            'count_move_waiting': context_domain + waiting_state,
-            'count_move_unpacked': context_domain + without_result_package + ready_state,
-            'count_move_ready': context_domain + ready_state,
-            'count_move': context_domain + to_do_state,
-            'count_move_to_pick': context_domain  + without_pick + ready_state,
-            'count_move_pasaran': context_domain + pasaran,
-            'count_move_late': context_domain + to_do_state + later,
-            'count_move_backorders': context_domain + to_do_state + [('origin_returned_move_id', '!=', False)],
+            'count_move_todo_today':expression.AND([context_domain, to_do_today]),
+            'count_move_done': expression.AND([context_domain, done,[('date', '>', yesterday)]]), #context_domain + done + [('date', '>', yesterday)],
+            'count_move_draft': expression.AND([context_domain, draft]),
+            'count_move_waiting': expression.AND([context_domain, waiting_state]),
+            'count_move_unpacked': expression.AND([to_do_today, ready_state, without_result_package]),
+            'count_move_ready': expression.AND([context_domain, ready_state]),
+            'count_move': count_move,
+            'count_move_to_pick': expression.AND([context_domain, without_pick, ready_state]),
+            'count_move_pasaran': expression.AND([context_domain, pasaran]),
+            'count_move_late': expression.AND([context_domain, later]),
+            'count_move_backorders': expression.AND([context_domain, to_do_state,[('origin_returned_move_id', '!=', False)]]),
             'count_sga_send': count_sga_send,
             'count_sga_done': count_sga_done,
             'count_sga_undone': count_sga_undone,
             'count_sga_error': count_sga_error
         }
-        context_domain =  [('picking_id', '!=', False)] + context_domain
+        #context_domain =  [('picking_id', '!=', False)] + context_domain
 
         #moves = self.env['stock.move']
         #pasaran_picking_ids = moves.search_read(move_domains['count_move_pasaran'], ['picking_id'])
         #pasaran_picking = [x['picking_id'][0] for x in pasaran_picking_ids]
 
         picking_domains = {
-            'count_picking_draft': context_domain + draft,
-            'count_picking_waiting': context_domain + [('state', 'in', ('confirmed', 'waiting'))],
-            'count_picking_ready': context_domain + ready_state,
-            'count_picking': context_domain + ['|', ('state', 'in', ('partially_available', 'assigned', 'waiting', 'confirmed')), '&', ('state', '=', 'done'), ('date', '>',  yesterday)],
-            'count_picking_late': context_domain + [('date', '<', datetime.now().strftime(DEFAULT_SERVER_DATETIME_FORMAT))] + to_do_state,
-            'count_picking_backorders': context_domain + [('backorder_id', '!=', False)] + to_do_state,
-            'count_pick_to_batch': context_domain + without_pick + ready_state,
-            'count_picking_pasaran': context_domain + pasaran,
+            'count_picking_draft': move_domains['count_move_draft'],
+            'count_picking_waiting': move_domains['count_move_waiting'],
+            'count_picking_ready':  move_domains['count_move_ready'],
+            'count_picking':  move_domains['count_move'],
+            'count_picking_late':  move_domains['count_move_late'],
+            'count_picking_backorders':  move_domains['count_move_backorders'],
+            'count_pick_to_batch': expression.AND([move_domains['count_move_ready'], without_pick]),
+            'count_picking_pasaran': expression.AND([move_domains['count_move_ready'], pasaran]),
         }
-        context_domain = ['|', ('draft_batch_picking_id', '!=', False), ('batch_picking_id', '!=', False)] + context_domain
+        context_domain = expression.AND([['|', ('draft_batch_picking_id', '!=', False), ('batch_picking_id', '!=', False)], context_domain])
 
         batch_domains = {
             'count_batch': context_domain + ['|', ('state', '=', 'assigned'), '&', ('state', '!=', 'cancel'), ('date', '>', yesterday)],
@@ -384,6 +385,15 @@ class PickingType(models.Model):
             'affected_excess': context_domain + self.env['stock.batch.picking'].get_excess_domain()
         }
 
+        def str(domain):
+            mds = ''
+            for d in domain.keys():
+                mds = "{}\n{}: {}\n".format(mds, d, domain[d])
+            return mds
+
+        print(
+            "--------------------------------\nDOMAINS:\nMove domain ----\n{}\nPick domain ----\n{}\nBatch ----\n{}\n---------------------------".format(
+                str(move_domains),str(picking_domains), str(batch_domains)))
         return move_domains, picking_domains, batch_domains
 
     @api.model
@@ -709,4 +719,14 @@ class PickingType(models.Model):
         action = self.env.ref(
             'stock_move_selection_wzd.batch_excess_wzd_action').read()[0]
         action['res_id'] = wzd_id.id
+        return action
+
+    @api.multi
+    def action_open_new_batch(self):
+        vals = {'picking_type_id': self.id, 'picker_id': self.env.user.id}
+        new_batch = self.env['stock.batch.picking'].create(vals)
+        ctx = self._context.copy()
+        ctx.update({'hide_batch_conf': True})
+        action = new_batch.with_context(ctx).get_formview_action()
+
         return action

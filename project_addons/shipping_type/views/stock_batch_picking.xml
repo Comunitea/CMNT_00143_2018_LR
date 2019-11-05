@@ -9,10 +9,12 @@
                 <field name="info_route_str"/>
             </field>
             <xpath expr="//notebook" position="before">
-                <group string="Info envío">
-                    <field name="shipping_type"/>
-                    <field name="delivery_route_path_id"/>
-                    <field name="payment_term_id"/>
+                <group>
+                <group name="info_envio" string="Info envío">
+                    <field name="shipping_type" readonly="1"/>
+                    <field name="delivery_route_path_id" readonly="1"/>
+                    <field name="payment_term_id" readonly="1"/>
+                </group>
                 </group>
             </xpath>
         </field>

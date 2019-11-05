@@ -43,6 +43,22 @@ class StockBatchPicking(models.Model):
     ready_to_transfer = fields.Boolean('Listo para transferir', compute="compute_ready_to_transfer")
     count_move_lines = fields.Integer('Nº líneas', compute="_get_nlines")
 
+    delivery_route_path_ids = fields.Many2many('delivery.route.path', string="Rutas de transporte")
+    payment_term_ids = fields.Many2many('account.payment.term', string='Plazos de pago')
+    shipping_type_ids = fields.Selection(related='shipping_type')
+
+    @api.multi
+    def action_view_stock_picking(self):
+        """This function returns an action that display existing pickings of
+        given batch picking.
+        """
+
+        self.ensure_one()
+        pickings = self.mapped('picking_ids') + self.draft_move_lines.mapped('picking_id')
+        action = self.env.ref('stock.action_picking_tree_all').read([])[0]
+        action['domain'] = [('id', 'in', pickings.ids)]
+        return action
+
     @api.depends('picking_ids', 'draft_picking_ids')
     def _compute_move_lines(self):
         for batch in self.filtered(lambda x: not x.draft_move_lines):
@@ -79,10 +95,10 @@ class StockBatchPicking(models.Model):
     @api.multi
     def alternate_draft_ready(self):
         for batch in self:
-            if batch.state == 'ready':
-                batch.state == 'draft'
+            if batch.state == 'assigned':
+                batch.state = 'draft'
             elif batch.state =='draft':
-                batch.state == 'ready'
+                batch.state = 'assigned'
 
     def check_allow_change_route_fields(self):
         super().check_allow_change_route_fields()
@@ -162,9 +178,13 @@ class StockBatchPicking(models.Model):
                 #        ml.qty_done = ml.product_uom_qty
                 moves.write({'draft_batch_picking_id': False})
                 moves_to_do = moves.filtered(lambda x: x.state in ('partially_available', 'assigned')).mapped('move_line_ids')
-                for ml in moves_to_do:
-                    ml.qty_done = ml.product_uom_qty
+                picks = moves_to_do.mapped('picking_id')
+                for pick in picks:
+                    if all(x.quantity_done == 0 for x in pick.move_lines):
+                        for ml in moves_to_do:
+                            ml.qty_done = ml.product_uom_qty
                 picks_to_transfer = moves.mapped('picking_id')
+
                 if not picks_to_transfer:
                     continue
                 picks_to_transfer.action_done()
@@ -194,6 +214,7 @@ class StockBatchPicking(models.Model):
                         pick_message = "<li><a href=# data-oe-model=stock.picking data-oe-id=%d>%s</a>{}</li>"% (pick.id, pick.name)
                         message = "{}{}".format(message, pick_message)
                     message = "{}</ul>".format(message)
+
                 batch.message_post(message)
                 batch.write({'state': 'done',
                              'date_done': fields.Datetime.now()})
@@ -304,3 +325,118 @@ class StockBatchPicking(models.Model):
     @api.multi
     def read_from_sga(self):
         return True
+
+    def return_move_vals(self, moves, picking_ids, complete=False):
+        #pickings = moves.mapped('picking_id')
+
+        vals = []
+        for pick in picking_ids:
+            if pick.draft_batch_picking_id or all(not move.draft_batch_picking_id for move in pick.move_lines):
+                selected = True
+            else:
+                selected = False
+            for move in moves.filtered(lambda x: x.picking_id == pick):
+                val = {'move_id': move.id, 'selected': selected}
+                if complete:
+                    val.update({'origin': move.origin,
+                                'name': move.name,
+                                'selected': selected,
+                                'info_route_str': move.info_route_str,
+                                'product_id': move.product_id.id,
+                                'product_uom_qty': move.product_uom_qty,
+                                'result_package_id': move.result_package_id.id,
+                                'state': move.state,
+                                'draft_batch_picking_id': move.draft_batch_picking_id.id
+                                })
+                vals.append ((0,0,val))
+        return vals
+
+    def return_pick_vals(self, picking_ids, complete=False):
+        vals = []
+        for pick in picking_ids:
+            val = {'picking_id': pick.id}
+            if complete:
+                val.update({'origin': pick.origin,
+                            'name': pick.name,
+                            'selected': True,
+                            'info_route_str': pick.info_route_str,
+                            'count_move_lines': pick.count_move_lines,
+                            'partner_id': pick.partner_id.id,
+                            'state': pick.state,
+                            'draft_batch_picking_id': pick.draft_batch_picking_id.id
+                                })
+            vals.append ((0,0,val))
+        return vals
+
+    @api.multi
+    def open_tree_to_add(self):
+
+        self.ensure_one()
+        model = self._context.get('model', 'stock.move')
+        if not self.picking_type_id:
+            raise ValidationError(_('Necesitas un tipo de albarán para generar el lote'))
+
+        states = ('confirmed', 'assigned', 'partially_available')
+        domain = [('picking_id', '!=', False),
+                  ('picking_type_id', '=', self.picking_type_id.id), ('state', 'in', states)]
+        if self.delivery_route_path_id:
+            domain += [('delivery_route_path_id', '=', self.delivery_route_path_id.id)]
+        elif self.delivery_route_path_ids:
+            domain += ['|', ('delivery_route_path_id', 'in', self.delivery_route_path_ids.ids),
+                       ('delivery_route_path_id', '=', False)]
+
+        if self.shipping_type_ids:
+            domain += [('shipping_type', '=', self.shipping_type_ids)]
+
+        if self.payment_term_id:
+            domain += [('payment_term_id', '=', self.payment_term_id.id)]
+        elif  self.payment_term_ids.ids:
+            domain += ['|', ('payment_term_id', 'in', self.payment_term_ids.ids),
+                       ('payment_term_id', '=', False)]
+
+
+
+
+        moves = self.env['stock.move'].search(domain)
+        picking_ids = moves.mapped('picking_id')
+        note = 'Notas de los albaranes asociados'
+        for pick in picking_ids:
+            if pick.note:
+                note = '{}\n{}\n{}'.format(note, pick.name, pick.note)
+            else:
+                note = '{}\n{}'.format(note, pick.name)
+
+        dates = moves.mapped('picking_id').mapped('scheduled_date')
+        dates.append( fields.Datetime.now())
+        date = min(dates)
+        if date < fields.Date.today():
+            date = fields.Date.today()
+        move_vals = self.return_move_vals(moves, picking_ids)
+        vals = {
+            'date':date,
+            'picking_type_id': self.picking_type_id.id,
+            'batch_picking_id': self.id,
+            'picker_id': self.picker_id and self.picker_id.id  or False,
+            'notes': note,
+            'payment_term_id': self.payment_term_id and self.payment_term_id.id or False,
+            'carrier_id': self.carrier_id and self.carrier_id.id or False,
+            'move_ids': move_vals,#  self.return_move_vals(moves, picking_ids), #[(0, 0, {'move_id': move.id, 'selected': True if move.draft_batch_picking_id else False}) for move in moves],
+            'picking_ids': [(0, 0, {'picking_id': pick}) for pick in picking_ids.ids],
+            'delivery_route_path_id': self.delivery_route_path_id and self.delivery_route_path_id.id  or False,
+        }
+
+        ## Cuando selecciono un movimiento o varios debo seleccionar todos los que van en el mismo paquete
+        print (vals)
+        ctx = self._context.copy()
+        if 'active_domain' in ctx.keys():
+            ctx.pop('active_domain')
+        ctx.update(get_vals=False)
+        obj = self.env['stock.batch.picking.wzd']
+        wzd_id = obj.create(vals)
+        action = wzd_id.get_formview_action()
+        action['target'] = 'new'
+        # return action
+
+        action['res_id'] = wzd_id.id
+
+        return action

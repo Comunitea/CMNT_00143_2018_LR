@@ -66,7 +66,7 @@ class StockMove(models.Model):
 
     visible_count_move_to_pick = fields.Boolean(related='picking_type_id.visible_count_move_to_pick')
     visible_count_move_unpacked = fields.Boolean(related='picking_type_id.visible_count_move_unpacked')
-    orig_picking_id = fields.Many2one(related='move_orig_ids.picking_id', string="Expedición")
+    orig_picking_id = fields.Many2one(related='move_orig_ids.picking_id', string="Expedición SGA")
 
     @api.depends('state', 'picking_id')
     def _compute_is_initial_demand_editable(self):
@@ -181,6 +181,10 @@ class StockMove(models.Model):
         action['res_id'] = wzd_id.id
 
         return action
+
+    @api.multi
+    def button_unlink_from_batch(self):
+        self.write({'draft_batch_picking_id': False})
 
     @api.multi
     def action_add_to_batch_picking(self):
@@ -414,6 +418,6 @@ class StockMove(models.Model):
 
 
     def get_batch_domain(self):
-        domain = super()._get_batch_domain()
+        domain = super().get_batch_domain()
         domain += [('batch_delivery_id', '=', False)]
         return domain

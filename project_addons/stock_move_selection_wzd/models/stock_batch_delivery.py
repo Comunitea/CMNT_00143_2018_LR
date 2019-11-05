@@ -27,7 +27,7 @@ class StockBatchDelivery(models.Model):
             batch.move_lines.write({'date_expected': batch.date_expected})
 
     @api.model
-    def _get_batch_domain(self):
+    def get_batch_domain(self):
         bp = self and self[0]
         if bp:
             domain = [('state', 'in', ('assigned', 'done')), ('picking_type_id', '=', bp.picking_type_id.id)]
@@ -88,7 +88,7 @@ class StockBatchDelivery(models.Model):
                                 },
                                 readonly=True,
                                 compute = '_get_picking_ids',
-                                domain=_get_batch_domain)
+                                domain= get_batch_domain)
     picking_ids = fields.One2many(
         'stock.picking', string='Albaranes',
         compute='_get_picking_ids',
