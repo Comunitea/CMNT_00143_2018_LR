@@ -6,12 +6,9 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_sales_order_filter"/>
         <field name="arch" type="xml">
-            <field name="product_id" position="after">
+            <field name="partner_id" position="after">
                 <field name="invoice_until" context="{'invoice_until': self}"/>
             </field>
-            <filter name="my_sale_orders_filter" position="after">
-                <filter name="invoiceable_sales" string="Search invoiceable sales" domain="[('has_invoiceable_lines', '=', True)]"/>
-            </filter>
         </field>
     </record>
 </odoo>

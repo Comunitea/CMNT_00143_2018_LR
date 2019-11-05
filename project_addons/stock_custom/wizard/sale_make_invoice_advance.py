@@ -11,14 +11,24 @@ class SaleAdvancePaymentInv(models.TransientModel):
             No viene la fecha en contexto, solo en el active_domain,
             por lo que necesitamos volver a ponerla en contexto
         """
+        until_date = False
+        if self._context.get('active_domain'):
+            for domain in self._context['active_domain']:
+                if domain[0] == 'invoice_until':
+                    until_date = domain[2]
         sale_orders = self.env["sale.order"].browse(
             self._context.get("active_ids", [])
         )
-        sale_orders.mapped("batch_picking_ids").filtered(
-            lambda r: not r.invoiced
-            and r.state == "done"
-            and r.picking_type_id.code == "outgoing"
-        ).create_invoice()
+        sale_pickings = sale_orders.mapped('batch_picking_ids.id')
+        batchs = self.env["stock.batch.picking"].search(
+            [
+                ("invoiced", "!=", True),
+                ("date_done", "<", until_date),
+                ("picking_type_id.code", "=", "outgoing"),
+                ("id", "in", sale_pickings)
+            ]
+        )
+        batchs.create_invoice()
         if self._context.get('open_invoices', False):
             return sale_orders.action_view_invoice()
         return {'type': 'ir.actions.act_window_close'}

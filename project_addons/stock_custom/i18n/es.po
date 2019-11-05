@@ -16,6 +16,41 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: stock_custom
+#: model:ir.model.fields,field_description:stock_custom.field_res_company_excess_price
+msgid "Excess Price"
+msgstr "Precio franquicia"
+
+#. module: stock_custom
+#: model:ir.ui.view,arch_db:stock_custom.res_config_settings_view_form
+msgid "Shipping type charges account"
+msgstr "Cuenta de cargo por tipo de envío"
+
+#. module: stock_custom
+#: model:ir.ui.view,arch_db:stock_custom.res_config_settings_view_form
+msgid "Financiable charges account"
+msgstr "Cuenta de cargo por financiado"
+
+#. module: stock_custom
+#: model:ir.ui.view,arch_db:stock_custom.res_config_settings_view_form
+msgid "Charge accounts"
+msgstr "Cuentas de cargo"
+
+#. module: stock_custom
+#: model:ir.model.fields,field_description:stock_custom.field_res_company_shipping_type_price_discount_decrease
+msgid "Discount Decrease"
+msgstr "Decrecimiento descuento"
+
+#. module: stock_custom
+#: model:ir.model.fields,field_description:stock_custom.field_res_company_discount_decrease_financiable
+msgid "Discount decrease for financed orders"
+msgstr "Decrecimiento de descuento para pedidos financiados"
+
+#. module: stock_custom
+#: model:ir.model.fields,field_description:stock_custom.field_res_company_shipping_type_price_configuration
+msgid "Shipping Type Price Configuration"
+msgstr "Precio de costes de envío"
+
+#. module: stock_custom
 #: model:ir.model.fields,field_description:stock_custom.field_stock_rotation_history_month_1
 msgid "01 Month Ago"
 msgstr "Hace 1 mes"

@@ -7,8 +7,8 @@
         <field name="inherit_id" ref="account.invoice_form"/>
         <field name="arch" type="xml">
             <field name="product_id" position="after">
-                <field name="financiable_decrease"/>
-                <field name="shipping_type_decrease"/>
+                <field name="financiable_decrease" invisible="1"/>
+                <field name="shipping_type_decrease" invisible="1"/>
             </field>
         </field>
     </record>

@@ -14,10 +14,12 @@ class SaleInvoiceOnDate(models.TransientModel):
             [
                 ("invoiced", "!=", True),
                 ("date_done", "<", self.invoice_until_date),
-                ("picking_type_id.code", "=", "outgoing")
+                ("picking_type_id.code", "=", "outgoing"),
             ]
         )
         invoiceable_sales = batchs.mapped("sale_ids")
         action = self.env.ref("sale.action_orders").read()[0]
-        action["domain"] = [('id', 'in', invoiceable_sales._ids)]
+        action["domain"] = [("id", "in", invoiceable_sales._ids)]
+        action['context'] = {
+            'search_default_invoice_until': self.invoice_until_date}
         return action

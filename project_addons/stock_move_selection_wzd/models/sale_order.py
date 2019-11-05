@@ -18,7 +18,7 @@ class SaleOrder(models.Model):
             domain = order.get_moves_domain()
             move_ids = self.env['stock.move'].search(domain)
             order.batch_picking_ids = move_ids.mapped('batch_id')
-            order.batch_delivery_ids =move_ids.mapped('batch_delivery_id')
+            order.batch_delivery_ids = move_ids.mapped('batch_delivery_id')
             order.count_batch_picking_ids = len(order.batch_picking_ids)
             order.count_batch_delivery_ids = len(order.batch_delivery_ids)
 
