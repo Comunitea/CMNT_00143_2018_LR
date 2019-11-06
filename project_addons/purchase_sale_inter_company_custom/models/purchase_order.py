@@ -35,7 +35,7 @@ class PurchaseOrderLine(models.Model):
                 ic_lines |= line
             else:
                 not_ic_lines |= line
-            return not_ic_lines, ic_lines
+        return not_ic_lines, ic_lines
 
     @api.depends('order_id.state', 'move_ids.state', 'move_ids.product_uom_qty', 'sale_line_id.qty_delivered')
     def _compute_qty_received(self):
