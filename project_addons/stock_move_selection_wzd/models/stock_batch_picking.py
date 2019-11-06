@@ -26,6 +26,14 @@ class StockBatchPicking(models.Model):
                 batch_picking_id.draft_move_lines = batch_picking_id.move_lines.filtered(
                     lambda x: x.reserved_availability > 0)
 
+    @api.model
+    def _get_parner_ids_domain(self):
+        domain = [('state', 'not in', [('cancel', 'done')])]
+        partner_ids = self.env['stock.move'].read_group(domain, ['partner_id'], ['partner_id'])
+        ids  = [x['partner_id'][0] for x in partner_ids if x['partner_id']]
+        return [('id', 'in', ids)]
+
+
     batch_delivery_id = fields.Many2one('stock.batch.delivery', string="Delivery batch")
     picking_type_id = fields.Many2one('stock.picking.type', string='Picking type', required=True, readonly=True, states={'draft': [('readonly', False)]},)
     draft_move_lines = fields.One2many('stock.move', 'draft_batch_picking_id', string='Movimientos')
@@ -46,6 +54,7 @@ class StockBatchPicking(models.Model):
     delivery_route_path_ids = fields.Many2many('delivery.route.path', string="Rutas de transporte")
     payment_term_ids = fields.Many2many('account.payment.term', string='Plazos de pago')
     shipping_type_ids = fields.Selection(related='shipping_type')
+    partner_ids = fields.Many2many('res.partner', string='Clientes', domain=_get_parner_ids_domain)
 
     @api.multi
     def action_view_stock_picking(self):
@@ -379,6 +388,7 @@ class StockBatchPicking(models.Model):
         states = ('confirmed', 'assigned', 'partially_available')
         domain = [('picking_id', '!=', False),
                   ('picking_type_id', '=', self.picking_type_id.id), ('state', 'in', states)]
+
         if self.delivery_route_path_id:
             domain += [('delivery_route_path_id', '=', self.delivery_route_path_id.id)]
         elif self.delivery_route_path_ids:
@@ -388,14 +398,14 @@ class StockBatchPicking(models.Model):
         if self.shipping_type_ids:
             domain += [('shipping_type', '=', self.shipping_type_ids)]
 
+        if self.partner_ids:
+            domain += [('partner_id', '=', self.partner_ids.ids)]
+
         if self.payment_term_id:
             domain += [('payment_term_id', '=', self.payment_term_id.id)]
         elif  self.payment_term_ids.ids:
             domain += ['|', ('payment_term_id', 'in', self.payment_term_ids.ids),
                        ('payment_term_id', '=', False)]
-
-
-
 
         moves = self.env['stock.move'].search(domain)
         picking_ids = moves.mapped('picking_id')

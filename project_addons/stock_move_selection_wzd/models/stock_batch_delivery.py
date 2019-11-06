@@ -14,7 +14,7 @@ class StockBatchDelivery(models.Model):
     _inherit = ['info.route.mixin', 'mail.thread', 'mail.activity.mixin']
     _name = 'stock.batch.delivery'
 
-    @api.depends('move_lines.date_expected')
+    #@api.depends('move_lines.date_expected')
     @api.multi
     def _get_dates(self):
         for batch in self:
@@ -96,9 +96,8 @@ class StockBatchDelivery(models.Model):
     )
     count_picking_ids = fields.Integer('Nº albaranes', compute='_get_picking_ids')
     move_lines = fields.One2many(
-        'stock.move',
+        'stock.move', 'batch_delivery_id',
         string='Movimientos',
-        compute='_get_picking_ids',
         help='List of picking related to this batch.'
     )
     count_move_lines = fields.Integer('Nº líneas', compute='_get_picking_ids')
@@ -187,7 +186,7 @@ class StockBatchDelivery(models.Model):
 
         for out_batch in self:
             print ("Batch: {}".format(out_batch.name))
-            out_batch.move_lines = self.env['stock.move'].search([('batch_delivery_id', '=', out_batch.id)])
+            #out_batch.move_lines = self.env['stock.move'].search([('batch_delivery_id', '=', out_batch.id)])
             out_batch.picking_ids = out_batch.move_lines.mapped('picking_id')
             out_batch.batch_ids = out_batch.move_lines.mapped('batch_id')
             out_batch.move_lines_ids = out_batch.move_lines.mapped('move_line_ids')

@@ -81,6 +81,7 @@
                             context="{'model_dest': 'stock.move', 'hide_conf_vals': True}"
                             name="open_tree_to_add" type="object" string="↳Ver/Modificar contenido"/>
                     </div>
+                    <field name="partner_ids" widget="many2many_tags"/>
                     <field name="delivery_route_path_ids" widget="many2many_tags"/>
                     <field name="payment_term_ids" widget="many2many_tags"/>
                     <field name="shipping_type_ids"/>
