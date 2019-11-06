@@ -31,6 +31,23 @@ class StockPickingSGA(models.Model):
     sga_integrated = fields.Boolean(related="picking_type_id.sga_integrated")
     sga_integration_type = fields.Selection(related="picking_type_id.sga_integration_type")
 
+    sga_adaia_picking_name = fields.Char(compute="compute_adaia_picking_name")
+    sga_adaia_partner_ref = fields.Char(compute="compute_adaia_partner_ref")
+
+    @api.multi
+    @api.depends('draft_batch_picking_id')
+    def compute_adaia_picking_name(self):
+        for pick in self:
+            pick.sga_adaia_picking_name = "{}.{}".format(pick.draft_batch_picking_id.name, pick.id)
+
+    @api.multi
+    @api.depends('partner_id')
+    def compute_adaia_partner_ref(self):
+        for pick in self:
+            partner_ref = pick.partner_id.ref if pick.partner_id else self.env['purchase.order'].\
+            search([('name', '=', pick.origin)], limit=1).partner_id.ref
+            pick.sga_adaia_partner_ref = "{}{}".format(8, partner_ref)
+
     def force_button_validate(self):
         self.sga_state = 'done'
         return self.button_validate()

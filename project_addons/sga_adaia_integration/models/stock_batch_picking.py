@@ -115,7 +115,7 @@ class StockBatchPickingSGA(models.Model):
     
 
     @api.multi    
-    def new_adaia_file(self, sga_file_type='SBP0', operation=False, code_type=0):
+    def new_adaia_file(self, sga_file_type='BPP0', operation=False, code_type=0):
         ctx = dict(self.env.context)
         
         if operation:

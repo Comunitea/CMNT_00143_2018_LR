@@ -220,7 +220,7 @@ class AdaiaFileHeader(models.Model):
         if sga_filename:
             file_prefix = sga_filename.rsplit('.', 1)[0]
             if file_prefix == 'TREXP':
-                return 'SBP'
+                return 'BPP'
         else:
             return False
 
@@ -467,8 +467,8 @@ class AdaiaFileHeader(models.Model):
         process = []
         proc_error = False
         try:
-            if self.file_code == "SBP":
-                self.write_log("Desde adaia picking SBP ...")
+            if self.file_code == "BPP":
+                self.write_log("Desde adaia picking BPP ...")
                 #process = self.env['stock.picking'].import_adaia_OUT(self.id)
                 process = self.env['stock.batch.picking'].import_adaia_OUT(self.id)
 
@@ -571,7 +571,6 @@ class AdaiaFileHeader(models.Model):
             # todo numeros de lineas o vale el id de los _ids
             cont = 0
             res = ''
-            line_ids = False
             if sgavar.file_filter:
                 model_pool = model_pool.filtered(eval(sgavar.file_filter))
             for model in model_pool:
@@ -585,6 +584,7 @@ class AdaiaFileHeader(models.Model):
                     new_sga_file.write_log('    Modelo: {}'.format(model), header_line=False)
 
                 for val in sgavar.sga_file_var_ids:
+                    line_ids = False
 
                     value = False
                     length = [val.length, val.length_int, val.length_dec]
@@ -602,19 +602,14 @@ class AdaiaFileHeader(models.Model):
                             value = u'[]'
                         var_str = value
 
-                    # No es Listado de lineas
+                    #No es listado de líneas
                     elif val.adaia_type != "L":
                         if val.name == "num_lim" and not val.odoo_name:
                             value = cont
                         elif val.odoo_name:
                             value = model[val.odoo_name.name]
                             if val.adaia_type == "R-A" or val.adaia_type == "R-N":
-                                if val.name == 'TERREF' and code == 'INS':
-                                    print(value)
-                                    print(value[val.default])
-                                    value = '{}{}'.format(8, value[val.default]),
-                                else:
-                                    value = value[val.default]
+                                value = value[val.default]
 
                         if not value and val.required:
                                 value = val.default
