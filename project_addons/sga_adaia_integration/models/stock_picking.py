@@ -34,11 +34,23 @@ class StockPickingSGA(models.Model):
     sga_adaia_picking_name = fields.Char(compute="compute_adaia_picking_name")
     sga_adaia_partner_ref = fields.Char(compute="compute_adaia_partner_ref")
 
+    adaia_move_ids = fields.One2many(compute='get_adaia_lines')
+
     @api.multi
-    @api.depends('draft_batch_picking_id')
+    def get_adaia_lines(self):
+        batch_picking_id = self._context.get('draft_batch_picking_id', False)
+        if batch_picking_id:
+            for pick in self:
+                move_ids = self.env['stock.move'].search([('draft_batch_picking_id', '=', batch_picking_id)])
+                pick.adaia_move_ids = move_ids
+
+
+    @api.multi
     def compute_adaia_picking_name(self):
-        for pick in self:
-            pick.sga_adaia_picking_name = "{}.{}".format(pick.draft_batch_picking_id.name, pick.id)
+        batch_picking_id = self._context.get('draft_batch_picking_id', False)
+        if batch_picking_id:
+            for pick in self:
+                pick.sga_adaia_picking_name = "{}.{}".format(self._context.get('draft_batch_picking_name', pick.name), pick.id)
 
     @api.multi
     @api.depends('partner_id')

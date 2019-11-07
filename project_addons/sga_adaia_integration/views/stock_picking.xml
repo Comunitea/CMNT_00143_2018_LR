@@ -8,6 +8,7 @@
             <xpath expr="//field[@name='sga_integration_type']" position="after">
                 <field name="sgavar_file_id" string="ADAIA file type" attrs="{'invisible': [('sga_integration_type','!=','sga_adaia')]}" />
                 <field name="sga_prefix" string="ADAIA file Prefix" attrs="{'invisible': [('sga_integration_type','!=','sga_adaia')]}" />
+                <field name="sga_autovalidate" attrs="{'invisible': [('sga_integrated','=',False)]}" />
             </xpath>
         </field>
     </record>

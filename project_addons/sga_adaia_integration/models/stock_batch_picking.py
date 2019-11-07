@@ -10,12 +10,19 @@ class StockBatchPickingSGA(models.Model):
 
     _inherit = "stock.batch.picking"
 
+    @api.multi
+    def get_adaia_picking_ids(self):
+        for batch in self:
+            batch.adaia_picking_ids = batch.draft_move_line_ids.mapped('picking_id')
+
     sga_state = fields.Selection(SGA_STATES)
     draft_move_lines_id = fields.One2many('stock.move.line', 'draft_batch_picking_id', string='Líneas de Movimientos')
     adaia_code = fields.Char(compute="compute_route_fields")
     adaia_dock = fields.Integer(compute="compute_route_fields")    
     adaia_group = fields.Char(compute="compute_adaia_group")
     adaia_import_partner_ref = fields.Char(compute="import_partner_ref")
+    adaia_picking_ids = fields.One2many(compute='get_adaia_picking_ids')
+
 
     @api.multi
     @api.depends('move_lines.shipping_type', 'move_lines.delivery_route_path_id', 'move_lines.carrier_id')
@@ -254,7 +261,8 @@ class StockBatchPickingSGA(models.Model):
             for pick in pick_pool:
                 pick_id = self.env['stock.batch.picking'].browse(pick.id)
                 pick_id.set_as_sga_done()
-                #pick_id.button_validate()
+                if pick.picking_type_id and pick.picking_type_id.sga_auto_validate:
+                    pick_id.button_validate()
 
         return pick_pool
 

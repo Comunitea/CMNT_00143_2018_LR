@@ -622,6 +622,7 @@ class AdaiaFileHeader(models.Model):
                         # Listado de lineas
                         new_model = model[val.odoo_name.name]
                         new_sgavar = self.env['sgavar.file'].search([('code', '=', val.default)], limit=1)
+
                         if new_sgavar.file_filter:
                             new_model = new_model.filtered(eval(new_sgavar.file_filter))
                         value = len(new_model) or 0
