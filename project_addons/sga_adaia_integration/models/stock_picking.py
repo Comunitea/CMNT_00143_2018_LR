@@ -41,9 +41,11 @@ class StockPickingSGA(models.Model):
         batch_picking_id = self._context.get('draft_batch_picking_id', False)
         if batch_picking_id:
             for pick in self:
-                move_ids = self.env['stock.move'].search([('draft_batch_picking_id', '=', batch_picking_id)])
+                domain = [('draft_batch_picking_id', '=', batch_picking_id), ('picking_id', '=', pick.id),
+                 ('state', 'in', ('assigned', 'partially_available')), ('sga_state', '=', 'no_send')]
+                move_ids = self.env['stock.move'].search(domain)
                 pick.adaia_move_ids = move_ids
-
+    
 
     @api.multi
     def compute_adaia_picking_name(self):
