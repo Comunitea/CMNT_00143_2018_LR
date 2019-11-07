@@ -34,7 +34,33 @@ class StockPickingSGA(models.Model):
     sga_adaia_picking_name = fields.Char(compute="compute_adaia_picking_name")
     sga_adaia_partner_ref = fields.Char(compute="compute_adaia_partner_ref")
 
-    adaia_move_ids = fields.One2many(compute='get_adaia_lines')
+    adaia_move_ids = fields.One2many('stock.move', compute='get_adaia_lines')
+    adaia_code = fields.Char(compute="compute_route_fields")
+    adaia_dock = fields.Integer(compute="compute_route_fields")    
+    adaia_group = fields.Char(compute="compute_adaia_group")
+
+    @api.multi
+    @api.depends('adaia_move_ids.shipping_type', 'adaia_move_ids.delivery_route_path_id', 'adaia_move_ids.carrier_id')
+    def compute_route_fields(self):
+        for pick in self:
+            if pick.shipping_type == 'route':
+                pick.adaia_code = 'NORM'
+                pick.adaia_dock = 110
+            elif pick.shipping_type == 'pasaran':
+                pick.adaia_code = 'PAS'
+                pick.adaia_dock = 107
+            else:
+                pick.adaia_code = 'AG'
+                pick.adaia_dock = 106
+
+    @api.multi
+    @api.depends('adaia_move_ids')
+    def compute_adaia_group(self):
+        for pick in self:
+            if len(pick.adaia_move_ids) < 4:
+                pick.adaia_group = 'MP'
+            else:
+                pick.adaia_group = ''
 
     @api.multi
     def get_adaia_lines(self):
@@ -53,6 +79,7 @@ class StockPickingSGA(models.Model):
         if batch_picking_id:
             for pick in self:
                 pick.sga_adaia_picking_name = "{}.{}".format(self._context.get('draft_batch_picking_name', pick.name), pick.id)
+                print(pick.sga_adaia_picking_name)
 
     @api.multi
     @api.depends('partner_id')

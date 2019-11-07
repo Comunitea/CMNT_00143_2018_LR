@@ -567,13 +567,15 @@ class AdaiaFileHeader(models.Model):
         # con la lista de campos/longitud field_list_ids
 
         def get_line(sgavar, model_pool):
+            ctx = self._context.copy()
             # TODO Revisar si hace falta contador para los
             # todo numeros de lineas o vale el id de los _ids
             cont = 0
             res = ''
             if sgavar.file_filter:
-                model_pool = model_pool.filtered(eval(sgavar.file_filter))
+                model_pool = model_pool.with_context(ctx).filtered(eval(sgavar.file_filter))
             for model in model_pool:
+                model
 
                 cont += 1
                 model_str = ''
@@ -633,7 +635,8 @@ class AdaiaFileHeader(models.Model):
                         model_str += var_str.strip()+'|'
                     # Esta es para el formato seguido sin separador.
                     #model_str += var_str 
-                res += model_str + '\n'
+                if model_str and model_str != '':
+                    res += model_str + '\n'
 
                 if line_ids:
                     res += get_line(new_sgavar, new_model)

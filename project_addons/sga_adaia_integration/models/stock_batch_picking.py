@@ -16,12 +16,12 @@ class StockBatchPickingSGA(models.Model):
             batch.adaia_picking_ids = batch.draft_move_line_ids.mapped('picking_id')
 
     sga_state = fields.Selection(SGA_STATES)
-    draft_move_lines_id = fields.One2many('stock.move.line', 'draft_batch_picking_id', string='Líneas de Movimientos')
+    draft_move_line_ids = fields.One2many('stock.move.line', 'draft_batch_picking_id', string='Líneas de Movimientos')
     adaia_code = fields.Char(compute="compute_route_fields")
     adaia_dock = fields.Integer(compute="compute_route_fields")    
     adaia_group = fields.Char(compute="compute_adaia_group")
     adaia_import_partner_ref = fields.Char(compute="import_partner_ref")
-    adaia_picking_ids = fields.One2many(compute='get_adaia_picking_ids')
+    adaia_picking_ids = fields.One2many('stock.picking', compute='get_adaia_picking_ids')    
 
 
     @api.multi
@@ -131,6 +131,8 @@ class StockBatchPickingSGA(models.Model):
             ctx['ACCION'] = 'MO'
 
         ctx['PREFIX'] = self.picking_type_id.sga_prefix
+        ctx['draft_batch_picking_id'] = self.id
+        ctx['draft_batch_picking_name'] = self.name
         
         states_to_check = ('confirmed', 'partially_available', 'draft', 'ready')
         states_to_send = ('assigned', 'draft', 'ready')
