@@ -86,6 +86,8 @@ class StockBatchPicking(models.Model):
             pick.update({
                 'status': '2'
             })
-            ctx = pick._context.copy()
-            ctx.update(from_sga=True)
-            pick.with_context(ctx).button_validate()
+            # sga_auto_validate está en sga_adaia_integration. Mirar de meterlo en un sitio del que dependan ambos
+            if pick.picking_type_id and pick.picking_type_id.sga_auto_validate:
+                    ctx = pick._context.copy()
+                    ctx.update(from_sga=True)
+                    pick.with_context(ctx).button_validate()
