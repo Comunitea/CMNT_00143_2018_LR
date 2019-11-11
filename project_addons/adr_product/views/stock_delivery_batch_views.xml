@@ -9,10 +9,21 @@
             <button name="action_cancel" position="after">
                 <button name="print_rda_delivery" string="Print RDA" type="object" class="oe_highlight"/>
             </button>
-            <!--field name="picking_ids" position="inside">
-                <field name="adr"/>
-                <field name="adr_packing_list"/>
-            </field-->
+            <xpath expr="//notebook[@colspan='4']" position="inside">
+                <page string="Delivery order">
+                    <field name="picking_ids">
+                        <tree string="Pickings" default_order='sequence'>
+                            <field name="sequence" widget="handle"/>
+                            <field name="name"/>
+                            <field name="partner_id"/>
+                            <field name="origin"/>
+                            <field name="backorder_id"/>
+                            <field name="scheduled_date"/>
+                            <field name="state"/>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
         </field>
     </record>
 
