@@ -33,6 +33,13 @@ class StockBatchPicking(models.Model):
         ids  = [x['partner_id'][0] for x in partner_ids if x['partner_id']]
         return [('id', 'in', ids)]
 
+    @api.multi
+    def _get_batch_partner_id(self):
+        for batch in self:
+            moves = batch.move_lines | batch.draft_move_lines
+            partner= moves.mapped('partner_id')
+            batch.partner_id = len(partner) == 1 and partner or False
+
 
     batch_delivery_id = fields.Many2one('stock.batch.delivery', string="Delivery batch")
     picking_type_id = fields.Many2one('stock.picking.type', string='Picking type', required=True, readonly=True, states={'draft': [('readonly', False)]},)
@@ -55,6 +62,12 @@ class StockBatchPicking(models.Model):
     payment_term_ids = fields.Many2many('account.payment.term', string='Plazos de pago')
     shipping_type_ids = fields.Selection(related='shipping_type')
     partner_ids = fields.Many2many('res.partner', string='Clientes', domain=_get_parner_ids_domain)
+
+    pack_count = fields.Integer('Nº de paquetes')
+    move_count = fields.Integer('Nº de líneas')
+    sale_count = fields.Integer('Nº de pedidos')
+    partner_id = fields.Many2one('res.partner', compute=_get_batch_partner_id)
+    str_content = fields.Char('Contenido')
 
     @api.multi
     def action_view_stock_picking(self):
@@ -187,7 +200,11 @@ class StockBatchPicking(models.Model):
                 #        ml.qty_done = ml.product_uom_qty
                 moves.write({'draft_batch_picking_id': False})
                 moves_to_do = moves.filtered(lambda x: x.state in ('partially_available', 'assigned')).mapped('move_line_ids')
+
                 picks = moves_to_do.mapped('picking_id')
+                sale_count = len(picks)
+                move_count=len(moves_to_do)
+                pack_count = len(moves_to_do.mapped('result_package_id'))
                 for pick in picks:
                     if all(x.quantity_done == 0 for x in pick.move_lines):
                         for ml in moves_to_do:
@@ -226,11 +243,17 @@ class StockBatchPicking(models.Model):
 
                 batch.message_post(message)
                 batch.write({'state': 'done',
+                             'str_content': '{} / {} / {}'.format(sale_count, pack_count, move_count),
+                             'sale_count': sale_count,
+                             'move_count': move_count,
+                             'pack_count': pack_count,
                              'date_done': fields.Datetime.now()})
+
+
+            self.compute_counts()
 
         if normal.mapped('picking_ids'):
             return super(StockBatchPicking, normal).action_transfer()
-
 
     @api.onchange('picking_ids')
     def onchange_picking_ids(self):

@@ -96,7 +96,6 @@ class StockQuantPackage(models.Model):
 
     @api.model
     def update_object_from_apk(self, values):
-
         ctx = self._context.copy()
         ctx.update(write_from_package=True)
         package_id = self.browse(values.get('package_id', False))
@@ -108,12 +107,10 @@ class StockQuantPackage(models.Model):
             if move_line:
                 result_package_id = self.create(move_line[0].update_info_route_vals())
                 move_line.with_context(ctx).write({'result_package_id': result_package_id.id})
-
         elif action == 'unlink':
             move_line = self.env['stock.move.line'].search([('package_id', '=', self.id)])
             if move_line:
                 move_line_ids.with_context(ctx).write({'result_package_id': False})
-
         else:
             result_package_id = self.env['stock.quant.package'].browse(values['result_package_id'])
             ##Si ya tienen moviemintos, entonces todos lo movimeitneos pasana tener info ruta del pack

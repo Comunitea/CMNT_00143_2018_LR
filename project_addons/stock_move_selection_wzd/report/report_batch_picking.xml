@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <report string="Batch picking"
+            id="stock_batch_picking.action_report_batch_picking"
+            model="stock.batch.picking"
+            report_type="qweb-html"
+            name="stock_batch_picking.report_batch_picking"
+            file="stock_batch_picking.report_batch_picking"/>
+        <template id="batch_header">
+            <style>
+                .td_01 {
+                    padding: 4px;
+                    text-align: center;
+                    border: 0px
+                 }
+            </style>
+            <t t-set="batch" t-value="doc"/>
+            <table width = "50%">
+                <tbody>
+                    <tr>
+                        <td id="th_ref" class="td_01" t-if="doc.picking_type_id.group_code=='outgoing'">
+                            CÓDIGO CLIENTE
+                        </td >
+
+                        <td id="th_date" class="td_01">
+                            FECHA
+                        </td>
+
+                        <td id="th_pick" class="td_01">
+                            ALBARÁN
+                        </td>
+
+                        <td id="th_vat" class="td_01" t-if="doc.picking_type_id.group_code=='outgoing'">
+                            NIF ó DNI
+                        </td>
+                        <td id="vat" class="td_01">
+                            RUTA
+                        </td>
+                    </tr>
+                     <tr>
+                        <td class="td_01" t-if="doc.picking_type_id.group_code=='outgoing'">
+                             <span t-field="batch.partner_id.ref"/>
+                        </td>
+
+                        <td class="td_01">
+                            <t t-if="batch.state=='done'" t-esc="batch.date_done.split()[0]"/>
+                            <t t-if="batch.state!='done'" t-esc="batch.date.split()[0]"/>
+                        </td>
+
+                        <td class="td_01">
+                            <span t-field="batch.name"/>
+                        </td>
+
+                        <td class="td_01" t-if="doc.picking_type_id.group_code=='outgoing'">
+                           <span t-field="batch.partner_id.vat"/>
+                        </td>
+                         <td class="td_01">
+                           <span t-field="batch.info_route_str"/>
+                        </td>
+                    </tr>
+                </tbody>
+
+            </table>
+        </template>
+        <template id="external_layout_LR">
+            <link rel="stylesheet" href="/stock_move_selection_wzd/static/src/css/lr.css"></link>
+            <t t-if="not o and doc">
+                <t t-set="o" t-value="doc"/>
+                <t t-set="partner" t-value="o.partner_id.sudo()"/>
+            </t>
+            <t t-set="partner" t-value="doc.partner_id.sudo()"/>
+
+            <t t-if="o and 'company_id' in o">
+                <t t-set="company" t-value="o.company_id.sudo()"/>
+
+            </t>
+            <t t-if="not o or not 'company_id' in o">
+                <t t-set="company" t-value="res_company"/>
+            </t>
+
+            <div class="header o_boxed_header">
+                <div class="row mb8">
+                    <div class="col-xs-6 text-left mb4">
+                        <img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % to_text(company.logo)"/>
+
+                        <h4 class="mt0" t-field="company.report_header"/>
+                        <div name="company_address" class="mb4">
+                            <span class="company_address" t-field="company.partner_id"
+                                t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'/>
+                        </div>
+                    </div>
+                    <div class="col-xs-6 text-right mb4">
+                        <!--img t-if="doc.partner_id.logo" t-att-src="'data:image/png;base64,%s' % to_text(doc.partner_id.logo)"/-->
+
+                        <!--h4 class="mt0" t-field="partner.report_header"/-->
+                        <div name="partner_address" class="mb4">
+                            <span class="company_address" t-field="doc.partner_id"
+                                t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="article o_report_layout_boxed">
+              <t t-raw="0" />
+            </div>
+
+            <div class="footer o_boxed_footer">
+                <div class="text-center">
+                    <ul class="list-inline">
+                        <li t-if="company.phone">Tel: <span t-field="company.phone"/></li>
+                        <li t-if="company.email">Mail: <span t-field="company.email"/></li>
+                        <li t-if="company.website">Web: <span t-field="company.website"/></li>
+                        <li t-if="company.vat"><t t-esc="company.country_id.vat_label or 'TIN'"/>: <span t-field="company.vat"/></li>
+                    </ul>
+                    <div t-field="company.report_footer"/>
+                    <div>
+                        Page: <span class="page"/> / <span class="topage"/>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+    <template id="stock_batch_picking.report_batch_picking">
+
+        <t t-call="web.html_container">
+        <t t-foreach="docs" t-as="doc">
+
+        <t t-call="stock_move_selection_wzd.external_layout_LR">
+               <div class="page">
+                    <div t-if="doc.picking_type_id == 'internal'" class="row mt32 mb32">
+                        <div class="col-xs-3">
+                            <strong>Date:</strong>
+                            <span t-esc="now()" t-options="{'widget': 'datetime'}"/>
+                        </div>
+                        <div class="col-xs-3">
+                            <strong>Printed by:</strong>
+                            <span t-field="user.name"/>
+                        </div>
+                    </div>
+                   <t t-if="doc.notes">
+                        <p t-esc="doc.notes"/>
+                   </t>
+                   <t t-call="stock_move_selection_wzd.batch_header"/>
+                        <table width="100%"
+                                        style="
+                                        background-color: #777777 !important;
+                                        border-spacing: 2px;
+                                        color: #18B6E6 !important;
+                                        border: 3px;
+                                        padding: 4px;
+                                        border-color: #18B6E6 !important;
+                                        ">
+                            <tr style="border: 0px; padding: 4px; color: #18B6E6 !important" t-if="doc.picking_type_id.group_code=='outgoing'">
+                                <td id="th_ref" width="12%" style="padding: 4px;border: 0px">
+                                    REFERENCIA
+                                </td>
+                                <td id="th_desc" width="48%" style="padding: 4px;border: 0px">
+                                    DESCRIPCION
+                                </td>
+                                <td id="th_qty" width="8%" style="padding: 4px;text-align: center; border: 0px">
+                                    CANTIDAD
+                                </td>
+                                <td id="th_price" width="8%" style="padding: 4px;text-align: center;  border: 0px">
+                                    PRECIO
+                                </td>
+                                <td id="th_dto" width="8%" style="padding: 4px;text-align: center; border: 0px">
+                                    DTO.
+                                </td>
+                                 <td id="th_stl" width="8%" style="padding: 4px;text-align: center; border: 0px">
+                                    SUBTOTAL
+                                </td>
+                                 <td id="th_tax" width="8%" style="padding: 4px; text-align: center; border: 0px; background-color: #777777 !important;">
+                                    IVA
+                                </td>
+                            </tr>
+
+                            <tr style="border: 0px; padding: 4px; color: #18B6E6 !important" t-if="doc.picking_type_id.code=='internal'">
+                                <td id="th_ref" width="12%" style="padding: 4px;border: 0px">
+                                    REFERENCIA
+                                </td>
+                                <td id="th_desc" width="48%" style="padding: 4px;border: 0px">
+                                    DESCRIPCION
+                                </td>
+                                <td id="th_qty" width="10%" style="padding: 4px;text-align: center; border: 0px">
+                                    UBICACION
+                                </td>
+                                <td id="th_price" width="22%" style="padding: 4px;text-align: center;  border: 0px">
+                                    PAQUETES
+                                </td>
+
+                                 <td id="th_qty" width="8%" style="padding: 4px; text-align: center; border: 0px; background-color: #777777 !important;">
+                                    CANTIDAD
+                                </td>
+                            </tr>
+                        </table>
+                        <t t-foreach="get_grouped_data(doc)" t-as="sale">
+                        <table width="50%"  style=" padding: 4px; border: 0px">
+                            <tr>
+                                <td  style="padding: 4px; border: 0px; text-align: left; background-color: white !important">
+                                    <strong><span t-esc="sale['display_name']"/></strong>
+                                </td>
+                            </tr>
+                        </table>
+                        <t t-foreach="sale['l1_items']" t-as="pick">
+                                <table style="width: 50%;  padding: 4px; border: 0px">
+                                     <tbody >
+                                        <tr>
+
+                                        <td  style="padding: 2px; border: 0px; text-align: left; background-color: white !important">
+                                         <span t-esc="pick['display_name']"/>
+                                        </td>
+                                         </tr>
+                                     </tbody>
+                                </table>
+                                <table style=" width: 100%; padding: 4px; border: 0px; background-color: white !important">
+                                    <tbody t-if="doc.picking_type_id.group_code=='outgoing'">
+                                        <t t-set="total_qty" t-value="0.0"/>
+                                        <t t-foreach="pick['l2_items']" t-as="line">
+                                            <tr>
+                                                <t t-set="product" t-value="line['product']"/>
+                                                <t t-set="qty" t-value="line['product_qty']"/>
+                                                <t t-set="total_qty" t-value="total_qty + qty"/>
+                                                <td width="12%" style="padding: 4px;text-align: right; border: 0px">
+                                                    <span t-field="product.default_code"/>
+                                                </td>
+                                                <td width="48%" style="padding: 4px;text-align: left; border: 0px">
+                                                    <span t-field="product.product_tmpl_id.name"/>
+                                                </td>
+                                                <td width="8%" style="padding: 4px;text-align: center; border: 0px">
+                                                    <span t-esc="qty"/>
+                                                </td>
+                                                <td width="8%" style="padding: 4px;text-align: center; border: 0px">
+                                                    <span t-esc="line['price_unit']"/>
+                                                </td>
+                                                <td width="8%" style="padding: 4px;text-align: center; border: 0px">
+                                                    <span t-esc="line['dto']"/>
+                                                </td>
+                                                 <td width="8%" style="padding: 4px;text-align: center; border: 0px">
+                                                    <span t-esc="line['subtotal']"/>
+                                                </td>
+                                                <td width="8%" style="padding: 4px; text-align: center; border: 0px; background-color: white !important;">
+                                                     <span t-esc="line['tax'].amount"/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                    <tbody t-if="doc.picking_type_id.code=='internal'">
+                                        <t t-set="total_qty" t-value="0.0"/>
+                                        <t t-foreach="pick['l2_items']" t-as="line">
+                                            <tr>
+                                                <t t-set="product" t-value="line['product']"/>
+                                                <t t-set="qty" t-value="line['product_qty']"/>
+                                                <t t-set="total_qty" t-value="total_qty + qty"/>
+                                                <td width="12%" style="padding: 4px;text-align: right; border: 0px">
+                                                    <span t-field="product.default_code"/>
+                                                </td>
+                                                <td width="48%" style="padding: 4px;text-align: left; border: 0px">
+                                                    <span t-field="product.product_tmpl_id.name"/>
+                                                </td>
+
+
+                                                <td width="10%" style="padding: 4px;text-align: center; border: 0px">
+                                                    <span t-esc="line['location_id']"/>
+                                                </td>
+                                                <td width="22%" style="padding: 4px;text-align: center; border: 0px">
+                                                    <span t-esc="line['package_id']"/> <span t-esc="line['flecha']"/><span t-esc="line['result_package_id']"/>
+                                                </td>
+                                                 <td width="8%" style="padding: 4px;text-align: center; border: 0px">
+                                                    <span t-esc="qty"/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+
+                             </table>
+                             </t>
+                        </t>
+                        <table  t-if="doc.picking_type_id.code=='outgoing'"
+                                width="100%"
+                                        style="
+                                        border: 0px;
+                                        border-spacing: 2px;
+
+                                        padding: 4px;
+                                        ">
+
+                            <tr style="border-color: #18B6E6 !important; border: 3px; padding: 4px; background-color: #777777 !important; color: #18B6E6 !important">
+                                <td style="text-align: center; padding: 4px;border: 0px">
+                                    Neto
+                                </td>
+                                <td style="text-align: center;padding: 4px;border: 0px">
+                                    Portes
+                                </td>
+                                <td style="padding: 4px;text-align: center; border: 0px">
+                                    % Portes
+                                </td>
+                                <td style="padding: 4px;text-align: center;  border: 0px">
+                                    Base imponible
+                                </td>
+                                <td style="padding: 4px;text-align: center; border: 0px">
+                                    Tipo IVA
+                                </td>
+                                <td style="padding: 4px;text-align: center; border: 0px">
+                                    Cuota IVA
+                                </td>
+                                <td style="padding: 4px;text-align: center; border: 0px">
+                                    Tipo Rec
+                                </td>
+                                 <td style="padding: 4px; text-align: center; border: 0px; background-color: #777777 !important;">
+                                    Total
+                                </td>
+                            </tr>
+                            <tr style="border: 0px; padding: 4px; color: #white !important">
+                                <td style="text-align: center; padding: 4px;border: 0px">
+                                    Neto
+                                </td>
+                                <td style="text-align: center;padding: 4px;border: 0px">
+                                    Portes
+                                </td>
+                                <td style="padding: 4px;text-align: center; border: 0px">
+                                    % Portes
+                                </td>
+                                <td style="padding: 4px;text-align: center;  border: 0px">
+                                    Base imponible
+                                </td>
+                                <td style="padding: 4px;text-align: center; border: 0px">
+                                    Tipo IVA
+                                </td>
+                                <td style="padding: 4px;text-align: center; border: 0px">
+                                    Cuota IVA
+                                </td>
+                                <td style="padding: 4px;text-align: center; border: 0px">
+                                    Tipo Rec
+                                </td>
+                                 <td style="padding: 4px; text-align: center; border: 0px; background-color: white !important;">
+                                    Total
+                                </td>
+                            </tr>
+                        </table>
+
+
+
+                </div>
+            </t>
+            </t>
+        </t>
+    </template>
+</odoo>

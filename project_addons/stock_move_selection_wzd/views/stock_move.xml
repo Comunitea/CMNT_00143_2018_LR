@@ -252,6 +252,7 @@
                 <field name="payment_term_id" />
                 <field name="shipping_type" />
                 <field name="delivery_route_path_id"/>
+                <field name="dunmy_route_group_id" context="{'dunmy_route_group_id': self}"/>
                 <field name="sale_id" groups="stock.group_stock_multi_locations"/>
                 <field name="package_id"/>
                 <field name="result_package_id"/>

@@ -18,6 +18,7 @@
                     <field name="carrier_id"/>
                     <field name="partner_id"/>
                     <field name="date" />
+                    <field name="str_content"/>
                     <field name="count_move_lines"/>
                     <field name="state"/>
                     <field name="code"  invisible="1"/>

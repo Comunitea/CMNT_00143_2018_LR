@@ -16,13 +16,12 @@ class DeliveryBatchReport(models.AbstractModel):
         model = self.env.context.get('active_model', 'stock.batch.picking')
         objects = self.env[model].browse(docids)
         pickings = self.env.context.get('pickings') or self.env['stock.picking'].search([('batch_picking_id', '=', docids)])
-        
+        company_id = objects[0].picker_id and objects[0].picker_id.company_id or self.env.user.company_id
         company_data = {
-            'logo_web': objects[0].picker_id.company_id.logo_web,
-            'vat': objects[0].picker_id.company_id.vat
+            'logo_web': company_id.logo_web,
+            'vat': company_id.vat
         }
-
-        company_id = self.env.user.company_id
+        batch_id =
 
         delivery_carrier_data = {
             'vat': objects[0].route_driver_id.vat,

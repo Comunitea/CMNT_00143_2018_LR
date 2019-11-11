@@ -4,8 +4,8 @@
         <field name="name">paperformat.delivery.batch.report</field>
         <field name="default" eval="True"/>
         <field name="format">A4</field>
-        <field name="page_width">0</field>
-        <field name="page_width">0</field>
+        <!--field name="page_width">0</field>
+        <field name="page_width">0</field-->
         <field name="orientation">Portrait</field>
         <field name="margin_top">5</field>
         <field name="margin_right">5</field>
@@ -17,17 +17,16 @@
     </record>
 
     <report id="delivery_batch_report"
-            model="stock.batch.picking"
+            model="stock.batch.delivery"
             string="Delivery Batch Report"
-            report_type="qweb-pdf"
+            report_type="qweb-html"
             name="stock_move_selection_wzd.delivery_batch_view"
+            file="stock_move_selection_wzd.delivery_batch_view"
             paperformat="paperformat_delivery_batch_report"
-            menu="False"/>
+            />
 
-    <template id="delivery_batch_view">
-        
+    <template id="stock_move_selection_wzd.delivery_batch_view">
         <div class="article"  style="background-color:#fff !important;">
-
             <div class="row" style="background-color:#fff !important; padding-top: 5px;">
                 <t t-foreach="docs" t-as="doc">
                     <div class="col-xs-4">

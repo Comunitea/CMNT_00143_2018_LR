@@ -36,6 +36,7 @@ class StockPicking(models.Model):
 
     excess = fields.Boolean(string='Franquicia')
     count_move_lines = fields.Integer('Nº líneas', compute="_get_nlines")
+    dunmy_route_group_id = fields.Many2one('delivery.route.path.group', 'Grupo de entrega', store=False)
 
     @api.multi
     def _get_nlines(self):
