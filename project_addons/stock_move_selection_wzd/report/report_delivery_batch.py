@@ -21,7 +21,7 @@ class DeliveryBatchReport(models.AbstractModel):
             'logo_web': company_id.logo_web,
             'vat': company_id.vat
         }
-        batch_id =
+        
 
         delivery_carrier_data = {
             'vat': objects[0].route_driver_id.vat,

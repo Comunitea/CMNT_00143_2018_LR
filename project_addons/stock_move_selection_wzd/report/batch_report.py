@@ -216,5 +216,5 @@ class ReportPrintBatchPicking(models.AbstractModel):
 
 
         res = self.sort_level_0(grouped_data.values(), code)
-        
+
         return res
