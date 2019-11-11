@@ -22,6 +22,7 @@
         'security/ir.model.access.csv',
         'report/report_batch_delivery_adr_views.xml',
         'data/adr_code.xml',
-        'views/stock_delivery_batch_views.xml'
+        'views/stock_delivery_batch_views.xml',
+        'views/delivery_route_views.xml'
     ],
 }

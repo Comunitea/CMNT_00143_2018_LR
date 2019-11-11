@@ -57,6 +57,8 @@ class BatchDeliveryCustomReport(models.AbstractModel):
 
         for partner_id in partner_ids:
             partners_data.append(self.get_partner_data(partner_id, move_line_ids))
+        
+        partners_data.sort(key=lambda x: x['adr_sequence'], reverse=False)
 
         company_id = pickings and pickings[0].company_id
         for pick in pickings:
@@ -142,7 +144,8 @@ class BatchDeliveryCustomReport(models.AbstractModel):
                     not x.product_id.product_tmpl_id.adr_idnumonu.qty_limit > 0).mapped('result_package_id')) or 0.0,
             'real_kgs_picking': real_kgs_picking,
             'kgs_picking_11363': kgs_picking_11363,
-            'kgs_picking_11364': kgs_picking_11364
+            'kgs_picking_11364': kgs_picking_11364,
+            'adr_sequence': partner_id.adr_sequence
         }
 
     def get_exec_type_weight_strings(self, exec_type, move_line_ids, products):

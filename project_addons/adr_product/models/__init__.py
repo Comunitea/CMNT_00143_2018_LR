@@ -7,3 +7,5 @@ from . import product_adr_code
 from . import stock_picking
 from . import sale_order
 from . import stock_delivery_batch
+from . import delivery_route
+from . import res_partner
