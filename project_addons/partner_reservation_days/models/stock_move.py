@@ -30,6 +30,7 @@ class StockMove(models.Model):
         return values
 
 class ProcurementRule(models.Model):
+
     _inherit='procurement.rule'
 
     def _get_stock_move_values(self, product_id, product_qty, product_uom, location_id, name, origin, values,
@@ -43,5 +44,4 @@ class ProcurementRule(models.Model):
             if reservation_days:
                 cancel_date = (fields.Datetime.from_string(result['date_expected']) + timedelta(days=reservation_days)).strftime(DEFAULT_SERVER_DATE_FORMAT)
                 result['cancel_date'] = cancel_date
-                print (cancel_date)
         return result
