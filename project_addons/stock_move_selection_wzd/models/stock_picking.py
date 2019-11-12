@@ -107,21 +107,19 @@ class StockPicking(models.Model):
 
     @api.model
     def search(self, args, offset=0, limit=None, order=None, count=False):
+
         if self._context.get('para_hoy', False):
             today = fields.Date.today()
-            hoy = [('date_expected', '>=', today)]
-            ayer = [('date_expected', '<', today)]
-            d_1 = expression.AND((hoy, ['&', ('picking_id', '!=', False), ('state', 'not in', ('draft', 'cancel'))]))
-            d_2 = ['&', ayer, ('state', 'in', ('assigned', 'confirmed', 'partially_available')), ]
-            domain = expression.OR((d_1,d_2))
+            hoy = ('date_expected', '>=', today)
+            ayer = ('date_expected', '<', today)
+            d_1 = expression.AND([[hoy], ['&', ('picking_id', '!=', False), ('state', 'not in', ('draft', 'cancel'))]])
+            d_2 = ['&', ayer, ('state', 'in', ('assigned', 'confirmed', 'partially_available'))]
+            domain = expression.OR([d_1,d_2])
             moves = self.env['stock.move'].read_group(domain, ['picking_id'], ['picking_id'])
-            picking_ids = [x['picking_id'][0] for x in moves if x['picking_ids']]
+            picking_ids = [x['picking_id'][0] for x in moves if x['picking_id']]
             args_para_hoy = [('id', 'in', picking_ids)]
-
             args = expression.normalize_domain(args)
-            args = expression.AND((args_para_hoy, args))
-            print (args)
-
+            args = expression.AND([args_para_hoy, args])
         return super().search(args, offset=offset, limit=limit, order=order, count=count)
 
     @api.multi

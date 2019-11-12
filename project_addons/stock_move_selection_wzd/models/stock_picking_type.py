@@ -21,6 +21,7 @@ PICKING_TYPE_GROUP = [('incoming', 'Incoming'),
                       ('internal', 'Internal'),
                       ('location', 'Location'),
                       ('reposition', 'Reposition'),
+                      ('packaging', 'Palets'),
                       ('other', 'Other')]
 
 SGA_STATES = [('no_integrated', 'Sin integracion'),
@@ -176,10 +177,10 @@ class PickingType(models.Model):
                 x['picking_type_id'][0]: x['picking_type_id_count']
                 for x in data if x['picking_type_id']
             }
-            print(">>>>>>>>>>>COUNT: \n {}".format(count))
+
             for record in self:
                 record[field] = count.get(record.id, 0)
-                print("{} >> {}: {} in move_domains".format(record.name, field, record[field]))
+
         for field in picking_domains:
             domain = expression.AND([picking_domains[field], [('picking_type_id', 'in', self.ids)]])
             moves = self.env['stock.move'].read_group(domain, ['picking_id'], ['picking_id'])
@@ -192,10 +193,10 @@ class PickingType(models.Model):
                     x['picking_type_id'][0]: x['picking_type_id_count']
                     for x in data if x['picking_type_id']
                 }
-                print(">>>>>>>>>>>COUNT: \n {}".format(count))
+
                 for record in self:
                     record[field] = count.get(record.id, 0)
-                    print("{} >> {}: {} in pick_domains".format(record.name, field, record[field]))
+
 
         for field in batch_domains:
             domain = expression.AND([batch_domains[field], [('picking_type_id', 'in', self.ids)]])
@@ -212,10 +213,10 @@ class PickingType(models.Model):
                     x['picking_type_id'][0]: x['picking_type_id_count']
                     for x in data if x['picking_type_id']
                 }
-                print (">>>>>>>>>>>COUNT: \n {}".format(count))
+
                 for record in self:
                     record[field] = count.get(record.id, 0)
-                    print("{} >> {}: {} in batch_domains".format(record.name, field, record[field]))
+
 
         for record in self:
             today = datetime.now().strftime(DEFAULT_SERVER_DATE_FORMAT)
@@ -263,7 +264,7 @@ class PickingType(models.Model):
                 'rate_sga_undone': rate_sga_undone,
                 'rate_packed_undone': rate_packed_undone
             }
-            #print('Ratios para {}: {} \n {}'.format(record.name, res, rates))
+
             record.rate_late = rate_late
             record.rate_undone = rate_undone
             record.rate_sga_undone = rate_sga_undone
@@ -294,15 +295,12 @@ class PickingType(models.Model):
 
     def get_moves_domain(self, default = []):
 
-        #context_domain = self.get_context_domain()
-        #hide_state = [('state', 'not in', ('draft', 'cancel'))]
-        #context_domain += hide_state
-        #context_domain += self.date_domain('date_expected')
+
         context_domain = expression.AND([[('picking_id', '!=', False)], self.get_context_domain(),  self.date_domain('date_expected')])
         today = datetime.now().strftime(DEFAULT_SERVER_DATE_FORMAT)
         tomorrow = (datetime.now() + timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT)
         yesterday = (datetime.now() - timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT)
-        print ("Fechas:\n Hoy {}\nAyer {}\n Mañana{}".format(today, yesterday, tomorrow))
+
         draft = [('state', '=', 'draft')]
         done = [('state', '=', 'done')]
         today = [('date_expected', '<', tomorrow)]
@@ -390,10 +388,6 @@ class PickingType(models.Model):
             for d in domain.keys():
                 mds = "{}\n{}: {}\n".format(mds, d, domain[d])
             return mds
-
-        print(
-            "--------------------------------\nDOMAINS:\nMove domain ----\n{}\nPick domain ----\n{}\nBatch ----\n{}\n---------------------------".format(
-                str(move_domains),str(picking_domains), str(batch_domains)))
         return move_domains, picking_domains, batch_domains
 
     @api.model
@@ -491,8 +485,6 @@ class PickingType(models.Model):
             elif f_day=='late':
                 date_domain = [(date_expected, '<=', today)]
 
-
-
         if self._context.get('search_partner_id', False):
             partner_id = self.env['res.partner'].search([('display_name', 'ilike', self._context['search_partner_id'])])
             if partner_id:
@@ -500,7 +492,6 @@ class PickingType(models.Model):
         if self._context.get('search_shipping_type', False):
             domain += [('shipping_type', '=', self._context.get('search_shipping_type', False) )]
 
-        print ("CONTEXT DOMAIN {}".format(domain))
         return domain or []
 
 

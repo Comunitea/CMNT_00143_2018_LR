@@ -262,6 +262,67 @@ class StockQuantPackage(models.Model):
             moves.write(vals)
             moves.assign_picking()
 
+    @api.multi
+    def picking_pack_lines(self):
+        picking_type_id = self.env['stock.picking.type'].search([('code', '=', 'outgoing'), ('group_code', '=', 'packaging')], limit=1)
+        # crea un stock picking para las líneas de los m0vimientos
+        move_ids = self.env['stock.move']
+        lines = self.mapped('packaging_line_ids')
+        partner_id = self.mapped('move_line_ids').mapped('partner_id')
+        if len(partner_id)!=1:
+            raise ValueError(_('No puedes crearlo de varios clientes al mismo tiempos'))
+        moves = {}
+        for line in lines:
+            if line.product_id in moves:
+                moves[line.product_id].product_qty += line.qty
+            else:
+                val = {
+                    'name': line.product_id.display_name,
+                    'partner_id': partner_id.id,
+                    'product_id': line.product_id.id,
+                    'product_uom': line.product_id.uom_id.id,
+                    'product_uom_qty': line.qty,
+                    'location_id': picking_type_id.default_location_src_id.id,
+                    'location_dest_id': picking_type_id.default_location_dest_id.id,
+                    'picking_type_id': picking_type_id.id
+                }
+
+                new_move = move_ids.create(val)
+                new_move._action_confirm()
+                new_move._action_assign()
+                new_move._assign_picking()
+                moves[line.product_id] = new_move
+                move_ids |= new_move
+
+
+        picking_id = move_ids.mapped('picking_id')
+
+        new_batch_vals = {
+            'name': picking_id.name,
+            'partner_id': picking_id.partner_id.id,
+            #'location_id': picking_id.location_id.id,
+            #'location_dest_id': picking_id.location_dest_id.id,
+            'picking_type_id': picking_type_id.id,
+            'picking_ids': [(6,0, [picking_id.id])]
+        }
+        batch = self.env['stock.batch.picking'].create(new_batch_vals)
+        batch.action_transfer()
+        return batch
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

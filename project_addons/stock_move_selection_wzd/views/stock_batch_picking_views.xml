@@ -75,6 +75,9 @@
                     ]
                 </attribute>
             </field>
+            <xpath expr="//field[@name='payment_term_id']" position="after">
+                <field name="pack_lines_picking_id" attrs = "{'invisible': [('code', '!=', 'outgoing')]}"/>
+            </xpath>
             <xpath expr="//group[@name='info_envio']" position="after">
                 <group name="manage_drafts" string="Gestión de contenido" attrs = "{'invisible': [('state', 'in', ('done', 'cancel'))]}">
                     <div>

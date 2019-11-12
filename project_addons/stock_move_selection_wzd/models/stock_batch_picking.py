@@ -69,6 +69,8 @@ class StockBatchPicking(models.Model):
     partner_id = fields.Many2one('res.partner', compute=_get_batch_partner_id)
     str_content = fields.Char('Contenido')
 
+    pack_lines_picking_id = fields.Many2one('stock.batch.picking')
+
     @api.multi
     def action_view_stock_picking(self):
         """This function returns an action that display existing pickings of
@@ -249,11 +251,23 @@ class StockBatchPicking(models.Model):
                              'pack_count': pack_count,
                              'date_done': fields.Datetime.now()})
 
-
-            self.compute_counts()
+                if batch.picking_type_id.code == 'outgoing' and batch.picking_type_id.group_code != 'packaging':
+                    batch.create_batch_packaging_id()
+            #self.compute_counts()
 
         if normal.mapped('picking_ids'):
             return super(StockBatchPicking, normal).action_transfer()
+
+
+
+
+    @api.multi
+    def create_batch_packaging_id(self):
+        for batch in self:
+            package_ids = batch.move_lines.mapped('result_package_id')
+            if package_ids:
+                batch.pack_lines_picking_id = package_ids.picking_pack_lines()
+
 
     @api.onchange('picking_ids')
     def onchange_picking_ids(self):

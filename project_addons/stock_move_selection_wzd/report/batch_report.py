@@ -140,6 +140,19 @@ class ReportPrintBatchPicking(models.AbstractModel):
         return res
 
     @api.model
+    def get_package_line(line):
+        res = {
+            'product_id': line.product_id,
+            'product_qty': line.qty_done,
+            'price_unit': line.product_id and line.product_id.price_unit or 0.00,
+            'dto': 0,
+            'subtotal': line.qty_done * line.product_id.price_unit,
+            'tax': 21,
+            'flecha': u'\u21E8'
+        }
+        return res
+
+    @api.model
     def update_level_2(self, group_dict, operation, code=''):
         group_dict['product_qty'] += (
                 operation.product_qty or operation.qty_done)
@@ -216,5 +229,32 @@ class ReportPrintBatchPicking(models.AbstractModel):
 
 
         res = self.sort_level_0(grouped_data.values(), code)
+        packaging_line_ids = op_ids.mapped('result_package_id').mapped('packaging_line_ids')
+        pack_line = []
+        for line in batch.pack_lines_picking_id.move_lines:
+            product = line.product_id
+            if product in pack_line:
+               pack_line[product].qty += line.qty_done
+            else:
+                pack_line[product] = self.get_package_line(line)
 
+        pack_line =  sorted(pack_line, key=lambda rec: (rec['product_id']))
+        return res, pack_line
+
+    @api.model
+    def get_report_values(self, docids, data=None):
+        model = 'stock.batch.picking'
+        docs = self.env[model].browse(docids)
+        grouped_data, pack_line = self._get_grouped_data(docs)
+
+        res =  {
+            'doc_ids': docids,
+            'doc_model': model,
+            'data': data,
+            'docs': docs,
+            'doc_package': pack_line,
+            'grouped_data': grouped_data,
+            'now': fields.Datetime.now,
+        }
+        import  ipdb; ipdb.set_trace()
         return res

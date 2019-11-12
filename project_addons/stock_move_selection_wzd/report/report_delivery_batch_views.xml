@@ -24,8 +24,162 @@
             file="stock_move_selection_wzd.delivery_batch_view"
             paperformat="paperformat_delivery_batch_report"
             />
+    <template id="stock_move_selection_wzd.internal_partner_list">
+        <t t-set="partner_ids" t-value="partner_ids"/>
+        <div class="row" style="background-color:#fff !important;">
+            <div class="col-xs-9 text-left" style="border-bottom: solid 1px blue;">
+                <strong>
+                    Destinatarios
+                </strong>
+            </div>
+             <div class="col-xs-3" style="border-bottom: solid 1px blue;">
+                <div>
+                <strong>Fecha: </strong><t t-esc="doc['date_done']"/>
+                </div>
+            </div>
+            <t t-foreach="partner_ids" t-as="partner_id">
+                <div class="col-xs-12">
+                    <span><t t-esc="partner_id.display_name"/></span>
+                </div>
+            </t>
+        </div>
+    </template>
+    <template id="stock_move_selection_wzd.internal_layout_LR">
+            <link rel="stylesheet" href="/stock_move_selection_wzd/static/src/css/lr.css"></link>
+            <t t-if="not o and doc">
+                <t t-set="o" t-value="doc"/>
+            </t>
 
+
+            <t t-if="o and 'company_id' in o">
+                <t t-set="company" t-value="o.company_id.sudo()"/>
+
+            </t>
+            <t t-if="not o or not 'company_id' in o">
+                <t t-set="company" t-value="res_company"/>
+            </t>
+            <t t-set="driver_id" t-value="o.driver_id"></t>
+
+            <div class="header o_boxed_header">
+                <div class="row mb8">
+                    <div class="col-xs-6 text-left mb4">
+                        <img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % to_text(company.logo)"/>
+
+                        <h4 class="mt0" t-field="company.report_header"/>
+                        <div name="company_address" class="mb4">
+                            <span class="company_address" t-field="company.partner_id"
+                                t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'/>
+                        </div>
+                    </div>
+
+                    <div t-if="o.driver_id != False" class="col-xs-6 text-right mb4">
+                        <div name="driver_address" class="mb4">
+                            <span class="company_address" t-field="o.driver_id"
+                                t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'/>
+
+                            Matrícula: <t t-if="delivery_carrier_data['vehicle']"  t-esc="delivery_carrier_data['vehicle'].name"/><br/>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="article o_report_layout_boxed">
+              <t t-raw="0" />
+            </div>
+
+            <div class="footer o_boxed_footer">
+                <div class="text-center">
+                    <ul class="list-inline">
+                        <li t-if="company.phone">Tel: <span t-field="company.phone"/></li>
+                        <li t-if="company.email">Mail: <span t-field="company.email"/></li>
+                        <li t-if="company.website">Web: <span t-field="company.website"/></li>
+                        <li t-if="company.vat"><t t-esc="company.country_id.vat_label or 'TIN'"/>: <span t-field="company.vat"/></li>
+                    </ul>
+                    <div t-field="company.report_footer"/>
+                    <div>
+                        Page: <span class="page"/> / <span class="topage"/>
+                    </div>
+                </div>
+            </div>
+        </template>
+    <template id="stock_move_selection_wzd.delivery_detail">
+        <div class="row" style="background-color:#fff !important; padding-top: 10px; border-top: solid 1px blue;">
+            </div>
+
+            <div class="row" style="background-color:#fff !important; border: solid 1px blue;">
+                <div class="col-xs-12" style="border-bottom: solid 1px blue; text-align: left;">
+                    <div class="col-xs-2">
+                        PAQUETE
+                    </div>
+                    <div class="col-xs-2">
+                        REFERENCIA
+                    </div>
+                    <div class="col-xs-7">
+                        DESCRIPCIÓN
+                    </div>
+                    <div class="col-xs-1">
+                        UDS
+                    </div>
+                </div>
+
+                <t t-foreach="elements" t-as="element">
+                    <t t-set="previous_partner" t-value="0"/>
+                    <t t-set="previous_origin" t-value="0"/>
+                    <t t-set="previous_pack" t-value="0"/>
+                    <t t-foreach="element['movements']" t-as="movement">
+                        <div class="col-xs-12">
+
+                            <div t-if="previous_origin != movement['picking_id']" class="col-xs-3 col-xs-offset-6" style="text-align: right;">
+                                Albarán: <t t-esc="movement['picking_id']"/>
+                            </div>
+
+                            <div t-if="previous_partner != movement['partner_id']" class="col-xs-3 " style="text-align: right;">
+                                <strong>
+                                    <t t-esc="movement['partner_name']"/>
+                                </strong>
+                            </div>
+
+                        </div>
+                        <div class="col-xs-12" style="text-align: left;">
+                            <div class="col-xs-2">
+                                <strong>
+                                    <t t-if="previous_pack != movement['result_package_id']" t-esc="movement['result_package_id']"/>
+                                </strong>
+                            </div>
+                            <div class="col-xs-2">
+                                <t t-esc="movement['default_code']"/>
+                            </div>
+                            <div class="col-xs-7">
+                                <t t-esc="movement['name']"/>
+                            </div>
+                            <div class="col-xs-1">
+                                <t t-esc="movement['product_qty']"/>
+                            </div>
+                        </div>
+                        <t t-set="previous_origin" t-value="movement['picking_id']"/>
+                        <t t-set="previous_partner" t-value="movement['partner_id']"/>
+                        <t t-set="previous_pack" t-value="movement['result_package_id']"/>
+                    </t>
+                </t>
+            </div>
+
+
+    </template>
     <template id="stock_move_selection_wzd.delivery_batch_view">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="stock_move_selection_wzd.internal_layout_LR">
+                    <t t-call="stock_move_selection_wzd.internal_partner_list"/>
+                    <t t-call="stock_move_selection_wzd.delivery_detail"/>
+                </t>
+            </t>
+
+        </t>
+    </template>
+    <template id="stock_move_selection_wzd.delivery_batch_view2">
+
+
         <div class="article"  style="background-color:#fff !important;">
             <div class="row" style="background-color:#fff !important; padding-top: 5px;">
                 <t t-foreach="docs" t-as="doc">
@@ -33,6 +187,7 @@
                         <div class="panel panel-info break-word" style="border: none;">
                             <div class="panel-body">
                                 <img t-if="company_id" t-att-src="'data:image/png;base64,%s' % to_text(company_id['logo_web'])"/>
+
                                 <div class='o_div_text_overflow' t-field="company_id.partner_id" t-options="{'widget': 'contact','fields': ['name', 'address'], 'no_marker': True}" />
                                 <t t-if="company_id"  t-esc="company_id['vat']"/><br/>
                             </div>
@@ -46,14 +201,14 @@
                     </div>
                     <div class="col-xs-4">
                         <div>
-                            Fecha: <t t-esc="doc['date']"/>
+                            Fecha: <t t-esc="doc['date_done']"/>
                         </div>
                     </div>
                 </t>
             </div>
 
             <div class="row" style="background-color:#fff !important; padding-top:20px;">
-                <div class="col-xs-12" style="border: solid 1px black; margin-top: 5px; margin-bottom: 5px;">
+                <div class="col-xs-12" style="border: solid 1px blue; margin-top: 5px; margin-bottom: 5px;">
                     <div class="col-xs-6" style="text-align:center;">
                         ORIGEN
                     </div>
@@ -72,13 +227,14 @@
                     </div>
                     <div class="col-xs-5 col-xs-offset-2" style="border: solid 1px black;  margin-bottom: 5px;">
                         <div class="panel panel-info break-word" style="border: none;">
-                            <div t-if="doc.carrier_partner_id" class="panel-body">
-                                <div class='o_div_text_overflow' t-field="doc.carrier_partner_id" t-options="{'widget': 'contact','fields': ['name', 'address', 'vat', 'vehicle'], 'no_marker': True}"/>
+                            <div t-if="doc.driver_id" class="panel-body">
+                                <div class='o_div_text_overflow' t-field="doc.driver_id"
+                                     t-options="{'widget': 'contact','fields': ['name', 'address', 'vat', 'vehicle'], 'no_marker': True}"/>
                                 <t t-if="delivery_carrier_data"  t-esc="delivery_carrier_data['vat']"/><br/>
                                 Matrícula: <t t-if="delivery_carrier_data"  t-esc="delivery_carrier_data['vehicle']"/><br/>
                             </div>
-                            <div t-if="not doc.carrier_partner_id" class="panel-body">
-                                <p>No se ha seleccionado un transportista para este envío.</p>
+                            <div t-if="not doc.driver_id" class="panel-body">
+                                <p>No se ha seleccionado un transportista/conductor para este envío.</p>
                             </div>
                         </div>
                     </div>
@@ -89,8 +245,8 @@
             <div class="row" style="background-color:#fff !important; padding-top: 10px; border-top: solid 1px black;">
             </div>
 
-            <div class="row" style="background-color:#fff !important; border-left: solid 1px black; border-right: solid 1px black;">
-                <div class="col-xs-12 text-center" style="border-bottom: solid 1px black; border-top: solid 1px black;">
+            <div class="row" style="background-color:#fff !important; border-left: solid 1px blue; border-right: solid 1px blue;">
+                <div class="col-xs-12 text-center" style="border-bottom: solid 1px blue; border-top: solid 1px blue;">
                     Destinatarios
                 </div>
 
@@ -106,7 +262,7 @@
                 
             </div>
 
-            <div class="row" style="background-color:#fff !important; padding-top: 10px; border-top: solid 1px black; page-break-after: always;">
+            <div class="row" style="background-color:#fff !important; padding-top: 10px; border-top: solid 1px blue; page-break-after: always;">
             </div>
 
             <div class="row" style="background-color:#fff !important;">
@@ -122,11 +278,11 @@
                 </div>
             </div>
 
-            <div class="row" style="background-color:#fff !important; padding-top: 10px; border-top: solid 1px black;">
+            <div class="row" style="background-color:#fff !important; padding-top: 10px; border-top: solid 1px blue;">
             </div>
 
-            <div class="row" style="background-color:#fff !important; border: solid 1px black;">
-                <div class="col-xs-12" style="border-bottom: solid 1px black; text-align: left;">
+            <div class="row" style="background-color:#fff !important; border: solid 1px blue;">
+                <div class="col-xs-12" style="border-bottom: solid 1px blue; text-align: left;">
                     <div class="col-xs-2">
                         PAQUETE
                     </div>
@@ -146,7 +302,7 @@
                     <t t-foreach="element['movements']" t-as="movement">
                         <t t-if="previous_origin != movement['picking_id']">
                             <div class="col-xs-12">
-                                <div class="col-xs-3 col-xs-offset-1" style="border-bottom: solid 1px black; text-align: left;">
+                                <div class="col-xs-3 col-xs-offset-1" style="border-bottom: solid 1px blue; text-align: left;">
                                     Albarán: <t t-esc="movement['picking_id']"/> 
                                 </div>
                             </div>

@@ -260,8 +260,6 @@ class StockBatchDeliveryWzd(models.TransientModel):
         that they are not already in another batch or done/cancel.
         """
         ## compruebo que
-
-
         if any(not x.draft_batch_picking_id for x in self.move_ids):
             raise ValidationError('Tienes movimientos sin albarán de cliente')
 
@@ -269,12 +267,12 @@ class StockBatchDeliveryWzd(models.TransientModel):
         ctx.update(force_route_vals=True)
         ## ESCRIBO LAS CANTIDADES PARA QUE ME HAGA SPLIT
         for move in self.move_ids:
-            if move.picking_type_id.allow_unpacked or move.result_package_id:
-                for ml in move.move_line_ids:
-                    ml.qty_done = ml.product_uom_qty
-            else:
+
+            for ml in move.move_line_ids:
+                ml.qty_done = ml.product_uom_qty
+
+            if not move.picking_type_id.allow_unpacked and any(x.result_package_id == False for x in move.move_line_ids):
                 raise ValidationError('Tienes movimientos sin paquete')
-                ml.qty_done = 0.0
 
         self.picking_ids.write({'batch_delivery_id': batch_delivery_id.id})
         self.move_ids.filtered(lambda x: x.quantity_done > 0.00).write({'batch_delivery_id': batch_delivery_id.id})

@@ -218,7 +218,7 @@ class StockBatchDelivery(models.Model):
 
     @api.multi
     def action_view_stock_batch_picking(self):
-        batch_ids = self.move_lines.mapped("draft_batch_picking_id")
+        batch_ids = self.move_lines.mapped("batch_picking_id")
         self.ensure_one()
         action = self.env.ref('stock_batch_picking.action_stock_batch_picking_tree').read([])[0]
         action['domain'] = [('id', 'in', batch_ids.ids)]
