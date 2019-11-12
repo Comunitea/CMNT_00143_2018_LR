@@ -16,8 +16,6 @@
                         <field name="adr_peligroma" string="Artículo peligroso"/>
                         <field name="adr_exe22315" string="Sujeto a la exención 22315"/>
                         <field name="adr_bultodesc" string="Descripción del bulto"/>
-                        <field name="adr_bultodesc" string="Descripción del bulto"/>
-                        <field name="adr_bultodesc" string="Descripción del bulto"/>
                     </group>
                 </page>
             </xpath>
