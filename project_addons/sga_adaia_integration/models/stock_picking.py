@@ -79,7 +79,6 @@ class StockPickingSGA(models.Model):
         if batch_picking_id:
             for pick in self:
                 pick.sga_adaia_picking_name = "{}.{}".format(self._context.get('draft_batch_picking_name', pick.name), pick.id)
-                print(pick.sga_adaia_picking_name)
 
     @api.multi
     @api.depends('partner_id')
@@ -246,8 +245,8 @@ class StockPickingSGA(models.Model):
 
     def import_adaia_OUT(self, file_id):
         res = False
-        #pick_obj = self.env['stock.picking']
-        pick_obj = self.env['stock.batch.picking']
+        pick_obj = self.env['stock.picking']
+        #pick_obj = self.env['stock.batch.picking']
         sga_file_obj = self.env['sga.file'].browse(file_id)
         sga_file = open(sga_file_obj.sga_file, 'r')
         sga_file_lines = sga_file.readlines()
@@ -266,14 +265,17 @@ class StockPickingSGA(models.Model):
         actual_pick = False
         pick_pool = []
         for line in sga_file_lines:
+            print(line)
             if '|' in line:
                 file_data = line.rsplit('|')
                 TIPEREG = file_data[0]
                 EXPORDREF = file_data[2]
             n_line += 1
             
-            if TIPEREG == 'CECA':                    
-                actual_pick = self.env['stock.batch.picking'].search([('name', '=', EXPORDREF), ('state', 'in', ['assigned', 'waiting', 'confirmed']),
+            if TIPEREG == 'CECA':
+
+                EXPORDREF = EXPORDREF.rsplit('.', 1)[1]
+                actual_pick = self.env['stock.picking'].search([('id', '=', EXPORDREF), ('state', 'in', ['assigned', 'waiting', 'confirmed']),
                 ('sga_state', 'in', ['pending'])])
                 #actual_pick = self.env['stock.picking'].search([('name', '=', EXPORDREF), ('state', 'in', ['assigned', 'waiting', 'confirmed']),
                  #('sga_state', 'in', ['pending'])])
@@ -296,7 +298,7 @@ class StockPickingSGA(models.Model):
                     if '|' in line:
                         file_data = line.rsplit('|')
                         EXPORDLIN = file_data[3]
-                        CANSER = file_data[6]
+                        CANSER = float(file_data[6])
                     actual_line = self.env['stock.move.line'].search([('id', '=', EXPORDLIN)])
                     if not actual_line:
                         error_message = u'Op %s no encontrada en el albarán %s' % (EXPORDLIN, actual_pick.name)
@@ -305,14 +307,7 @@ class StockPickingSGA(models.Model):
                         continue
                     else:
                         if actual_line.ordered_qty == CANSER:
-                            if actual_line.qty_done != CANSER:
-                                #actual_line.write({
-                                #    'qty_done': CANSER
-                                #})
-                                actual_line._set_quantity_done(CANSER)
-                            else:
-                                actual_move = self.env['stock.move'].search([('origin_returned_move_id', '=', EXPORDLIN)])
-                                actual_move._prepare_move_line_vals(CANSER)
+                            actual_line._set_quantity_done(CANSER)
 
                         else:
                             diference = actual_line.ordered_qty - CANSER
@@ -341,11 +336,10 @@ class StockPickingSGA(models.Model):
                         if not package:
                             package = self.env['stock.quant.package'].create({
                                 'name': CNTDORREF,
-                                'shipping_type': line_id.move_id.shipping_type
+                                'shipping_type': actual_line.move_id.shipping_type
                             })
                             
                         actual_line.update({
-                            'product_qty': CAN,
                             'result_package_id': package.id
                         })
 
@@ -360,12 +354,15 @@ class StockPickingSGA(models.Model):
 
         if pick_pool:
             for pick in pick_pool:
-                #pick_id = self.env['stock.picking'].browse(pick.id)
-                pick_id = self.env['stock.batch.picking'].browse(pick.id)
+                pick_id = self.env['stock.picking'].browse(pick.id)
+                #pick_id = self.env['stock.batch.picking'].browse(pick.id)
                 pick_id.write({
                     'sga_state': 'done'
                 })
-                pick_id.button_validate()
+                if pick.picking_type_id and pick.picking_type_id.sga_auto_validate:
+                    ctx = pick._context.copy()
+                    ctx.update(from_sga=True)
+                    pick.with_context(ctx).button_validate()
 
         return pick_pool
 

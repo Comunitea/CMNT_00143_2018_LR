@@ -13,6 +13,15 @@ class ResPartner(models.Model):
     
     partner_type = fields.Char(compute="_compute_partner_type")
     sga_state = fields.Selection(SGA_STATES)
+    sga_ref = fields.Char(compute="compute_sga_ref")
+
+    @api.multi
+    def compute_adaia_partner_ref(self):
+        for partner in self:
+            if partner.supplier:
+                partner.sga_ref = "{}{}".format(8, partner.ref)
+            else:
+                partner.sga_ref = partner.ref
 
     @api.model
     def _compute_partner_type(self):

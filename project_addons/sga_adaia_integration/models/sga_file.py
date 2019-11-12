@@ -220,7 +220,7 @@ class AdaiaFileHeader(models.Model):
         if sga_filename:
             file_prefix = sga_filename.rsplit('.', 1)[0]
             if file_prefix == 'TREXP':
-                return 'BPP'
+                return 'OUT'
         else:
             return False
 
@@ -231,7 +231,7 @@ class AdaiaFileHeader(models.Model):
         elif sga_filename:
             file_prefix = sga_filename.rsplit('.', 1)[0]
             if file_prefix == 'TREXP':
-                return 0
+                return 1
         else:
             return False
 
@@ -467,10 +467,10 @@ class AdaiaFileHeader(models.Model):
         process = []
         proc_error = False
         try:
-            if self.file_code == "BPP":
-                self.write_log("Desde adaia picking BPP ...")
-                #process = self.env['stock.picking'].import_adaia_OUT(self.id)
-                process = self.env['stock.batch.picking'].import_adaia_OUT(self.id)
+            if self.file_code == "OUT":
+                self.write_log("Desde adaia picking OUT ...")
+                process = self.env['stock.picking'].import_adaia_OUT(self.id)
+                #process = self.env['stock.batch.picking'].import_adaia_OUT(self.id)
 
             if process:
                 self.move_file('archive', self.name)
