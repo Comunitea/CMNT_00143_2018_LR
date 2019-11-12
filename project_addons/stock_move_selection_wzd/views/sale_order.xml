@@ -27,7 +27,12 @@
                     </button>
                 </xpath>
 
-
+             <xpath expr="//field[@name='price_subtotal']" position="after">
+                 <field name="qty_available_global"/>
+             </xpath>
+             <xpath expr="//tree/field[@name='name']" position="after">
+                 <field name="qty_available_global"/>
+             </xpath>
             </field>
         </record>
     </data>

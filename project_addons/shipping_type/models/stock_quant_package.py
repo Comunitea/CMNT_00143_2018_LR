@@ -7,8 +7,7 @@ from .info_route_mixin import SHIPPING_TYPE_SEL, DEFAULT_SHIPPING_TYPE, STRING_S
 from odoo.exceptions import ValidationError
 
 class StockQuantPackage(models.Model):
-    _inherit = ['stock.quant.package', 'info.route.mixin']
-    _name = 'stock.quant.package'
+    _inherit = 'stock.quant.package'
 
     @api.multi
     def _count_move_line_ids(self):
@@ -17,18 +16,41 @@ class StockQuantPackage(models.Model):
 
     count_move_line = fields.Integer(compute=_count_move_line_ids)
     picking_ids = fields.One2many('stock.picking', compute='get_stock_pickings')
-    carrier_id = fields.Many2one("delivery.carrier", string="Carrier")
+
+    carrier_id = fields.Many2one("delivery.carrier", string="Carrier", compute='compute_route_fields', inverse='set_route_fields')
     campaign_id = fields.Many2one('campaign', 'Campaign')
-    shipping_type = fields.Selection(compute='compute_route_fields', inverse='set_route_fields')
-    delivery_route_path_id = fields.Many2one('delivery.route.path', compute='compute_route_fields', inverse='set_route_fields')
+    #shipping_type = fields.Selection(compute='compute_route_fields', inverse='set_route_fields')
+    #delivery_route_path_id = fields.Many2one(compute='compute_route_fields', inverse='set_route_fields')
+    payment_term_id = fields.Many2one(compute='compute_route_fields', inverse='set_route_fields')
+    shipping_type = fields.Selection(SHIPPING_TYPE_SEL, string=STRING_SHIPPING_TYPE,
+                                     help=HELP_SHIPPING_TYPE, compute='compute_route_fields', inverse='set_route_fields')
+    delivery_route_path_id = fields.Many2one('delivery.route.path', string="Ruta de transporte", compute='compute_route_fields', inverse='set_route_fields')
+    info_route_str = fields.Char('Info ruta', compute='compute_route_fields')
+
+    payment_term_id = fields.Many2one('account.payment.term', string='Plazos de pago', compute='compute_route_fields', inverse='set_route_fields')
+
+    @api.multi
+    def get_info_route(self):
+        for obj in self:
+            if obj.shipping_type == 'pasaran':
+                name = 'Pasarán'
+            elif obj.shipping_type == 'urgent':
+                name = 'Urgente'
+                if 'carrier_id' in obj.fields_get_keys() and obj.carrier_id:
+                    name = '{}: {}'.format(name, obj.carrier_id.name)
+
+            elif obj.shipping_type == 'route':
+                name = 'Ruta: {}'.format(obj.delivery_route_path_id and obj.delivery_route_path_id.name)
+            else:
+                name = 'No definido'
+            return '{} / {}'.format(name, obj.payment_term_id and obj.payment_term_id.display_name or '')
 
 
     @api.multi
-    @api.depends('move_line_ids')
     def compute_route_fields(self):
-
         for pack in self.sudo():
-            moves = pack.move_line_ids.mapped('move_id')
+            domain = [('result_package_id', '=', pack.id)]
+            moves = self.env['stock.move.line'].search(domain).mapped('move_id')
             #if any(move.state == 'done' for move in moves):
             #    raise ValidationError (_('No puedes cambiar en movimientos ya realizados'))
             if moves:
@@ -39,16 +61,17 @@ class StockQuantPackage(models.Model):
                     shipping_type_ids.append(move.shipping_type)
                 if shipping_type_ids[0] and len(shipping_type_ids) == 1:
                     pack.shipping_type = shipping_type_ids[0]
+                    print (pack.shipping_type)
                 delivery_route_path_ids = moves.mapped('delivery_route_path_id')
                 if len(delivery_route_path_ids) == 1:
                     pack.delivery_route_path_id = delivery_route_path_ids[0]
                 carrier_ids = moves.mapped('carrier_id')
                 if len(carrier_ids) == 1:
                     pack.carrier_id = carrier_ids[0]
-
                 payment_term_id = moves.mapped('payment_term_id')
                 if len(payment_term_id) == 1:
                     pack.payment_term_id = payment_term_id
+                pack.info_route_str = pack.get_info_route()
 
     def check_allow_change_route_fields(self):
         if any(move.state == 'done' for move in self.move_line_ids):
@@ -60,11 +83,17 @@ class StockQuantPackage(models.Model):
         for pack in self:
             pack.check_allow_change_route_fields()
             moves = pack.move_line_ids.mapped('move_id')
-            moves.write({
-                'shipping_type': pack.shipping_type,
-                'delivery_route_path_id': pack.delivery_route_path_id.id,
-                'carrier_id': pack.carrier_id.id
-            })
+
+            vals = {}
+            if pack.shipping_type:
+                vals.update({'shipping_type': pack.shipping_type})
+            if pack.delivery_route_path_id:
+                vals.update({'delivery_route_path_id': pack.delivery_route_path_id.id})
+            if pack.carrier_id:
+                vals.update({'carrier_id': pack.carrier_id.id})
+            if pack.payment_term_id:
+                vals.update({'payment_term_id': pack.payment_term_id.id})
+            moves.write(vals)
 
     @api.multi
     def get_stock_pickings(self):

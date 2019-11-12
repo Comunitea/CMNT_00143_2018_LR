@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+     <record id="stock.action_picking_tree_all" model="ir.actions.act_window">
+       <field name="view_ids"
+              eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree', 'view_id': ref('stock_move_selection_wzd.pick_tree_custom')})]"/>
+
+    </record>
+
     <record id="view_picking_form_sga" model="ir.ui.view">
         <field name="name">view.picking.form.sga</field>
         <field name="model">stock.picking</field>
@@ -62,6 +69,11 @@
                 <field name="sga_state"/>
 
             </field>
+
+            <filter name="draft" position="before">
+                <filter name="actuales" string="Para hoy" context="{'para_hoy': True}" help="Albaranes para salir hoy, o en estado preparados y atrasados, ordenados por fecha de prevista de salida"/>
+                <separator/>
+            </filter>
             <filter name="picking_type" position="after">
                     <filter name="sga_integrated" string="SGA" domain="[('sga_integrated','=', True)]"/>
                     <filter name="waiting" string="SGA. Enviado" domain="[('sga_state','=', 'pending')]"/>
@@ -72,6 +84,7 @@
                     <field name="shipping_type" string="Tipo de envio"/>
                     <field name="carrier_id" string="Forma de envío"/>
                 <separator/>
+
                     <filter string="Pasarán" name="pasaran_route" domain="[('shipping_type','=', 'pasaran')]"/>
                     <filter string="Urgente" name="urgent_route" domain="[('shipping_type','=', 'urgent')]"/>
                     <filter string="Ruta" name="route_route" domain="[('shipping_type','=', 'route')]"/>

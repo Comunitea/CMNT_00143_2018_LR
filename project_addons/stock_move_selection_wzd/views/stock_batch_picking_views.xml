@@ -10,14 +10,16 @@
                       string="Picking list">
                     <field name="name"/>
 
-                    <field name="count_move_lines"/>
-                    <field name="payment_term_id" invisible="1"/>
+
+                    <field name="payment_term_id" invisible="context.get('group_code', False) != 'outgoing'"/>
                     <field name="shipping_type"/>
                     <field name="delivery_route_path_id"/>
                     <field name="batch_delivery_id" invisible="context.get('group_code', False) != 'outgoing'"/>
                     <field name="carrier_id"/>
                     <field name="partner_id"/>
                     <field name="date" />
+                    <field name="str_content"/>
+                    <field name="count_move_lines"/>
                     <field name="state"/>
                     <field name="code"  invisible="1"/>
                     <field name="excess" invisible="context.get('group_code', False) != 'outgoing'"/>
@@ -31,13 +33,16 @@
         <field name="model">stock.batch.picking</field>
         <field name="inherit_id" ref="stock_batch_picking.stock_batch_picking_form"/>
         <field name="arch" type="xml">
-
+            <xpath expr="//button[@name='action_transfer'][2]" position="replace">
+            </xpath>
+            <xpath expr="//button[@name='action_transfer'][1]" position="replace">
+            </xpath>
             <xpath expr="//button[@name='action_cancel']" position="after">
                 <button name="action_transfer" string="Validar" type="object" class="oe_highlight"
                         attrs="{'invisible': ['|', ('state', '!=', 'assigned'), ('ready_to_transfer', '=', False)]}"/>
                 <button name="batch_printing" string="Print" type="object" class="oe_highlight"/>
                 <button name="alternate_draft_ready" string="Pasar a Borrador"
-                        states="ready"
+                        states="assigned"
                         type="object" class="oe_highlight"/>
                 <button name="alternate_draft_ready" string="Pasar a Disponible"
                         states="draft"
@@ -47,10 +52,7 @@
                         type="object" class="btn-default" help="Fuerza todos los movimientos creando los move lines"/>
                 <field name="ready_to_transfer" invisible="1"/>
             </xpath>
-            <xpath expr="//button[@name='action_transfer'][2]" position="replace">
-            </xpath>
-            <xpath expr="//button[@name='action_transfer'][1]" position="replace">
-            </xpath>
+
             <xpath expr="//button[@name='action_cancel']" position="after">
                 <button name="action_send_to_sga" string="Enviar a SGA" type="object" class="oe_highlight"
                         attrs="{'invisible': [('sga_state', 'not in', ('export_error', 'import_error', 'no_send'))]}"/>
@@ -73,7 +75,27 @@
                     ]
                 </attribute>
             </field>
+            <xpath expr="//field[@name='payment_term_id']" position="after">
+                <field name="pack_lines_picking_id" attrs = "{'invisible': [('code', '!=', 'outgoing')]}"/>
+            </xpath>
+            <xpath expr="//group[@name='info_envio']" position="after">
+                <group name="manage_drafts" string="Gestión de contenido" attrs = "{'invisible': [('state', 'in', ('done', 'cancel'))]}">
+                    <div>
+                        <button class="oe_link oe_left"
+                            context="{'model_dest': 'stock.move', 'hide_conf_vals': True}"
+                            name="open_tree_to_add" type="object" string="↳Ver/Modificar contenido"/>
+                    </div>
+                    <field name="partner_ids" widget="many2many_tags"/>
+                    <field name="delivery_route_path_ids" widget="many2many_tags"/>
+                    <field name="payment_term_ids" widget="many2many_tags"/>
+                    <field name="shipping_type_ids"/>
 
+
+                </group>
+                <group attrs = "{'invisible': [('state', 'not in', ('done', 'cancel'))]}">
+
+                </group>
+            </xpath>
             <xpath expr="//button[@name='action_view_stock_picking']" position="before">
 
                     <button name="action_see_moves" string="Movimientos"
@@ -83,13 +105,23 @@
 
             </xpath>
             <xpath expr="//page[1]" position="before">
-                <page string="Movimientos" >
-                    <!--field name="draft_move_lines"
+                <page string="Movimientos" attrs = "{'invisible': [('state', 'in', ('done', 'cancel'))]}">
+                <!--
                            context="{'tree_view_ref': 'stock_move_selection_wzd.view_move_line_tree_sel'}"
                            readonly="1" options="{'reload_on_button': true}"/-->
 
                     <field name="draft_move_lines">
-                        <tree>
+                        <tree create="0" delete="0">
+
+                            <button name="button_unlink_from_batch"
+                            string="Eliminar del batch"
+                            type="object"
+                            icon="fa-trash"
+                            groups="base.group_user"
+                                    options='{"fg_color":
+                                    "red: draft_batch_picking_id != False;
+                                    green: draft_batch_picking_id == False"}'/>
+                            <field name="draft_batch_picking_id" invisible="1"/>
                             <field name="orig_picking_id"/>
                             <field name="partner_id"/>
                             <field name="product_id"/>
@@ -119,13 +151,13 @@
                 </page>
             </xpath>
             <xpath expr="//page/field[@name='id']/.." position="attributes">
-                <attribute name="invisible">1</attribute>
+                <attribute name="invisible">[('state', '=', 'done')]</attribute>
             </xpath>
             <xpath expr="//page/field[@name='active_picking_ids']/.." position="attributes">
-                <attribute name="invisible">1</attribute>
+                <attribute name="invisible">[('state', '=', 'done')]</attribute>
             </xpath>
-            <xpath expr="//page/field[@name='move_line_ids']/.." position="attributes">
-                <attribute name="invisible">1</attribute>
+            <xpath expr="//page/field[@name='move_line_ids']/.." position="replace">
+
             </xpath>
             <xpath expr="//sheet" position="after">
                 <div class="oe_chatter">

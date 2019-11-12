@@ -13,6 +13,7 @@
         'stock_picking_imp',
         'stock_picking_group',
         'shipping_type',
+        'stock_available_global',
         'purchase_sale_inter_company_custom'
     ],
     'data': [
@@ -20,6 +21,7 @@
         'data/stock_batch_delivery.xml',
         'security/ir.model.access.csv',
         'report/report_delivery_batch_views.xml',
+        'report/report_batch_picking.xml',
         'views/stock_batch_delivery.xml',
         'views/delivery_route_path.xml',
         'views/picking_type.xml',

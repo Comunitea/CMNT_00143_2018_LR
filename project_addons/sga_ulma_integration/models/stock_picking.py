@@ -37,10 +37,10 @@ class StockPicking(models.Model):
         partner_id = self.partner_id
         vals = batch.picking_type_id.get_ulma_vals('sale', partner_id, self)
         
-        if batch.shipping_type == 'route':
+        if self.shipping_type == 'route':
             shipping_type_letter = 'N'
             shipping_type_full = 'RUTA'
-        elif batch.shipping_type == 'pasaran':
+        elif self.shipping_type == 'pasaran':
             shipping_type_letter = 'P'
             shipping_type_full = 'PASARAN'
         else:
@@ -182,4 +182,5 @@ class StockPicking(models.Model):
         else:
             self.create_package_from_selection(type_selecction_list[0:8])
             self.create_package_from_selection(type_selecction_list[8:])
-
+    
+    

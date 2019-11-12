@@ -7,6 +7,27 @@ from odoo.exceptions import UserError
 from odoo.addons.shipping_type.models.info_route_mixin import SHIPPING_TYPE_SEL, DEFAULT_SHIPPING_TYPE, STRING_SHIPPING_TYPE,HELP_SHIPPING_TYPE
 from odoo.exceptions import ValidationError
 
+
+class SBDWMoveLine(models.TransientModel):
+    _name = 'sbdw.move.line'
+
+    wzd_id = fields.Many2one('stock.batch.delivery.wzd')
+    selected = fields.Boolean(string="Seleccionado")
+    move_id = fields.Many2one('stock.move')
+    product_id = fields.Many2one(related='move_id.product_id')
+    partner_id = fields.Many2one(related='move_id.partner_id')
+    orig_picking_id = fields.Many2one(related='move_id.orig_picking_id')
+    product_uom_qty = fields.Many2one(related='move_id.product_uom_qty')
+    quantity_done = fields.Float(related='move_id.quantity_done')
+    reserved_availability = fields.Float(related='move_id.reserved_availability')
+    product_uom_qty = fields.Float(related='move_id.product_uom_qty')
+    origin = fields.Char(related='move_id.origin')
+    info_route_str = fields.Char(related='move_id.info_route_str')
+    result_package_id = fields.Many2one(related='move_id.result_package_id')
+    state = fields.Selection(related='move_id.state')
+    draft_batch_picking_id = fields.Many2one(related='move_id.draft_batch_picking_id')
+
+
 class StockBatchDeliveryWzd(models.TransientModel):
     """Create a stock.batch.delivery from stock.moves or stock.quant.packages
     """
@@ -40,7 +61,7 @@ class StockBatchDeliveryWzd(models.TransientModel):
     picking_ids = fields.Many2many('stock.picking', string='Pedidos asociados', compute='get_child_vals')
     packages_ids = fields.Many2many('stock.quant.package', string='Paquetes', compute='get_child_vals')
     moves_to_not_include = fields.Many2many('stock.move', string='Movimientos no incluidos')
-
+    line_ids = fields.One2many('sbdw.move.line', 'wzd_id')
 
     def set_moves_to_pack_ids(self):
         return
@@ -56,7 +77,6 @@ class StockBatchDeliveryWzd(models.TransientModel):
     def get_new_batch_values(self, picking_type_id):
         return {
             'date': self.date,
-            #'notes': self.notes,
             'picker_id': self.picker_id.id,
             'picking_type_id': picking_type_id.id,
             'state': 'assigned'
@@ -64,10 +84,15 @@ class StockBatchDeliveryWzd(models.TransientModel):
     @api.multi
     def action_assign_partner_batch(self):
 
+
         if len(self.move_ids.mapped('picking_type_id')) > 1:
-            raise ValueError(_('No puedes crear un batch de con movimientos de distiont tipo'))
+            raise ValueError(_('No puedes crear un batch de con movimientos de distinto tipo'))
+        code = self.move_ids.mapped('picking_type_id').mapped('code')
+        if len(code) != 1 and code[0] != 'outgoing':
+            raise ValueError(_('Solo puedes crear batch de tipo cliente (Albaranes de cliente)'))
+
+
         picking_type_id = self.move_ids.mapped('picking_type_id')
-            # self.move_line_ids.mapped('move_id').ids
         fields = picking_type_id.grouped_batch_field_ids
         new_batchs = self.env['stock.batch.picking']
         if not fields:
@@ -76,12 +101,13 @@ class StockBatchDeliveryWzd(models.TransientModel):
         else:
             for move in self.move_ids:
                 domain = move.get_batch_domain()
-                batch = self.env['stock.batch.picking'].search(domain, order='id asc', limit=1)
+                batch = self.env['stock.batch.picking'].search(domain, order='id desc', limit=1)
                 if batch:
                     move.draft_batch_picking_id = batch
                 else:
                     vals = self.get_new_batch_values(picking_type_id)
                     vals.update(move.get_batch_vals())
+                    vals.update(move.update_info_route_vals())
                     batch = self.env['stock.batch.picking'].create(vals)
                     move.draft_batch_picking_id = batch
                     new_batchs += batch
@@ -92,7 +118,7 @@ class StockBatchDeliveryWzd(models.TransientModel):
                         note = '{}\n{}\n{}'.format(note, pick.name, pick.note)
                     else:
                         note = '{}\n{}'.format(note, pick.name)
-
+        new_batchs.write({'state': 'assigned'})
         return self.autorefresh()
 
     @api.multi
@@ -104,7 +130,9 @@ class StockBatchDeliveryWzd(models.TransientModel):
                 'delivery_route_path_id': self.delivery_route_path_id.id,
                 'carrier_id': self.carrier_id.id}
         self.with_context(ctx).packages_ids.write(vals)
-        self.with_context(ctx).moves_to_pack_ids.write(vals)
+        self.with_context(ctx).move_ids.write(vals)
+
+        self.move_ids.mapped('picking_id').compute_route_fields()
         return self.autorefresh()
 
     def autorefresh(self):
@@ -133,8 +161,6 @@ class StockBatchDeliveryWzd(models.TransientModel):
 
     @api.model
     def default_get(self, fields):
-
-
         active_ids = self._context.get('active_ids')
         if not active_ids:
             raise ValidationError(_('No hay nada seleccionado'))
@@ -191,6 +217,9 @@ class StockBatchDeliveryWzd(models.TransientModel):
         vals.update(default_moves_to_batch_ids=[(6, 0, moves.filtered(lambda x: not x.batch_id).ids)])
         vals.update(default_moves_to_not_include=[(6, 0, moves_to_not_include.ids)])
 
+        move_vals = self.env['stock.batch.picking'].return_move_vals(moves, moves.mapped('picking_id'), complete=True)
+        vals.update(default_line_ids=move_vals)
+
         ctx = self._context.copy()
         ctx.update(vals)
         if 'active_domain' in ctx.keys():
@@ -231,8 +260,6 @@ class StockBatchDeliveryWzd(models.TransientModel):
         that they are not already in another batch or done/cancel.
         """
         ## compruebo que
-
-
         if any(not x.draft_batch_picking_id for x in self.move_ids):
             raise ValidationError('Tienes movimientos sin albarán de cliente')
 
@@ -240,12 +267,12 @@ class StockBatchDeliveryWzd(models.TransientModel):
         ctx.update(force_route_vals=True)
         ## ESCRIBO LAS CANTIDADES PARA QUE ME HAGA SPLIT
         for move in self.move_ids:
-            if move.picking_type_id.allow_unpacked or move.result_package_id:
-                for ml in move.move_line_ids:
-                    ml.qty_done = ml.product_uom_qty
-            else:
+
+            for ml in move.move_line_ids:
+                ml.qty_done = ml.product_uom_qty
+
+            if not move.picking_type_id.allow_unpacked and any(x.result_package_id == False for x in move.move_line_ids):
                 raise ValidationError('Tienes movimientos sin paquete')
-                ml.qty_done = 0.0
 
         self.picking_ids.write({'batch_delivery_id': batch_delivery_id.id})
         self.move_ids.filtered(lambda x: x.quantity_done > 0.00).write({'batch_delivery_id': batch_delivery_id.id})

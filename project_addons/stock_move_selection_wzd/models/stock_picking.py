@@ -12,18 +12,31 @@ from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT, DEFAULT_SERVER_DATE_FORMA
 
 
 from .stock_picking_type import SGA_STATES
+from odoo.osv import expression
 
 class StockPicking(models.Model):
     _inherit = 'stock.picking'
+
+    @api.multi
+    def get_draft_batch_picking_id(self):
+
+        for pick in self:
+            draft_batch_picking_id = pick.move_lines.mapped('draft_batch_picking_id')
+            if len(draft_batch_picking_id) == 1:
+                pick.draft_batch_picking_id = draft_batch_picking_id
+            else:
+                pick.draft_batch_picking_id = False
+
 
     sga_integrated = fields.Boolean('Sga', help='Marcar si tiene un tipo de integración con el sga')
     sga_state = fields.Selection(SGA_STATES, default='no_integrated', string="SGA Estado", copy=False)
     #state = fields.Selection(selection_add=[('packaging', 'Empaquetado')])
     batch_delivery_id = fields.Many2one('stock.batch.delivery', string='Orden de carga', copy=False, store=False, compute="get_batch_delivery_id")
-    draft_batch_picking_id = fields.Many2one('stock.batch.picking', 'Batch')
+    draft_batch_picking_id = fields.Many2one('stock.batch.picking', 'Batch', compute="get_draft_batch_picking_id")
 
     excess = fields.Boolean(string='Franquicia')
     count_move_lines = fields.Integer('Nº líneas', compute="_get_nlines")
+    dunmy_route_group_id = fields.Many2one('delivery.route.path.group', 'Grupo de entrega', store=False)
 
     @api.multi
     def _get_nlines(self):
@@ -88,6 +101,35 @@ class StockPicking(models.Model):
 
     @api.multi
     def button_validate(self):
-        if any(x.batch_picking_id or x.draft_batch_picking_id for x in self):
+        if not self._context.get('from_sga', False) and any(x.batch_picking_id or x.draft_batch_picking_id for x in self):
             raise ValidationError (_("No puedes validar un albarán asigado a un batch"))
         return super().button_validate()
+
+    @api.model
+    def search(self, args, offset=0, limit=None, order=None, count=False):
+
+        if self._context.get('para_hoy', False):
+            today = fields.Date.today()
+            hoy = ('date_expected', '>=', today)
+            ayer = ('date_expected', '<', today)
+            d_1 = expression.AND([[hoy], ['&', ('picking_id', '!=', False), ('state', 'not in', ('draft', 'cancel'))]])
+            d_2 = ['&', ayer, ('state', 'in', ('assigned', 'confirmed', 'partially_available'))]
+            domain = expression.OR([d_1,d_2])
+            moves = self.env['stock.move'].read_group(domain, ['picking_id'], ['picking_id'])
+            picking_ids = [x['picking_id'][0] for x in moves if x['picking_id']]
+            args_para_hoy = [('id', 'in', picking_ids)]
+            args = expression.normalize_domain(args)
+            args = expression.AND([args_para_hoy, args])
+        return super().search(args, offset=offset, limit=limit, order=order, count=count)
+
+    @api.multi
+    def _add_delivery_cost_to_so(self):
+        return True
+
+
+    @api.multi
+    def button_unlink_from_batch(self):
+        draft_batch_picking_id = self._context.get('draft_batch_picking_id', False)
+        if draft_batch_picking_id:
+            moves = self.mapped('move_lines').filtered(lambda x: x.draft_batch_picking_id==draft_batch_picking_id)
+            moves.button_unlink_from_batch()

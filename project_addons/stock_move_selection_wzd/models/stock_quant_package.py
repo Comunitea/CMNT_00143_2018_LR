@@ -53,11 +53,10 @@ class StockQuantPackage(models.Model):
     @api.multi
     @api.depends('move_line_ids.state', 'move_line_ids.batch_delivery_id')
     def get_batch_delivery_id(self):
-
         for pack in self.filtered(lambda x: x.move_lines):
             batch_id = pack.move_lines.mapped('batch_delivery_id')
-            if len(batch_id)>1:
-                raise ValueError (_('Error. El paquete tiene movimientos en varias ordenes de carga'))
+            if len(batch_id) > 1:
+                raise exceptions.ValidationError (_('Error. El paquete tiene movimientos en varias ordenes de carga'))
             pack.batch_delivery_id = batch_id
 
     @api.multi
@@ -75,11 +74,11 @@ class StockQuantPackage(models.Model):
     @api.multi
     @api.depends('move_line_ids.state', 'move_line_ids.draft_batch_picking_id', 'move_line_ids.batch_picking_id')
     def get_batch_picking_id(self):
+
         for pack in self.filtered(lambda x: x.move_lines):
             batch_id = pack.move_lines.mapped('batch_id')
-            if len(batch_id)>1:
-                raise ValueError (_('Error. El paquete tiene movimientos en varias batchs'))
-            pack.batch_picking_id = batch_id
+            if batch_id and len(batch_id)  == 1:
+                pack.batch_picking_id = batch_id
 
 
     def get_packaging_lines(self, vals):
@@ -254,14 +253,75 @@ class StockQuantPackage(models.Model):
 
         for pack in self:
             if any(move.state in ('done', 'cancel') for move in pack.move_line_ids):
-                raise ValueError('No puedes cambiar en un movimiento hecho o cancelado')
+                raise exceptions.ValidationError('No puedes cambiar en un movimiento hecho o cancelado')
 
             if pack.batch_delivery_id :
-                raise ValueError('No puedes cambiar en un paquete que ya está en una orden de carga')
+                raise exceptions.ValidationError('No puedes cambiar en un paquete que ya está en una orden de carga')
 
             moves = pack.move_line_ids.mapped('move_id')
             moves.write(vals)
             moves.assign_picking()
+
+    @api.multi
+    def picking_pack_lines(self):
+        picking_type_id = self.env['stock.picking.type'].search([('code', '=', 'outgoing'), ('group_code', '=', 'packaging')], limit=1)
+        # crea un stock picking para las líneas de los m0vimientos
+        move_ids = self.env['stock.move']
+        lines = self.mapped('packaging_line_ids')
+        partner_id = self.mapped('move_line_ids').mapped('partner_id')
+        if len(partner_id)!=1:
+            raise ValueError(_('No puedes crearlo de varios clientes al mismo tiempos'))
+        moves = {}
+        for line in lines:
+            if line.product_id in moves:
+                moves[line.product_id].product_qty += line.qty
+            else:
+                val = {
+                    'name': line.product_id.display_name,
+                    'partner_id': partner_id.id,
+                    'product_id': line.product_id.id,
+                    'product_uom': line.product_id.uom_id.id,
+                    'product_uom_qty': line.qty,
+                    'location_id': picking_type_id.default_location_src_id.id,
+                    'location_dest_id': picking_type_id.default_location_dest_id.id,
+                    'picking_type_id': picking_type_id.id
+                }
+
+                new_move = move_ids.create(val)
+                new_move._action_confirm()
+                new_move._action_assign()
+                new_move._assign_picking()
+                moves[line.product_id] = new_move
+                move_ids |= new_move
+
+
+        picking_id = move_ids.mapped('picking_id')
+
+        new_batch_vals = {
+            'name': picking_id.name,
+            'partner_id': picking_id.partner_id.id,
+            #'location_id': picking_id.location_id.id,
+            #'location_dest_id': picking_id.location_dest_id.id,
+            'picking_type_id': picking_type_id.id,
+            'picking_ids': [(6,0, [picking_id.id])]
+        }
+        batch = self.env['stock.batch.picking'].create(new_batch_vals)
+        batch.action_transfer()
+        return batch
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

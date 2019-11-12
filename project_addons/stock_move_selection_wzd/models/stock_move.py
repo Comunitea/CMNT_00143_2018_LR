@@ -6,6 +6,7 @@ from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 from .stock_picking_type import PICKING_TYPE_GROUP
 from .stock_picking_type import SGA_STATES
+from odoo.osv import expression
 
 class StockMove(models.Model):
     _inherit = 'stock.move'
@@ -51,6 +52,7 @@ class StockMove(models.Model):
                                         copy=False)
     lot_id = fields.Many2one('stock.production.lot', 'Lote')
     dunmy_picking_id = fields.Many2one('stock.picking', 'Transfer Reference', store=False)
+    dunmy_route_group_id = fields.Many2one('delivery.route.path.group', 'Grupo de entrega', store=False)
     sga_integrated = fields.Boolean(related="picking_type_id.sga_integrated")
     sga_state = fields.Selection(SGA_STATES, default='no_integrated', string="SGA Estado", copy=False)
     batch_delivery_id = fields.Many2one('stock.batch.delivery', string='Orden de carga', copy=False, store=True)
@@ -66,7 +68,7 @@ class StockMove(models.Model):
 
     visible_count_move_to_pick = fields.Boolean(related='picking_type_id.visible_count_move_to_pick')
     visible_count_move_unpacked = fields.Boolean(related='picking_type_id.visible_count_move_unpacked')
-    orig_picking_id = fields.Many2one(related='move_orig_ids.picking_id', string="Expedición")
+    orig_picking_id = fields.Many2one(related='move_orig_ids.picking_id', string="Expedición SGA")
 
     @api.depends('state', 'picking_id')
     def _compute_is_initial_demand_editable(self):
@@ -183,6 +185,10 @@ class StockMove(models.Model):
         return action
 
     @api.multi
+    def button_unlink_from_batch(self):
+        self.write({'draft_batch_picking_id': False})
+
+    @api.multi
     def action_add_to_batch_picking(self):
         to_add = self.filtered(lambda x: x.state != 'done' and not x.draft_batch_picking_id).get_affected_moves()
         to_remove = self.filtered(lambda x: x.state != 'done' and  x.draft_batch_picking_id).get_affected_moves()
@@ -199,15 +205,18 @@ class StockMove(models.Model):
             action = wzd_id.get_formview_action()
             action['target'] = 'new'
             return action
-            action = self.env.ref('stock_move_selection_wzd.open_view_create_batch_picking').read()[0]
-            action['res_id'] = wzd_id.id
-            return action
-
 
     @api.model
     def search(self, args, offset=0, limit=None, order=None, count=False):
-        new_args = args.copy()
 
+        new_args = args.copy()
+        if self._context.get('dunmy_route_group_id', False):
+            group_ids = self.env['delivery.route.path.group'].search(
+                [('name', 'ilike', self._context['dunmy_route_group_id'])])
+            if group_ids:
+                route_ids = [('delivery_route_path_id', 'in', group_ids.mapped('route_path_ids').ids)]
+
+                new_args = expression.AND([route_ids, new_args])
         move_lines = False
         for arg in new_args:
             if arg[0] == 'ghost_qty_done':
@@ -216,11 +225,11 @@ class StockMove(models.Model):
                 arg[2] = '0'
                 move_lines = True
 
-        if move_lines:
-            moves = self.env['stock.move'].search_read(new_args, ['id'])
-            line_ids = [('id', 'in', [x['id'] for x in moves]), ('qty_done', '>', 0)]
-            moves = self.env['stock.move.line'].search_read(line_ids, ['move_id'])
-            new_args = [('id', 'in', [x['move_id'][0] for x in moves])]
+            if move_lines:
+                moves = self.env['stock.move'].search_read(new_args, ['id'])
+                line_ids = [('id', 'in', [x['id'] for x in moves]), ('qty_done', '>', 0)]
+                moves = self.env['stock.move.line'].search_read(line_ids, ['move_id'])
+                new_args = expression.AND([('id', 'in', [x['move_id'][0] for x in moves]), new_args])
         return super().search(new_args, offset=offset, limit=limit, order=order, count=count)
 
 
@@ -385,7 +394,7 @@ class StockMove(models.Model):
 
     def _action_done(self):
         res = super()._action_done()
-        for move in self.filtered(lambda x: x.sga_state != 'done'):
+        for move in self.filtered(lambda x: x.sga_state not in ('no_integrated', 'done')):
             move.sga_state = 'done'
         return res
 
@@ -417,3 +426,7 @@ class StockMove(models.Model):
 
 
 
+    def get_batch_domain(self):
+        domain = super().get_batch_domain()
+        domain += [('batch_delivery_id', '=', False)]
+        return domain

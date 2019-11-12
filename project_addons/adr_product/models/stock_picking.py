@@ -8,6 +8,8 @@ from odoo import models, fields, api, _
 class StockPicking(models.Model):
     _inherit = "stock.picking"
 
+    _order = "name, id"
+
     @api.multi
     def _get_adr_picking_value(self):
         for pick in self:

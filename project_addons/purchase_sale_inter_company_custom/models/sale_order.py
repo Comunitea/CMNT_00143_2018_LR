@@ -11,7 +11,6 @@ class SaleOrder(models.Model):
     def get_default_autoconfirm_ic(self):
         return self.env.user.company_id.auto_confirm_ic_ops
 
-
     @api.multi
     def write_ic_values(self):
         for ic_so in self:
@@ -82,5 +81,7 @@ class SaleOrderLine(models.Model):
             return qty
         return super(SaleOrderLine, self.filtered(lambda x: not x.ic_move_ids))._get_delivered_qty()
 
-
+    @api.onchange('product_uom_qty', 'product_uom', 'route_id')
+    def _onchange_product_id_check_availability(self):
+        super()
 

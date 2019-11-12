@@ -54,8 +54,7 @@ class StockMove(models.Model):
 
     def _get_new_picking_values(self):
         vals = super(StockMove, self)._get_new_picking_values()
-        if self.payment_term_id:
-            vals.update(payment_term_id=self.payment_term_id.id)
+        vals.update(self.update_info_route_vals())
         return vals
 
 

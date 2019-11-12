@@ -21,83 +21,70 @@
             <form string="Grupos">
                 <separator string="Grupos de albaranes"/>
                 <label string="Gestión de movimientos y albaranes en grupos. "/>
-                <br/>
-                <br/>
-                <group>
-                    <field name="id"/>
-                    <field name="batch_picking_id" domain="[('state', 'in', ('draft', 'assigned')), ('picking_type_id', '=', picking_type_id)]"/>
-                    <field name="picking_type_id" required="1"/>
-                    <field name="sga_integrated" invisible="1"/>
-                    <field name="date"/>
-                    <field name="picker_id"/>
+                <group invisible="context.get('hide_conf_vals', False)">
+                    <group>
+                        <field name="id" invisible="1"/>
+                        <field name="batch_picking_id" domain="[('state', 'in', ('draft', 'assigned')), ('picking_type_id', '=', picking_type_id)]"/>
+                        <field name="picking_type_id" required="1" readonly="1"/>
+                        <field name="sga_integrated" invisible="1"/>
+                        <field name="date"/>
+                        <field name="picker_id"/>
+                    </group>
+                    <group>
+                        <field name="shipping_type" attrs="{'readonly': [('batch_picking_id', '=', False)]}"/>
+                        <field name="delivery_route_path_id" attrs="{'readonly': [('batch_picking_id', '=', False)]}"/>
+                        <field name="carrier_id" attrs="{'readonly': [('batch_picking_id', '=', False)]}"/>
+                        <field name="payment_term_id" attrs="{'readonly': [('batch_picking_id', '=', False)]}"/>
+                    </group>
                 </group>
-                <group>
-                    <field name="shipping_type" readonly="1"/>
-                    <field name="delivery_route_path_id" readonly="1"/>
-                    <field name="carrier_id" readonly="1"/>
-                    <field name="payment_term_id" readonly="1"/>
-                </group>
+
                 <label for="notes"/>
                 <field name="notes"/>
                 <notebook>
-                    <!--page string="Albaranes para añadir">
-                        <field name="new_picking_ids" >
-                            <tree>
-                                <field name="state"/>
-                                <field name="name"/>
-                                <field name="picking_type_id"/>
-
-                            </tree>
-                        </field>
-                    </page>
-                    <page string="Albaranes en la agrupación">
-                        <field name="batch_picking_ids">
-                            <tree>
-                                <field name="state"/>
-                                <field name="name"/>
-                                <field name="picking_type_id"/>
-                            </tree>
-                        </field>
-                    </page>
-                    <page string="Movimientos SGA" attrs="{'invisible': [('sga_integrated','=', False)]}">
-                        <field name="moves_to_sga">
-                            <tree
-                                decoration-success="sga_state=='ready'"
-                                decoration-primary="sga_state=='no_send'"
-                                decoration-danger="sga_state not in ('ready', 'no_send', 'done')">
-
-                                <field name="origin"/>
-                                <field name="product_id"/>
-                                <field name="product_uom_qty"/>
-                                <field name="state" invisible="0"/>
-                                <field name="sga_state" invisible="0"/>
-                                <button
-                                        name="action_set_envio_sga"
-                                        string="Marcar para alternar envio a SGA"
-                                        type="object"
-                                        icon="fa-rss"
-                                        attrs="{'context': 'ready'}"
-                                        />
-
-                            </tree>
-                        </field>
-                    </page-->
-
                     <page string="Movimientos" >
-                        <field name="move_ids" create="false" edit="false" delete="true">
-                            <tree>
+                        <field name="move_ids" create="false" delete="0">
+                            <tree   editable="bottom" decoration-warning="selected==False"
+                                    decoration-muted="draft_batch_picking_id==False"
+                                    decoration-success="draft_batch_picking_id!=False">
+                                <field name="selected"/>
+                                <field name="origin" readonly="1"/>
+                                <field name="info_route_str" readonly="1"/>
+                                <field name="product_id" readonly="1"/>
+                                <field name="product_uom_qty" readonly="1"/>
+                                <field name="result_package_id" readonly="1"/>
+                                <field name="state" readonly="1"/>
+                                <field name="draft_batch_picking_id" invisible="1" readonly="1"/>
+                            </tree>
+                        </field>
+                    </page>
+                    <page string="Pedidos" >
+                        <field name="picking_ids" create="false" edit="false" delete="0">
+                            <tree decoration-muted="draft_batch_picking_id==False"
+                                decoration-success="draft_batch_picking_id!=False">
+                            <button name="button_unlink_from_batch"
+                                string="Eliminar del batch"
+                                type="object"
+                                icon="fa-trash"
+                                groups="base.group_user"
+                                class="text-danger"
+                                    />
+                                <field name="draft_batch_picking_id" invisible="1"/>
                                 <field name="origin"/>
-                                <field name="product_id"/>
-                                <field name="product_uom_qty"/>
+                                <field name="info_route_str"/>
+                                <field name="name"/>
+                                <field name="count_move_lines"/>
+                                <field name="partner_id"/>
                                 <field name="state"/>
                             </tree>
                         </field>
                     </page>
+
                 </notebook>
                 <footer>
                     <button name="action_create_batch" context="{'send': False}" string="Crear batch" type="object" class="oe_highlight" attrs="{'invisible': [('batch_picking_id','!=', False)]}"/>
                     <button name="action_create_batch" context="{'send': True}"  string="Crear y enviar a Sga" type="object" attrs="{'invisible': ['|', ('sga_integrated','=', False), ('batch_picking_id','!=', False)]}"/>
-                    <button name="action_assign_batch" string="Asignar grupo" type="object" attrs="{'invisible': [('batch_picking_id','=', False)]}"/>
+                    <button name="action_assign_batch" context="{'reload': True}" string="Asignar grupo" type="object" attrs="{'invisible': [('batch_picking_id','=', False)]}"/>
+                    <button name="action_apply_info_envio" string="Aplicar Info envío" type="object" attrs="{'invisible': [('batch_picking_id','=', False)]}"/>
                     <button string="Cancel" class="oe_link" special="cancel"/>
                 </footer>
             </form>

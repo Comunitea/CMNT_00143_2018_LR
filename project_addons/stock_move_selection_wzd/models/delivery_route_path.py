@@ -12,8 +12,7 @@ class DeliveryRoutePath(models.Model):
     description = fields.Char("Description")
     day_ids = fields.Many2many('delivery.route.path.day')
     plate_ids = fields.Many2many('delivery.plate')
-
-
+    group_ids = fields.Many2many('delivery.route.path.group', string="Rutas en el grupo")
 class DeliveryPlate(models.Model):
     _name = 'delivery.plate'
 
@@ -27,3 +26,10 @@ class DeliveryRoutePathDay(models.Model):
 
     sequence = fields.Integer('Sequence')
     name = fields.Char('Day')
+
+class DeliveryRoutePathGroup(models.Model):
+
+    _name = 'delivery.route.path.group'
+
+    name = fields.Char('Grupo')
+    route_path_ids = fields.Many2many('delivery.route.path', string="Rutas en el grupo")

@@ -16,7 +16,7 @@
             </xpath>
         </field>
     </record>
-    <delete id="stock_move_selection_wzd.action_moves_assign_batch" model="ir.actions.server"/>
+    <!--delete id="stock_move_selection_wzd.action_moves_assign_batch" model="ir.actions.server"/-->
     <!--record id="action_moves_assign_batch" model="ir.actions.server">
         <field name="name">Asignar carta de porte</field>
         <field name="model_id" ref="stock.model_stock_move"/>
@@ -24,7 +24,7 @@
         <field name="state">code</field>
         <field name="code">records.move_assign_batch_delivery()</field>
     </record-->
-    <delete id="stock_move_selection_wzd.action_moves_DEassign_batch" model="ir.actions.server"/>
+    <!--delete id="stock_move_selection_wzd.action_moves_DEassign_batch" model="ir.actions.server"/-->
     <!--record id="action_moves_DEassign_batch" model="ir.actions.server">
         <field name="name">Desasignar carta de porte</field>
         <field name="model_id" ref="stock.model_stock_move"/>
@@ -68,6 +68,51 @@
             </field>
         </field>
     </record>
+    <!--record id = "view_move_short_tree_sel" model = "ir.ui.view">
+        <field name="name">stock.move.tree.short.sel</field>
+        <field name="model">stock.move</field>
+        <field name="arch" type="xml">
+            <tree decoration-muted="draft_batch_picking_id==False"
+                  decoration-success="draft_batch_picking_id!=False">
+                <field name="sale_id" string="Venta" invisible="not context.get('group_code', False) in ('outgoing', 'picking')"/>
+                <field name="purchase_id" string="Compra" invisible="not context.get('group_code', False) in ('incoming', 'location')"/>
+                <field name="picking_id"/>
+                <field name="info_str_route"/>
+                <field name="name"/>
+                <field name="product_uom_qty"/>
+                <field name="reserved_availability" invisible="context.get('hide_reserved_availability', False)"/>
+                <field name="quantity_done" options='{"fg_color": "green: quantity_done &gt; 0.00"}'/>
+                <field name="location_id" invisible="context.get('group_code', False) in ('outgoing', 'incoming')"/>
+                <field name="location_dest_id" invisible="not context.get('group_code', False) in ('picking', 'internal', 'location', 'reposition')"/>
+                <field name="result_package_id" attrs="{'invisible': [('visible_count_move_unpacked', '=', False)]}"/>
+                <field name="payment_term_id" invisible="1"/>
+                <field name="shipping_type" invisible="1"/>
+                <field name="delivery_route_path_id" invisible="1"/>
+                <field name="carrier_id" invisible="1"/>
+                <field name="visible_count_move_unpacked" invisible="1"/>
+                <field name="sga_integrated" invisible="1"/>
+                <field name="code" invisible="1"/>
+                <field name="draft_batch_picking_id" invisible="1"/>
+                <field name="group_code" invisible="1"/>
+                <field name="state"/>
+                <button name="action_unlink_from_batch"
+                        string="Eliminar del listado"
+                        type="object"
+                        icon="fa-truck"
+                        class="text-primary"
+                        attrs="{'invisible': [('draft_batch_picking_id', '=', 'False')]}"
+                        />
+                <button name="action_link_from_batch"
+                        string="Asignar del listado"
+                        type="object"
+                        icon="fa-truck"
+                        class="text-primary"
+                        attrs="{'invisible': [('draft_batch_picking_id', '=', 'False')]}"
+                        />
+            </tree>
+        </field>
+    </record-->
+
 
      <record id="view_move_line_tree_sel" model="ir.ui.view">
         <field name="name">stock.move.tree.sel</field>
@@ -207,6 +252,7 @@
                 <field name="payment_term_id" />
                 <field name="shipping_type" />
                 <field name="delivery_route_path_id"/>
+                <field name="dunmy_route_group_id" context="{'dunmy_route_group_id': self}"/>
                 <field name="sale_id" groups="stock.group_stock_multi_locations"/>
                 <field name="package_id"/>
                 <field name="result_package_id"/>

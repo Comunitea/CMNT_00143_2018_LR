@@ -1,3 +1,25 @@
+# Intrucciones para Instalación de Oracle_fdw:
+
+1. Instalamos las dependencias
+
+sudo apt-get install postgresql-server-dev-all
+sudo apt-get install postgresql-common
+
+2. Seguimos la guía:
+
+https://mikesmithers.wordpress.com/2011/04/03/oracle-instant-client-on-ubuntu-with-added-aliens/
+
+
+3. Descargamos Oracle_fdw:
+
+https://github.com/laurenz/oracle_fdw
+
+4. Instalamos:
+
+make
+make install (si no tiene permisos utilizamos sudo)
+
+
 # Intrucciones para conectar Postgresql con Oracle:
 
 Paso 1: Oracle_fdw

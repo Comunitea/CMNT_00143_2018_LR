@@ -26,3 +26,6 @@
 "__export__.sgavar_file_25_z02s9t8y","False","152","Stock Batch Picking, líneas","","Stock Move Line","mrp.model_stock_move_line","","SBL","SBL/0","0"
 "__export__.sgavar_file_26_9a4he3z2","False","679","Stock Batch Picking Confirmation","","Stock Batch Picking","stock_picking_group.model_stock_batch_picking","","SBP","SBP/1","1"
 "__export__.sgavar_file_27_3ao6r92t","False","152","Stock Batch Picking Confirmation, líneas","","Stock Move Line","mrp.model_stock_move_line","","SBC","SBC/0","0"
+"__export__.sgavar_file_28_4099139e","False","300","Batch de recepción", "", "stock.batch.picking", "stock_picking_group.model_stock_batch_picking", "","INS", "INS/0","0"
+"__export__.sgavar_file_29_1e0d23ee","False","139","Confirmación de recepción batch", "", "stock.batch.picking", "stock_picking_group.model_stock_batch_picking", "","INS", "INS/1","1"
+"__export__.sgavar_file_30_1897a3c6","False","110","Líneas de recepción, batch", "", "stock.move.line", "mrp.model_stock_move_line", "","OSL", "OSL/0","0"

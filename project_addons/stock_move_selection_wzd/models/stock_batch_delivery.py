@@ -14,7 +14,7 @@ class StockBatchDelivery(models.Model):
     _inherit = ['info.route.mixin', 'mail.thread', 'mail.activity.mixin']
     _name = 'stock.batch.delivery'
 
-    @api.depends('move_lines.date_expected')
+    #@api.depends('move_lines.date_expected')
     @api.multi
     def _get_dates(self):
         for batch in self:
@@ -27,7 +27,7 @@ class StockBatchDelivery(models.Model):
             batch.move_lines.write({'date_expected': batch.date_expected})
 
     @api.model
-    def _get_batch_domain(self):
+    def get_batch_domain(self):
         bp = self and self[0]
         if bp:
             domain = [('state', 'in', ('assigned', 'done')), ('picking_type_id', '=', bp.picking_type_id.id)]
@@ -88,7 +88,7 @@ class StockBatchDelivery(models.Model):
                                 },
                                 readonly=True,
                                 compute = '_get_picking_ids',
-                                domain=_get_batch_domain)
+                                domain= get_batch_domain)
     picking_ids = fields.One2many(
         'stock.picking', string='Albaranes',
         compute='_get_picking_ids',
@@ -96,9 +96,8 @@ class StockBatchDelivery(models.Model):
     )
     count_picking_ids = fields.Integer('Nº albaranes', compute='_get_picking_ids')
     move_lines = fields.One2many(
-        'stock.move',
+        'stock.move', 'batch_delivery_id',
         string='Movimientos',
-        compute='_get_picking_ids',
         help='List of picking related to this batch.'
     )
     count_move_lines = fields.Integer('Nº líneas', compute='_get_picking_ids')
@@ -123,22 +122,25 @@ class StockBatchDelivery(models.Model):
                                       help='Carrier driver for this batch picking.',
                                       domain="[('route_driver', '=', True)]")
     plate_id = fields.Many2one('delivery.plate', string='Matrícula', help='Plate for this batch picking.')
-
-    carrier_id = fields.Many2one("delivery.carrier", string="Carrier")
-    #shipping_type = fields.Selection(selection=SHIPPING_TYPE_SEL, compute='compute_route_fields', inverse='set_route_fields', store=True)
-    #delivery_route_path_id = fields.Many2one('delivery.route.path', compute='compute_route_fields',
-     #                                      inverse='set_route_fields', store=True)
     company_id = fields.Many2one(
         'res.company', 'Company',
         default=lambda self: self.env['res.company']._company_default_get(),
         index=True, required=True)
-    #info_route_str = fields.Char('Info ruta')#, compute='get_info_route')
+    carrier_id = fields.Many2one("delivery.carrier", string="Carrier", compute='compute_route_fields',
+                                 inverse='set_route_fields')
+    shipping_type = fields.Selection(compute='compute_route_fields', inverse='set_route_fields', store=True)
+    delivery_route_path_id = fields.Many2one('delivery.route.path', compute='compute_route_fields',
+                                             inverse='set_route_fields', store=True)
+    payment_term_id = fields.Many2one('account.payment.term', string='Plazos de pago', compute='compute_route_fields',
+                                      inverse='set_route_fields', store=True)
 
-
-    @api.depends('state', 'move_lines.shipping_type', 'move_lines.delivery_route_path_id', 'move_lines.carrier_id')
+    @api.multi
+    @api.depends('move_lines.shipping_type', 'move_lines.delivery_route_path_id', 'move_lines.carrier_id')
     def compute_route_fields(self):
-        for batch in self:
-            moves = batch.move_lines
+        for pick in self:
+            moves = pick.move_lines
+            # if any(move.state == 'done' for move in moves):
+            #    raise ValidationError (_('No puedes cambiar en movimientos ya realizados'))
             if moves:
                 shipping_type_ids = []
                 for move in moves:
@@ -146,41 +148,45 @@ class StockBatchDelivery(models.Model):
                         continue
                     shipping_type_ids.append(move.shipping_type)
                 if shipping_type_ids[0] and len(shipping_type_ids) == 1:
-                    batch.shipping_type = shipping_type_ids[0]
+                    pick.shipping_type = shipping_type_ids[0]
                 delivery_route_path_ids = moves.mapped('delivery_route_path_id')
                 if len(delivery_route_path_ids) == 1:
-                    batch.delivery_route_path_id = delivery_route_path_ids[0]
+                    pick.delivery_route_path_id = delivery_route_path_ids[0]
                 carrier_ids = moves.mapped('carrier_id')
                 if len(carrier_ids) == 1:
-                    batch.carrier_id = carrier_ids[0]
+                    pick.carrier_id = carrier_ids[0]
+                payment_term_ids = moves.mapped('payment_term_id')
+                if len(payment_term_ids) == 1:
+                    pick.payment_term_id = payment_term_ids[0]
 
     def check_allow_change_route_fields(self):
-
-        if any(move.state == 'done' for move in self.move_lines) and not self._context.get(
-                'force_route_vals', False):
-            raise ValidationError(_('No puedes cambiar en movimientos de una orden de carga'))
+        if any(move.state == 'done' for move in self.move_lines):
+            raise ValidationError(_('No puedes cambiar en movimientos ya realizados'))
         return True
 
     @api.multi
     def set_route_fields(self):
+        for pack in self:
+            pack.check_allow_change_route_fields()
+            moves = pack.move_line_ids.mapped('move_id')
 
-        ctx = self._context.copy()
-        ctx.update(force_route_vals=True)
-        for batch in self.with_context(ctx):
-            batch.check_allow_change_route_fields()
-            moves = batch.move_lines
-            moves.write({
-                'shipping_type': batch.shipping_type,
-                'delivery_route_path_id': batch.delivery_route_path_id.id,
-                'carrier_id': batch.carrier_id.id
-            })
+            vals = {}
+            if pack.shipping_type:
+                vals.update({'shipping_type': pack.shipping_type})
+            if pack.delivery_route_path_id:
+                vals.update({'delivery_route_path_id': pack.delivery_route_path_id.id})
+            if pack.carrier_id:
+                vals.update({'carrier_id': pack.carrier_id.id})
+            if pack.payment_term_id:
+                vals.update({'payment_term_id': pack.payment_term_id.id})
+            moves.write(vals)
 
     @api.multi
     def _get_picking_ids(self):
 
         for out_batch in self:
             print ("Batch: {}".format(out_batch.name))
-            out_batch.move_lines = self.env['stock.move'].search([('batch_delivery_id', '=', out_batch.id)])
+            #out_batch.move_lines = self.env['stock.move'].search([('batch_delivery_id', '=', out_batch.id)])
             out_batch.picking_ids = out_batch.move_lines.mapped('picking_id')
             out_batch.batch_ids = out_batch.move_lines.mapped('batch_id')
             out_batch.move_lines_ids = out_batch.move_lines.mapped('move_line_ids')
@@ -212,7 +218,7 @@ class StockBatchDelivery(models.Model):
 
     @api.multi
     def action_view_stock_batch_picking(self):
-        batch_ids = self.move_lines.mapped("draft_batch_picking_id")
+        batch_ids = self.move_lines.mapped("batch_picking_id")
         self.ensure_one()
         action = self.env.ref('stock_batch_picking.action_stock_batch_picking_tree').read([])[0]
         action['domain'] = [('id', 'in', batch_ids.ids)]
