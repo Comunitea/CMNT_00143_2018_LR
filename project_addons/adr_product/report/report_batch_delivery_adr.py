@@ -4,7 +4,6 @@
 
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
-from pprint import pprint
 
 
 class BatchDeliveryCustomReport(models.AbstractModel):
@@ -116,7 +115,7 @@ class BatchDeliveryCustomReport(models.AbstractModel):
 
         partner_string = "{} {} {} - {} - {} - {}".format(partner_id.name, partner_id.street if partner_id.street else '', \
             partner_id.street2 if partner_id.street2 else '', partner_id.zip if partner_id.zip else '', \
-            partner_id.state_id if partner_id.state_id else '', partner_id.country_id if partner_id.country_id else '')
+            partner_id.state_id.name if partner_id.state_id else '', partner_id.country_id.name if partner_id.country_id else '')
         
         pickings = []
 
@@ -127,8 +126,8 @@ class BatchDeliveryCustomReport(models.AbstractModel):
         kgs_picking_11364 = 0.0
 
         for move in move_lines:
-            move_string = "{} [{}/{}]".format(move.picking_id.name, move.product_id.product_tmpl_id.adr_idnumonu.acc_signals, \
-                move.product_id.product_tmpl_id.adr_idnumonu.numero_onu)
+            move_string = "{} [{}/{}]".format(move.picking_id.name, move.product_id.product_tmpl_id.adr_idnumonu.acc_signals or '', \
+                move.product_id.product_tmpl_id.adr_idnumonu.numero_onu or '')
             pickings.append(move_string)
         
             if not move.product_id.product_tmpl_id.adr_exe22315 and not move.product_id.product_tmpl_id.adr_idnumonu.qty_limit > 0:
@@ -154,12 +153,12 @@ class BatchDeliveryCustomReport(models.AbstractModel):
         weight_11364 = 0.0
 
         cat_weight = [0.0,0.0,0.0,0.0,0.0]
-        cat_weight_11363 = [0.0,0.0,0.0,0.0,0.0]
-        cat_weight_11364 = [0.0,0.0,0.0,0.0,0.0]
 
         for cat_id in [1,2,3,4]:
             cat_weight_11363 = 0.0
             cat_weight_11364 = 0.0
+            cat_weight[cat_id] = 0.0
+            
             for move_line in move_line_ids.filtered(lambda x: x.product_id.product_tmpl_id.adr_idnumonu.\
                 adr_category_id.id == cat_id):
                 real_weight = real_weight + move_line.product_id.product_tmpl_id.weight*move_line.qty_done
@@ -170,9 +169,9 @@ class BatchDeliveryCustomReport(models.AbstractModel):
                     weight_11364 = weight_11364 + \
                         move_line.product_id.product_tmpl_id.adr_weight_x_kgrs_11364*move_line.qty_done
                     cat_weight_11363 = cat_weight_11363 + move_line.product_id.product_tmpl_id.adr_weight_x_kgrs_11363*move_line.qty_done
-                    cat_weight_11364 = cat_weight_11363 + move_line.product_id.product_tmpl_id.adr_weight_x_kgrs_11364*move_line.qty_done
+                    cat_weight_11364 = cat_weight_11364 + move_line.product_id.product_tmpl_id.adr_weight_x_kgrs_11364*move_line.qty_done
                 else:
-                    cat_weight[cat_id] = cat_weight[cat_id] if cat_weight[cat_id] else 0.0 + move_line.product_id.product_tmpl_id.weight*move_line.qty_done
+                    cat_weight[cat_id] = cat_weight[cat_id] + move_line.product_id.product_tmpl_id.weight*move_line.qty_done
 
             if exec_type == '1136x':
                 cat_weight[cat_id] = {
@@ -246,10 +245,10 @@ class BatchDeliveryCustomReport(models.AbstractModel):
             
             packages = len(moves.mapped('result_package_id'))
               
-            product_string = "UN {} {} ({}) {} {} ({}) {}".format(product.product_tmpl_id.adr_idnumonu.numero_onu, \
-                product.product_tmpl_id.adr_idnumonu.official_name, product.product_tmpl_id.adr_denomtecnica, \
-                product.product_tmpl_id.adr_idnumonu.acc_signals or product.product_tmpl_id.adr_idnumonu.ranking, \
-                product.product_tmpl_id.adr_idnumonu.packing_group, product.product_tmpl_id.adr_idnumonu.t_code, \
+            product_string = "UN {} {} ({}) {} {} ({}) {}".format(product.product_tmpl_id.adr_idnumonu.numero_onu or '', \
+                product.product_tmpl_id.adr_idnumonu.official_name or '', product.product_tmpl_id.adr_denomtecnica or '', \
+                product.product_tmpl_id.adr_idnumonu.acc_signals or product.product_tmpl_id.adr_idnumonu.ranking or '', \
+                product.product_tmpl_id.adr_idnumonu.packing_group or '', product.product_tmpl_id.adr_idnumonu.t_code or '', \
                 '*Peligroso para el medioambiente' if product.product_tmpl_id.adr_peligroma else '')
             
             if exec_type == '11363':   
@@ -259,7 +258,7 @@ class BatchDeliveryCustomReport(models.AbstractModel):
             else:
                 product_weight = "Peso: {} Kg.".format(qty_done*product.product_tmpl_id.weight)
             product_qty = "Bultos: {} Uds: {}".format(packages, qty_done)
-            product_box = "Descripción embalaje: {}".format(product.product_tmpl_id.adr_bultodesc)
+            product_box = "Descripción embalaje: {}".format(product.product_tmpl_id.adr_bultodesc or '')
 
             product_data.append({
                 'product_string': product_string,

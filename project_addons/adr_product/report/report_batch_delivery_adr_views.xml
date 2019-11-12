@@ -173,10 +173,10 @@
                 
             </div>
 
-            <div class="row" t-if="exec22315_data" style="background-color:#fff !important; padding-top: 10px; border-top: solid 1px black;">
+            <div class="row" t-if="len(exec22315_data['move_lines']) > 0" style="background-color:#fff !important; padding-top: 10px; border-top: solid 1px black;">
             </div>
 
-            <div class="row" t-if="exec22315_data" style="background-color:#fff !important; border-left: solid 1px black; border-right: solid 1px black;">
+            <div class="row" t-if="len(exec22315_data['move_lines']) > 0" style="background-color:#fff !important; border-left: solid 1px black; border-right: solid 1px black;">
                 <div class="col-xs-12 text-center" style="border-bottom: solid 1px black; border-top: solid 1px black;">
                     Exención 2.2.3.1.5
                 </div>
@@ -206,10 +206,10 @@
                 
             </div>
 
-            <div class="row" t-if="execlq_data" style="background-color:#fff !important; padding-top: 10px; border-top: solid 1px black;">
+            <div class="row" t-if="len(execlq_data['move_lines']) > 0" style="background-color:#fff !important; padding-top: 10px; border-top: solid 1px black;">
             </div>
 
-            <div class="row" t-if="execlq_data" style="background-color:#fff !important; border-left: solid 1px black; border-right: solid 1px black; border-bottom: solid 1px black;">
+            <div class="row" t-if="len(execlq_data['move_lines']) > 0" style="background-color:#fff !important; border-left: solid 1px black; border-right: solid 1px black; border-bottom: solid 1px black;">
                 <div class="col-xs-12 text-center" style="border-bottom: solid 1px black; border-top: solid 1px black;">
                     Exención por cantidad limitada (LQ)
                 </div>
