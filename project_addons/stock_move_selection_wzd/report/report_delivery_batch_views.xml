@@ -107,8 +107,8 @@
                         <span  class="col-xs-12" t-esc="partner['str_pick']"/>
                         <span  class="col-xs-12" style="padding: 0px">
                             <t t-foreach="partner['manual_moves']" t-as="line">
-                                <span  class="col-xs-2" style="padding: 0px" t-esc="line.quantity_done"/>
-                                <span  class="col-xs-2" style="padding: 0px" t-esc="line.product_id.name"/>
+                                <span  class="col-xs-2" style="padding: 2px" t-esc="line.quantity_done"/>
+                                <span  class="col-xs-10" style="padding: 2px" t-esc="line.product_id.name"/>
                             </t>
                         </span>
                     </span>
