@@ -22,3 +22,5 @@ class StockPackOperationSGA(models.Model):
     sga_changed = fields.Boolean ('SGA modified/created', default=False)
     product_tmpl_id = fields.Many2one(related="product_id.product_tmpl_id")
     picking_id = fields.Many2one(related="move_id.picking_id")
+
+    adaia_container = fields.Char()
