@@ -20,8 +20,8 @@ SGA_STATES = [('no_integrated', 'Sin integracion'),
               ('done', 'Realizado'),
               ('cancel', 'Cancelado')]
 
-ODOO_READ_FOLDER = 'Send'
-ODOO_END_FOLDER = 'Receive'
+ODOO_READ_FOLDER = 'Receive'
+ODOO_END_FOLDER = 'Send'
 ODOO_WRITE_FOLDER = 'temp'
 
 class ConfigAdaiaData(models.TransientModel):
@@ -80,3 +80,8 @@ class ConfigAdaiaData(models.TransientModel):
                             os.makedirs(new_path)
                 except:
                     raise UserError("Error creating directories in %s" % self.path_files)
+
+    @api.model
+    def sync_folders(self):
+        super(ConfigAdaiaData, self).sync_folders()
+        self.env['sga.file'].process_sga_files()

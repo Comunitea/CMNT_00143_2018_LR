@@ -17,7 +17,8 @@
         'stock',
         'shipping_type',
         'stock_batch_picking',
-        'stock_move_selection_wzd'
+        'stock_move_selection_wzd',
+        'ftp_folder_sync'
     ],
     'data': [
         'security/ir.model.access.csv',

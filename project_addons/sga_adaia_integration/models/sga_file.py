@@ -10,8 +10,8 @@ import os
 
 DELETE_FILE = False
 ERRORS = 3
-ODOO_READ_FOLDER = 'Send'
-ODOO_END_FOLDER = 'Receive'
+ODOO_READ_FOLDER = 'Receive'
+ODOO_END_FOLDER = 'Send'
 ODOO_WRITE_FOLDER = 'temp'
 
 class AdaiaVars(models.Model):
@@ -221,6 +221,8 @@ class AdaiaFileHeader(models.Model):
             file_prefix = sga_filename.rsplit('.', 1)[0]
             if file_prefix == 'TREXP':
                 return 'OUT'
+            if file_prefix == 'TRREC':
+                return 'INR'
         else:
             return False
 
@@ -230,7 +232,7 @@ class AdaiaFileHeader(models.Model):
             return version
         elif sga_filename:
             file_prefix = sga_filename.rsplit('.', 1)[0]
-            if file_prefix == 'TREXP':
+            if file_prefix == 'TREXP' or file_prefix == 'TRREC':
                 return 1
         else:
             return False
@@ -469,8 +471,12 @@ class AdaiaFileHeader(models.Model):
         try:
             if self.file_code == "OUT":
                 self.write_log("Desde adaia picking OUT ...")
-                process = self.env['stock.picking'].import_adaia_OUT(self.id)
+                process = self.env['stock.picking'].import_adaia(self.id, 'OUT')
                 #process = self.env['stock.batch.picking'].import_adaia_OUT(self.id)
+            
+            if self.file_code == "INR":
+                self.write_log("Desde adaia picking INR ...")
+                process = self.env['stock.picking'].import_adaia(self.id, 'INR')
 
             if process:
                 self.move_file('archive', self.name)
