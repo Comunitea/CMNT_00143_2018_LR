@@ -135,7 +135,7 @@ class StockPicking(models.Model):
             moves.button_unlink_from_batch()
 
     @api.multi
-    def transfer_package(self, package_id, location_dest_id, auto=False):
+    def transfer_package(self, package_id, location_dest_id, auto=False, unpack=False):
 
         picking_id = self.env['stock.picking']
         quant_ids = self.env['stock.quant'].search([('package_id', '=', package_id)])
@@ -164,10 +164,12 @@ class StockPicking(models.Model):
                         'location_dest_id': location_dest_id,
                         'qty_done': quant.quantity,
                         'package_id': package_id,
-                        'result_package_id': package_id,
+                        'result_package_id': unpack and False or package_id,
                         'picking_id': picking_id.id,
                         'product_uom_id': quant.product_uom_id.id
                         }
+            if unpack:
+                sml_vals['result_package_id'] = False
             sml.create(sml_vals)
         if auto:
             picking_id.do_transfer()

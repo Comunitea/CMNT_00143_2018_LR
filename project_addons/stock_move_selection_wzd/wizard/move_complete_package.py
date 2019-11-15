@@ -14,6 +14,7 @@ class MoveCompletePackageWzd(models.TransientModel):
     package_id = fields.Many2one('stock.quant.package', 'Paquete que moveremos')
     location_dest_id = fields.Many2one('stock.location', 'Ubicación de destino')
     auto_transfer = fields.Boolean('Validación automática', default=True)
+    unpack = fields.Boolean('Desempaquetar al mover', default=False)
 
     @api.model
     def default_get(self, fields):
@@ -31,8 +32,8 @@ class MoveCompletePackageWzd(models.TransientModel):
     def move_package(self):
         package = self.package_id.id
         location_dest_id = self.location_dest_id.id
-        auto=self.auto_transfer
-
-        picking_id = self.env['stock.picking'].transfer_package(package, location_dest_id, auto)
+        auto = self.auto_transfer
+        unpack = self.unpack
+        picking_id = self.env['stock.picking'].transfer_package(package, location_dest_id, auto, unpack)
         action = picking_id.get_formview_action()
         return action

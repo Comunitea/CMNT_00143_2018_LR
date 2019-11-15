@@ -16,7 +16,11 @@
 
                 <group string="">
                     <field name="location_dest_id"/>
+                </group>
+                <label string="Opciones del movimiento"/>
+                <group>
                     <field name="auto_transfer"/>
+                    <field name="unpack"/>
 
                 </group>
                 <footer>
