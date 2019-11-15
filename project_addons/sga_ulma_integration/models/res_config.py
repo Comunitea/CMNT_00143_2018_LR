@@ -268,6 +268,10 @@ class ConfigUlmaData(models.TransientModel):
         ## Deletes the cajas table
         self.env.cr.execute("""DROP FOREIGN TABLE ulma_cajas""")
 
+    def drop_server(self):
+        ## Drop server
+        self.env.cr.execute("""DROP SERVER %s CASCADE""" % (self.ulma_database))
+
     @api.model
     def sync_folders(self):
         super(ConfigUlmaData, self).sync_folders()
