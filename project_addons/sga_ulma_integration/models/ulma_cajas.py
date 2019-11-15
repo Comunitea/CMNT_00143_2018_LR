@@ -26,7 +26,7 @@ class UlmaCajas(models.Model):
     def check_packages_from_adaia(self):
         packages = self.search([('confirmado', '=', 'C'), ('procesado', '=', 'N')])
         for package in packages:
-            package_odoo = self.env['stock.quant.package'].search([('name', '=', package.matricula)])
+            package_odoo = self.env['stock.quant.package'].search_read([('name', '=', package.matricula)], fields=['id'])
 
             if package_odoo:
                 if package.tipo.startswith('C') == 1:
@@ -34,7 +34,7 @@ class UlmaCajas(models.Model):
                 else:
                     location_dest_id = self.env['stock.location'].search_read([('ulma_type', '=', 'SUBPAL')], fields=['id'])
 
-                self.env['stock.picking'].transfer_package(package_odoo, package_odoo.location_id.id, location_dest_id)
+                self.env['stock.picking'].transfer_package(package_odoo, location_dest_id)
                 package.update({
                     'procesado': 'Y'
                 })
