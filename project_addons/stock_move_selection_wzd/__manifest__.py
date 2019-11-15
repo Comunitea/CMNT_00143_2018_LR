@@ -40,6 +40,7 @@
         'wizard/config_stock_delivery.xml',
         'wizard/batch_picking_excess.xml',
         'wizard/move_complete_package.xml',
+        'wizard/create_package_picking_from_package.xml',
         'views/menu_views.xml',
     ],
     'installable': True,

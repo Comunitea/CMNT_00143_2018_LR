@@ -74,6 +74,7 @@ class StockQuantPackage(models.Model):
                 pack.info_route_str = pack.get_info_route()
 
     def check_allow_change_route_fields(self):
+        return True
         if any(move.state == 'done' for move in self.move_line_ids):
             raise ValidationError (_('No puedes cambiar en movimientos ya realizados'))
         return True

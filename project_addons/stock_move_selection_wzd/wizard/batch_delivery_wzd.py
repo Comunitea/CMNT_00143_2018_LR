@@ -131,8 +131,11 @@ class StockBatchDeliveryWzd(models.TransientModel):
                 'carrier_id': self.carrier_id.id}
         self.with_context(ctx).packages_ids.write(vals)
         self.with_context(ctx).move_ids.write(vals)
-
         self.move_ids.mapped('picking_id').compute_route_fields()
+        for batch in self.move_ids.mapped('draft_batch_picking_id').filtered(lambda x: x.picking_type_id.code == 'outgoing'):
+            batch.compute_route_fields()
+        for batch in self.move_ids.mapped('batch_picking_id').filtered(lambda x: x.picking_type_id.code == 'outgoing'):
+            batch.compute_route_fields()
         return self.autorefresh()
 
     def autorefresh(self):
@@ -184,7 +187,7 @@ class StockBatchDeliveryWzd(models.TransientModel):
         if moves.filtered(lambda x: x.batch_delivery_id) and len(moves.mapped('batch_delivery_id')) > 2:
             raise ValidationError(_('Algunos movimientos ya tienen orden de carga seleccionada'))
 
-        if moves.filtered(lambda x: x.state not in ('partially_available', 'assigned')):
+        if moves.filtered(lambda x: x.state not in ('partially_available', 'assigned', 'confirmed', 'done')):
             raise ValidationError(_("Tienes movimientos en estado distinto a 'Reservado'"))
 
         vals = {'cancel_delivery': cancel_delivery}

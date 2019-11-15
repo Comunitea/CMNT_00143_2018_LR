@@ -8,6 +8,7 @@ from odoo.exceptions import ValidationError
 
 
 class DeliveryCarrier(models.Model):
+
     _inherit = 'delivery.carrier'
 
     route_ids = fields.Many2many('delivery.route.path', string="Routes")

@@ -24,6 +24,115 @@
             file="stock_move_selection_wzd.delivery_batch_view"
             paperformat="paperformat_delivery_batch_report"
             />
+
+    <template id="external_layout_delivery_LR">
+            <link rel="stylesheet" href="/stock_move_selection_wzd/static/src/css/lr.css"></link>
+            <t t-set="company" t-value="doc.company_id"></t>
+            <div class="header o_boxed_header">
+                <div class="row mb8">
+                    <div class="col-xs-6 text-left mb4">
+                        <img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % to_text(company.logo)"/>
+
+                        <h4 class="mt0" t-field="company.report_header"/>
+                        <div name="company_address" class="mb4">
+                            <span class="company_address" t-field="company.partner_id"
+                                t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'/>
+                        </div>
+                    </div>
+
+                    <div t-if="doc.driver_id != False" class="col-xs-6 text-left mb4">
+                        <div name="driver_address" class="mb4">
+                            <span class="company_address col-xs-12" t-field="doc.driver_id"
+                                t-field-options='{"widget": "contact", "fields": ["address", "name", "vat", "phone"], "no_marker": true}'/>
+
+
+                            <span class="col-xs-12">Matrícula: <span t-if="doc.plate_id" t-field="doc.plate_id.name"/></span>
+                            <span class="col-xs-12">Fecha: <t t-esc="doc.date_done or doc.date"/></span>
+                            <span class="col-xs-12">Peso:  <t t-esc="doc.weight"/> Kgrs.</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="article o_report_layout_boxed">
+              <t t-raw="0" />
+            </div>
+            <div class="footer o_boxed_footer">
+                <div class="text-center">
+                    <ul class="list-inline">
+                        <li t-if="company.phone">Tel: <span t-field="company.phone"/></li>
+                        <li t-if="company.email">Mail: <span t-field="company.email"/></li>
+                        <li t-if="company.website">Web: <span t-field="company.website"/></li>
+                        <li t-if="company.vat"><t t-esc="company.country_id.vat_label or 'TIN'"/>: <span t-field="company.vat"/></li>
+                    </ul>
+                    <div t-field="company.report_footer"/>
+                    <div>
+                        Page: <span class="page"/> / <span class="topage"/>
+                    </div>
+                </div>
+            </div>
+        </template>
+    <template id="body_delivery">
+        <t t-foreach="partner_data" t-as="partner">
+
+            <div class="row" style="border: 1px solid black; padding-left: 0px !important" >
+
+                    <span class="col-xs-4" style="height: 100%; border-right:1px solid black" >
+                        <span  class="col-xs-6" style="padding: 0px">Ruta: <t t-esc="doc.delivery_route_path_id.name"/>
+                        </span>
+                        <span  class="col-xs-2" style="border: 1px solid black; text-align: center; padding: 0px">Bultos</span>
+                        <span  class="col-xs-2" style="border: 1px solid black; text-align: center; padding: 0px">Palets</span>
+                        <span  class="col-xs-2" style="border: 1px solid black; text-align: center; padding: 0px">Pl. Rec.</span>
+
+                        <span  class="col-xs-6" style="padding: 0px">Código: <t t-esc="partner['partner_id'].ref"/> </span>
+                        <span  class="col-xs-2" style="border: 1px solid black; text-align: center; padding: 0px" t-esc="partner['count_package_ids']"/>
+                        <span  class="col-xs-2" style="border: 1px solid black; text-align: center; padding: 0px" t-esc="partner['count_package_packaging_ids']"/>
+                        <span  class="col-xs-2" style="border: 1px solid black; text-align: center; padding: 0px" > - </span>
+                        <span class="col-xs-12" style="padding: 0px">
+                            <span class="col-xs-12"  style="padding: 0px" t-esc="partner['partner_id'].name"/>
+                            <span class="col-xs-12"  style="padding: 0px" t-esc="partner['partner_id'].street"/>
+                            <span class="col-xs-12"  style="padding: 0px" t-esc="partner['partner_id'].street2"/>
+                            <span class="col-xs-12" style="padding: 0px">
+                                <span t-esc="partner['partner_id'].zip"/><span t-esc="partner['partner_id'].city"/>
+                            </span>
+                            <span class="col-xs-12" style="padding: 0px">
+                                <span t-esc="partner['partner_id'].state_id.name"/><span t-esc="partner['partner_id'].country_id.name"/>
+                            </span>
+                        </span>
+
+
+                    </span>
+                    <span class="col-xs-5"  style="height: 100%; border-right:1px solid black; padding: 0px">
+                        <span  class="col-xs-12" style="text-align: center; padding: 0px">Se incluyen los siguientes albaranes</span>
+                        <span  class="col-xs-12" t-esc="partner['str_pick']"/>
+                        <span  class="col-xs-12" style="padding: 0px">
+                            <t t-foreach="partner['manual_moves']" t-as="line">
+                                <span  class="col-xs-2" style="padding: 0px" t-esc="line.qty_done"/>
+                                <span  class="col-xs-2" style="padding: 0px" t-esc="line.product_id.name"/>
+                            </t>
+                        </span>
+                    </span>
+                    <span  class="col-xs-3" style="height: 100%; border-left:1px solid black; padding: 0px">
+                        <span  class="col-xs-12" style="text-align: center; padding: 0px">Recibi conforme:</span>
+                        <span  class="col-xs-12"></span>
+                        <span  class="col-xs-12" >Nº de albaranes: </span>
+                    </span>
+
+
+            </div>
+        </t>
+    </template>
+    <template id="stock_move_selection_wzd.delivery_batch_view">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="stock_move_selection_wzd.external_layout_delivery_LR">
+                    <t t-call="stock_move_selection_wzd.body_delivery"/>
+                </t>
+            </t>
+
+        </t>
+    </template>
+
     <template id="stock_move_selection_wzd.internal_partner_list">
         <t t-set="partner_ids" t-value="partner_ids"/>
         <div class="row" style="background-color:#fff !important;">
@@ -166,7 +275,7 @@
 
 
     </template>
-    <template id="stock_move_selection_wzd.delivery_batch_view">
+    <template id="stock_move_selection_wzd.delivery_batch_view2">
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="doc">
                 <t t-call="stock_move_selection_wzd.internal_layout_LR">

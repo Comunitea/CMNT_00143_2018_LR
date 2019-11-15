@@ -43,6 +43,7 @@ class StockBatchPicking(models.Model):
                     pick.payment_term_id = payment_term_ids[0]
 
     def check_allow_change_route_fields(self):
+        return True
         if any(move.state == 'done' for move in self.move_lines):
             raise ValidationError(_('No puedes cambiar en movimientos ya realizados'))
         return True

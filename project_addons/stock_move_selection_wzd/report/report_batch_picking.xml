@@ -46,8 +46,7 @@
                         </td>
 
                         <td class="td_01">
-                            <t t-if="batch.state=='done'" t-esc="batch.date_done.split()[0]"/>
-                            <t t-if="batch.state!='done'" t-esc="batch.date.split()[0]"/>
+                            <t t-esc="batch.date_done and batch.date_done.split()[0] or batch.date"/>
                         </td>
 
                         <td class="td_01">
@@ -199,22 +198,13 @@
                                     % Portes
                                 </td>
                                 <td style="padding: 4px;text-align: center;  border: 0px">
-                                    Base imponible
+                                    Subtotal
                                 </td>
-                                <td style="padding: 4px;text-align: center; border: 0px">
-                                    Tipo IVA
-                                </td>
-                                <td style="padding: 4px;text-align: center; border: 0px">
-                                    Cuota IVA
-                                </td>
-                                <td style="padding: 4px;text-align: center; border: 0px">
-                                    Tipo Rec
-                                </td>
-                                <td style="padding: 4px;text-align: center; border: 0px">
-                                    Rec
+                                <td style="padding: 4px;text-align: center;  border: 0px">
+                                    Total
                                 </td>
                                  <td style="padding: 4px; text-align: center; border: 0px; background-color: #777777 !important;">
-                                    Total
+                                    Impuestos
                                 </td>
                             </tr>
 
@@ -233,33 +223,32 @@
                                      <span t-field="batch.amount_untaxed"
                                           t-options='{"widget": "monetary", "display_currency": batch.currency_id}' style="font-weight: bold; font-family: Courier New"/>
                                 </td>
-                                <td style="padding: 4px;text-align: center; border: 0px" colspan="2">
-                                    <table>
-                                    <t t-foreach="batch.get_taxes_values().values()" t-as="amount_by_group">
-                                        <tr style="border :0px">
-                                            <td style="padding: 4px;text-align: center; border: 0px">
-                                                <span t-esc="amount_by_group['tax'].name"/>
-                                                <span>&amp;nbsp;<span>on</span>
-                                                    <t t-esc="amount_by_group['base_str']"/>
-                                                </span>
-                                            </td>
-                                            <td style="padding: 4px;text-align: center; border: 0px">
-                                                <span t-esc="amount_by_group['amount_str']"/>
-                                            </td>
-                                        </tr>
-                                    </t>
-                                    </table>
+                                <td style="padding: 4px; text-align: center; border: 0px; background-color: white !important;">
+                                    <span t-field="batch.amount_total"
+                                          t-options='{"widget": "monetary", "display_currency": batch.currency_id}'
+                                          style="font-weight: bold; font-family: Courier New"/>
+                                </td>
+                                <td style="padding: 4px; text-align: center; border: 0px; background-color: white !important;">
+                                    <table style="border:0px; background-color: white !important;">
+                                        <t t-foreach="batch.get_taxes_values().values()" t-as="amount_by_group">
+                                            <tr style="border :0px">
+                                                <td style="padding: 4px;text-align: left; border: 0px">
+                                                    <span t-esc="amount_by_group['tax'].name"/>
+                                                    <span>&amp;nbsp;<span>sobre</span>
+                                                        <t t-esc="amount_by_group['base']"
+                                                           t-options='{"widget": "monetary", "display_currency": batch.currency_id}' style="font-weight: bold; font-family: Courier New"/>
+                                                    </span>
+                                                </td>
+                                                <td style="padding: 4px;text-align: center; border: 0px; background-color: white !important;">
+                                                    <span t-esc="amount_by_group['amount_str']"/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                        </table>
 
                                 </td>
-                                <td style="padding: 4px;text-align: center; border: 0px">
-                                    Tipo Rec
-                                </td>
-                                <td style="padding: 4px;text-align: center; border: 0px">
-                                    Rec
-                                </td>
-                                 <td style="padding: 4px; text-align: center; border: 0px; background-color: white !important;">
-                                    <span t-field="batch.amount_total" t-options='{"widget": "monetary", "display_currency": batch.currency_id}' style="font-weight: bold; font-family: Courier New"/>
-                                </td>
+
+
                             </tr>
 
                         </table>
@@ -382,7 +371,28 @@
                                                     <span t-esc="line['subtotal']"/>
                                                 </td>
                                                 <td width="8%" style="padding: 4px; text-align: center; border: 0px; background-color: white !important;">
-                                                     <span t-esc="line['tax'].amount"/>
+
+                                                   <t t-foreach="line['tax']" t-as="tax">
+                                                       <span class="col-xs-12" t-esc="tax.amount"/>
+                                                   </t>
+                                                    <!--table>
+                                                        <t t-foreach="line['tax']" t-as="amount_by_group">
+                                                            <tr style="border :0px">
+                                                                <td style="padding: 4px;text-align: center; border: 0px">
+                                                                    <span t-esc="amount_by_group['tax'].name"/>
+                                                                    <span>&amp;nbsp;<span>on</span>
+                                                                        <t t-esc="amount_by_group['base_str']"/>
+                                                                    </span>
+                                                                </td>
+                                                                <td style="padding: 4px;text-align: center; border: 0px">
+                                                                    <span t-esc="amount_by_group['amount_str']"/>
+                                                                </td>
+                                                            </tr>
+                                                        </t>
+                                                    </table-->
+
+
+
                                                 </td>
                                                 </t>
                                             </tr>
@@ -465,7 +475,10 @@
                                                 <span t-esc="line['subtotal']"/>
                                             </td>
                                             <td width="8%" style="padding: 4px; text-align: center; border: 0px; background-color: white !important;">
-                                                 <span t-esc="line['tax'].amount"/>
+                                                <t t-foreach="line['tax']" t-as="tax">
+                                                   <span class="col-xs-12" t-esc="tax.amount"/>
+                                               </t>
+                                               <!--span t-esc="line['tax'].amount"/-->
                                             </td>
                                         </tr>
                                     </t>
@@ -574,11 +587,11 @@
                        <img t-att-src="'data:image/png;base64,%s' % to_text(doc.digital_signature)"/>
                     </div>
 
-                    <t t-call="stock_move_selection_wzd.table_footer_LR"/>
+                     <t t-call="stock_move_selection_wzd.table_footer_LR"/>
                 </div>
             </t>
 
-            <t t-call="stock_move_selection_wzd.external_layout_LR">
+            <t t-call="stock_move_selection_wzd.external_layout_LR" t-if="doc.pack_lines_picking_id">
                 <t t-set="batch" t-value="doc.pack_lines_picking_id"/>
                 <t t-set="is_pack" t-value="True"/>
                 <div class="page">
