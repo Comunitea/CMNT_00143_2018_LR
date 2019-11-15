@@ -74,7 +74,12 @@ class StockBatchPicking(models.Model):
             currency_obj=currency,
         )
         for line in self.move_line_ids:
-            for tax in line.sale_line.tax_id:
+            if line.sale_line:
+                tax_id = line.sale_line.tax_id
+            else:
+                tax_id = line.move_id._compute_tax_id()
+
+            for tax in tax_id:
                 tax_id = tax.id
                 if tax_id not in tax_grouped:
                     tax_grouped[tax_id] = {
@@ -146,36 +151,21 @@ class StockBatchPicking(models.Model):
         }
         self.env["account.invoice.line"].create(res)
 
+
+    @api.multi
     def create_invoice(self):
         invoices = self.env["account.invoice"]
         for batch_picking in self:
             invoice_vals = batch_picking._get_invoice_values()
             invoice = self.env["account.invoice"].create(invoice_vals)
-            for move in batch_picking.move_lines:
-                invoice_line_vals = move.sale_line_id._prepare_invoice_line(
-                    move.quantity_done
-                )
-                invoice_line_vals.update(
-                    {
-                        "invoice_id": invoice.id,
-                        "sale_line_ids": [(6, 0, [move.sale_line_id.id])],
-                    }
-                )
-                invoice_line_vals[
-                    "shipping_type_decrease"
-                ] = move.company_id.get_discount_decrease_shipping(
-                    batch_picking.shipping_type
-                )
-                if move.sale_line_id.order_id.financiable_payment:
-                    invoice_line_vals[
-                        "financiable_decrease"
-                    ] = move.company_id.discount_decrease_financiable
-                self.env["account.invoice.line"].create(invoice_line_vals)
-            if batch_picking.excess:
+            invoice_lines = batch_picking.move_lines._create_invoice_line(invoice.id)
+
+            if batch_picking.sale_ids:
                 batch_picking.create_excess_invoice_line(
                     batch_picking.sale_ids[0], invoice
                 )
-            batch_picking.sale_ids.create_service_invoice_lines(invoice)
+                batch_picking.sale_ids.create_service_invoice_lines(invoice)
+
             invoice.compute_taxes()
             if not invoice.invoice_line_ids:
                 raise UserError(_("There is no invoiceable line."))
