@@ -12,3 +12,5 @@ from . import res_config
 from . import stock_picking_type
 from . import sale_order
 from . import stock_batch_picking
+from . import stock_location
+from . import ulma_cajas
