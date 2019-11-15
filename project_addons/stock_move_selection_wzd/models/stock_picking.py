@@ -133,3 +133,48 @@ class StockPicking(models.Model):
         if draft_batch_picking_id:
             moves = self.mapped('move_lines').filtered(lambda x: x.draft_batch_picking_id==draft_batch_picking_id)
             moves.button_unlink_from_batch()
+
+    @api.multi
+    def transfer_package(self, package_id, location_dest_id, auto=False, unpack=False):
+
+        picking_id = self.env['stock.picking']
+        quant_ids = self.env['stock.quant'].search([('package_id', '=', package_id)])
+        if not quant_ids:
+            return False
+        location_id = quant_ids[0].location_id.id
+
+        if not (picking_id and picking_id.location_id == location_id):
+            domain = [('default_location_src_id', '=', location_id),
+                      ('default_location_dest_id', '=', location_dest_id), ]
+            picking_type_id = self.env['stock.picking.type'].search(domain, limit=1)
+            if not picking_type_id:
+                domain =[('code', '=', 'internal')]
+                picking_type_id = self.env['stock.picking.type'].search(domain, limit=1)
+            vals = {'picking_type_id': picking_type_id.id,
+                    'location_id': location_id,
+                    'location_dest_id': location_dest_id,
+                    }
+            picking_id = self.create(vals)
+
+
+        sml = self.env['stock.move.line']
+        for quant in quant_ids:
+            sml_vals = {'product_id': quant.product_id.id,
+                        'location_id': quant.location_id.id,
+                        'location_dest_id': location_dest_id,
+                        'qty_done': quant.quantity,
+                        'package_id': package_id,
+                        'result_package_id': unpack and False or package_id,
+                        'picking_id': picking_id.id,
+                        'product_uom_id': quant.product_uom_id.id
+                        }
+            if unpack:
+                sml_vals['result_package_id'] = False
+            sml.create(sml_vals)
+        if auto:
+            picking_id.do_transfer()
+
+        return picking_id
+
+
+
