@@ -39,6 +39,7 @@
         'wizard/move_change_quant_wzd.xml',
         'wizard/config_stock_delivery.xml',
         'wizard/batch_picking_excess.xml',
+        'wizard/move_complete_package.xml',
         'views/menu_views.xml',
     ],
     'installable': True,

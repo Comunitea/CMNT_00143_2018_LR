@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_move_complete_package_wzd" model="ir.ui.view">
+        <field name="name">view.move.complete.package.wzd</field>
+        <field name="model">move.complete.package.wzd</field>
+        <field name="arch" type="xml">
+            <form string="Asistente para mover paquetes">
+                <header>
+
+                </header>
+                <separator string="Paquete"/>
+                <h2>
+                    <field name="package_id"/>
+                </h2>
+                <label string="Indica ubicación de destino para el paquete completo"/>
+
+                <group string="">
+                    <field name="location_dest_id"/>
+                    <field name="auto_transfer"/>
+
+                </group>
+                <footer>
+                    <button name="move_package" string="Mover" type="object" class="oe_highlight"/>
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <act_window name="Asistente de cambio de ubicación"
+                res_model="move.complete.package.wzd"
+                src_model="stock.quant.package"
+                view_mode="form"
+                target="new"
+                key2="client_action_multi"
+                id="act_view_move_complete_package_wzd"/>
+
+</odoo>
