@@ -46,6 +46,7 @@
                             <button name="create_table_cajas" string="Create table cajas" class="oe_highlight" type="object" attrs="{'invisible': [('oracle_cajas', '=', True)]}"/>
                         </group>
                         <group>
+                            <button name="drop_server" string="Drop server" class="oe_highlight" type="object" attrs="{'invisible': [('oracle_server', '!=', True)]}"/>
                             <button name="drop_tables" string="Drop tables" class="oe_highlight" type="object" attrs="{'invisible': [('oracle_mmmout', '=', False),('oracle_mmminp', '=', False),('oracle_packing', '=', False)]}"/>
                             <button name="drop_mmmout" string="Drop mmmout table" class="oe_highlight" type="object" attrs="{'invisible': [('oracle_mmmout', '=', False)]}"/>
                             <button name="drop_mmminp" string="Drop mmminp table" class="oe_highlight" type="object" attrs="{'invisible': [('oracle_mmminp', '=', False)]}"/>
