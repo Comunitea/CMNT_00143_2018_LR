@@ -219,7 +219,7 @@ class StockBatchDelivery(models.Model):
     def _get_picking_ids(self):
         partner_id = self._context.get('partner_id', False)
         for delivery_batch in self:
-            delivery_batch.write(self.get_delivery_info(partner_id=partner_id))
+            delivery_batch.write(delivery_batch.get_delivery_info(partner_id=partner_id))
 
 
     @api.multi
