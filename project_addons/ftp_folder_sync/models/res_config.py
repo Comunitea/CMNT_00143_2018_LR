@@ -25,7 +25,8 @@ from ftplib import FTP
 import os
 
 FTP_PARAMS = ['ftp_server', 'ftp_login', 'ftp_password', 'ftp_get_folder', 'ftp_sent_folder',
- 'local_got_folder', 'local_to_send_folder', 'ftp_port', 'ftp_done_folder', 'local_done_folder']
+ 'local_got_folder', 'local_to_send_folder', 'ftp_port', 'ftp_done_folder', 'local_done_folder',
+ 'move_local_files', 'move_remote_files', 'delete_remote_files']
 
 class ConfigFTPConnection(models.TransientModel):
 
@@ -41,6 +42,9 @@ class ConfigFTPConnection(models.TransientModel):
     local_got_folder = fields.Char(string="Local get folder", help="The folder with recieved files.")
     local_to_send_folder = fields.Char(string="Local send folder", help="The folder with files to send.")
     local_done_folder = fields.Char(string="Local done folder", help="The local folder where you put the processed files.")
+    move_local_files = fields.Boolean(string="Move done files", help="Move local files on done.")
+    move_remote_files = fields.Boolean(string="Move remote done files", help="Move remote files on done.")
+    delete_remote_files = fields.Boolean(string="Delete remote done files", help="Delete remote files on done.")
 
     @api.model
     def get_values(self):
@@ -66,10 +70,12 @@ class ConfigFTPConnection(models.TransientModel):
         ftp_password = self.env['ir.config_parameter'].get_param('ftp_folder_sync.ftp_password', False)
         
         try:
-            ftp = FTP(ftp_server)
-            ftp.login(user=ftp_login, passwd=ftp_password)
+            ftp = FTP()
+            ftp.connect(ftp_server, int(ftp_port))
+            ftp.login(ftp_login, ftp_password)
         except Exception as e:
             raise UserError(_('Error: {}').format(e))
+
         self.get_files(ftp)
         ftp.cwd('..')
         self.send_files(ftp)
@@ -80,25 +86,32 @@ class ConfigFTPConnection(models.TransientModel):
         local_got_folder = self.env['ir.config_parameter'].get_param('ftp_folder_sync.local_got_folder', False)
         ftp_get_folder = self.env['ir.config_parameter'].get_param('ftp_folder_sync.ftp_get_folder', False)
         ftp_done_folder = self.env['ir.config_parameter'].get_param('ftp_folder_sync.ftp_done_folder', False)
+        move_remote_files = self.env['ir.config_parameter'].get_param('ftp_folder_sync.move_remote_files', False)
+        delete_remote_files = self.env['ir.config_parameter'].get_param('ftp_folder_sync.delete_remote_files', False)
         ftp.cwd(ftp_get_folder)
         filenames = ftp.nlst()
 
         try:
             for filename in filenames:
-                local_filename = os.path.join(local_got_folder, filename)
-                done_filename = "../{}/{}".format(ftp_done_folder, filename)
-                local_file = open(local_filename, 'wb')
-                if ftp.retrbinary('RETR '+ filename, local_file.write):
-                    ftp.rename(filename, done_filename)
-                local_file.close()
+                if filename.startswith('TR'):
+                    local_filename = os.path.join(local_got_folder, filename)
+                    done_filename = "../{}/{}".format(ftp_done_folder, filename)
+                    local_file = open(local_filename, 'wb')
+                    if ftp.retrbinary('RETR '+ filename, local_file.write):
+                        if move_remote_files:
+                            ftp.rename(filename, done_filename)
+                        if delete_remote_files:
+                            ftp.delete(filename)
+                    local_file.close()
         except Exception as e:
             raise UserError(_('Error: {}').format(e))
-    
+
     @api.model
     def send_files(self, ftp):
         local_to_send_folder = self.env['ir.config_parameter'].get_param('ftp_folder_sync.local_to_send_folder', False)
         local_done_folder = self.env['ir.config_parameter'].get_param('ftp_folder_sync.local_done_folder', False)
         ftp_sent_folder = self.env['ir.config_parameter'].get_param('ftp_folder_sync.ftp_sent_folder', False)
+        move_local_files = self.env['ir.config_parameter'].get_param('ftp_folder_sync.move_local_files', False)
         filenames = [f for f in os.listdir(local_to_send_folder) if os.path.isfile(os.path.join(local_to_send_folder, f))]
         ftp.cwd(ftp_sent_folder)
 
@@ -106,9 +119,10 @@ class ConfigFTPConnection(models.TransientModel):
             for filename in filenames:
                 local_filename = os.path.join(local_to_send_folder, filename)
                 done_filename = "{}/{}".format(local_done_folder, filename)
-                if ftp.storbinary('STOR '+filename, open(local_filename, 'rb')):
+                if ftp.storbinary('STOR '+filename, open(local_filename, 'rb')) and move_local_files:
                     open(local_filename, 'rb').close()
                     os.rename(local_filename, done_filename)
         except Exception as e:
             raise UserError(_('Error: {}').format(e))
+
     
