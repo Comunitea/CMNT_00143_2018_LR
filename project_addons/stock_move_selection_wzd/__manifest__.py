@@ -14,7 +14,9 @@
         'stock_picking_group',
         'shipping_type',
         'stock_available_global',
-        'purchase_sale_inter_company_custom'
+        'purchase_sale_inter_company_custom',
+        'stock_custom',
+        #'portal'
     ],
     'data': [
         'data/stock_batch_picking_sequence.xml',

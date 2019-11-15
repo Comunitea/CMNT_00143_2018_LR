@@ -6,8 +6,9 @@
             report_type="qweb-html"
             name="stock_batch_picking.report_batch_picking"
             file="stock_batch_picking.report_batch_picking"/>
+
         <template id="batch_header">
-            <t t-set="pack" t-value="is_pack"/>
+
             <style>
                 .td_01 {
                     padding: 4px;
@@ -15,11 +16,12 @@
                     border: 0px
                  }
             </style>
-            <t t-set="batch" t-value="doc"/>
+
+
             <table width = "50%">
                 <tbody>
                     <tr>
-                        <td id="th_ref" class="td_01" t-if="doc.picking_type_id.group_code=='outgoing'">
+                        <td id="th_ref" class="td_01" t-if="batch.picking_type_id.code=='outgoing'">
                             CÓDIGO CLIENTE
                         </td >
 
@@ -31,7 +33,7 @@
                             ALBARÁN
                         </td>
 
-                        <td id="th_vat" class="td_01" t-if="doc.picking_type_id.group_code=='outgoing'">
+                        <td id="th_vat" class="td_01" t-if="batch.picking_type_id.code=='outgoing'">
                             NIF ó DNI
                         </td>
                         <td id="vat" class="td_01">
@@ -39,7 +41,7 @@
                         </td>
                     </tr>
                      <tr>
-                        <td class="td_01" t-if="doc.picking_type_id.group_code=='outgoing'">
+                        <td class="td_01" t-if="batch.picking_type_id.code=='outgoing'">
                              <span t-field="batch.partner_id.ref"/>
                         </td>
 
@@ -49,12 +51,10 @@
                         </td>
 
                         <td class="td_01">
-
-                            <span t-if="batch == False"  t-field="batch.name"/>
-                            <span t-if="batch == True and pack_lines_picking_id != False"  t-field="pack_lines_picking_id.name"/>
+                            <span t-field="batch.name"/>
                         </td>
 
-                        <td class="td_01" t-if="doc.picking_type_id.group_code=='outgoing'">
+                        <td class="td_01" t-if="batch.picking_type_id.code=='outgoing'">
                            <span t-field="batch.partner_id.vat"/>
                         </td>
                          <td class="td_01">
@@ -67,11 +67,11 @@
         </template>
         <template id="external_layout_LR">
             <link rel="stylesheet" href="/stock_move_selection_wzd/static/src/css/lr.css"></link>
-            <t t-if="not o and doc">
-                <t t-set="o" t-value="doc"/>
+            <t t-if="not o and batch">
+                <t t-set="o" t-value="batch"/>
                 <t t-set="partner" t-value="o.partner_id.sudo()"/>
             </t>
-            <t t-set="partner" t-value="doc.partner_id.sudo()"/>
+            <t t-set="partner" t-value="batch.partner_id.sudo()"/>
 
             <t t-if="o and 'company_id' in o">
                 <t t-set="company" t-value="o.company_id.sudo()"/>
@@ -89,7 +89,7 @@
                         <h4 class="mt0" t-field="company.report_header"/>
                         <div name="company_address" class="mb4">
                             <span class="company_address" t-field="company.partner_id"
-                                t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'/>
+                                t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'/>
                         </div>
                     </div>
                     <div class="col-xs-6 text-right mb4">
@@ -97,8 +97,8 @@
 
                         <!--h4 class="mt0" t-field="partner.report_header"/-->
                         <div name="partner_address" class="mb4">
-                            <span class="company_address" t-field="doc.partner_id"
-                                t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'/>
+                            <span class="company_address" t-field="batch.partner_id"
+                                t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'/>
                         </div>
                     </div>
                 </div>
@@ -133,7 +133,7 @@
                                         padding: 4px;
                                         border-color: #18B6E6 !important;
                                         ">
-                            <tr style="border: 0px; padding: 4px; color: #18B6E6 !important" t-if="doc.picking_type_id.group_code=='outgoing'">
+                            <tr style="border: 0px; padding: 4px; color: #18B6E6 !important" t-if="doc.picking_type_id.code=='outgoing'">
                                 <td id="th_ref" width="12%" style="padding: 4px;border: 0px">
                                     REFERENCIA
                                 </td>
@@ -143,18 +143,20 @@
                                 <td id="th_qty" width="8%" style="padding: 4px;text-align: center; border: 0px">
                                     CANTIDAD
                                 </td>
-                                <td id="th_price" width="8%" style="padding: 4px;text-align: center;  border: 0px">
-                                    PRECIO
-                                </td>
-                                <td id="th_dto" width="8%" style="padding: 4px;text-align: center; border: 0px">
-                                    DTO.
-                                </td>
-                                <td id="th_stl" width="8%" style="padding: 4px;text-align: center; border: 0px">
-                                    SUBTOTAL
-                                </td>
-                                <td id="th_tax" width="8%" style="padding: 4px; text-align: center; border: 0px; background-color: #777777 !important;">
-                                    IVA
-                                </td>
+                                <t t-if="batch.valued">
+                                    <td id="th_price" width="8%" style="padding: 4px;text-align: center;  border: 0px">
+                                        PRECIO
+                                    </td>
+                                    <td id="th_dto" width="8%" style="padding: 4px;text-align: center; border: 0px">
+                                        DTO.
+                                    </td>
+                                    <td id="th_stl" width="8%" style="padding: 4px;text-align: center; border: 0px">
+                                        SUBTOTAL
+                                    </td>
+                                    <td id="th_tax" width="8%" style="padding: 4px; text-align: center; border: 0px; background-color: #777777 !important;">
+                                        IVA
+                                    </td>
+                                </t>
                             </tr>
 
                             <tr style="border: 0px; padding: 4px; color: #18B6E6 !important" t-if="doc.picking_type_id.code=='internal'">
@@ -170,7 +172,6 @@
                                 <td id="th_price" width="22%" style="padding: 4px;text-align: center;  border: 0px">
                                     PAQUETES
                                 </td>
-
                                  <td id="th_qty" width="8%" style="padding: 4px; text-align: center; border: 0px; background-color: #777777 !important;">
                                     CANTIDAD
                                 </td>
@@ -178,7 +179,7 @@
                         </table>
     </template>
     <template id="table_footer_LR">
-        <table  t-if="doc.picking_type_id.code=='outgoing'"
+        <table  t-if="batch.picking_type_id.code=='outgoing'"
                                 width="100%"
                                         style="
                                         border: 0px;
@@ -209,13 +210,18 @@
                                 <td style="padding: 4px;text-align: center; border: 0px">
                                     Tipo Rec
                                 </td>
+                                <td style="padding: 4px;text-align: center; border: 0px">
+                                    Rec
+                                </td>
                                  <td style="padding: 4px; text-align: center; border: 0px; background-color: #777777 !important;">
                                     Total
                                 </td>
                             </tr>
-                            <tr style="border: 0px; padding: 4px; color: #white !important">
+
+            <tr style="border: 0px; padding: 4px; color: #white !important">
                                 <td style="text-align: center; padding: 4px;border: 0px">
-                                    Neto
+                                    <span t-field="batch.amount_untaxed"
+                                          t-options='{"widget": "monetary", "display_currency": batch.currency_id}' style="font-weight: bold; font-family: Courier New"/>
                                 </td>
                                 <td style="text-align: center;padding: 4px;border: 0px">
                                     Portes
@@ -224,31 +230,47 @@
                                     % Portes
                                 </td>
                                 <td style="padding: 4px;text-align: center;  border: 0px">
-                                    Base imponible
+                                     <span t-field="batch.amount_untaxed"
+                                          t-options='{"widget": "monetary", "display_currency": batch.currency_id}' style="font-weight: bold; font-family: Courier New"/>
                                 </td>
-                                <td style="padding: 4px;text-align: center; border: 0px">
-                                    Tipo IVA
-                                </td>
-                                <td style="padding: 4px;text-align: center; border: 0px">
-                                    Cuota IVA
+                                <td style="padding: 4px;text-align: center; border: 0px" colspan="2">
+                                    <table>
+                                    <t t-foreach="batch.get_taxes_values().values()" t-as="amount_by_group">
+                                        <tr style="border :0px">
+                                            <td style="padding: 4px;text-align: center; border: 0px">
+                                                <span t-esc="amount_by_group['tax'].name"/>
+                                                <span>&amp;nbsp;<span>on</span>
+                                                    <t t-esc="amount_by_group['base_str']"/>
+                                                </span>
+                                            </td>
+                                            <td style="padding: 4px;text-align: center; border: 0px">
+                                                <span t-esc="amount_by_group['amount_str']"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                    </table>
+
                                 </td>
                                 <td style="padding: 4px;text-align: center; border: 0px">
                                     Tipo Rec
                                 </td>
+                                <td style="padding: 4px;text-align: center; border: 0px">
+                                    Rec
+                                </td>
                                  <td style="padding: 4px; text-align: center; border: 0px; background-color: white !important;">
-                                    Total
+                                    <span t-field="batch.amount_total" t-options='{"widget": "monetary", "display_currency": batch.currency_id}' style="font-weight: bold; font-family: Courier New"/>
                                 </td>
                             </tr>
+
                         </table>
 
     </template>
     <template id="table_footer_pack_line_LR">
-        <table  t-if="doc.picking_type_id.code=='outgoing'"
+        <table  t-if="doc.picking_type_id.code=='outgoing' and doc.valued"
                                 width="100%"
                                         style="
                                         border: 0px;
                                         border-spacing: 2px;
-
                                         padding: 4px;
                                         ">
 
@@ -273,6 +295,9 @@
                                 </td>
                                 <td style="padding: 4px;text-align: center; border: 0px">
                                     Tipo Rec
+                                </td>
+                                <td style="padding: 4px;text-align: center; border: 0px">
+                                    Rec
                                 </td>
                                  <td style="padding: 4px; text-align: center; border: 0px; background-color: #777777 !important;">
                                     Total
@@ -300,15 +325,18 @@
                                 <td style="padding: 4px;text-align: center; border: 0px">
                                     Tipo Rec
                                 </td>
+                                <td style="padding: 4px;text-align: center; border: 0px">
+                                    Rec
+                                </td>
                                  <td style="padding: 4px; text-align: center; border: 0px; background-color: white !important;">
                                     Total
                                 </td>
                             </tr>
-                        </table>
+        </table>
 
     </template>
     <template id="table_body_line_LR">
-        <t t-set="sale" t-value="sale"/>
+                        <t t-set="sale" t-value="sale"/>
                         <table width="50%"  style=" padding: 4px; border: 0px">
                             <tr>
                                 <td  style="padding: 4px; border: 0px; text-align: left; background-color: white !important">
@@ -327,7 +355,7 @@
                                      </tbody>
                                 </table>
                                 <table style=" width: 100%; padding: 4px; border: 0px; background-color: white !important">
-                                    <tbody t-if="doc.picking_type_id.group_code=='outgoing'">
+                                    <tbody t-if="batch.picking_type_id.code=='outgoing'">
                                         <t t-set="total_qty" t-value="0.0"/>
                                         <t t-foreach="pick['l2_items']" t-as="line">
                                             <tr>
@@ -343,22 +371,24 @@
                                                 <td width="8%" style="padding: 4px;text-align: center; border: 0px">
                                                     <span t-esc="qty"/>
                                                 </td>
+                                                <t t-if="doc.valued">
                                                 <td width="8%" style="padding: 4px;text-align: center; border: 0px">
                                                     <span t-esc="line['price_unit']"/>
                                                 </td>
                                                 <td width="8%" style="padding: 4px;text-align: center; border: 0px">
                                                     <span t-esc="line['dto']"/>
                                                 </td>
-                                                 <td width="8%" style="padding: 4px;text-align: center; border: 0px">
+                                                <td width="8%" style="padding: 4px;text-align: center; border: 0px">
                                                     <span t-esc="line['subtotal']"/>
                                                 </td>
                                                 <td width="8%" style="padding: 4px; text-align: center; border: 0px; background-color: white !important;">
                                                      <span t-esc="line['tax'].amount"/>
                                                 </td>
+                                                </t>
                                             </tr>
                                         </t>
                                     </tbody>
-                                    <tbody t-if="doc.picking_type_id.code=='internal'">
+                                    <tbody t-if="batch.picking_type_id.code=='internal'">
                                         <t t-set="total_qty" t-value="0.0"/>
                                         <t t-foreach="pick['l2_items']" t-as="line">
                                             <tr>
@@ -389,9 +419,8 @@
                              </table>
                         </t>
         </template>
-
     <template id="table_body_pack_line_LR">
-        <t t-set="lines" t-value="doc_package"/>
+        <t t-set="lines" t-value="pack_line"/>
                         <table width="50%"  style=" padding: 4px; border: 0px">
                             <tr>
                                 <td  style="padding: 4px; border: 0px; text-align: left; background-color: white !important">
@@ -414,7 +443,7 @@
                                     <t t-set="total_qty" t-value="0.0"/>
                                     <t t-foreach="lines" t-as="line">
                                         <tr>
-                                            <t t-set="product" t-value="line['product']"/>
+                                            <t t-set="product" t-value="line['product_id']"/>
                                             <t t-set="qty" t-value="line['product_qty']"/>
                                             <t t-set="total_qty" t-value="total_qty + qty"/>
                                             <td width="12%" style="padding: 4px;text-align: right; border: 0px">
@@ -445,14 +474,77 @@
 
     </template>
 
-<template id="stock_batch_picking.report_batch_picking">
+<template id="sign_template" >
 
+  <div class="modal fade" id="sign_template_1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+       <form id="accept" method="POST"  class="js_accept_json modal-content js_website_submit_form">
+        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&amp;times;</button>
+          <h4 class="modal-title">Validate Order</h4>
+        </div>
+        <div class="modal-body" id="sign-dialog">
+            <script type="text/javascript" src="/portal/static/src/js/portal_signature.js"></script>
+            <t t-call="portal.portal_signature">
+                <t t-set="object" t-value="batch"/>
+                <t t-set="partner_name" t-value="batch.name"/>
+                <t t-set="callUrl" t-value="'/my/picking/sign'"/>
+                <t t-set="accessToken" t-value="doc.access_token"/>
+                <div><span>Portal.portal signature</span></div>
+                    <form id="o_portal_sign_accept" method="POST">
+                        <input type="hidden" name="csrf_token" t-att-value="accessToken"/>
+                        <div class="form-group">
+                            <label class="control-label" for="name">Your Name</label>
+                            <input type="text" name="partner_name" id="o_portal_sign_name" class="form-control" t-att-value="partner_name"/>
+                        </div>
+                        <div class="panel panel-default mt16 mb0" id="o_portal_sign_draw">
+                            <div class="panel-heading">
+                                <div class="pull-right">
+                                    <a id="o_portal_sign_clear" class="btn btn-xs">Clear</a>
+                                </div>
+                                <strong>Draw your signature</strong>
+                            </div>
+                            <div id="o_portal_signature" class="panel-body" style="padding: 0"/>
+                        </div>
+                        <div class="mt16 clearfix">
+                          <button type="submit" class="btn btn-primary o_portal_sign_submit pull-right"><t t-esc="'Accept &amp; Sign'"/></button>
+                        </div>
+                </form>
+            </t>
+        </div>
+       </form>
+    </div>
+  </div>
+</template>
+<template id="assets_backend" name="stock_move_selection_wzd assets" inherit_id="web.assets_backend">
+    <xpath expr="." position="inside">
+            <script type="text/javascript" src="/portal/static/src/js/portal_signature.js"></script>
+            <script type="text/javascript" src="/portal/static/src/js/portal.js"></script>
+            <script type="text/javascript" src="/portal/static/src/js/portal_tour.js"></script>
+            <script type="text/javascript" src="/portal/static/src/js/portal_chatter.js"></script>
+
+
+        </xpath>
+</template>
+
+
+<template id="assets_common" inherit_id="web.assets_common" name="stock_move_selection_wzd Portal Common Assets">
+    <xpath expr="script[last()]" position="after">
+        <script type="text/javascript" src="/web/static/lib/jSignature/jSignatureCustom.js"></script>
+
+    </xpath>
+</template>
+
+<template id="stock_batch_picking.report_batch_picking">
     <t t-call="web.html_container">
         <t t-foreach="docs" t-as="doc">
             <t t-call="stock_move_selection_wzd.external_layout_LR">
                 <div class="page">
                     <t t-set="is_pack" t-value="False"/>
-                    <div t-if="doc.picking_type_id == 'internal'" class="row mt32 mb32">
+                    <t t-set="batch" t-value="doc"/>
+
+                    <div t-if="doc.picking_type_id.code == 'internal'" class="row mt32 mb32">
                         <div class="col-xs-3">
                             <strong>Date:</strong>
                             <span t-esc="now()" t-options="{'widget': 'datetime'}"/>
@@ -467,20 +559,33 @@
                     </t>
                     <t t-call="stock_move_selection_wzd.batch_header"/>
                     <t t-call="stock_move_selection_wzd.table_header_LR"/>
+                    <t t-call="stock_move_selection_wzd.sign_template"/>
                     <t t-foreach="grouped_data" t-as="sale">
                        <t t-call="stock_move_selection_wzd.table_body_line_LR"/>
                     </t>
+                    <div t-if="not doc.digital_signature" class="col-xs-12 text-center mb4">
+                        <a role="button" class="btn btn-primary btn-block mb8"
+                           data-toggle="modal"
+                           data-target="#sign_template_1" href="#">
+                            <i class="fa fa-check"/> Accept &amp; Sign
+                        </a>
+                    </div>
+                    <div t-if="doc.digital_signature" class="col-xs-6  col-xs-offset-6 text-center mb4">
+                       <img t-att-src="'data:image/png;base64,%s' % to_text(doc.digital_signature)"/>
+                    </div>
+
                     <t t-call="stock_move_selection_wzd.table_footer_LR"/>
                 </div>
             </t>
 
             <t t-call="stock_move_selection_wzd.external_layout_LR">
+                <t t-set="batch" t-value="doc.pack_lines_picking_id"/>
+                <t t-set="is_pack" t-value="True"/>
                 <div class="page">
-                    <t t-set="is_pack" t-value="True"/>
                     <t t-call="stock_move_selection_wzd.batch_header"/>
                     <t t-call="stock_move_selection_wzd.table_header_LR"/>
-                    <t t-foreach="pack_line" t-as="doc_package">
-                       <t t-call="stock_move_selection_wzd.table_body_pack_line_LR"/>
+                    <t t-foreach="doc_package" t-as="sale">
+                       <t t-call="stock_move_selection_wzd.table_body_line_LR"/>
                     </t>
                     <t t-call="stock_move_selection_wzd.table_footer_LR"/>
                 </div>

@@ -52,7 +52,7 @@ class StockMove(models.Model):
                                         copy=False)
     lot_id = fields.Many2one('stock.production.lot', 'Lote')
     dunmy_picking_id = fields.Many2one('stock.picking', 'Transfer Reference', store=False)
-    dunmy_route_group_id = fields.Many2one('delivery.route.path.group', 'Grupo de entrega', store=False)
+    delivery_route_group_id = fields.Many2one('delivery.route.path.group', 'Grupo de entrega', store=False)
     sga_integrated = fields.Boolean(related="picking_type_id.sga_integrated")
     sga_state = fields.Selection(SGA_STATES, default='no_integrated', string="SGA Estado", copy=False)
     batch_delivery_id = fields.Many2one('stock.batch.delivery', string='Orden de carga', copy=False, store=True)
@@ -210,9 +210,9 @@ class StockMove(models.Model):
     def search(self, args, offset=0, limit=None, order=None, count=False):
 
         new_args = args.copy()
-        if self._context.get('dunmy_route_group_id', False):
+        if self._context.get('delivery_route_group_id', False):
             group_ids = self.env['delivery.route.path.group'].search(
-                [('name', 'ilike', self._context['dunmy_route_group_id'])])
+                [('name', 'ilike', self._context['delivery_route_group_id'])])
             if group_ids:
                 route_ids = [('delivery_route_path_id', 'in', group_ids.mapped('route_path_ids').ids)]
 
@@ -430,3 +430,4 @@ class StockMove(models.Model):
         domain = super().get_batch_domain()
         domain += [('batch_delivery_id', '=', False)]
         return domain
+

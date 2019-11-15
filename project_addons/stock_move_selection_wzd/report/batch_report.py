@@ -116,7 +116,6 @@ class ReportPrintBatchPicking(models.AbstractModel):
 
     @api.model
     def new_level_2(self, operation, code =''):
-
         sale_line_id = operation.move_id.sale_line_id
         if operation.state == 'done':
             qty = operation.qty_done
@@ -125,10 +124,6 @@ class ReportPrintBatchPicking(models.AbstractModel):
         res = {
             'product': operation.product_id,
             'product_qty': qty,
-            'price_unit': sale_line_id and sale_line_id.price_unit or 0.00,
-            'dto': sale_line_id and sale_line_id.chained_discount or 0,
-            'subtotal': sale_line_id and sale_line_id.price_subtotal or 0.00,
-            'tax': sale_line_id and sale_line_id.mapped('tax_id') or 0,
             'operations': operation,
             'location_id': operation.location_id.name,
             'location_dest_id': operation.location_dest_id.name,
@@ -137,17 +132,37 @@ class ReportPrintBatchPicking(models.AbstractModel):
             'flecha': u'\u21E8'
 
         }
+        if sale_line_id:
+            ##replico el create invoice de create invoice
+
+            res.update({
+                'price_unit': sale_line_id and sale_line_id.price_unit or 0.00,
+                'dto': sale_line_id and sale_line_id.chained_discount or 0,
+                'subtotal': sale_line_id and sale_line_id.price_subtotal or 0.00,
+                'tax': sale_line_id and sale_line_id.mapped('tax_id') or 0,
+                })
+        else:
+            res.update({
+                'price_unit': operation.product_id.lst_price,
+                'dto': 0,
+                'subtotal': operation.product_id.lst_price * qty,
+                'tax': operation.move_id._compute_tax_id()
+            })
         return res
 
     @api.model
-    def get_package_line(line):
+    def get_package_line(self, line):
+
+        tax = line._compute_tax_id()
+        qty = sum(x.qty_done for x in line.move_line_ids)
         res = {
             'product_id': line.product_id,
-            'product_qty': line.qty_done,
-            'price_unit': line.product_id and line.product_id.price_unit or 0.00,
+            'product': line.product_id.name,
+            'product_qty': qty,
+            'price_unit': line.product_id.lst_price,
             'dto': 0,
-            'subtotal': line.qty_done * line.product_id.price_unit,
-            'tax': 21,
+            'subtotal': line.product_id.lst_price * qty,
+            'tax': ', '.join(map(lambda x: x.amount.is_integer() and str(int(x.amount)) + '%' or str(x.amount) + '%', line._compute_tax_id())),
             'flecha': u'\u21E8'
         }
         return res
@@ -229,32 +244,34 @@ class ReportPrintBatchPicking(models.AbstractModel):
 
 
         res = self.sort_level_0(grouped_data.values(), code)
-        packaging_line_ids = op_ids.mapped('result_package_id').mapped('packaging_line_ids')
-        pack_line = []
+        return res
+
+    @api.model
+    def _get_grouped_packs(self, batch):
+        pack_line = {}
         for line in batch.pack_lines_picking_id.move_lines:
             product = line.product_id
             if product in pack_line:
                pack_line[product].qty += line.qty_done
             else:
                 pack_line[product] = self.get_package_line(line)
-
-        pack_line =  sorted(pack_line, key=lambda rec: (rec['product_id']))
-        return res, pack_line
+        return pack_line.values()
 
     @api.model
     def get_report_values(self, docids, data=None):
         model = 'stock.batch.picking'
         docs = self.env[model].browse(docids)
-        grouped_data, pack_line = self._get_grouped_data(docs)
-
-        res =  {
+        grouped_data = self._get_grouped_data(docs)
+        res = {
             'doc_ids': docids,
             'doc_model': model,
             'data': data,
             'docs': docs,
-            'doc_package': pack_line,
+            'doc_package': False,
             'grouped_data': grouped_data,
             'now': fields.Datetime.now,
         }
-        import  ipdb; ipdb.set_trace()
+        if docs.pack_lines_picking_id:
+            res.update({'doc_package': self._get_grouped_data(docs.pack_lines_picking_id)})
+
         return res

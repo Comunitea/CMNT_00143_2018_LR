@@ -51,6 +51,7 @@
                         attrs="{'invisible': ['|', ('state', 'in', ('cancel', 'done')), ('ready_to_transfer','=', True)]}"
                         type="object" class="btn-default" help="Fuerza todos los movimientos creando los move lines"/>
                 <field name="ready_to_transfer" invisible="1"/>
+                <button name="create_invoice" string="Crear Factura" type="object" />
             </xpath>
 
             <xpath expr="//button[@name='action_cancel']" position="after">
@@ -77,6 +78,7 @@
             </field>
             <xpath expr="//field[@name='payment_term_id']" position="after">
                 <field name="pack_lines_picking_id" attrs = "{'invisible': [('code', '!=', 'outgoing')]}"/>
+                <field name="orig_batch_picking_id" attrs = "{'invisible': [('code', '!=', 'outgoing')]}"/>
             </xpath>
             <xpath expr="//group[@name='info_envio']" position="after">
                 <group name="manage_drafts" string="Gestión de contenido" attrs = "{'invisible': [('state', 'in', ('done', 'cancel'))]}">
@@ -157,7 +159,15 @@
                 <attribute name="invisible">[('state', '=', 'done')]</attribute>
             </xpath>
             <xpath expr="//page/field[@name='move_line_ids']/.." position="replace">
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Firma">
+                    <label for="digital_signature" string="Firmar" class="oe_edit_only"/>
+                <h2>
+                    <field name="digital_signature" widget="signature"/>
+                </h2>
 
+                </page>
             </xpath>
             <xpath expr="//sheet" position="after">
                 <div class="oe_chatter">

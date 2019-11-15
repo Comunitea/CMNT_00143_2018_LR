@@ -263,12 +263,14 @@ class StockQuantPackage(models.Model):
             moves.assign_picking()
 
     @api.multi
-    def picking_pack_lines(self):
+    def picking_pack_lines(self, batch_picking_id):
         picking_type_id = self.env['stock.picking.type'].search([('code', '=', 'outgoing'), ('group_code', '=', 'packaging')], limit=1)
         # crea un stock picking para las líneas de los m0vimientos
         move_ids = self.env['stock.move']
         lines = self.mapped('packaging_line_ids')
         partner_id = self.mapped('move_line_ids').mapped('partner_id')
+        move_ids = self.mapped('move_line_ids').mapped('move_id')
+
         if len(partner_id)!=1:
             raise ValueError(_('No puedes crearlo de varios clientes al mismo tiempos'))
         moves = {}
@@ -284,7 +286,10 @@ class StockQuantPackage(models.Model):
                     'product_uom_qty': line.qty,
                     'location_id': picking_type_id.default_location_src_id.id,
                     'location_dest_id': picking_type_id.default_location_dest_id.id,
-                    'picking_type_id': picking_type_id.id
+                    'picking_type_id': picking_type_id.id,
+                    'shipping_type': batch_picking_id.shipping_type,
+                    'route_path_id': batch_picking_id.delivery_route_path_id and batch_picking_id.delivery_route_path_id.id or False,
+                    'carrier_id': batch_picking_id.carrier_id and batch_picking_id.carrier_id.id or False,
                 }
 
                 new_move = move_ids.create(val)
@@ -300,6 +305,7 @@ class StockQuantPackage(models.Model):
         new_batch_vals = {
             'name': picking_id.name,
             'partner_id': picking_id.partner_id.id,
+            'orig_batch_picking_id': picking_id.id,
             #'location_id': picking_id.location_id.id,
             #'location_dest_id': picking_id.location_dest_id.id,
             'picking_type_id': picking_type_id.id,

@@ -126,6 +126,7 @@ class PickingType(models.Model):
                                      help=HELP_SHIPPING_TYPE, store=False)
     payment_term_id = fields.Many2one('account.payment.term', string='Plazos de pago', store=False)
     delivery_route_path_id = fields.Many2one('delivery.route.path', string="Route path", store=False)
+    delivery_route_group_id = fields.Many2one('delivery.route.path.group', 'Grupo de entrega', store=False)
     urgent = fields.Selection([('urgent', 'Urgente'), ('no_urgent', 'No uergente')], help='Default urgent for partner orders\nPlus 3.20%', store=False)
     context_domain = fields.Char()
     need_batch_delivery = fields.Boolean('Mostrar orden de carga', default=False, help="Si está marcado, se visualiza la opción de orden de carga en kanban")
@@ -137,6 +138,8 @@ class PickingType(models.Model):
     partner_id = fields.Many2one('res.partner', 'Cliente/Proveedor', store=False)
     description = fields.Char("Descripción")
     batch_name = fields.Char('Nombre de los lotes', default='Batch')
+
+
 
     def get_sga_integrated(self):
         return self.sga_integrated
@@ -459,6 +462,13 @@ class PickingType(models.Model):
         if delivery_route_path_id:
             clear = False
             delete(domain, 'delivery_route_path_id', [('delivery_route_path_id', '=', return_id('delivery.route.path', delivery_route_path_id))])
+
+        delivery_route_group_id = self._context.get('search1_delivery_route_group_id', False)
+        if delivery_route_group_id:
+            clear = False
+            route_path_ids = self.env['delivery.route.path.group'].browse(delivery_route_group_id).route_path_ids
+            delete(domain, 'delivery_route_group_id',
+                   [('delivery_route_path_id', 'in', route_path_ids.ids)])
 
         payment_term_id = self._context.get('search1_payment_term_id', False)
         if payment_term_id:

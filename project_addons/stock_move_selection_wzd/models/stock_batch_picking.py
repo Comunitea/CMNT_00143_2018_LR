@@ -10,6 +10,7 @@ from datetime import datetime, timedelta
 from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT, DEFAULT_SERVER_DATE_FORMAT
 
 from .stock_picking_type import SGA_STATES
+import uuid
 
 class StockBatchPicking(models.Model):
 
@@ -41,6 +42,13 @@ class StockBatchPicking(models.Model):
             batch.partner_id = len(partner) == 1 and partner or False
 
 
+    def _get_default_access_token(self):
+        return str(uuid.uuid4())
+
+    access_token = fields.Char(
+        'Security Token', copy=False,
+        default=_get_default_access_token)
+
     batch_delivery_id = fields.Many2one('stock.batch.delivery', string="Delivery batch")
     picking_type_id = fields.Many2one('stock.picking.type', string='Picking type', required=True, readonly=True, states={'draft': [('readonly', False)]},)
     draft_move_lines = fields.One2many('stock.move', 'draft_batch_picking_id', string='Movimientos')
@@ -70,6 +78,22 @@ class StockBatchPicking(models.Model):
     str_content = fields.Char('Contenido')
 
     pack_lines_picking_id = fields.Many2one('stock.batch.picking')
+    orig_batch_picking_id = fields.Many2one('stock.batch.picking')
+
+    digital_signature = fields.Binary(
+        string='Signature',
+        oldname="signature_image",
+    )
+    signup_url = fields.Char(compute='_compute_signup_url', string='Signup URL')
+
+    @api.multi
+    def _compute_signup_url(self):
+        """ proxy for function field towards actual implementation """
+        result = self.sudo()._get_signup_url_for_action()
+        for partner in self:
+            if any(u.has_group('base.group_user') for u in partner.user_ids if u != self.env.user):
+                self.env['res.users'].check_access_rights('write')
+            partner.signup_url = result.get(partner.id, False)
 
     @api.multi
     def action_view_stock_picking(self):
@@ -266,7 +290,7 @@ class StockBatchPicking(models.Model):
         for batch in self:
             package_ids = batch.move_lines.mapped('result_package_id')
             if package_ids:
-                batch.pack_lines_picking_id = package_ids.picking_pack_lines()
+                batch.pack_lines_picking_id = package_ids.picking_pack_lines(batch)
 
 
     @api.onchange('picking_ids')
