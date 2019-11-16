@@ -94,9 +94,14 @@ class ConfigFTPConnection(models.TransientModel):
         try:
             for filename in filenames:
                 if filename.startswith('TR'):
+                    
                     local_filename = os.path.join(local_got_folder, filename)
+                    print('Local filename {}'.format(local_filename))
+
                     done_filename = "../{}/{}".format(ftp_done_folder, filename)
+                    print('done_filename {}'.format(done_filename))
                     local_file = open(local_filename, 'wb')
+                    print('local_file {}'.format(local_file))
                     if ftp.retrbinary('RETR '+ filename, local_file.write):
                         if move_remote_files:
                             ftp.rename(filename, done_filename)
