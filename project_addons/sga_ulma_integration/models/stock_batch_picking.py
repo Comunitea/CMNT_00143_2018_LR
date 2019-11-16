@@ -70,19 +70,24 @@ class StockBatchPicking(models.Model):
                 for ulma_move in ulma_move_lines_ids:
                     move_line = self.env['stock.move.line'].browse(ulma_move.mmmsecada)
                     if move_line.sga_state not in ['done', 'cancel']:
-                        if move_line.ordered_qty == ulma_move.mmmcanuni:
-                            move_line._set_quantity_done(ulma_move.mmmcanuni)
-                            move_line.update({
-                                'sga_state': 'done'
-                            })
-                        
-                        else:
-                            diference = move_line.ordered_qty - ulma_move.mmmcanuni
-                            move_line.move_id._split(diference)
-                            move_line._set_quantity_done(ulma_move.mmmcanuni)
-                            move_line.update({
-                                'sga_state': 'done'
-                            })
+                        #move_line._set_quantity_done(ulma_move.mmmcanuni)
+                        move_line.update({
+                            'qty_done': ulma_move.mmmcanuni,
+                            'sga_state': 'done'
+                        })
+                        # if move_line.ordered_qty == ulma_move.mmmcanuni:
+                        #     move_line._set_quantity_done(ulma_move.mmmcanuni)
+                        #     move_line.update({
+                        #         'sga_state': 'done'
+                        #     })
+                        #
+                        # else:
+                        #     diference = move_line.ordered_qty - ulma_move.mmmcanuni
+                        #     move_line.move_id._split(diference)
+                        #     move_line._set_quantity_done(ulma_move.mmmcanuni)
+                        #     move_line.update({
+                        #         'sga_state': 'done'
+                        #     })
             pick.update({
                 'status': '2'
             })
