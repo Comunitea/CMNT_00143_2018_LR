@@ -23,12 +23,46 @@ class StockPickingTypeSGA(models.Model):
         else:
             raise ValidationError ('Tipo no permitido')
 
-        vals = {'mmmdisref': self.ulma_type,
-                'mmmsesid': 1 if self.ulma_type == 'SUBUNI' else 2,
+        vals = {
                 'mmmcmdref': mmmCMDREF,
-                'mmmartean': 'ean13',
+                'mmmdisref': self.ulma_type,
                 'mmmges': 'ULMA',
-                'mmmres': 'FINPED'}
+                'mmmres': 'FINPED',
+                'mmmsesid': 1 if self.ulma_type == 'SUBUNI' else 2,
+                'momcre': '',
+                'mmmartean': 'ean13',
+                'mmmbatch': '',
+                'mmmmomexp': '',
+                'mmmacccolcod': '',
+                'mmmentdes': '',
+                'mmmexpordref': '',
+                'mmmterref': '',
+                'mmmentdir1': '',
+                'mmmentdir2': '',
+                'mmmentdir3': '',
+                'mmmentdir4': '',
+                'mmmurgnte': '',
+                'mmmtraref': '',
+                'mmmartdes': '',
+                'mmmartref': '',
+                'mmmcanuni': '',
+                'mmmsecada': '',
+                'mmmacccod': '',
+                'mmmfeccad': '',
+                'mmmartapi': '',
+                'mmmminudsdis': '',
+                'mmmabclog': '',
+                'mmmdim': '',
+                'mmmcntdorref': '',
+                'mmmcrirot': '',
+                'mmmdorhue': '',
+                'mmmlot': '',
+                'mmmmonlot': '',
+                'mmmrecref': '',
+                'mmmubidesref': '',
+                'mmmzondesref': '',
+                'mmmobs': ''
+            }
 
         if type =="sale":
             vals.update({
