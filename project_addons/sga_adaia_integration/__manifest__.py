@@ -31,6 +31,7 @@
         'views/product_template.xml',
         'wizard/check_adaia_stock.xml',
         'wizard/stock_picking_adaia_confirm.xml',
+        'views/stock_location_views.xml',
         'data/sga_data.xml'
     ]
 }

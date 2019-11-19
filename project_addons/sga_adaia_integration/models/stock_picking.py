@@ -136,84 +136,6 @@ class StockPickingSGA(models.Model):
 
         return super(StockPickingSGA, self).write(vals)
 
-
-    def button_move_to_done(self):
-        return self.move_to_done
-
-    @api.multi
-    def move_to_done(self):
-        picks = self.filtered(lambda x: x.sga_state != 'no_integrated')
-        picks.write({'sga_state': 'done'})
-
-
-    def button_move_to_NE(self):
-        return self.move_to_NE
-
-    @api.multi
-    def move_to_NE(self):
-        sga_states_to_NE = ('pending', 'import_error', 'export_error', 'done', 'cancel', False)
-        picks = self.filtered(lambda x: x.sga_integrated and x.sga_state in sga_states_to_NE)
-        picks.write({'sga_state': 'no_send'})
-
-    def button_new_adaia_file(self, ctx):
-        return self.with_context(ctx).new_adaia_file()
-
-    @api.multi
-    def create_new_adaia_file_button(self):
-        ctx = dict(self.env.context)
-        file_type_stng = 'sga_adaia_integration.' + ctx['file_type']
-        file_type = self.env['ir.config_parameter'].get_param(file_type_stng)
-        for pick in self:
-            pick.new_adaia_file(file_type, ctx['mod_type'], ctx['version'])
-            if ctx['mod_type'] == 'DE':
-                self.env['stock.picking'].browse(pick.id).write({'sga_state': 'no_integrated'})
-
-    @api.multi    
-    def new_adaia_file(self, sga_file_type='INR0', operation=False, code_type=0):
-        ctx = dict(self.env.context)
-        
-        if operation:
-            ctx['ACCION'] = operation
-        if 'ACCION' not in ctx:
-            ctx['ACCION'] = 'AG'
-
-        self = self.filtered(lambda x: x.sga_state == 'no_send')
-        states_to_check = ('confirmed', 'partially_available')
-        states_to_send = 'assigned'
-        picks = []
-        pick_to_check = self.filtered(lambda x: x.state in states_to_check)
-        if pick_to_check and pick_to_check[0]:
-            view = self.env.ref('sga_file.stock_adaia_confirm_wizard')
-            wiz = self.env['stock.adaia.confirm'].create({'pick_id': pick_to_check.id})
-            return {
-                'name': 'Confirmación de envio a Adaia',
-                'type': 'ir.actions.act_window',
-                'view_type': 'form',
-                'view_mode': 'form',
-                'res_model': 'stock.adaia.confirm',
-                'views': [(view.id, 'form')],
-                'view_id': view.id,
-                'res_id': wiz.id,
-                'target': 'new',
-                'context': self.env.context,
-            }
-
-        for pick in self.filtered(lambda x: x.state in states_to_send):
-            ctx['PREFIX'] = pick.picking_type_id.sga_prefix
-            if not pick.partner_id:
-                raise UserError("No puedes enviar un albarán sin asociarlo a una empresa")
-
-            new_sga_file = self.env['sga.file'].with_context(ctx).\
-                check_sga_file('stock.picking', pick.id, pick.picking_type_id.sgavar_file_id.code)
-            if new_sga_file:
-                picks.append(pick.id)
-
-        if picks:
-            self.env['stock.picking'].browse(picks).write({'sga_state': 'pending'})
-        else:
-            raise ValidationError("No hay albaranes para enviar a Adaia")
-        return True
-
     @api.multi
     def renum_operation_line_number(self):
         for pick in self:
@@ -249,7 +171,6 @@ class StockPickingSGA(models.Model):
     def import_adaia(self, file_id, code):
         res = False
         pick_obj = self.env['stock.picking']
-        #pick_obj = self.env['stock.batch.picking']
         sga_file_obj = self.env['sga.file'].browse(file_id)
         sga_file = open(sga_file_obj.sga_file, 'r')
         sga_file_lines = sga_file.readlines()
@@ -268,6 +189,7 @@ class StockPickingSGA(models.Model):
         actual_pick = False
         pick_pool = []
         cnt_pool = []
+        _logger.info("Importando fichero con código: {}".format(code))
         for line in sga_file_lines:
             if code == 'OUT':
                 if '|' in line:
@@ -282,11 +204,14 @@ class StockPickingSGA(models.Model):
                     actual_pick = self.env['stock.picking'].search([('id', '=', EXPORDREF), ('state', 'in', ['assigned', 'waiting', 'confirmed']),
                     ('sga_state', 'in', ['pending'])])
 
+                    _logger.info("Procesando el picking: {}".format(actual_pick))
+
                     if not actual_pick:
                         bool_error = False
                         str_error += "Codigo de albaran %s no encontrado o estado incorrecto en linea ...%s " % (EXPORDREF, n_line)
                         error_message =  u'Albarán %s no encontrado o en estado incorrecto.' % (
                                         EXPORDREF)
+                        _logger.info("Error: {}".format(error_message))
                         self.create_sga_file_error(sga_file_obj, n_line, 'OUT', actual_pick, 'Pick no válido', error_message)
 
                         sga_file_obj.write_log(str_error)
@@ -302,28 +227,25 @@ class StockPickingSGA(models.Model):
                             EXPORDLIN = file_data[3]
                             CANSER = float(file_data[6])
                         actual_line = self.env['stock.move.line'].search([('id', '=', EXPORDLIN)])
+                        _logger.info("Procesando la move line: {}".format(actual_line))
                         if not actual_line:
-                            error_message = u'Op %s no encontrada en el albarán %s' % (EXPORDLIN, actual_pick.name)
+                            error_message = u'Op línea %s no encontrada en el albarán %s' % (EXPORDLIN, actual_pick.name)
+                            _logger.info("Error: {}".format(error_message))
                             self.create_sga_file_error(sga_file_obj, n_line,'OUT',actual_pick,'Op no encontrada', error_message)
                             bool_error = False
                             continue
                         else:
-                            if actual_line.ordered_qty == CANSER:
-                                actual_line._set_quantity_done(CANSER)
-
-                            else:
-                                diference = actual_line.ordered_qty - CANSER
-                                actual_line.move_id._split(diference)
-                                actual_line._set_quantity_done(CANSER)
-                                actual_line.write({
-                                    'sga_changed': 1
-                                })
+                            _logger.info("Encontrada línea: {} con cantidad: {}".format(actual_line.id, CANSER))
+                            actual_line.update({
+                                'qty_done': CANSER,
+                                'sga_state': 'done'
+                            })
                             sga_ops_exists.append(actual_line.id)
 
                     elif actual_pick is not False and TIPEREG == 'CECN':
                         if '|' in line:
                             CNTDORREF = line.rsplit('|')[19]
-                            _logger.info("Container: {}".format(CNTDORREF))
+                            _logger.info("Encontrado container con matrícula: {}".format(CNTDORREF))
                         # Un comment to create packages for the products.
                         #if '|' in line:
                         #    file_data = line.rsplit('|')
@@ -353,6 +275,7 @@ class StockPickingSGA(models.Model):
                         bool_error = False
                         str_error += "Codigo de albaran no encontrado o estado incorrecto. Revisa el formato del archivo ..."
                         error_message =  u'Albarán no encontrado o en estado incorrecto. Revisa el formato del archivo.'
+                        _logger.info("Error: {}".format(error_message))
                         self.create_sga_file_error(sga_file_obj, n_line, 'OUT', actual_pick, 'Pick no válido', error_message)
 
                         sga_file_obj.write_log(str_error)
@@ -366,16 +289,18 @@ class StockPickingSGA(models.Model):
                 n_line += 1
                 
                 if TIPEREG == 'CRCA':
-
+                    
                     RECORDREF = RECORDREF.rsplit('.', 1)[1]
                     actual_pick = self.env['stock.picking'].search([('id', '=', RECORDREF), ('state', 'in', ['assigned', 'waiting', 'confirmed']),
                     ('sga_state', 'in', ['pending'])])
+                    _logger.info("Procesando el picking: {}".format(actual_pick))
 
                     if not actual_pick:
                         bool_error = False
                         str_error += "Codigo de albaran %s no encontrado o estado incorrecto en linea ...%s " % (RECORDREF, n_line)
                         error_message =  u'Albarán %s no encontrado o en estado incorrecto.' % (
                                         RECORDREF)
+                        _logger.info("Error: {}".format(error_message))
                         self.create_sga_file_error(sga_file_obj, n_line, 'INR', actual_pick, 'Pick no válido', error_message)
 
                         sga_file_obj.write_log(str_error)
@@ -392,22 +317,19 @@ class StockPickingSGA(models.Model):
                             CANREC = float(file_data[4])
                             RECORDLIN = file_data[9]
                         actual_line = self.env['stock.move.line'].search([('id', '=', RECORDLIN)])
+                        _logger.info("Procesando la move line: {}".format(actual_line))
                         if not actual_line:
-                            error_message = u'Op %s no encontrada en el albarán %s' % (RECORDLIN, actual_pick.name)
+                            error_message = u'Op línea %s no encontrada en el albarán %s' % (RECORDLIN, actual_pick.name)
+                            _logger.info("Error: {}".format(error_message))
                             self.create_sga_file_error(sga_file_obj, n_line,'INR',actual_pick,'Op no encontrada', error_message)
                             bool_error = False
                             continue
                         else:
-                            if actual_line.ordered_qty == CANREC:
-                                actual_line._set_quantity_done(CANREC)
-
-                            else:
-                                diference = actual_line.ordered_qty - CANREC
-                                actual_line.move_id._split(diference)
-                                actual_line._set_quantity_done(CANREC)
-                                actual_line.write({
-                                    'sga_changed': 1
-                                })
+                            _logger.info("Encontrada línea: {} con cantidad: {}".format(actual_line.id, CANREC))
+                            actual_line.update({
+                                'qty_done': CANREC,
+                                'sga_state': 'done'
+                            })
                             sga_ops_exists.append(actual_line.id)
 
                     elif actual_pick is not False and TIPEREG == 'CRCN':
@@ -416,28 +338,31 @@ class StockPickingSGA(models.Model):
                             RECORDLIN = line.rsplit('|')[19]
                             _logger.info("Container: {}, línea: {}".format(CNTDORREF, RECORDLIN))
 
-                            actual_line = self.env['stock.move.line'].search([('id', '=', EXPORDLIN)])
-                            if not actual_line:
-                                error_message = u'Op %s no encontrada en el albarán %s' % (EXPORDLIN, actual_pick.name)
-                                self.create_sga_file_error(sga_file_obj, n_line,'INR',actual_pick,'Op no encontrada', error_message)
-                                bool_error = False
-                                continue
-                            else:
+                        actual_line = self.env['stock.move.line'].search([('id', '=', RECORDLIN)])
+                        if not actual_line:
+                            error_message = u'Op línea %s no encontrada en el albarán %s' % (RECORDLIN, actual_pick.name)
+                            _logger.info("Error: {}".format(error_message))
+                            self.create_sga_file_error(sga_file_obj, n_line,'INR',actual_pick,'Op no encontrada', error_message)
+                            bool_error = False
+                            continue
+                        else:
 
-                                package = self.env['stock.quant.package'].search([('name', '=', CNTDORREF)])
-                                if not package:
-                                    package = self.env['stock.quant.package'].create({
-                                        'name': CNTDORREF
-                                    })
-                                    
-                                actual_line.update({
-                                    'result_package_id': package.id
+                            package = self.env['stock.quant.package'].search([('name', '=', CNTDORREF)])
+                            if not package:
+                                package = self.env['stock.quant.package'].create({
+                                    'name': CNTDORREF
                                 })
+                                _logger.info("Creado paquete: {} con matrícula: {}".format(package.id, package.name))
+                                
+                            actual_line.update({
+                                'result_package_id': package.id
+                            })
 
                     else:
                         bool_error = False
                         str_error += "Codigo de albaran no encontrado o estado incorrecto. Revisa el formato del archivo ..."
                         error_message =  u'Albarán no encontrado o en estado incorrecto. Revisa el formato del archivo.'
+                        _logger.info("Error: {}".format(error_message))
                         self.create_sga_file_error(sga_file_obj, n_line, 'INR', actual_pick, 'Pick no válido', error_message)
 
                         sga_file_obj.write_log(str_error)
@@ -450,6 +375,7 @@ class StockPickingSGA(models.Model):
                     'sga_state': 'done'
                 })
                 if pick.picking_type_id and pick.picking_type_id.sga_auto_validate:
+                    _logger.info("Autovalidando picking: {}.".format(pick.id))
                     ctx = pick._context.copy()
                     ctx.update(from_sga=True)
                     pick.with_context(ctx).button_validate()
@@ -467,3 +393,41 @@ class StockPickingSGA(models.Model):
                       'error_code': error_code,
                       'error_message': error_message}
         self.env['sga.file.error'].create(error_vals)
+
+    # Incomming Production orders
+    @api.multi    
+    def new_adaia_file(self, sga_file_type='UNT0', operation=False, code_type=0):
+        _logger.info("Exportando production picking.")
+        ctx = dict(self.env.context)
+        
+        if operation:
+            ctx['ACCION'] = operation
+        if 'ACCION' not in ctx:
+            ctx['ACCION'] = 'MO'
+
+        ctx['PREFIX'] = self.picking_type_id.sga_prefix
+        ctx['draft_batch_picking_id'] = self.id
+        ctx['draft_batch_picking_name'] = self.name
+        
+        states_to_send = ('assigned', 'draft', 'ready')
+
+        if self.state in states_to_send:
+            new_sga_file = self.env['sga.file'].with_context(ctx).\
+                    check_sga_file('stock.picking', self.id, self.picking_type_id.sgavar_file_id.code)
+            if not new_sga_file:
+                raise ValidationError("No hay albaranes para enviar a Adaia")
+        return True
+
+    @api.multi
+    def send_to_sga(self):
+        for pick in self.filtered(lambda x: x.picking_type_id.sga_integration_type == 'sga_adaia' and x.state not in ('done', 'cancel')):
+            pick_file = pick.new_adaia_file()
+            if pick_file:
+                _logger.info("Cambiando sga_state de los movimientos {} del pick {}.".format(pick.move_line_ids.ids, pick.name))
+                pick.move_line_ids.update({
+                    'sga_state': 'done'
+                })
+                _logger.info("Cambiando sga_state del pick {}.".format(pick.name))
+                pick.update({
+                    'sga_state': 'done'
+                })
