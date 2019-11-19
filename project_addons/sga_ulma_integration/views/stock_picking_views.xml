@@ -19,6 +19,7 @@
         <field name="arch" type="xml">
             <xpath expr="//group[@name='buttons']" position="before" >
                 <group  attrs="{'invisible': [('sga_integration_type','!=','sga_ulma')]}">
+                    <field name="sga_integration_type" invisible="1"/>
                     <button name="force_button_validate" string="Forzar validación" type="object"
                         class="oe_stat_button" icon="fa-shopping-cart" attrs="{'invisible': [('sga_state', 'in', ['done', 'export_error', 'no_integrated', 'cancel'])]}"/>
                 </group>
