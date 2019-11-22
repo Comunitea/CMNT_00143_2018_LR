@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <report string="Batch picking"
+    <!-- <report string="Batch picking"
             id="stock_batch_picking.action_report_batch_picking"
             model="stock.batch.picking"
             report_type="qweb-html"
             name="stock_batch_picking.report_batch_picking"
-            file="stock_batch_picking.report_batch_picking"/>
+            file="stock_batch_picking.report_batch_picking"/> -->
 
         <template id="batch_header">
 

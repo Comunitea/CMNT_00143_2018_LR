@@ -34,6 +34,7 @@
                             </div>
                     </div>
                     <t t-value="get_grouped_data(doc)" t-set="grouped_data"/>
+                    <t t-value="get_no_sale_lines(doc)" t-set="no_sale_lines"/>
                     <table class="table table-condensed">
                         <thead style="font-weight: bold; color: rgb(0,51,102); font-family: Arial; font-size: 12px;">
                             <tr>
@@ -49,6 +50,17 @@
                             </tr>
                         </thead>
                         <tbody>
+                            <tr t-foreach="no_sale_lines" t-as="line">
+                                <td></td>
+                                <td><span t-esc="line['name']"/></td>
+                                <td>1,000</td>
+                                <t t-if="doc.valued">
+                                    <td><span t-esc="('%.3f' % line['price_unit']).replace('.', ',')"/></td>
+                                    <td></td>
+                                    <td><span t-esc="line['price_unit']"  t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/></td>
+                                    <td><span t-esc="', '.join(map(lambda x: x.amount.is_integer() and str(int(x.amount)) + '%' or str(x.amount) + '%', line['invoice_line_tax_ids']))"/></td>
+                                </t>
+                            </tr>
                             <t t-foreach="grouped_data.keys()" t-as="sale">
                                 <tr>
                                     <td colspan="7" class="text-center">

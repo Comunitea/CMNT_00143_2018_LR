@@ -9,10 +9,12 @@
             <field name="report_header" position="after">
                 <field name="excess_price"/>
                 <field name="discount_decrease_financiable"/>
+                <field name="discount_decrease_phone"/>
                 <field name="shipping_type_price_configuration">
                     <tree editable="bottom">
                         <field name="shipping_type"/>
                         <field name="discount_decrease"/>
+                        <field name="include_in_lines"/>
                     </tree>
                 </field>
             </field>

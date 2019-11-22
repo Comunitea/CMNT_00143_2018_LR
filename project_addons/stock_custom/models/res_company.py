@@ -22,6 +22,7 @@ class ResCompanyShippingTypePrice(models.Model):
         required=True,
     )
     discount_decrease = fields.Float()
+    include_in_lines = fields.Boolean()
     company_id = fields.Many2one("res.company")
 
     _sql_constraints = [
@@ -40,10 +41,14 @@ class ResCompany(models.Model):
     discount_decrease_financiable = fields.Float(
         "Discount decrease for financed orders"
     )
+    discount_decrease_phone = fields.Float(
+        "Discount decrease for orders maked by phone"
+    )
     shipping_type_price_configuration = fields.One2many(
         "res.company.shipping.type.price", "company_id"
     )
     financiable_account_id = fields.Many2one("account.account")
+    phone_account_id = fields.Many2one("account.account")
     shipping_type_account_id = fields.Many2one("account.account")
 
     def get_discount_decrease_shipping(self, shipping_type):
@@ -51,8 +56,21 @@ class ResCompany(models.Model):
             lambda r: r.shipping_type == shipping_type
         )
         if price_conf:
+            if not price_conf.include_in_lines:
+                return 0
             return price_conf.discount_decrease
         raise UserError(
             _("Shipping type price not configured for {}").format(shipping_type)
         )
 
+    def get_shipping_cost_line_percentage(self, shipping_type):
+        price_conf = self.shipping_type_price_configuration.filtered(
+            lambda r: r.shipping_type == shipping_type
+        )
+        if price_conf:
+            if price_conf.include_in_lines:
+                return 0
+            return price_conf.discount_decrease
+        raise UserError(
+            _("Shipping type price not configured for {}").format(shipping_type)
+        )
