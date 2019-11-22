@@ -6,7 +6,7 @@
         <field name="model">stock.batch.delivery</field>
         <field name="inherit_id" ref="stock_move_selection_wzd.stock_batch_delivery_form"/>
         <field name="arch" type="xml">
-            <button name="action_cancel" position="after">
+            <button name="action_transfer" position="after">
                 <button name="print_rda_delivery" string="Print RDA" type="object" class="oe_highlight"/>
             </button>
         </field>

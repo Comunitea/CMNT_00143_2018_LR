@@ -208,28 +208,21 @@ class StockMove(models.Model):
 
     @api.model
     def search(self, args, offset=0, limit=None, order=None, count=False):
-
-        new_args = args.copy()
+        new_args = expression.normalize_domain(args.copy())
         if self._context.get('delivery_route_group_id', False):
             group_ids = self.env['delivery.route.path.group'].search(
                 [('name', 'ilike', self._context['delivery_route_group_id'])])
             if group_ids:
                 route_ids = [('delivery_route_path_id', 'in', group_ids.mapped('route_path_ids').ids)]
-
                 new_args = expression.AND([route_ids, new_args])
-        move_lines = False
-        for arg in new_args:
-            if arg[0] == 'ghost_qty_done':
-                arg[0] = 'product_uom_qty'
-                arg[1] = '>='
-                arg[2] = '0'
-                move_lines = True
-
-            if move_lines:
-                moves = self.env['stock.move'].search_read(new_args, ['id'])
+        if self._context.get('ghost_qty_done', False):
+            moves = self.env['stock.move'].search_read(new_args, ['id'])
+            if moves:
                 line_ids = [('id', 'in', [x['id'] for x in moves]), ('qty_done', '>', 0)]
-                moves = self.env['stock.move.line'].search_read(line_ids, ['move_id'])
-                new_args = expression.AND([('id', 'in', [x['move_id'][0] for x in moves]), new_args])
+                if line_ids:
+                    moves_qty = self.env['stock.move.line'].search_read(line_ids, ['move_id'])
+                    if moves_qty:
+                        new_args = expression.AND([('id', 'in', [x['move_id'][0] for x in moves_qty]), new_args])
         return super().search(new_args, offset=offset, limit=limit, order=order, count=count)
 
 

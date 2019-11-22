@@ -81,14 +81,7 @@ class StockBatchDelivery(models.Model):
         },
         help='the user who prepare this batch'
     )
-    batch_ids = fields.One2many('stock.batch.picking', 'batch_delivery_id', 'Grupo',
-                                states={
-                                    'draft': [('readonly', False)],
-                                    'ready': [('readonly', False)]
-                                },
-                                readonly=True,
-                                compute = '_get_picking_ids',
-                                domain= get_batch_domain)
+    batch_ids = fields.One2many('stock.batch.picking', string='Grupo', compute = '_get_picking_ids')
     picking_ids = fields.One2many(
         'stock.picking', string='Albaranes',
         compute='_get_picking_ids',
@@ -190,25 +183,21 @@ class StockBatchDelivery(models.Model):
 
     def get_delivery_info(self, partner_id=False):
         move_lines = self.move_lines
-        if partner_id:
-            move_lines = move_lines.filtered(lambda x: x.partner_id == partner_id)
 
         print ("Batch: {}".format(self.name))
-        #out_batch.move_lines = self.env['stock.move'].search([('batch_delivery_id', '=', out_batch.id)])
-        batch_ids = move_lines.mapped('draft_batch_picking_id') + move_lines.mapped('batch_picking_id')
-        picking_ids = move_lines.mapped('batch_picking_id')
+
+        picking_ids = move_lines.mapped('picking_id')
         move_line_ids = move_lines.mapped('move_line_ids')
         package_ids = move_line_ids.mapped('result_package_id')
         package_packaging_ids = package_ids.mapped('packaging_line_ids')
-
+        sbp_ids = move_lines.mapped('batch_picking_id') + move_lines.mapped('draft_batch_picking_id')
         vals ={
-            'picking_ids': picking_ids.ids,
-            'batch_ids': move_lines.mapped('batch_picking_id').ids,
-            'batch_picking_ids': move_lines.mapped('batch_picking_id'),
-            'move_line_ids': move_line_ids.ids,
-            'partner_ids': move_lines.mapped('partner_id').ids,
-            'package_ids': package_ids.ids,
-            'count_picking_ids': len(batch_ids),
+            'picking_ids': picking_ids,
+            'batch_ids': sbp_ids,
+            'move_line_ids': move_line_ids,
+            'partner_ids': move_lines.mapped('partner_id'),
+            'package_ids': package_ids,
+            'count_picking_ids': len(sbp_ids),
             'count_move_lines': len(move_lines),
             'count_package_ids': len(package_ids),
             'count_package_packaging_ids': sum(x.qty for x in package_packaging_ids)
@@ -216,10 +205,27 @@ class StockBatchDelivery(models.Model):
         return vals
 
     @api.multi
+    def unlink(self):
+        if any(x.state == 'done' for x in self):
+            raise ValidationError(_('No puedes boorar una orden de carga ya realizada'))
+        super().unlink()
+
+    @api.multi
     def _get_picking_ids(self):
         partner_id = self._context.get('partner_id', False)
         for delivery_batch in self:
-            delivery_batch.write(delivery_batch.get_delivery_info(partner_id=partner_id))
+
+            vals = delivery_batch.get_delivery_info(partner_id=partner_id)
+            print(vals)
+            delivery_batch.count_move_lines= vals['count_move_lines']
+            delivery_batch.count_package_packaging_ids = vals['count_package_packaging_ids']
+            delivery_batch.count_picking_ids = vals['count_picking_ids']
+            delivery_batch.count_package_ids = vals['count_package_ids']
+            delivery_batch.package_ids = vals['package_ids']
+            delivery_batch.batch_ids = vals['batch_ids']
+            #delivery_batch.batch_picking_ids = vals['batch_picking_ids']
+
+            #delivery_batch.write(delivery_batch.get_delivery_info(partner_id=partner_id))
 
 
     @api.multi
@@ -227,6 +233,10 @@ class StockBatchDelivery(models.Model):
         for batch in self.filtered(lambda x:x.state=='ready'):
             batch.batch_ids.action_transfer()
             batch.state = 'done'
+
+    @api.multi
+    def action_draft(self):
+        self.write({'state': 'ready'})
 
     @api.multi
     def action_confirm(self):
@@ -244,10 +254,11 @@ class StockBatchDelivery(models.Model):
 
     @api.multi
     def action_view_stock_batch_picking(self):
-        batch_ids = self.move_lines.mapped("batch_picking_id")
+
+
         self.ensure_one()
         action = self.env.ref('stock_batch_picking.action_stock_batch_picking_tree').read([])[0]
-        action['domain'] = [('id', 'in', batch_ids.ids)]
+        action['domain'] = [('id', 'in', self.batch_ids.ids)]
         return action
 
     @api.multi

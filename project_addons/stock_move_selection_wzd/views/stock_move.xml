@@ -308,7 +308,7 @@
                 <separator/>
                 <filter name="sga_integrated" string="SGA" domain="[('sga_integrated','=', True)]"/>
                 <filter name="waiting" string="SGA. Enviado" domain="[('sga_state','=', 'pending')]"/>
-                <filter name="waiting_sga" string="SGA. Realizado" domain="[('sga_integrated','=', True),('ghost_qty_done', '&gt;', 0)]"/>
+                <filter name="waiting_sga" string="SGA. Realizado" context="{'ghost_qty_done': True}" domain="[('sga_integrated','=', True)]"/>
                 <filter name="error" string="SGA. Error" domain="[('sga_state','in', ['import_error', 'export_error'])]"/>
                 <filter name="processed" string="SGA. Completado" domain="[('sga_state','=', 'done')]"/>
                 <group expand="0" string="Group By">
