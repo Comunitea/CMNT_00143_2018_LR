@@ -18,14 +18,11 @@
         'ftp_folder_sync'
     ],
     'data': ['views/res_config_views.xml',
-        #'views/stock_batch_picking_views.xml',
         'data/sga_data.xml',
         'views/stock_picking_views.xml',
-        'views/ulma_mmmout.xml',
-        'views/ulma_mmminp.xml',
-        'views/ulma_cajas.xml',
-        'views/ulma_packinglist.xml',
-        #'views/stock_quant_package_views.xml',
+        'views/ulma_processed_mmmout.xml',
+        'views/ulma_processed_mmminp.xml',
+        'views/ulma_processed_containers.xml',
         'security/ir.model.access.csv',
         'views/stock_location_views.xml'
     ]

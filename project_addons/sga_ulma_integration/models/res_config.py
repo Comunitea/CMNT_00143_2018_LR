@@ -5,6 +5,9 @@
 from odoo import fields, models, api, _
 from odoo.addons.stock_move_selection_wzd.models.stock_picking_type import SGA_STATES
 from odoo.exceptions import Warning, UserError
+import logging
+
+_logger = logging.getLogger(__name__)
 
 ULMA_PARAMS = ['ulma_user', 'ulma_pass', 'ulma_host', 'ulma_port', 'ulma_sid',  'ulma_database', 'mmmout_table', 'mmminp_table', \
 'packing_table', 'fdw', 'oracle_extension', 'oracle_server', 'oracle_mmmout', 'oracle_mmminp', 'oracle_packing', 'ulma_cajas', 'ulma_cajas']
@@ -275,5 +278,6 @@ class ConfigUlmaData(models.TransientModel):
     @api.model
     def sync_folders(self):
         super(ConfigUlmaData, self).sync_folders()
-        self.env['stock.batch.picking'].get_from_ulma()
-        self.env['ulma.cajas'].check_packages_from_adaia()
+        _logger.info("Iniciando automatismos ULMA.")
+        self.env['ulma.processed.mmminp'].get_from_ulma()
+        self.env['ulma.processed.containers'].check_packages_from_adaia()

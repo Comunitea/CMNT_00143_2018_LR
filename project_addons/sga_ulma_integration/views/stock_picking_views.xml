@@ -19,25 +19,11 @@
         <field name="arch" type="xml">
             <xpath expr="//group[@name='buttons']" position="before" >
                 <group  attrs="{'invisible': [('sga_integration_type','!=','sga_ulma')]}">
+                    <field name="sga_integration_type" invisible="1"/>
                     <button name="force_button_validate" string="Forzar validación" type="object"
                         class="oe_stat_button" icon="fa-shopping-cart" attrs="{'invisible': [('sga_state', 'in', ['done', 'export_error', 'no_integrated', 'cancel'])]}"/>
-
-                    <button name="send_to_sga" string="Mover a ULMA" type="object"
-                        class="oe_stat_button" icon="fa-shopping-cart" attrs="{'invisible': [('sga_state', 'in', ['done', 'no_integrated', 'cancel'])]}"/>
-                    <button name="get_from_ulma" string="Recibir de ULMA" type="object"
-                        class="oe_stat_button" icon="fa-shopping-cart" attrs="{'invisible': [('sga_state', 'in', ['done', 'export_error', 'no_integrated', 'no_send', 'cancel'])]}"/>
-                    <button name="create_packages_for_ulma" string="Create packages" type="object"
-                        class="oe_stat_button" icon="fa-shopping-cart" attrs="{'invisible': [('sga_state', 'in', ['pending', 'done'])]}"/>
-                    <button name="show_ulma_mmmout" string="Mostrar registros en ulma" type="object"
-                        class="oe_stat_button" icon="fa-shopping-cart" attrs="{'invisible': [('sga_state', 'in', ['export_error', 'no_integrated', 'cancel', 'no_send'])]}"/>
-                    <button name="move_to_not_sent" string="Mover a no enviado" type="object"
-                        class="oe_stat_button" icon="fa-shopping-cart"  attrs="{'invisible': [('sga_state', 'in', ['done'])]}"/>
                 </group>
             </xpath>
-            <!-- <xpath expr="//button[@name='button_validate']" position="attributes">
-                <attribute name="attrs">{'invisible': ['|', ('sga_state', '=', 'pending'), ('show_validate', '=', False)]}</attribute>
-            </xpath> -->
-
         </field>
     </record>
 
