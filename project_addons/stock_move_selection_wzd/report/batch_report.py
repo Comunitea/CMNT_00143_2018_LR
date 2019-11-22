@@ -267,7 +267,6 @@ class ReportPrintBatchPicking(models.AbstractModel):
             'doc_model': model,
             'data': data,
             'docs': docs,
-            'doc_package': False,
             'grouped_data': grouped_data,
             'now': fields.Datetime.now,
         }

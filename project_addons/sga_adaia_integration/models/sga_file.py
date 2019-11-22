@@ -10,8 +10,8 @@ import os
 
 DELETE_FILE = False
 ERRORS = 3
-ODOO_READ_FOLDER = 'Send'
-ODOO_END_FOLDER = 'Receive'
+ODOO_READ_FOLDER = 'Receive'
+ODOO_END_FOLDER = 'Send'
 ODOO_WRITE_FOLDER = 'temp'
 
 class AdaiaVars(models.Model):
@@ -221,6 +221,10 @@ class AdaiaFileHeader(models.Model):
             file_prefix = sga_filename.rsplit('.', 1)[0]
             if file_prefix == 'TREXP':
                 return 'OUT'
+            if file_prefix == 'TRREC':
+                return 'INR'
+            if file_prefix == 'TRSTOMOV':
+                return 'TRS'
         else:
             return False
 
@@ -230,7 +234,7 @@ class AdaiaFileHeader(models.Model):
             return version
         elif sga_filename:
             file_prefix = sga_filename.rsplit('.', 1)[0]
-            if file_prefix == 'TREXP':
+            if file_prefix in ('TREXP', 'TRREC', 'TRSTOMOV'):
                 return 1
         else:
             return False
@@ -469,8 +473,15 @@ class AdaiaFileHeader(models.Model):
         try:
             if self.file_code == "OUT":
                 self.write_log("Desde adaia picking OUT ...")
-                process = self.env['stock.picking'].import_adaia_OUT(self.id)
-                #process = self.env['stock.batch.picking'].import_adaia_OUT(self.id)
+                process = self.env['stock.picking'].import_adaia(self.id, 'OUT')
+            
+            if self.file_code == "INR":
+                self.write_log("Desde adaia picking INR ...")
+                process = self.env['stock.picking'].import_adaia(self.id, 'INR')
+            
+            if self.file_code == "TRS":
+                self.write_log("Desde adaia picking TRS ...")
+                process = self.env['stock.warehouse'].import_adaia(self.id, 'TRS')
 
             if process:
                 self.move_file('archive', self.name)
@@ -478,9 +489,9 @@ class AdaiaFileHeader(models.Model):
             else:
                 proc_error = True
                 self.write_log("-- ERROR >> %s\n--------------\n%s\n----------------------\n" %(self.sga_file, process))
-        except:
+        except Exception as e:
             proc_error = True
-            self.write_log("-- ERROR >> %s\n--------------\n%s\n----------------------\n" % (self.sga_file, "Error de archivo. No se puede mover"))
+            self.write_log("-- ERROR >> %s\n--------------\n%s\n----------------------\n" % (self.sga_file, "Error de archivo: {}".format(e)))
 
         if not process:
             self.move_file('error', self.name)
@@ -494,14 +505,10 @@ class AdaiaFileHeader(models.Model):
 
         res_file = False
         global_path = u'%s/%s' %(self.get_global_path(), folder)
-        #self.write_log("Buscando ficheros en >> %s" % global_path)
         pool_ids = []
         for path, directories, files in os.walk(global_path, topdown=False):
             for name in files:
                 file_prefix = name.rsplit('.', 1)[0]
-                if file_type:
-                    if file_code != file_type:
-                        continue
 
                 sga_file = self.check_sga_name(name, path)
                 if sga_file:

@@ -15,6 +15,7 @@ class StockQuantPackagePackLine(models.Model):
     package_id = fields.Many2one('stock.quant.package', 'Paquete')
     product_id = fields.Many2one('product.product', 'Producto de empaquetado', required="1", domain=get_domain)
     qty = fields.Integer('Cantidad')
+    packaging_move_id = fields.Many2one('stock.move', string="Movimiento de salida asociado")
 
     @api.multi
     def action_add_pack(self):
@@ -49,6 +50,7 @@ class StockQuantPackage(models.Model):
     picking_ids = fields.One2many('stock.picking', compute=get_picking_ids)
     packaging_line_ids = fields.One2many('stock.quant.package.pack.line', 'package_id', 'Empaquetado')
     move_lines = fields.One2many('stock.move', compute=get_picking_ids)
+
 
     @api.multi
     @api.depends('move_line_ids.state', 'move_line_ids.batch_delivery_id')
@@ -263,13 +265,22 @@ class StockQuantPackage(models.Model):
             moves.assign_picking()
 
     @api.multi
-    def picking_pack_lines(self, batch_picking_id):
+    def picking_pack_lines(self, batch_picking_id=False):
+        import  ipdb; ipdb.set_trace()
+        lines = self.mapped('packaging_line_ids').filtered(lambda x: not x.packaging_move_id)
+        if not lines:
+            return False
+        if not batch_picking_id:
+            batch_picking_id = self.batch_picking_id
+        if not batch_picking_id:
+            raise ValueError(_('Debes asignar primero a un albarán de cliente'))
+
         picking_type_id = self.env['stock.picking.type'].search([('code', '=', 'outgoing'), ('group_code', '=', 'packaging')], limit=1)
         # crea un stock picking para las líneas de los m0vimientos
         move_ids = self.env['stock.move']
         lines = self.mapped('packaging_line_ids')
         partner_id = self.mapped('move_line_ids').mapped('partner_id')
-        move_ids = self.mapped('move_line_ids').mapped('move_id')
+        #move_ids = self.mapped('move_line_ids').mapped('move_id')
 
         if len(partner_id)!=1:
             raise ValueError(_('No puedes crearlo de varios clientes al mismo tiempos'))
@@ -288,11 +299,12 @@ class StockQuantPackage(models.Model):
                     'location_dest_id': picking_type_id.default_location_dest_id.id,
                     'picking_type_id': picking_type_id.id,
                     'shipping_type': batch_picking_id.shipping_type,
-                    'route_path_id': batch_picking_id.delivery_route_path_id and batch_picking_id.delivery_route_path_id.id or False,
+                    'delivery_route_path_id': batch_picking_id.delivery_route_path_id and batch_picking_id.delivery_route_path_id.id or False,
                     'carrier_id': batch_picking_id.carrier_id and batch_picking_id.carrier_id.id or False,
                 }
 
                 new_move = move_ids.create(val)
+                line.write({'packaging_move_id': new_move.id})
                 new_move._action_confirm()
                 new_move._action_assign()
                 new_move._assign_picking()
@@ -304,15 +316,18 @@ class StockQuantPackage(models.Model):
 
         new_batch_vals = {
             'name': picking_id.name,
-            'partner_id': picking_id.partner_id.id,
-            'orig_batch_picking_id': picking_id.id,
+            'partner_id': partner_id.id,
+            'orig_batch_picking_id': batch_picking_id.id,
             #'location_id': picking_id.location_id.id,
             #'location_dest_id': picking_id.location_dest_id.id,
             'picking_type_id': picking_type_id.id,
             'picking_ids': [(6,0, [picking_id.id])]
+
         }
         batch = self.env['stock.batch.picking'].create(new_batch_vals)
-        batch.action_transfer()
+        batch_picking_id.pack_lines_picking_id = batch
+        if batch_picking_id.state == 'done':
+            batch.action_transfer()
         return batch
 
 

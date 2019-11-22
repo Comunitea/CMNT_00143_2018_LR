@@ -96,27 +96,27 @@ class StockMove(models.Model):
         """
         self.ensure_one()
         res = {}
-        account = (
-            self.product_id.property_account_income_id
-            or self.product_id.categ_id.property_account_income_categ_id
-        )
-        fpos = (
-            self.partner_id.commercial_partner_id.property_account_position_id
-        )
+        account = self.product_id.property_account_income_id or self.product_id.categ_id.property_account_income_categ_id
+        fpos = self.partner_id.commercial_partner_id.property_account_position_id
+        orig_order = self.picking_id.orig_batch_picking_id.order_id
+        if orig_order:
+            origin = orig_order.name
+        else:
+            origin = ''
         if fpos:
             account = fpos.map_account(account)
         res = {
-            "name": self.name,
-            "sequence": self.sequence,
-            "origin": self.picking_id.orig_batch_picking_id.order_id.name,
-            "account_id": account.id,
-            "price_unit": self.product_id.lst_price,
-            "quantity": self.quantity_done,
-            "discount": 0,
-            "uom_id": self.product_uom.id,
-            "product_id": self.product_id.id or False,
-            "layout_category_id": False,
-            "invoice_line_tax_ids": [(6, 0, self._compute_tax_id().ids)],
+            'name': self.name,
+            'sequence': self.sequence,
+            'origin': origin,
+            'account_id': account.id,
+            'price_unit': self.product_id.lst_price,
+            'quantity': self.quantity_done,
+            'discount': 0,
+            'uom_id': self.product_uom.id,
+            'product_id': self.product_id.id or False,
+            'layout_category_id': False,
+            'invoice_line_tax_ids': [(6, 0, self._compute_tax_id().ids)],
         }
         return res
 
@@ -129,7 +129,7 @@ class StockMoveLine(models.Model):
 
     def _compute_computed_discount(self):
 
-        for line in self.filtered(lambda x: x.sale_line):
+        for line in self.filtered (lambda x: x.sale_line and (x.move_id.shipping_type or line.batch_picking_id.shipping_type)):
             discount = line.sale_discount
             discount -= line.move_id.company_id.get_discount_decrease_shipping(
                 line.move_id.shipping_type
@@ -152,7 +152,7 @@ class StockMoveLine(models.Model):
         sale_lines = self.filtered(lambda x: x.sale_line)
         no_sale_lines = self - sale_lines
         for line in sale_lines:
-            discount = line.computed_discount
+            discount = line.move_id.shipping_type and line.computed_discount or 0.0
             sale_line = line.sale_line
             price_unit = line.sale_price_unit * (1 - (discount or 0.0) / 100.0)
             taxes = line.sale_tax_id.compute_all(

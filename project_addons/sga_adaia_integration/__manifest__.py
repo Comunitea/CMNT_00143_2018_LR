@@ -17,7 +17,8 @@
         'stock',
         'shipping_type',
         'stock_batch_picking',
-        'stock_move_selection_wzd'
+        'stock_move_selection_wzd',
+        'ftp_folder_sync'
     ],
     'data': [
         'security/ir.model.access.csv',
@@ -30,6 +31,7 @@
         'views/product_template.xml',
         'wizard/check_adaia_stock.xml',
         'wizard/stock_picking_adaia_confirm.xml',
+        'views/stock_location_views.xml',
         'data/sga_data.xml'
     ]
 }

@@ -4,6 +4,7 @@
 
 from odoo import models, fields, api, _
 
+
 class DeliveryRoutePath(models.Model):
     _inherit = 'delivery.route.path'
     _order = 'name ASC'
@@ -13,6 +14,7 @@ class DeliveryRoutePath(models.Model):
     day_ids = fields.Many2many('delivery.route.path.day')
     plate_ids = fields.Many2many('delivery.plate')
     group_ids = fields.Many2many('delivery.route.path.group', string="Rutas en el grupo")
+
 class DeliveryPlate(models.Model):
     _name = 'delivery.plate'
 

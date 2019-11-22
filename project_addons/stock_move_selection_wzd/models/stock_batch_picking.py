@@ -275,6 +275,8 @@ class StockBatchPicking(models.Model):
                              'pack_count': pack_count,
                              'date_done': fields.Datetime.now()})
 
+                batch.compute_route_fields()
+
                 if batch.picking_type_id.code == 'outgoing' and batch.picking_type_id.group_code != 'packaging':
                     batch.create_batch_packaging_id()
             #self.compute_counts()

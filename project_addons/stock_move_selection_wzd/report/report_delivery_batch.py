@@ -12,6 +12,49 @@ class DeliveryBatchReport(models.AbstractModel):
 
     def get_report_values(self, docids, data=None):
         model = self.env.context.get('active_model', 'stock.batch.delivery')
+        delivery_id = self.env[model].browse(docids)
+        domain = [('batch_delivery_id', '=', docids), ('state', '!=', 'cancel')]
+        move_ids = self.env['stock.move'].search(domain)
+        picking_ids = move_ids.mapped('picking_id')
+        partner_ids = move_ids.mapped('partner_id')
+
+        info_partner_ids = []
+        ctx = self._context.copy()
+        for partner_id in move_ids.mapped('partner_id'):
+            delivery_route_id = delivery_id.delivery_route_path_id
+            partner_order = partner_id.get_route_order(delivery_route_id)
+            ctx.update(partner_id=partner_id.id)
+            info_partner = delivery_id.get_delivery_info (partner_id=partner_id)
+            str_pick = ''
+            for picking_id in info_partner['batch_ids']:
+                if str_pick:
+                    str_pick = '{},{}'.format(str_pick, picking_id['name'])
+                else:
+                    str_pick = picking_id['name']
+
+            manual_moves = move_ids.filtered(lambda x: x.mapped('move_orig_ids').filtered(lambda x: x.location_id.manual_pick))
+            info_partner.update({
+                'route': delivery_route_id,
+                'partner_id': partner_id,
+                'str_pick': str_pick,
+                'manual_moves': manual_moves,
+                'partner_order': partner_order
+            })
+            info_partner_ids.append(info_partner)
+
+        docargs = {
+            'doc_ids': docids,
+            'doc_model': model,
+            'docs': delivery_id,
+            'partner_data': info_partner_ids,
+            'manual_moves': manual_moves,
+
+        }
+        print (docargs)
+        return docargs
+
+    def get_report_values2(self, docids, data=None):
+        model = self.env.context.get('active_model', 'stock.batch.delivery')
         batch = self.env[model].browse(docids)
         domain = [('batch_delivery_id', '=', docids), ('state', '!=', 'cancel')]
         move_ids = self.env['stock.move'].search(domain)

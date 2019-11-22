@@ -5,8 +5,12 @@
 from odoo import fields, models, api, _
 from odoo.addons.stock_move_selection_wzd.models.stock_picking_type import SGA_STATES
 from odoo.exceptions import Warning, UserError
+import logging
 
-ULMA_PARAMS = ['ulma_user', 'ulma_pass', 'ulma_host', 'ulma_port', 'ulma_sid',  'ulma_database', 'mmmout_table', 'mmminp_table', 'packing_table', 'fdw', 'oracle_extension', 'oracle_server', 'oracle_mmmout', 'oracle_mmminp', 'oracle_packing']
+_logger = logging.getLogger(__name__)
+
+ULMA_PARAMS = ['ulma_user', 'ulma_pass', 'ulma_host', 'ulma_port', 'ulma_sid',  'ulma_database', 'mmmout_table', 'mmminp_table', \
+'packing_table', 'fdw', 'oracle_extension', 'oracle_server', 'oracle_mmmout', 'oracle_mmminp', 'oracle_packing', 'ulma_cajas', 'ulma_cajas']
 
 
 class ConfigUlmaData(models.TransientModel):
@@ -24,9 +28,11 @@ class ConfigUlmaData(models.TransientModel):
     oracle_mmmout = fields.Boolean('MMMOUT table linked')
     oracle_mmminp = fields.Boolean('MMMINP table linked')
     oracle_packing = fields.Boolean('packing table linked')
+    oracle_cajas = fields.Boolean('cajas table linked')
     mmmout_table = fields.Char('MMMOUT table', help='Name of the mmmout table')
     mmminp_table = fields.Char('MMMINP table', help='Name of the mmminp table')
     packing_table = fields.Char('Packinglist table', help='Name of the packinglist table')
+    ulma_cajas = fields.Char('Cajas table', help='Ulma cajas table')
     fdw = fields.Selection([('oracle_fdw', 'Oracle'), ('postgres_fdw', 'Postgres')], default="oracle_fdw", string='FDW', help='Foreign Data Wrapper')
 
 
@@ -85,6 +91,14 @@ class ConfigUlmaData(models.TransientModel):
             self.oracle_packing = True
         else:
             self.oracle_packing = False
+
+        self.env.cr.execute(
+            """select * from information_schema.foreign_tables where foreign_table_name = 'ulma_cajas' and foreign_server_name = '%s'""" % (
+                self.ulma_database))
+        if self.env.cr.rowcount:
+            self.oracle_cajas = True
+        else:
+            self.oracle_cajas = False
         return
 
     def check_server_link(self):
@@ -108,6 +122,12 @@ class ConfigUlmaData(models.TransientModel):
             self.oracle_mmminp = False
 
         self.env.cr.execute("""select * from information_schema.foreign_tables where foreign_table_name = 'ulma_packinglist' and foreign_server_name = '%s'""" % (self.ulma_database))
+        if self.env.cr.rowcount:
+            self.oracle_packing = True
+        else:
+            self.oracle_packing = False
+
+        self.env.cr.execute("""select * from information_schema.foreign_tables where foreign_table_name = 'ulma_cajas' and foreign_server_name = '%s'""" % (self.ulma_database))
         if self.env.cr.rowcount:
             self.oracle_packing = True
         else:
@@ -141,6 +161,7 @@ class ConfigUlmaData(models.TransientModel):
         self.create_table_mmmout()
         self.create_table_mmminp()
         self.create_table_packing()
+        self.create_table_cajas()
 
     
     def create_table_mmmout(self):
@@ -208,12 +229,31 @@ class ConfigUlmaData(models.TransientModel):
         #ADD Key to enable table editing
         self.env.cr.execute("""ALTER FOREIGN TABLE ulma_packinglist ALTER "id" OPTIONS (ADD key 'true');""")
 
+    def create_table_cajas(self):
+
+        if self.fdw == 'oracle_fdw':
+            table_mod = 'TABLE'
+            primary_mod = 'SERIAL'
+        else:
+            table_mod = 'table_name'
+            primary_mod = 'integer NOT NULL'
+
+        ## Create foreign table cajas
+        self.env.cr.execute("""CREATE FOREIGN TABLE ulma_cajas (matricula character varying(15), referencia character varying(20), hueco numeric(9,0), 
+        cantidad numeric(9,0), tipo character varying(15), caja_id numeric(15), procesado character varying(1), id %s,
+        origen character varying(9), confirmado character varying(1), fecha timestamp) 
+        SERVER %s OPTIONS (%s '%s')""" % (primary_mod, self.ulma_database, table_mod, self.ulma_cajas))
+
+        #ADD Key to enable table editing
+        self.env.cr.execute("""ALTER FOREIGN TABLE ulma_cajas ALTER "id" OPTIONS (ADD key 'true');""")
+
 
     def drop_tables(self):
         ## Deletes the tables
         self.drop_mmmout()
         self.drop_mmminp()
         self.drop_packinglist()
+        self.drop_cajas()
 
     def drop_mmmout(self):
         ## Deletes the mmmout table
@@ -226,3 +266,18 @@ class ConfigUlmaData(models.TransientModel):
     def drop_packinglist(self):
         ## Deletes the packinglist table
         self.env.cr.execute("""DROP FOREIGN TABLE ulma_packinglist""")
+
+    def drop_cajas(self):
+        ## Deletes the cajas table
+        self.env.cr.execute("""DROP FOREIGN TABLE ulma_cajas""")
+
+    def drop_server(self):
+        ## Drop server
+        self.env.cr.execute("""DROP SERVER %s CASCADE""" % (self.ulma_database))
+
+    @api.model
+    def sync_folders(self):
+        super(ConfigUlmaData, self).sync_folders()
+        _logger.info("Iniciando automatismos ULMA.")
+        self.env['ulma.processed.mmminp'].get_from_ulma()
+        self.env['ulma.processed.containers'].check_packages_from_adaia()
