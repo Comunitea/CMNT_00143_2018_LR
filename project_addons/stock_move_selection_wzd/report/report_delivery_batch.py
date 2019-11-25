@@ -7,9 +7,9 @@ from odoo.exceptions import UserError
 
 
 class DeliveryBatchReport(models.AbstractModel):
-
     _name = 'report.stock_move_selection_wzd.delivery_batch_view'
 
+    @api.model
     def get_report_values(self, docids, data=None):
         model = self.env.context.get('active_model', 'stock.batch.delivery')
         delivery_id = self.env[model].browse(docids)
@@ -54,6 +54,8 @@ class DeliveryBatchReport(models.AbstractModel):
         return docargs
 
     def get_report_values2(self, docids, data=None):
+        import ipdb;
+        ipdb.set_trace()
         model = self.env.context.get('active_model', 'stock.batch.delivery')
         batch = self.env[model].browse(docids)
         domain = [('batch_delivery_id', '=', docids), ('state', '!=', 'cancel')]

@@ -18,7 +18,7 @@
 
     <report id="delivery_batch_report"
             model="stock.batch.delivery"
-            string="Delivery Batch Report"
+            string="Orden de carga"
             report_type="qweb-html"
             name="stock_move_selection_wzd.delivery_batch_view"
             file="stock_move_selection_wzd.delivery_batch_view"
@@ -92,25 +92,25 @@
             <tr class="row" style="border: 1px solid black; padding-left: 0px !important" t-foreach="partner_data"
                 t-as="partner">
 
-                <td class="col-xs-5" style="height: 100%; border:1px solid black; padding-right: 0px;">
-                    <span class="col-xs-6" style="padding: 0px">Ruta:
-                        <t t-esc="doc.delivery_route_path_id.name"/>
+                <td class="col-xs-5" style="height: 100%; padding-right: 0px; padding-top: 0px">
+                    <span class="col-xs-6" style="padding: 0px">
+                        Ruta: <t t-esc="doc.delivery_route_path_id.name"/><br/>
+                        Código: <t t-esc="partner['partner_id'].ref"/>
                     </span>
-                    <span class="col-xs-2" style="border: 1px solid black; text-align: center; padding: 0px">Bultos
+                    <span class="col-xs-2" style="border: 1px solid black;  border-right: 0px; border-top: 0px; text-align: center; padding: 0px">
+                        Bultos
+                        <br/>
+                        <span style="text-align: center; padding: 0px" t-esc="partner['count_package_ids']"/>
                     </span>
-                    <span class="col-xs-2" style="border: 1px solid black; text-align: center; padding: 0px">Palets
-                    </span>
-                    <span class="col-xs-2" style="border: 1px solid black; text-align: center; padding: 0px">Pl. Rec.
-                    </span>
-
-                    <span class="col-xs-6" style="padding: 0px">Código:
-                        <t t-esc="partner['partner_id'].ref"/>
-                    </span>
-                    <span class="col-xs-2" style="border: 1px solid black; text-align: center; padding: 0px"
-                          t-esc="partner['count_package_ids']"/>
-                    <span class="col-xs-2" style="border: 1px solid black; text-align: center; padding: 0px"
+                    <span class="col-xs-2" style="border: 1px solid black; border-right: 0px; border-top: 0px; text-align: center; padding: 0px">Palets
+                        <br/>
+                         <span style="text-align: center; padding: 0px"
                           t-esc="partner['count_package_packaging_ids']"/>
-                    <span class="col-xs-2" style="border: 1px solid black; text-align: center; padding: 0px">-</span>
+                    </span>
+                    <span class="col-xs-2" style="border: 1px solid black; border-right: 0px; border-top: 0px; text-align: center; padding: 0px">Pl. Rec.
+                        <br/>
+                        <span style="text-align: center; padding: 0px">_____</span>
+                    </span>
                     <span class="col-xs-12" style="padding: 0px">
                         <span class="col-xs-12" style="padding: 0px" t-esc="partner['partner_id'].name"/>
                         <span class="col-xs-12" style="padding: 0px" t-esc="partner['partner_id'].street"/>
@@ -138,7 +138,7 @@
                     </span>
                 </td>
                 <td class="col-xs-2"
-                    style="height: 100%; border:1px solid black; padding: 2px; background-color: white !important; vertical-align:top">
+                    style="height: 100%; padding: 2px; background-color: white !important; vertical-align:top">
                     <span class="col-xs-12" style="text-align: center; padding: 0px">Recibi conforme:</span>
                     <span class="col-xs-12" style="text-align: center; padding: 0px"></span>
                     <span class="col-xs-12"></span>
@@ -153,7 +153,7 @@
             <t t-foreach="docs" t-as="doc">
                 <t t-call="stock_move_selection_wzd.external_layout_delivery_LR">
                     <div class="page">
-                        <!--t t-call="stock_move_selection_wzd.body_delivery"/-->
+                        <t t-call="stock_move_selection_wzd.body_delivery"/>
                     </div>
                 </t>
 
