@@ -3,7 +3,7 @@
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 
 from odoo import api, fields, models, _
-from odoo.exceptions import UserError
+from odoo.exceptions import ValidationError
 
 
 class BatchDeliveryCustomReport(models.AbstractModel):
@@ -26,7 +26,9 @@ class BatchDeliveryCustomReport(models.AbstractModel):
         batch_delivery_id = self.env[model].browse(docids)
         batch_delivery_id.ensure_one()
 
-        moves = batch_delivery_id.move_lines.filtered(lambda x: x.quantity_done != 0.00 and x.product_tmpl_id.adr_idnumonu != False)
+        moves = batch_delivery_id.move_lines.filtered(lambda x: x.quantity_done != 0.00 and x.product_tmpl_id.adr_idnumonu)
+        if not moves:
+            raise ValidationError(_("There are no ADR products in this order."))
 
         move_line_ids = self.env['stock.move.line'].search([('move_id', 'in', moves.ids)])
         pickings = moves.mapped('picking_id')
