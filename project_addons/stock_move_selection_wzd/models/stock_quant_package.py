@@ -266,7 +266,6 @@ class StockQuantPackage(models.Model):
 
     @api.multi
     def picking_pack_lines(self, batch_picking_id=False):
-        import  ipdb; ipdb.set_trace()
         lines = self.mapped('packaging_line_ids').filtered(lambda x: not x.packaging_move_id)
         if not lines:
             return False
