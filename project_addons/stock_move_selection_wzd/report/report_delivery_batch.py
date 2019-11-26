@@ -54,8 +54,6 @@ class DeliveryBatchReport(models.AbstractModel):
         return docargs
 
     def get_report_values2(self, docids, data=None):
-        import ipdb;
-        ipdb.set_trace()
         model = self.env.context.get('active_model', 'stock.batch.delivery')
         batch = self.env[model].browse(docids)
         domain = [('batch_delivery_id', '=', docids), ('state', '!=', 'cancel')]

@@ -328,6 +328,8 @@ class StockMove(models.Model):
 
     @api.multi
     def action_tree_manage_pack(self):
+        if any(x.state == 'done' for x in self):
+            raise ValidationError (_('No puedes asignar un paquete a un movimiento hecho. Deberás empaquetar posteriormente'))
 
         if self.result_package_id:
             package = self.result_package_id
