@@ -151,7 +151,6 @@
                 </span>
             </span>
             <div class="col-xs-2" style="border: 0px solid black; height: 100%">
-
                 <span class="col-xs-12" style="text-align: left; padding: 0px">
                     <strong style="font-weight: bold; color: rgb(0,51,102); font-family: Arial"> Recibi conforme:</strong>
                 </span>
@@ -216,8 +215,6 @@
             </tr>
         </table>
     </template>
-
-
     <template id="stock_move_selection_wzd.delivery_batch_view3">
         <t t-call="web.external_layout">
             <t t-set="doc" t-value="doc.with_context(lang=doc.driver_id.lang)" />
@@ -245,10 +242,37 @@
                         </div>
 
                     </div>
-
-
                     <t t-call="stock_move_selection_wzd.body_delivery"/>
+                    <div class="row">
+                         <div class="col-xs-4" style="text-align: center;padding: 0px; color: rgb(0,51,102); font-family: Arial" >
+                                Recibí volumenes y albaranes
+                                <br/>
+                                Firma del conductor:
+                        </div>
+
+                         <div class="col-xs-4" style="text-align: center;padding: 0px; color: rgb(0,51,102); font-family: Arial" >
+                                Recibí volumenes y albaranes
+                                <br/>
+                                Firma del conductor:
+                        </div>
+                         <div class="col-xs-4" style="text-align: center;padding: 0px; color: rgb(0,51,102); font-family: Arial" >
+                                Recibí volumenes y albaranes
+                                <br/>
+                                Firma del conductor:
+                        </div>
+
+                         <div class="col-xs-4" style="text-align: center;padding: 0px; color: rgb(0,51,102); font-family: Arial" >
+                                Recibí volumenes y albaranes
+                                <br/>
+                                Firma del conductor:
+                        </div>
+
+
+
                 </div>
+                </div>
+
+
         </t>
     </template>
 
@@ -289,56 +313,39 @@
                         </div>
                     </div>
                     <t t-call="stock_move_selection_wzd.body_delivery"/>
-                    <!--table class="table table-condensed">
-                        <thead style="font-weight: bold; color: rgb(0,51,102); font-family: Arial; font-size: 12px;">
-                            <tr>
-                                <th>REFERENCIA</th>
-                                <th>DESCRIPCION</th>
-                                <th>CANTIDAD</th>
-                                <t t-if="doc.valued">
-                                    <th>PRECIO</th>
-                                    <th>DTdoc.</th>
-                                    <th>SUBTOTAL</th>
-                                    <th>IMPUESTOS</th>
-                                </t>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr t-foreach="no_sale_lines" t-as="line">
-                                <td></td>
-                                <td><span t-esc="line['name']"/></td>
-                                <td>1,000</td>
-                                <t t-if="doc.valued">
-                                    <td><span t-esc="('%.3f' % line['price_unit']).replace('.', ',')"/></td>
-                                    <td></td>
-                                    <td><span t-esc="line['price_unit']"  t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/></td>
-                                    <td><span t-esc="', '.join(map(lambda x: x.amount.is_integer() and str(int(x.amount)) + '%' or str(x.amount) + '%', line['invoice_line_tax_ids']))"/></td>
-                                </t>
-                            </tr>
-                            <t t-foreach="grouped_data.keys()" t-as="sale">
-                                <tr>
-                                    <td colspan="7" class="text-center">
-                                        Pedido : <span t-field="sale.name"/><t t-if="sale.client_order_ref"> S/Ref:<span t-field="sale.client_order_ref"/></t> <span t-field="sale.date_order" t-options="{'widget': 'date'}"/>
-                                    </td>
-                                </tr>
-                                <tr t-foreach="grouped_data[sale]" t-as="move_line">
-                                    <td><span t-field="move_line.product_id.default_code"/></td>
-                                    <td><span t-field="move_line.product_id.name"/></td>
-                                    <td><span t-field="move_line.qty_done"/></td>
-                                    <t t-if="doc.valued">
-                                        <td><span t-field="move_line.sale_price_unit"/></td>
-                                        <td><span t-field="move_line.computed_discount"/></td>
-                                        <td><span t-field="move_line.sale_price_subtotal"/></td>
-                                        <td><span t-esc="', '.join(map(lambda x: x.amount.is_integer() and str(int(x.amount)) + '%' or str(x.amount) + '%', move_line.sale_tax_id))"/></td>
-                                    </t>
 
-                                </tr>
-                            </t>
-                        </tbody>
-                    </table-->
                     <div class="oe_structure"/>
+                        <div class="col-xs-12" style="height: 200px; border-radius: 25px;border: 1px solid black; padding-top: 7px;padding-left: px; padding-right: 0px; width: 100%; margin-top: 100px; display: inline"  >
+                             <div class="col-xs-4" style="width: 25%; text-align: left; padding: 2px; color: rgb(0,51,102); font-size: small; font-family: Arial" >
+                                    Recibí volumenes y albaranes
+                                    <br/>
+                                    Firma del conductor:
+                            </div>
+
+                             <div class="col-xs-4" style="width: 25%; text-align: left; padding: 2px; color: rgb(0,51,102); font-size: small; font-family: Arial" >
+                                    VºBº y firma responsable
+                                    <br/>
+                                     almacén: <span  t-esc="doc.date_done or doc.date"/>
+
+                            </div>
+                             <div class="col-xs-4" style="width: 35%; text-align: left; padding: 2px; color: rgb(0,51,102); font-size: small; font-family: Arial" >
+                                 Mercancía entregada conforme <br/>a la carta
+                                 sin salvedades <br/>(Salvedades al dorso)
+                                 <br/>
+                                 Firma del conductor:
+                            </div>
+
+                             <div class="col-xs-4" style="width: 15%; text-align: left; padding: 2px; color: rgb(0,51,102); font-size: small; font-family: Arial" >
+                                    Total de horas/Kms.
+                                    <br/>
+
+                            </div>
+                        </div>
                 </div>
+
+
             </t>
+
         </template>
 
 

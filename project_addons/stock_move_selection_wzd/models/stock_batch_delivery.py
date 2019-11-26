@@ -183,9 +183,8 @@ class StockBatchDelivery(models.Model):
 
     def get_delivery_info(self, partner_id=False):
         move_lines = self.move_lines
-
-        print ("Batch: {}".format(self.name))
-
+        if partner_id:
+            move_lines = move_lines.filtered(lambda x:x.partner_id == partner_id)
         picking_ids = move_lines.mapped('picking_id')
         move_line_ids = move_lines.mapped('move_line_ids')
         package_ids = move_line_ids.mapped('result_package_id')
