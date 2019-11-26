@@ -21,7 +21,6 @@ class StockQuantPackage(models.Model):
     campaign_id = fields.Many2one('campaign', 'Campaign')
     #shipping_type = fields.Selection(compute='compute_route_fields', inverse='set_route_fields')
     #delivery_route_path_id = fields.Many2one(compute='compute_route_fields', inverse='set_route_fields')
-    payment_term_id = fields.Many2one(compute='compute_route_fields', inverse='set_route_fields')
     shipping_type = fields.Selection(SHIPPING_TYPE_SEL, string=STRING_SHIPPING_TYPE,
                                      help=HELP_SHIPPING_TYPE, compute='compute_route_fields', inverse='set_route_fields')
     delivery_route_path_id = fields.Many2one('delivery.route.path', string="Ruta de transporte", compute='compute_route_fields', inverse='set_route_fields')
