@@ -32,11 +32,12 @@ class DeliveryBatchReport(models.AbstractModel):
                 else:
                     str_pick = picking_id['name']
 
-            manual_moves = move_ids.filtered(lambda x: x.mapped('move_orig_ids').filtered(lambda x: x.location_id.manual_pick))
+            manual_moves = move_ids.filtered(lambda x: x.product_id.manual_picking)
             info_partner.update({
                 'route': delivery_route_id,
                 'partner_id': partner_id,
                 'str_pick': str_pick,
+                'count_pick': len(info_partner['batch_ids']),
                 'manual_moves': manual_moves,
                 'partner_order': partner_order
             })
