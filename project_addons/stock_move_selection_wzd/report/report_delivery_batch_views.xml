@@ -316,26 +316,26 @@
 
                     <div class="oe_structure"/>
                         <div class="col-xs-12" style="height: 200px; border-radius: 25px;border: 1px solid black; padding-top: 7px;padding-left: px; padding-right: 0px; width: 100%; margin-top: 100px; display: inline"  >
-                             <div class="col-xs-4" style="width: 25%; text-align: left; padding: 2px; color: rgb(0,51,102); font-size: small; font-family: Arial" >
+                             <div class="col-xs-4" style="width: 25%; text-align: left; color: rgb(0,51,102); font-size: small; font-family: Arial" >
                                     Recibí volumenes y albaranes
                                     <br/>
                                     Firma del conductor:
                             </div>
 
-                             <div class="col-xs-4" style="width: 25%; text-align: left; padding: 2px; color: rgb(0,51,102); font-size: small; font-family: Arial" >
+                             <div class="col-xs-4" style="width: 25%; text-align: left; color: rgb(0,51,102); font-size: small; font-family: Arial" >
                                     VºBº y firma responsable
                                     <br/>
                                      almacén: <span  t-esc="doc.date_done or doc.date"/>
 
                             </div>
-                             <div class="col-xs-4" style="width: 35%; text-align: left; padding: 2px; color: rgb(0,51,102); font-size: small; font-family: Arial" >
+                             <div class="col-xs-4" style="width: 35%; text-align: left; color: rgb(0,51,102); font-size: small; font-family: Arial" >
                                  Mercancía entregada conforme <br/>a la carta
                                  sin salvedades <br/>(Salvedades al dorso)
                                  <br/>
                                  Firma del conductor:
                             </div>
 
-                             <div class="col-xs-4" style="width: 15%; text-align: left; padding: 2px; color: rgb(0,51,102); font-size: small; font-family: Arial" >
+                             <div class="col-xs-4" style="width: 15%; text-align: left; color: rgb(0,51,102); font-size: small; font-family: Arial" >
                                     Total de horas/Kms.
                                     <br/>
 

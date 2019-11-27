@@ -23,6 +23,7 @@
         'data/stock_batch_delivery.xml',
         'security/ir.model.access.csv',
         'report/report_delivery_batch_views.xml',
+        'report/report_batch_picking.xml',
         'views/stock_batch_delivery.xml',
         'views/delivery_route_path.xml',
         'views/picking_type.xml',

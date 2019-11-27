@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- <report string="Batch picking"
-            id="stock_batch_picking.action_report_batch_picking"
+    <report string="Firmar picking"
+            id="stock_move_selection_wzd.action_report_batch_picking"
             model="stock.batch.picking"
             report_type="qweb-html"
-            name="stock_batch_picking.report_batch_picking"
-            file="stock_batch_picking.report_batch_picking"/> -->
+            name="stock_batch_picking.report_batch_picking_sign"
+            file="stock_batch_picking.report_batch_picking_sign"/>
 
     <template id="batch_header">
 
@@ -530,7 +530,7 @@
         </div>
       </div>
     </template>
-<template id="assets_backend" name="stock_move_selection_wzd assets" inherit_id="web.assets_backend">
+    <template id="assets_backend" name="stock_move_selection_wzd assets" inherit_id="web.assets_backend">
     <xpath expr="." position="inside">
             <script type="text/javascript" src="/portal/static/src/js/portal_signature.js"></script>
             <script type="text/javascript" src="/portal/static/src/js/portal.js"></script>
@@ -545,11 +545,10 @@
 <template id="assets_common" inherit_id="web.assets_common" name="stock_move_selection_wzd Portal Common Assets">
     <xpath expr="script[last()]" position="after">
         <script type="text/javascript" src="/web/static/lib/jSignature/jSignatureCustom.js"></script>
-
     </xpath>
 </template>
 
-<template id="stock_batch_picking.report_batch_picking">
+<template id="stock_batch_picking.report_batch_picking_sign">
     <t t-call="web.html_container">
         <t t-foreach="docs" t-as="doc">
             <t t-call="stock_move_selection_wzd.external_layout_LR">
@@ -576,13 +575,13 @@
                     <t t-foreach="grouped_data" t-as="sale">
                        <t t-call="stock_move_selection_wzd.table_body_line_LR"/>
                     </t>
-                    <!--div t-if="not doc.digital_signature" class="col-xs-12 text-center mb4">
+                    <div t-if="not doc.digital_signature" class="col-xs-12 text-center mb4">
                         <a role="button" class="btn btn-primary btn-block mb8"
                            data-toggle="modal"
                            data-target="#sign_template_1" href="#">
                             <i class="fa fa-check"/> Accept &amp; Sign
                         </a>
-                    </div-->
+                    </div>
                     <div class="row" t-if="doc.digital_signature">
                         <span class="col-xs-4"/>
                         <span class="col-xs-8 text-center">
