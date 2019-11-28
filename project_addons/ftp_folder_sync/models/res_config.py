@@ -72,6 +72,7 @@ class ConfigFTPConnection(models.TransientModel):
         ftp_password = self.env['ir.config_parameter'].get_param('ftp_folder_sync.ftp_password', False)
         
         try:
+            _logger.info("Conectando al ftp")
             ftp = FTP()
             ftp.connect(ftp_server, int(ftp_port))
             _logger.info("Conectando al ftp: {}".format(ftp_server))

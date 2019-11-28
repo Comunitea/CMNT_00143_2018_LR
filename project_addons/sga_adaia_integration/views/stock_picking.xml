@@ -21,10 +21,6 @@
             <xpath expr="//group[@name='buttons']" position="before" >
                 <field name="sga_integration_type" invisible="1"/>
             </xpath>
-            <xpath expr="//button[@name='button_validate']" position="after">
-                <button name="action_send_to_sga" string="Enviar a SGA" type="object" class="oe_highlight"
-                        attrs="{'invisible': [('sga_state', 'not in', ('export_error', 'import_error', 'no_send'))]}"/>
-            </xpath>
             <field name="name" position="after" >
                 <field name="sga_state" invisible="1"/>
             </field>

@@ -56,8 +56,8 @@ class UlmaMmminp(models.Model):
                 'picking_id': real_picking.id
             })
             #Descomentar cuando sea seguro probar
-            #self._cr.execute(sql_update)
-            #done = self._cr.fetchall()
+            self._cr.execute(sql_update)
+            done = self._cr.fetchall()
 
             # sga_auto_validate está en sga_adaia_integration. Mirar de meterlo en un sitio del que dependan ambos
             for batch in batch_ids:

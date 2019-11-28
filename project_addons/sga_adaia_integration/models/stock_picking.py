@@ -236,10 +236,18 @@ class StockPickingSGA(models.Model):
                             continue
                         else:
                             _logger.info("Encontrada línea: {} con cantidad: {}".format(actual_line.id, CANSER))
-                            actual_line.update({
-                                'qty_done': CANSER,
-                                'sga_state': 'done'
-                            })
+
+                            if actual_line.state != 'done':
+                                vals = {
+                                    'qty_done': CANSER,
+                                    'sga_state': 'done'}
+                            else:
+                                vals = {
+                                    'qty_done': actual_line.qty_done + CANSER,
+                                    'sga_state': 'done'}
+
+                            actual_line.write(vals)
+
                             sga_ops_exists.append(actual_line.id)
 
                     elif actual_pick is not False and TIPEREG == 'CECN':
@@ -326,10 +334,18 @@ class StockPickingSGA(models.Model):
                             continue
                         else:
                             _logger.info("Encontrada línea: {} con cantidad: {}".format(actual_line.id, CANREC))
-                            actual_line.update({
-                                'qty_done': CANREC,
-                                'sga_state': 'done'
-                            })
+
+                            if actual_line.state != 'done':
+                                vals = {
+                                    'qty_done': CANREC,
+                                    'sga_state': 'done'}
+                            else:
+                                vals = {
+                                    'qty_done': actual_line.qty_done + CANREC,
+                                    'sga_state': 'done'}
+
+                            actual_line.write(vals)
+
                             sga_ops_exists.append(actual_line.id)
 
                     elif actual_pick is not False and TIPEREG == 'CRCN':
@@ -369,16 +385,26 @@ class StockPickingSGA(models.Model):
                         continue
 
         if pick_pool:
+            batch_ids = []
             for pick in pick_pool:
                 pick_id = self.env['stock.picking'].browse(pick.id)
                 pick_id.write({
                     'sga_state': 'done'
                 })
-                if pick.picking_type_id and pick.picking_type_id.sga_auto_validate:
-                    _logger.info("Autovalidando picking: {}.".format(pick.id))
-                    ctx = pick._context.copy()
+                if pick_id.draft_batch_picking_id not in batch_ids:
+                    batch_ids.append(pick_id.draft_batch_picking_id)
+                #if pick.picking_type_id and pick.picking_type_id.sga_auto_validate:
+                #    _logger.info("Autovalidando picking: {}.".format(pick.id))
+                #    ctx = pick._context.copy()
+                #    ctx.update(from_sga=True)
+                #    pick.with_context(ctx).button_validate()
+
+            for batch in batch_ids:
+                if batch.picking_type_id and batch.picking_type_id.sga_auto_validate:
+                    _logger.info("Validando stock batch picking con ID: {} / {}.".format(batch_ids.id, batch.name))
+                    ctx = batch._context.copy()
                     ctx.update(from_sga=True)
-                    pick.with_context(ctx).button_validate()
+                    batch.with_context(ctx).action_transfer()
 
         return pick_pool
 
@@ -393,41 +419,3 @@ class StockPickingSGA(models.Model):
                       'error_code': error_code,
                       'error_message': error_message}
         self.env['sga.file.error'].create(error_vals)
-
-    # Incomming Production orders
-    @api.multi    
-    def new_adaia_file(self, sga_file_type='UNT0', operation=False, code_type=0):
-        _logger.info("Exportando production picking.")
-        ctx = dict(self.env.context)
-        
-        if operation:
-            ctx['ACCION'] = operation
-        if 'ACCION' not in ctx:
-            ctx['ACCION'] = 'MO'
-
-        ctx['PREFIX'] = self.picking_type_id.sga_prefix
-        ctx['draft_batch_picking_id'] = self.id
-        ctx['draft_batch_picking_name'] = self.name
-        
-        states_to_send = ('assigned', 'draft', 'ready')
-
-        if self.state in states_to_send:
-            new_sga_file = self.env['sga.file'].with_context(ctx).\
-                    check_sga_file('stock.picking', self.id, self.picking_type_id.sgavar_file_id.code)
-            if not new_sga_file:
-                raise ValidationError("No hay albaranes para enviar a Adaia")
-        return True
-
-    @api.multi
-    def send_to_sga(self):
-        for pick in self.filtered(lambda x: x.picking_type_id.sga_integration_type == 'sga_adaia' and x.state not in ('done', 'cancel')):
-            pick_file = pick.new_adaia_file()
-            if pick_file:
-                _logger.info("Cambiando sga_state de los movimientos {} del pick {}.".format(pick.move_line_ids.ids, pick.name))
-                pick.move_line_ids.update({
-                    'sga_state': 'done'
-                })
-                _logger.info("Cambiando sga_state del pick {}.".format(pick.name))
-                pick.update({
-                    'sga_state': 'done'
-                })

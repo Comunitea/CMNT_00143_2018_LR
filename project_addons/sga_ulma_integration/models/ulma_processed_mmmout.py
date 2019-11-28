@@ -72,8 +72,8 @@ class UlmaProcessedMmmout(models.Model):
                 vals['mmmubidesref'], vals['mmmzondesref'], vals['mmmobs'])
         print(sql_update)
         #Descomentar cuando sea seguro probar
-        #self._cr.execute(sql_update)
-        #done = self._cr.fetchall()
+        self._cr.execute(sql_update)
+        done = self._cr.fetchall()
 
         processed_vals = {
             'mmmcmdref': vals['mmmcmdref'],
