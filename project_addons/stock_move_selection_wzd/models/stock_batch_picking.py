@@ -124,8 +124,6 @@ class StockBatchPicking(models.Model):
             else:
                 batch.ready_to_transfer = False
 
-
-
     @api.multi
     def _get_nlines(self):
         for pick in self:

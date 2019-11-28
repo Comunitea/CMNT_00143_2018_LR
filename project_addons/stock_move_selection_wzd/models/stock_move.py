@@ -209,6 +209,7 @@ class StockMove(models.Model):
     @api.model
     def search(self, args, offset=0, limit=None, order=None, count=False):
         new_args = expression.normalize_domain(args.copy())
+        ctx = self._context.copy()
         if self._context.get('delivery_route_group_id', False):
             group_ids = self.env['delivery.route.path.group'].search(
                 [('name', 'ilike', self._context['delivery_route_group_id'])])
@@ -216,14 +217,16 @@ class StockMove(models.Model):
                 route_ids = [('delivery_route_path_id', 'in', group_ids.mapped('route_path_ids').ids)]
                 new_args = expression.AND([route_ids, new_args])
         if self._context.get('ghost_qty_done', False):
-            moves = self.env['stock.move'].search_read(new_args, ['id'])
+            ctx.update(ghost_qty_done=False)
+            moves = self.env['stock.move'].with_context(ctx).search_read(new_args, ['id'])
             if moves:
                 line_ids = [('id', 'in', [x['id'] for x in moves]), ('qty_done', '>', 0)]
                 if line_ids:
                     moves_qty = self.env['stock.move.line'].search_read(line_ids, ['move_id'])
                     if moves_qty:
                         new_args = expression.AND([('id', 'in', [x['move_id'][0] for x in moves_qty]), new_args])
-        return super().search(new_args, offset=offset, limit=limit, order=order, count=count)
+
+        return super(StockMove, self.with_context(ctx)).search(new_args, offset=offset, limit=limit, order=order, count=count)
 
 
     @api.multi
