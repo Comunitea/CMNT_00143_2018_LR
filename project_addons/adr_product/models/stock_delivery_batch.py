@@ -28,7 +28,7 @@ class StockBatchDelivery(models.Model):
     
     def _check_if_can_be_shipped(self):
         for delivery_batch in self:
-            move_lines = delivery_batch.move_lines.filtered(lambda x: x.quantity_done != 0.00 and x.product_tmpl_id.adr_idnumonu)
+            move_lines = delivery_batch.move_lines.filtered(lambda x: x.product_uom_qty != 0.00 and x.product_tmpl_id.adr_idnumonu)
 
             if not move_lines:
                 raise ValidationError(_("There are no ADR products in this delivery batch."))
@@ -53,10 +53,10 @@ class StockBatchDelivery(models.Model):
 
         if len(categories) > 1:
             for line in move_line_ids:
-                weight += line.product_id.product_tmpl_id.adr_weight_x_kgrs_11363*line.qty_done
+                weight += line.product_id.product_tmpl_id.adr_weight_x_kgrs_11363*line.product_uom_qty
         else:
             for line in move_line_ids:
-                weight += line.product_id.product_tmpl_id.adr_weight_x_kgrs_11364*line.qty_done
+                weight += line.product_id.product_tmpl_id.adr_weight_x_kgrs_11364*line.product_uom_qty
 
         return weight
         
