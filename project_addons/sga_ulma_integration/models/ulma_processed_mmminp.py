@@ -14,16 +14,21 @@ class UlmaMmminp(models.Model):
     picking_id = fields.Char(string='Picking ID')    
 
     @api.multi
-    def get_from_ulma(self):            
-        sql_select = "select id, mmmcmdref, mmmacccolcod, mmmres, mmmcanuni, mmmsecada from ulma_mmminp where mmmacccolcod in (select id from ulma_packinglist where status = 'P')"
+    def get_from_ulma(self):   
+        sql_select = "select id, mmmcmdref, mmmacccolcod, mmmres, mmmcanuni, mmmsecada from ulma_mmminp where mmmacccolcod in (select id from ulma_packinglist where status = 'P') order by momcre desc limit 25"
+        _logger.info("Ejecutando consulta {}".format(sql_select))         
         self._cr.execute(sql_select)
-        ulma_confirmed_pickings = self._cr.fetchall()
 
+        ulma_confirmed_pickings = self._cr.fetchall()
+        
         _logger.info("Registros sin procesar encontrados: {}".format(len(ulma_confirmed_pickings)))
         filtered_list = filter(lambda x: x[3] == 'FIN', ulma_confirmed_pickings)
         batch_ids = []
         for pick in filtered_list:
-            real_picking = self.env['stock.picking'].browse(int(pick[2]))
+            domain =[('id', '=', int(pick[2]))]
+            real_picking = self.env['stock.picking'].search(domain, limit=1)
+            if not real_picking:
+                continue
 
             _logger.info("Procesando el picking con ID: {}".format(real_picking.id))
             
