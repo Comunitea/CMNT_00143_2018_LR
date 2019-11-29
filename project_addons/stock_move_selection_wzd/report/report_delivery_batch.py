@@ -7,9 +7,9 @@ from odoo.exceptions import UserError
 
 
 class DeliveryBatchReport(models.AbstractModel):
-
     _name = 'report.stock_move_selection_wzd.delivery_batch_view'
 
+    @api.model
     def get_report_values(self, docids, data=None):
         model = self.env.context.get('active_model', 'stock.batch.delivery')
         delivery_id = self.env[model].browse(docids)
@@ -26,16 +26,18 @@ class DeliveryBatchReport(models.AbstractModel):
             ctx.update(partner_id=partner_id.id)
             info_partner = delivery_id.get_delivery_info (partner_id=partner_id)
             str_pick = ''
-            for picking_id in info_partner['batch_picking_ids']:
+            for picking_id in info_partner['batch_ids']:
                 if str_pick:
                     str_pick = '{},{}'.format(str_pick, picking_id['name'])
                 else:
                     str_pick = picking_id['name']
-            manual_moves = move_ids.filtered(lambda x: x.mapped('move_orig_ids').filtered(lambda x: x.location_id.name == 'MANUAL' or x.location_id=='Stock'))
+
+            manual_moves = move_ids.filtered(lambda x: x.product_id.manual_picking)
             info_partner.update({
                 'route': delivery_route_id,
                 'partner_id': partner_id,
                 'str_pick': str_pick,
+                'count_pick': len(info_partner['batch_ids']),
                 'manual_moves': manual_moves,
                 'partner_order': partner_order
             })

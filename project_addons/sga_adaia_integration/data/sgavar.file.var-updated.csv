@@ -1,6 +1,6 @@
 id,adaia_type,name,odoo_name/id,fillchar,en,st,length_dec,length_int,length,odoo_model/id,required,sequence,sga_file_id/id,default
-__export__.sgavar_file_var_3370_e483b6bf,Alfanumerico,TIPEREG,, ,4,1,0,4,4,sga_adaia_integration.model_stock_batch_picking,True,'-1,__export__.sgavar_file_34_4099139e,ORCA
-__export__.sgavar_file_var_3385_41a7ca62,Alfanumerico,TIPREG,, ,4,1,0,4,4,sga_adaia_integration.model_stock_batch_picking,True,'-1,__export__.sgavar_file_35_1e0d23ee,CRCA
+__export__.sgavar_file_var_3370_e483b6bf,Alfanumerico,TIPEREG,, ,4,1,0,4,4,sga_adaia_integration.model_stock_batch_picking,True,0,__export__.sgavar_file_34_4099139e,ORCA
+__export__.sgavar_file_var_3385_41a7ca62,Alfanumerico,TIPREG,, ,4,1,0,4,4,sga_adaia_integration.model_stock_batch_picking,True,0,__export__.sgavar_file_35_1e0d23ee,CRCA
 __export__.sgavar_file_var_1_e9e693de,Alfanumerico,TIPEREG,, ,4,1,0,4,4,sga_adaia_integration.model_stock_picking,True,0,__export__.sgavar_file_1_548dfa6f,ORCA
 __export__.sgavar_file_var_568_1cdd59bf,Alfanumerico,TIPREG,, ,4,1,0,4,4,sga_adaia_integration.model_stock_picking,True,0,__export__.sgavar_file_2_5484226f,CRCA
 __export__.sgavar_file_var_600_1a1a4774,Alfanumerico,TIPREF,, ,4,1,0,4,4,sga_adaia_integration.model_stock_picking,True,0,__export__.sgavar_file_4_48d6546f,CECA
@@ -30,8 +30,8 @@ __export__.sgavar_file_var_1164_1wgf3blp,Alfanumerico,TIPREG,, ,4,1,0,4,4,sga_ad
 __export__.sgavar_file_var_3326_9c48a10d,Alfanumerico,TIPEREG,, ,4,1,0,4,4,,True,0,,ORCA
 __export__.sgavar_file_var_3341_ad7951f2,Alfanumerico,TIPREG,, ,4,1,0,4,4,,True,0,,CRCA
 __export__.sgavar_file_var_3354_5d1ac02c,Alfanumerico,TIPREG,, ,4,1,0,4,4,,True,0,,ORLI
-__export__.sgavar_file_var_3371_19dfacc7,Alfanumerico,ACCION,, ,6,5,0,2,2,sga_adaia_integration.model_stock_batch_picking,True,0,__export__.sgavar_file_34_4099139e,MO
-__export__.sgavar_file_var_3386_e0b1b164,Alfanumerico,ACCION,, ,6,5,0,2,2,sga_adaia_integration.model_stock_batch_picking,True,0,__export__.sgavar_file_35_1e0d23ee,AG
+__export__.sgavar_file_var_3371_19dfacc7,Alfanumerico,ACCION,, ,6,5,0,2,2,sga_adaia_integration.model_stock_batch_picking,True,1,__export__.sgavar_file_34_4099139e,MO
+__export__.sgavar_file_var_3386_e0b1b164,Alfanumerico,ACCION,, ,6,5,0,2,2,sga_adaia_integration.model_stock_batch_picking,True,1,__export__.sgavar_file_35_1e0d23ee,AG
 __export__.sgavar_file_var_3398_b627e946,Alfanumerico,TIPREG,, ,4,1,0,4,4,sga_adaia_integration.model_stock_move_line,True,0,__export__.sgavar_file_36_1897a3c6,ORLI
 __export__.sgavar_file_var_3416_2cadc314,one2many,DRAFT_PICKINGS,sga_adaia_integration.field_stock_batch_picking_adaia_picking_ids, ,0,0,0,0,0,sga_adaia_integration.model_stock_batch_picking,True,0,__export__.sgavar_file_37_25d6085a,INR
 __export__.sgavar_file_var_3417_581927e3,one2many,DRAFT_PICKINGS,stock_move_selection_wzd.field_stock_batch_picking_draft_picking_ids, ,0,0,0,0,0,sga_adaia_integration.model_stock_batch_picking,True,0,__export__.sgavar_file_38_4eefb65f,INR
@@ -69,8 +69,8 @@ __export__.sgavar_file_var_1165_2ied3vav,Alfanumerico,ACCION,, ,6,5,0,2,2,sga_ad
 __export__.sgavar_file_var_3327_7c706063,Alfanumerico,ACCION,, ,6,5,0,2,2,,True,1,,AG
 __export__.sgavar_file_var_3342_98e28cb2,Alfanumerico,ACCION,, ,6,5,0,2,2,,True,1,,AG
 __export__.sgavar_file_var_3355_0fa78222,Alfanumerico,ACCION,, ,6,5,0,2,2,,True,1,,AG
-__export__.sgavar_file_var_3372_43ad4b07,Alfanumerico,RECORDREF,stock_batch_picking.field_stock_batch_picking_name, ,22,7,0,16,16,sga_adaia_integration.model_stock_batch_picking,True,1,__export__.sgavar_file_34_4099139e,
-__export__.sgavar_file_var_3387_13ab006b,Numérico,RECCOD,stock_batch_picking.field_stock_batch_picking_name, ,15,7,0,9,9,sga_adaia_integration.model_stock_batch_picking,True,1,__export__.sgavar_file_35_1e0d23ee,
+__export__.sgavar_file_var_3372_43ad4b07,Alfanumerico,RECORDREF,stock_batch_picking.field_stock_batch_picking_name, ,22,7,0,16,16,sga_adaia_integration.model_stock_batch_picking,True,2,__export__.sgavar_file_34_4099139e,
+__export__.sgavar_file_var_3387_13ab006b,Numérico,RECCOD,stock_batch_picking.field_stock_batch_picking_name, ,15,7,0,9,9,sga_adaia_integration.model_stock_batch_picking,True,2,__export__.sgavar_file_35_1e0d23ee,
 __export__.sgavar_file_var_3399_232bbcbc,Alfanumerico,ACCION,, ,6,5,0,2,2,sga_adaia_integration.model_stock_move_line,True,1,__export__.sgavar_file_36_1897a3c6,MO
 __export__.sgavar_file_var_3422_80c72346,Alfanumerico,ACCION,, ,6,5,0,2,2,,True,1,,MO
 __export__.sgavar_file_var_3438_cfcfaba0,Alfanumerico,ACCION,, ,6,5,0,2,2,sga_adaia_integration.model_stock_move_line,True,1,__export__.sgavar_file_44_d9a664dc,MO
@@ -103,8 +103,8 @@ __export__.sgavar_file_var_1166_3vf7ntou,Related-Alfanumérico,EXPORDREF,stock_m
 __export__.sgavar_file_var_3328_f6e2d28c,Alfanumerico,RECORDREF,stock_batch_picking.field_stock_batch_picking_name, ,22,7,0,16,16,,True,2,,
 __export__.sgavar_file_var_3343_19defafd,Numérico,RECCOD,stock.field_stock_picking_name, ,15,7,0,9,9,,True,2,,
 __export__.sgavar_file_var_3356_c3b67019,Alfanumerico,RECORDREF,stock.field_stock_move_line_reference, ,22,7,0,16,16,,True,2,,
-__export__.sgavar_file_var_3373_2bb2b45a,Numérico,ALMREF,, ,24,23,0,2,2,sga_adaia_integration.model_stock_batch_picking,True,2,__export__.sgavar_file_34_4099139e,1
-__export__.sgavar_file_var_3388_16a698bf,Numérico,ALMREF,, ,17,16,0,2,2,sga_adaia_integration.model_stock_batch_picking,True,2,__export__.sgavar_file_35_1e0d23ee,1
+__export__.sgavar_file_var_3373_2bb2b45a,Numérico,ALMREF,, ,24,23,0,2,2,sga_adaia_integration.model_stock_batch_picking,True,3,__export__.sgavar_file_34_4099139e,1
+__export__.sgavar_file_var_3388_16a698bf,Numérico,ALMREF,, ,17,16,0,2,2,sga_adaia_integration.model_stock_batch_picking,True,3,__export__.sgavar_file_35_1e0d23ee,1
 __export__.sgavar_file_var_3400_dbff631e,Related-Alfanumérico,RECORDREF,stock.field_stock_move_line_picking_id, ,22,7,0,16,16,sga_adaia_integration.model_stock_move_line,True,2,__export__.sgavar_file_36_1897a3c6,sga_adaia_picking_name
 __export__.sgavar_file_var_3423_7ceeabb2,Related-Alfanumérico,RECORDREF,stock.field_stock_move_line_picking_id, ,22,7,0,16,16,,True,2,,sga_adaia_picking_name
 __export__.sgavar_file_var_3439_89c22858,Related-Alfanumérico,EXPORDREF,stock.field_stock_move_line_picking_id, ,21,7,0,15,15,sga_adaia_integration.model_stock_move_line,True,2,__export__.sgavar_file_44_d9a664dc,sga_adaia_picking_name
@@ -137,8 +137,8 @@ __export__.sgavar_file_var_1167_4f4begk1,Numérico,EXPORDLIN,stock.field_stock_m
 __export__.sgavar_file_var_3329_d5e342a2,Related-Numérico,ALMREF,stock_move_selection_wzd.field_stock_batch_picking_picking_type_id, ,24,23,0,2,2,,True,3,,default_location_dest_id
 __export__.sgavar_file_var_3344_45b04eba,Related-Numérico,ALMREF,stock.field_stock_picking_location_dest_id, ,17,16,0,2,2,,True,3,,id
 __export__.sgavar_file_var_3357_57492d7c,Alfanumerico,ARTREF,, ,38,23,0,16,16,,True,3,,
-__export__.sgavar_file_var_3374_a3a3b4d5,Related-Alfanumérico,TERREF,stock.field_stock_picking_partner_id, ,40,25,0,16,16,sga_adaia_integration.model_stock_batch_picking,True,3,__export__.sgavar_file_34_4099139e,ref
-__export__.sgavar_file_var_3389_1fdc598a,Alfanumerico,RECORDREF,, ,33,18,0,16,16,sga_adaia_integration.model_stock_batch_picking,True,3,__export__.sgavar_file_35_1e0d23ee,
+__export__.sgavar_file_var_3374_a3a3b4d5,Related-Alfanumérico,TERREF,stock.field_stock_picking_partner_id, ,40,25,0,16,16,sga_adaia_integration.model_stock_batch_picking,True,4,__export__.sgavar_file_34_4099139e,ref
+__export__.sgavar_file_var_3389_1fdc598a,Alfanumerico,RECORDREF,, ,33,18,0,16,16,sga_adaia_integration.model_stock_batch_picking,True,4,__export__.sgavar_file_35_1e0d23ee,
 __export__.sgavar_file_var_3401_52c2fcf1,Related-Numérico,ARTREF,stock.field_stock_move_line_product_id, ,38,23,0,16,16,sga_adaia_integration.model_stock_move_line,True,3,__export__.sgavar_file_36_1897a3c6,default_code
 __export__.sgavar_file_var_3424_2232cb07,Related-Numérico,ARTREF,stock.field_stock_move_line_product_id, ,38,23,0,16,16,,True,3,,default_code
 __export__.sgavar_file_var_3440_e9e0911d,Numérico,EXPORDLIN,stock.field_stock_move_line_id, ,30,22,0,9,9,sga_adaia_integration.model_stock_move_line,True,3,__export__.sgavar_file_44_d9a664dc,
@@ -171,8 +171,8 @@ __export__.sgavar_file_var_1168_56k5f0po,Related-Numérico,ARTREF,stock.field_st
 __export__.sgavar_file_var_3330_0d92124a,Related-Alfanumérico,TERREF,stock.field_stock_picking_partner_id, ,40,25,0,16,16,,True,4,,id
 __export__.sgavar_file_var_3345_c06ff632,Alfanumerico,RECORDREF,stock.field_stock_picking_name, ,33,18,0,16,16,,True,4,,
 __export__.sgavar_file_var_3358_0bcc4fa6,Numérico,CANPED,stock.field_stock_move_line_ordered_qty, ,47,39,0,9,9,,True,4,,
-__export__.sgavar_file_var_3375_85135dee,Alfanumerico,TERPROREF,, ,56,41,0,16,16,sga_adaia_integration.model_stock_batch_picking,False,4,__export__.sgavar_file_34_4099139e,
-__export__.sgavar_file_var_3390_3051ab9e,Related-Alfanumérico,TERREF,stock.field_stock_picking_partner_id, ,49,34,0,16,16,sga_adaia_integration.model_stock_batch_picking,True,4,__export__.sgavar_file_35_1e0d23ee,id
+__export__.sgavar_file_var_3375_85135dee,Alfanumerico,TERPROREF,, ,56,41,0,16,16,sga_adaia_integration.model_stock_batch_picking,False,5,__export__.sgavar_file_34_4099139e,
+__export__.sgavar_file_var_3390_3051ab9e,Related-Alfanumérico,TERREF,stock.field_stock_picking_partner_id, ,49,34,0,16,16,sga_adaia_integration.model_stock_batch_picking,True,5,__export__.sgavar_file_35_1e0d23ee,id
 __export__.sgavar_file_var_3402_247c58ec,Numérico,CANPED,stock.field_stock_move_line_ordered_qty, ,47,39,0,9,9,sga_adaia_integration.model_stock_move_line,True,4,__export__.sgavar_file_36_1897a3c6,
 __export__.sgavar_file_var_3425_cf091aef,Numérico,CANPED,stock.field_stock_move_line_ordered_qty, ,47,39,0,9,9,,True,4,,
 __export__.sgavar_file_var_3441_8837c355,Related-Numérico,ARTREF,stock.field_stock_move_product_id, ,46,31,0,16,16,sga_adaia_integration.model_stock_move_line,True,4,__export__.sgavar_file_44_d9a664dc,default_code
@@ -202,8 +202,8 @@ __export__.sgavar_file_var_1169_6l5crsyx,Alfanumerico,CANPED,stock.field_stock_m
 __export__.sgavar_file_var_3331_4d8198f8,Alfanumerico,TERPROREF,, ,56,41,0,16,16,,True,5,,
 __export__.sgavar_file_var_3346_b66c0046,Related-Alfanumérico,TERREF,stock.field_stock_picking_partner_id, ,49,34,0,16,16,,True,5,,id
 __export__.sgavar_file_var_3359_7973218a,Alfanumerico,TIPUNI,, ,51,48,0,4,4,,True,5,,UD
-__export__.sgavar_file_var_3376_9b25b4d5,Alfanumerico,RECORDTIP,, ,60,57,0,4,4,sga_adaia_integration.model_stock_batch_picking,True,5,__export__.sgavar_file_34_4099139e,ENPR
-__export__.sgavar_file_var_3391_6ff2f8ab,Alfanumerico,TERPROREF,, ,65,50,0,16,16,sga_adaia_integration.model_stock_batch_picking,False,5,__export__.sgavar_file_35_1e0d23ee,
+__export__.sgavar_file_var_3376_9b25b4d5,Alfanumerico,RECORDTIP,, ,60,57,0,4,4,sga_adaia_integration.model_stock_batch_picking,True,6,__export__.sgavar_file_34_4099139e,ENPR
+__export__.sgavar_file_var_3391_6ff2f8ab,Alfanumerico,TERPROREF,, ,65,50,0,16,16,sga_adaia_integration.model_stock_batch_picking,False,6,__export__.sgavar_file_35_1e0d23ee,
 __export__.sgavar_file_var_3403_a9fd5624,Alfanumerico,TIPUNI,, ,51,48,0,4,4,sga_adaia_integration.model_stock_move_line,True,5,__export__.sgavar_file_36_1897a3c6,UD
 __export__.sgavar_file_var_3426_212ba4ec,Alfanumerico,TIPUNI,, ,51,48,0,4,4,,True,5,,UD
 __export__.sgavar_file_var_3442_d2ef9532,Numérico,CANPED,stock.field_stock_move_line_ordered_qty, ,55,47,0,9,9,sga_adaia_integration.model_stock_move_line,True,5,__export__.sgavar_file_44_d9a664dc,
@@ -233,12 +233,12 @@ __export__.sgavar_file_var_1170_7cgs51fc,Alfanumerico,CANSER,stock.field_stock_m
 __export__.sgavar_file_var_3332_53017da7,Alfanumerico,RECORDTIP,, ,60,57,0,4,4,,True,6,,ENPR
 __export__.sgavar_file_var_3347_74210a0b,Related-Alfanumérico,TERPROREF,stock.field_stock_picking_partner_id, ,65,50,0,16,16,,True,6,,id
 __export__.sgavar_file_var_3360_cb962bab,Related-Numérico,NUMUNI,stock.field_stock_move_line_product_uom_id, ,59,52,0,8,8,,True,6,,factor
-__export__.sgavar_file_var_3377_78f0bbab,Fecha,FECORD,stock_batch_picking.field_stock_batch_picking_create_date, ,8,61,0,8,8,sga_adaia_integration.model_stock_batch_picking,True,6,__export__.sgavar_file_34_4099139e,
-__export__.sgavar_file_var_3392_59d3cb7a,Alfanumerico,RECORDTIP,, ,69,66,0,4,4,sga_adaia_integration.model_stock_batch_picking,True,6,__export__.sgavar_file_35_1e0d23ee,ENPR
+__export__.sgavar_file_var_3377_78f0bbab,Fecha,FECORD,stock_batch_picking.field_stock_batch_picking_create_date, ,8,61,0,8,8,sga_adaia_integration.model_stock_batch_picking,True,7,__export__.sgavar_file_34_4099139e,
+__export__.sgavar_file_var_3392_59d3cb7a,Alfanumerico,RECORDTIP,, ,69,66,0,4,4,sga_adaia_integration.model_stock_batch_picking,True,7,__export__.sgavar_file_35_1e0d23ee,ENPR
 __export__.sgavar_file_var_3404_a36d81da,Related-Numérico,NUMUNI,stock.field_stock_move_line_product_uom_id, ,59,52,0,8,8,sga_adaia_integration.model_stock_move_line,True,6,__export__.sgavar_file_36_1897a3c6,factor
 __export__.sgavar_file_var_3427_4e2e37da,Related-Numérico,NUMUNI,stock.field_stock_move_line_product_uom_id, ,59,52,0,8,8,,True,6,,factor
 __export__.sgavar_file_var_3443_0389734a,Alfanumerico,TIPUNI,, ,59,56,0,4,4,sga_adaia_integration.model_stock_move_line,True,6,__export__.sgavar_file_44_d9a664dc,UD
-__export__.sgavar_file_var_561_a1150b59,Fecha,FECORD,__export__.ir_model_fields_8590_7acc3e09, ,8,61,0,8,8,sga_adaia_integration.model_stock_picking,True,7,__export__.sgavar_file_1_548dfa6f,
+__export__.sgavar_file_var_561_a1150b59,Fecha,FECORD,, ,8,61,0,8,8,sga_adaia_integration.model_stock_picking,True,7,__export__.sgavar_file_1_548dfa6f,
 __export__.sgavar_file_var_576_72bcbecc,Alfanumerico,RECORDTIP,, ,69,66,0,4,4,sga_adaia_integration.model_stock_picking,True,7,__export__.sgavar_file_2_5484226f,ENPR
 __export__.sgavar_file_var_588_ff8a5931,Alfanumerico,EXPORDTIP,sga_adaia_integration.field_stock_picking_adaia_code, ,59,56,0,4,4,sga_adaia_integration.model_stock_picking,False,7,__export__.sgavar_file_3_f45afa6f,
 __export__.sgavar_file_var_608_48926fd0,Alfanumerico,EXPORDSUBTIP,, ,63,60,0,4,4,sga_adaia_integration.model_stock_picking,False,7,__export__.sgavar_file_4_48d6546f,
@@ -264,8 +264,8 @@ __export__.sgavar_file_var_1171_8hvtvcvu,Alfanumerico,TIPUNI,, ,68,65,0,4,4,sga_
 __export__.sgavar_file_var_3333_ef4c8483,Fecha,FECORD,stock.field_stock_picking_date, ,8,61,0,8,8,,True,7,,
 __export__.sgavar_file_var_3348_8bed34d9,Alfanumerico,RECORDTIP,, ,69,66,0,4,4,,True,7,,ENPR
 __export__.sgavar_file_var_3361_c9f6d8fc,Related-Numérico,PESPED,stock.field_stock_move_line_product_id, ,68,60,3,3,6,,False,7,,weight
-__export__.sgavar_file_var_3378_22dd35ec,Hora,FECREC,stock_move_selection_wzd.field_stock_batch_picking_date_done, ,76,69,0,8,8,sga_adaia_integration.model_stock_batch_picking,False,7,__export__.sgavar_file_34_4099139e,
-__export__.sgavar_file_var_3393_b1934acc,Alfanumerico,ALBARA,stock_batch_picking.field_stock_batch_picking_name, ,86,70,0,17,17,sga_adaia_integration.model_stock_batch_picking,True,7,__export__.sgavar_file_35_1e0d23ee,
+__export__.sgavar_file_var_3378_22dd35ec,Hora,FECREC,stock_move_selection_wzd.field_stock_batch_picking_date_done, ,76,69,0,8,8,sga_adaia_integration.model_stock_batch_picking,False,8,__export__.sgavar_file_34_4099139e,
+__export__.sgavar_file_var_3393_b1934acc,Alfanumerico,ALBARA,stock_batch_picking.field_stock_batch_picking_name, ,86,70,0,17,17,sga_adaia_integration.model_stock_batch_picking,True,8,__export__.sgavar_file_35_1e0d23ee,
 __export__.sgavar_file_var_3405_e8665b8f,Alfanumerico,PESPED,, ,68,60,3,3,6,sga_adaia_integration.model_stock_move_line,False,7,__export__.sgavar_file_36_1897a3c6,
 __export__.sgavar_file_var_3428_fbc9c3b3,Alfanumerico,PESPED,, ,68,60,3,3,6,,False,7,,
 __export__.sgavar_file_var_3444_ef183857,Related-Numérico,NUMUNI,stock.field_stock_move_line_product_uom_id, ,67,60,0,8,8,sga_adaia_integration.model_stock_move_line,True,7,__export__.sgavar_file_44_d9a664dc,factor
@@ -295,8 +295,8 @@ __export__.sgavar_file_var_1172_92hg62sl,Related-Numérico,PESSER,product.field_
 __export__.sgavar_file_var_3334_0545ef3b,Fecha,FECREC,stock.field_stock_picking_scheduled_date, ,76,69,0,8,8,,False,8,,
 __export__.sgavar_file_var_3349_41784c88,Alfanumerico,ALBARA,stock.field_stock_picking_name, ,86,70,0,17,17,,True,8,,
 __export__.sgavar_file_var_3362_e02fe80f,Related-Numérico,PRECOM,stock.field_stock_move_line_product_id, ,77,69,2,7,9,,False,8,,standard_price
-__export__.sgavar_file_var_3379_b33ea5ee,Alfanumerico,HORREC,, ,80,77,0,4,4,sga_adaia_integration.model_stock_batch_picking,False,8,__export__.sgavar_file_34_4099139e,
-__export__.sgavar_file_var_3394_4cc8f3f9,Fecha,FECREC,stock.field_stock_picking_date_done, ,94,87,0,8,8,sga_adaia_integration.model_stock_batch_picking,True,8,__export__.sgavar_file_35_1e0d23ee,
+__export__.sgavar_file_var_3379_b33ea5ee,Alfanumerico,HORREC,, ,80,77,0,4,4,sga_adaia_integration.model_stock_batch_picking,False,9,__export__.sgavar_file_34_4099139e,
+__export__.sgavar_file_var_3394_4cc8f3f9,Fecha,FECREC,stock.field_stock_picking_date_done, ,94,87,0,8,8,sga_adaia_integration.model_stock_batch_picking,True,9,__export__.sgavar_file_35_1e0d23ee,
 __export__.sgavar_file_var_3406_1a62a914,Numérico,PRECOM,, ,77,69,2,7,9,sga_adaia_integration.model_stock_move_line,False,8,__export__.sgavar_file_36_1897a3c6,
 __export__.sgavar_file_var_3429_984da89c,Numérico,PRECOM,, ,77,69,2,7,9,,False,8,,
 __export__.sgavar_file_var_3445_2340e268,Alfanumerico,PESPED,, ,76,68,3,6,9,sga_adaia_integration.model_stock_move_line,False,8,__export__.sgavar_file_44_d9a664dc,
@@ -326,14 +326,14 @@ __export__.sgavar_file_var_1173_10pwb3kks,Related-Numérico,PREVEN,product.field
 __export__.sgavar_file_var_3335_7450f5ed,Hora,HORREC,stock.field_stock_picking_scheduled_date, ,80,77,0,4,4,,False,9,,
 __export__.sgavar_file_var_3350_6b0332bc,Fecha,FECREC,stock.field_stock_picking_date_done, ,94,87,0,8,8,,True,9,,
 __export__.sgavar_file_var_3363_8b103238,Alfanumerico,ADMCANMAY,, ,78,78,0,1,1,,False,9,,N
-__export__.sgavar_file_var_3380_67be1fc6,Alfanumerico,OBS,, ,120,81,0,40,40,sga_adaia_integration.model_stock_batch_picking,False,9,__export__.sgavar_file_34_4099139e,
-__export__.sgavar_file_var_3395_fdb355e2,Hora,HORREC,stock.field_stock_picking_date_done, ,98,95,0,5,5,sga_adaia_integration.model_stock_batch_picking,True,9,__export__.sgavar_file_35_1e0d23ee,
+__export__.sgavar_file_var_3380_67be1fc6,Alfanumerico,OBS,, ,120,81,0,40,40,sga_adaia_integration.model_stock_batch_picking,False,10,__export__.sgavar_file_34_4099139e,
+__export__.sgavar_file_var_3395_fdb355e2,Hora,HORREC,stock.field_stock_picking_date_done, ,98,95,0,5,5,sga_adaia_integration.model_stock_batch_picking,True,10,__export__.sgavar_file_35_1e0d23ee,
 __export__.sgavar_file_var_3407_e6c269bd,Alfanumerico,ADMCANMAY,, ,78,78,0,1,1,sga_adaia_integration.model_stock_move_line,False,9,__export__.sgavar_file_36_1897a3c6,S
 __export__.sgavar_file_var_3430_e4e101eb,Alfanumerico,ADMCANMAY,, ,78,78,0,1,1,,False,9,,S
 __export__.sgavar_file_var_3446_b82babb2,Alfanumerico,PREVEN,, ,85,77,2,7,9,sga_adaia_integration.model_stock_move_line,False,9,__export__.sgavar_file_44_d9a664dc,
 __export__.sgavar_file_var_564_dcb9ff46,Alfanumerico,OBS,, ,120,81,0,40,40,sga_adaia_integration.model_stock_picking,False,10,__export__.sgavar_file_1_548dfa6f,
 __export__.sgavar_file_var_579_139565ed,Hora,HORREC,stock.field_stock_picking_date_done, ,98,95,0,5,5,sga_adaia_integration.model_stock_picking,True,10,__export__.sgavar_file_2_5484226f,
-__export__.sgavar_file_var_591_453df48e,Fecha,FECORD,__export__.ir_model_fields_8590_7acc3e09, ,87,80,0,8,8,sga_adaia_integration.model_stock_picking,False,10,__export__.sgavar_file_3_f45afa6f,
+__export__.sgavar_file_var_591_453df48e,Fecha,FECORD,, ,87,80,0,8,8,sga_adaia_integration.model_stock_picking,False,10,__export__.sgavar_file_3_f45afa6f,
 __export__.sgavar_file_var_612_a069dd96,Hora,HOREXP,stock.field_stock_picking_scheduled_date, ,87,84,0,4,4,sga_adaia_integration.model_stock_picking,False,10,__export__.sgavar_file_4_48d6546f,
 __export__.sgavar_file_var_626_a22df7a7,Alfanumerico,ADMCANMEN,, ,79,79,0,1,1,sga_adaia_integration.model_stock_move_line,False,10,__export__.sgavar_file_5_f66f584a,N
 __export__.sgavar_file_var_642_c76b41a1,Alfanumerico,LOTE,stock.field_stock_move_line_lot_name, ,107,88,0,20,20,sga_adaia_integration.model_stock_move_line,False,10,__export__.sgavar_file_6_9scz97xz,
@@ -357,8 +357,8 @@ __export__.sgavar_file_var_1174_11v6wx6s,Alfanumerico,OBS,, ,126,87,0,40,40,sga_
 __export__.sgavar_file_var_3336_039d0af7,Alfanumerico,OBS,stock.field_stock_picking_note, ,120,81,0,40,40,,False,10,,
 __export__.sgavar_file_var_3351_96c4ce3d,Hora,HORREC,stock.field_stock_picking_date_done, ,98,95,0,5,5,,True,10,,
 __export__.sgavar_file_var_3364_2cc0d009,Alfanumerico,ADMCANMEN,, ,79,79,0,1,1,,False,10,,N
-__export__.sgavar_file_var_3381_f0d6397f,Alfanumerico,TERRESREF,, ,136,121,0,16,16,sga_adaia_integration.model_stock_batch_picking,False,10,__export__.sgavar_file_34_4099139e,
-__export__.sgavar_file_var_3396_1ddc78db,Alfanumerico,OBS,stock_batch_picking.field_stock_batch_picking_notes, ,139,99,0,40,40,sga_adaia_integration.model_stock_batch_picking,False,10,__export__.sgavar_file_35_1e0d23ee,
+__export__.sgavar_file_var_3381_f0d6397f,Alfanumerico,TERRESREF,, ,136,121,0,16,16,sga_adaia_integration.model_stock_batch_picking,False,11,__export__.sgavar_file_34_4099139e,
+__export__.sgavar_file_var_3396_1ddc78db,Alfanumerico,OBS,stock_batch_picking.field_stock_batch_picking_notes, ,139,99,0,40,40,sga_adaia_integration.model_stock_batch_picking,False,11,__export__.sgavar_file_35_1e0d23ee,
 __export__.sgavar_file_var_3408_ebffa2f8,Alfanumerico,ADMCANMEN,, ,79,79,0,1,1,sga_adaia_integration.model_stock_move_line,False,10,__export__.sgavar_file_36_1897a3c6,S
 __export__.sgavar_file_var_3431_b163fcd9,Alfanumerico,ADMCANMEN,, ,79,79,0,1,1,,False,10,,S
 __export__.sgavar_file_var_3447_56e0b23d,Alfanumerico,OBS,, ,125,86,0,40,40,sga_adaia_integration.model_stock_move_line,False,10,__export__.sgavar_file_44_d9a664dc,
@@ -388,9 +388,9 @@ __export__.sgavar_file_var_1175_125ou5la,Related-Alfanumérico,LOTE,stock_move_s
 __export__.sgavar_file_var_3337_f3ba0b41,Alfanumerico,TERRESREF,, ,136,121,0,16,16,,False,11,,
 __export__.sgavar_file_var_3352_7a07beaf,Alfanumerico,OBS,stock.field_stock_picking_note, ,139,99,0,40,40,,False,11,,
 __export__.sgavar_file_var_3365_0aa4cd4b,Alfanumerico,IGNCAD,, ,80,80,0,1,1,,False,11,,N
-__export__.sgavar_file_var_3382_ed63f90a,Alfanumerico,RECORDSUBTIP,, ,140,137,0,4,4,sga_adaia_integration.model_stock_batch_picking,False,11,__export__.sgavar_file_34_4099139e,
+__export__.sgavar_file_var_3382_ed63f90a,Alfanumerico,RECORDSUBTIP,, ,140,137,0,4,4,sga_adaia_integration.model_stock_batch_picking,False,12,__export__.sgavar_file_34_4099139e,
 __export__.sgavar_file_var_3409_87560bb2,Alfanumerico,IGNCAD,, ,80,80,0,1,1,sga_adaia_integration.model_stock_move_line,False,11,__export__.sgavar_file_36_1897a3c6,S
-__export__.sgavar_file_var_3415_db9323fc,one2many,MOVE_LINES,sga_adaia_integration.field_stock_batch_picking_draft_move_lines_id, ,0,0,0,0,0,sga_adaia_integration.model_stock_batch_picking,True,11,__export__.sgavar_file_35_1e0d23ee,OSL
+__export__.sgavar_file_var_3415_db9323fc,one2many,MOVE_LINES,sga_adaia_integration.field_stock_batch_picking_draft_move_line_ids, ,0,0,0,0,0,sga_adaia_integration.model_stock_batch_picking,True,12,__export__.sgavar_file_35_1e0d23ee,OSL
 __export__.sgavar_file_var_3432_2dc76ca3,Alfanumerico,IGNCAD,, ,80,80,0,1,1,,False,11,,S
 __export__.sgavar_file_var_3448_0bc81bd5,Alfanumerico,LOTE,, ,145,126,0,20,20,sga_adaia_integration.model_stock_move_line,False,11,__export__.sgavar_file_44_d9a664dc,
 __export__.sgavar_file_var_566_f6a164bb,Alfanumerico,RECORDSUBTIP,, ,140,137,0,4,4,sga_adaia_integration.model_stock_picking,False,12,__export__.sgavar_file_1_548dfa6f,
@@ -416,7 +416,7 @@ __export__.sgavar_file_var_1160_13ykk0pr,Alfanumerico,PRVCAMCOM,, ,286,128,0,160
 __export__.sgavar_file_var_3338_697b39c9,Alfanumerico,RECORDSUBTIP,, ,140,137,0,4,4,,False,12,,
 __export__.sgavar_file_var_3353_598d0701,one2many,MOVE_LINES,stock.field_stock_picking_move_line_ids,,0,0,0,0,0,,True,12,,CRL
 __export__.sgavar_file_var_3366_dd523517,Alfanumerico,CTRCAL,, ,81,81,0,1,1,,False,12,,N
-__export__.sgavar_file_var_3383_fb80cea1,Alfanumerico,PRVCAMCOM,, ,260,141,0,160,160,sga_adaia_integration.model_stock_batch_picking,False,12,__export__.sgavar_file_34_4099139e,
+__export__.sgavar_file_var_3383_fb80cea1,Alfanumerico,PRVCAMCOM,, ,260,141,0,160,160,sga_adaia_integration.model_stock_batch_picking,False,13,__export__.sgavar_file_34_4099139e,
 __export__.sgavar_file_var_3410_c436f245,Alfanumerico,CTRCAL,, ,81,81,0,1,1,sga_adaia_integration.model_stock_move_line,False,12,__export__.sgavar_file_36_1897a3c6,N
 __export__.sgavar_file_var_3433_f077f3cd,Alfanumerico,CTRCAL,, ,81,81,0,1,1,,False,12,,N
 __export__.sgavar_file_var_3449_be9c6c17,Alfanumerico,KIT,, ,146,146,0,1,1,sga_adaia_integration.model_stock_move_line,False,12,__export__.sgavar_file_44_d9a664dc,N
@@ -442,7 +442,7 @@ __export__.sgavar_file_var_1161_145r05kk,Alfanumerico,AGROEXGENACC,, ,301,287,0,
 __export__.sgavar_file_var_3339_bae0470b,Alfanumerico,PRVCAMCOM,, ,260,141,0,160,160,,False,13,,
 __export__.sgavar_file_var_3367_eb5ed34c,Numérico,RECORDLIN,stock.field_stock_move_line_id, ,90,82,0,9,9,,False,13,,
 __export__.sgavar_file_var_3411_7beb74e1,Alfanumerico,RECORDLIN,stock.field_stock_move_line_id, ,90,82,0,9,9,sga_adaia_integration.model_stock_move_line,False,13,__export__.sgavar_file_36_1897a3c6,
-__export__.sgavar_file_var_3414_35bd3300,one2many,MOVE_LINES,sga_adaia_integration.field_stock_batch_picking_draft_move_lines_id, ,0,0,0,0,0,sga_adaia_integration.model_stock_batch_picking,True,13,__export__.sgavar_file_34_4099139e,OSL
+__export__.sgavar_file_var_3414_35bd3300,one2many,MOVE_LINES,sga_adaia_integration.field_stock_batch_picking_draft_move_line_ids, ,0,0,0,0,0,sga_adaia_integration.model_stock_batch_picking,True,14,__export__.sgavar_file_34_4099139e,OSL
 __export__.sgavar_file_var_3434_348d6d6d,Alfanumerico,RECORDLIN,, ,90,82,0,9,9,,False,13,,
 __export__.sgavar_file_var_3450_fc297b25,Alfanumerico,VIDAUTILMIN,, ,149,147,0,3,3,sga_adaia_integration.model_stock_move_line,False,13,__export__.sgavar_file_44_d9a664dc,
 __export__.sgavar_file_var_2_eee660a6,one2many,MOVE_LINES,sga_adaia_integration.field_stock_picking_adaia_move_ids, ,0,0,0,0,0,sga_adaia_integration.model_stock_picking,True,14,__export__.sgavar_file_1_548dfa6f,MVL
@@ -463,7 +463,7 @@ __export__.sgavar_file_var_1072_b9c546fd,Numérico,CANPICMIN,, ,98,90,0,9,9,stoc
 __export__.sgavar_file_var_1102_1a5da141,Fecha,FECREC,stock.field_stock_move_line_date, ,159,152,0,8,8,sga_adaia_integration.model_stock_move_line,False,14,__export__.sgavar_file_22_4248892b,
 __export__.sgavar_file_var_1127_146euw6n,Alfanumerico,OBS,, ,140,101,0,40,40,sga_adaia_integration.model_stock_batch_picking,False,14,__export__.sgavar_file_24_6sfg829s,
 __export__.sgavar_file_var_1147_15jhuqtr,Alfanumerico,VIDAUTILMAX,, ,152,150,0,3,3,sga_adaia_integration.model_stock_move_line,False,14,__export__.sgavar_file_25_z02s9t8y,
-__export__.sgavar_file_var_1162_15lwbx11,one2many,MOVE_LINE,sga_adaia_integration.field_stock_batch_picking_draft_move_lines_id, ,0,0,0,0,0,sga_adaia_integration.model_stock_batch_picking,True,14,__export__.sgavar_file_26_9a4he3z2,SBC
+__export__.sgavar_file_var_1162_15lwbx11,one2many,MOVE_LINE,sga_adaia_integration.field_stock_batch_picking_draft_move_line_ids, ,0,0,0,0,0,sga_adaia_integration.model_stock_batch_picking,True,14,__export__.sgavar_file_26_9a4he3z2,SBC
 __export__.sgavar_file_var_3340_0126a262,one2many,MOVE_LINES,stock.field_stock_picking_move_line_ids,,0,0,0,0,0,,True,14,,ORL
 __export__.sgavar_file_var_3368_666f1f80,Numérico,ADMCANMAYPOR,, ,93,91,0,3,3,,False,14,,
 __export__.sgavar_file_var_3412_3fb3d709,Alfanumerico,ADMCANMAYPOR,, ,93,91,0,3,3,sga_adaia_integration.model_stock_move_line,False,14,__export__.sgavar_file_36_1897a3c6,
@@ -484,7 +484,7 @@ __export__.sgavar_file_var_1071_b43e97ef,Numérico,CANPICMAX,, ,108,99,0,9,9,sto
 __export__.sgavar_file_var_1103_f25f7a03,Fecha,FECFAB,stock.field_stock_move_line_date, ,167,160,0,8,8,sga_adaia_integration.model_stock_move_line,False,15,__export__.sgavar_file_22_4248892b,
 __export__.sgavar_file_var_1112_74f4b9fe,one2many,CONTENT_LINES,stock.field_stock_picking_move_line_ids, ,0,0,0,0,0,sga_adaia_integration.model_stock_picking,True,15,__export__.sgavar_file_4_48d6546f,CEN
 __export__.sgavar_file_var_1128_151cxvnf,Numérico,MUEEXP,sga_adaia_integration.field_stock_batch_picking_adaia_dock, ,146,141,0,6,6,sga_adaia_integration.model_stock_batch_picking,False,15,__export__.sgavar_file_24_6sfg829s,
-__export__.sgavar_file_var_1163_162tehza,one2many,CONTENT_LINES,sga_adaia_integration.field_stock_batch_picking_draft_move_lines_id, ,0,0,0,0,0,sga_adaia_integration.model_stock_batch_picking,True,15,__export__.sgavar_file_26_9a4he3z2,CEN
+__export__.sgavar_file_var_1163_162tehza,one2many,CONTENT_LINES,sga_adaia_integration.field_stock_batch_picking_draft_move_line_ids, ,0,0,0,0,0,sga_adaia_integration.model_stock_batch_picking,True,15,__export__.sgavar_file_26_9a4he3z2,CEN
 __export__.sgavar_file_var_3369_f9e5f44f,Alfanumerico,LOTE,stock.field_stock_move_line_lot_name, ,103,94,0,20,20,,False,15,,
 __export__.sgavar_file_var_3413_c5d030aa,Alfanumerico,LOTE,stock.field_stock_move_line_lot_name, ,103,94,0,20,20,sga_adaia_integration.model_stock_move_line,False,15,__export__.sgavar_file_36_1897a3c6,
 __export__.sgavar_file_var_3436_76c506fc,Alfanumerico,LOTE,stock.field_stock_move_line_lot_name, ,103,94,0,20,20,,False,15,,
@@ -530,7 +530,7 @@ __export__.sgavar_file_var_930_1240ce48,Alfanumerico,BLOQUEADO,, ,138,138,0,1,1,
 __export__.sgavar_file_var_966_beab6e88,Alfanumerico,BLOQUEADO,, ,138,138,0,1,1,stock_available_global.model_product_product,False,19,__export__.sgavar_file_14_a2s4fe9s,N
 __export__.sgavar_file_var_1067_14f7a96a,Alfanumerico,TERPROREF,, ,143,128,0,16,16,stock_move_reassign_availability.model_stock_quant,False,19,__export__.sgavar_file_21_446dd168,
 __export__.sgavar_file_var_1108_1d154255,Alfanumerico,CNTEXPTIP,, ,222,217,0,6,6,sga_adaia_integration.model_stock_move_line,False,19,__export__.sgavar_file_22_4248892b,
-__export__.sgavar_file_var_1132_19e57f1k,one2many,MOVE_LINES,sga_adaia_integration.field_stock_batch_picking_draft_move_lines_id, ,0,0,0,0,0,sga_adaia_integration.model_stock_batch_picking,True,19,__export__.sgavar_file_24_6sfg829s,SBL
+__export__.sgavar_file_var_1132_19e57f1k,one2many,MOVE_LINES,sga_adaia_integration.field_stock_batch_picking_draft_move_line_ids, ,0,0,0,0,0,sga_adaia_integration.model_stock_batch_picking,True,19,__export__.sgavar_file_24_6sfg829s,SBL
 __export__.sgavar_file_var_895_4650df0a,Numérico,NUMDIACALCAD,, ,142,139,0,4,4,stock_available_global.model_product_product,False,20,__export__.sgavar_file_12_1s52afw1,
 __export__.sgavar_file_var_931_56bce295,Numérico,NUMDIACALCAD,, ,142,139,0,4,4,stock_available_global.model_product_product,False,20,__export__.sgavar_file_13_sa3w1was,
 __export__.sgavar_file_var_967_cf629c8a,Numérico,NUMDIACALCAD,, ,142,139,0,4,4,stock_available_global.model_product_product,False,20,__export__.sgavar_file_14_a2s4fe9s,

@@ -74,8 +74,6 @@ class StockPicking(models.Model):
 
     @api.multi
     def action_done(self):
-        #print ("Entro action done de {}".format(self.name))
-        #import ipdb; ipdb.set_trace()
 
         res = super().action_done()
         ctx = self._context.copy()

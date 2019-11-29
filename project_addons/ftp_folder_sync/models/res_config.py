@@ -22,7 +22,9 @@
 from odoo import fields, models, tools, api, _
 from odoo.exceptions import UserError
 from ftplib import FTP
-import os
+import os, logging
+
+_logger = logging.getLogger(__name__)
 
 FTP_PARAMS = ['ftp_server', 'ftp_login', 'ftp_password', 'ftp_get_folder', 'ftp_sent_folder',
  'local_got_folder', 'local_to_send_folder', 'ftp_port', 'ftp_done_folder', 'local_done_folder',
@@ -70,8 +72,10 @@ class ConfigFTPConnection(models.TransientModel):
         ftp_password = self.env['ir.config_parameter'].get_param('ftp_folder_sync.ftp_password', False)
         
         try:
+            _logger.info("Conectando al ftp")
             ftp = FTP()
             ftp.connect(ftp_server, int(ftp_port))
+            _logger.info("Conectando al ftp: {}".format(ftp_server))
             ftp.login(ftp_login, ftp_password)
         except Exception as e:
             raise UserError(_('Error: {}').format(e))
@@ -91,17 +95,26 @@ class ConfigFTPConnection(models.TransientModel):
         ftp.cwd(ftp_get_folder)
         filenames = ftp.nlst()
 
+        _logger.info("Obteniendo ficheros de la carpeta: {}".format(ftp_get_folder))
+
         try:
             for filename in filenames:
                 if filename.startswith('TR'):
+                    
                     local_filename = os.path.join(local_got_folder, filename)
+                    _logger.info("Descargando archivo: {}".format(filename))
+
                     done_filename = "../{}/{}".format(ftp_done_folder, filename)
                     local_file = open(local_filename, 'wb')
+                    
                     if ftp.retrbinary('RETR '+ filename, local_file.write):
+                        _logger.info("Descargado archivo en: {}".format(local_filename))
                         if move_remote_files:
                             ftp.rename(filename, done_filename)
+                            _logger.info("Archivo {} movido a: {}".format(filename, done_filename))
                         if delete_remote_files:
                             ftp.delete(filename)
+                            _logger.info("Archivo {} borrado".format(filename))
                     local_file.close()
         except Exception as e:
             raise UserError(_('Error: {}').format(e))
@@ -115,13 +128,19 @@ class ConfigFTPConnection(models.TransientModel):
         filenames = [f for f in os.listdir(local_to_send_folder) if os.path.isfile(os.path.join(local_to_send_folder, f))]
         ftp.cwd(ftp_sent_folder)
 
+        _logger.info("Obteniendo ficheros de la carpeta: {}".format(ftp_sent_folder))
+
         try:
             for filename in filenames:
                 local_filename = os.path.join(local_to_send_folder, filename)
                 done_filename = "{}/{}".format(local_done_folder, filename)
+
+                _logger.info("Enviando archivo: {}".format(local_filename))
                 if ftp.storbinary('STOR '+filename, open(local_filename, 'rb')) and move_local_files:
+                    _logger.info("Enviado archivo: {}".format(local_filename))
                     open(local_filename, 'rb').close()
                     os.rename(local_filename, done_filename)
+                    _logger.info("Archivo {} movido a: {}".format(local_filename, done_filename))
         except Exception as e:
             raise UserError(_('Error: {}').format(e))
 

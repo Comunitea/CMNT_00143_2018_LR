@@ -15,19 +15,35 @@ class StockMove(models.Model):
         if self.sale_line_id:
 
             line = self.sale_line_id
-            fpos = line.order_id.fiscal_position_id or line.order_id.partner_id.property_account_position_id
+            fpos = (
+                line.order_id.fiscal_position_id
+                or line.order_id.partner_id.property_account_position_id
+            )
             # If company_id is set, always filter taxes by the company
             line_company_id = line.company_id or line.order_id.company_id
-            taxes = line.product_id.taxes_id.filtered(lambda r: not line_company_id or r.company_id == line_company_id)
-            tax_id = fpos.map_tax(taxes, line.product_id, line.order_id.partner_shipping_id) if fpos else taxes
+            taxes = line.product_id.taxes_id.filtered(
+                lambda r: not line_company_id or r.company_id == line_company_id
+            )
+            tax_id = (
+                fpos.map_tax(
+                    taxes, line.product_id, line.order_id.partner_shipping_id
+                )
+                if fpos
+                else taxes
+            )
 
         else:
             comercial_partner_id = self.partner_id.commercial_partner_id
             fpos = comercial_partner_id.property_account_position_id
             line_company_id = self.company_id or self.order_id.company_id
             taxes = self.product_id.taxes_id.filtered(
-                lambda r: not line_company_id or r.company_id == line_company_id)
-            tax_id = fpos.map_tax(taxes, self.product_id, self.partner_id) if fpos else taxes
+                lambda r: not line_company_id or r.company_id == line_company_id
+            )
+            tax_id = (
+                fpos.map_tax(taxes, self.product_id, self.partner_id)
+                if fpos
+                else taxes
+            )
         return tax_id
 
     @api.multi
@@ -40,24 +56,35 @@ class StockMove(models.Model):
         lines = []
         for move in self:
             if move.sale_line_id:
-                invoice_line_vals = move.sale_line_id._prepare_invoice_line(move.quantity_done)
+                invoice_line_vals = move.sale_line_id._prepare_invoice_line(
+                    move.quantity_done
+                )
             else:
-                 #Son palets
-                 invoice_line_vals = move._prepare_invoice_line()
+                # Son palets
+                invoice_line_vals = move._prepare_invoice_line()
 
             vals = {"invoice_id": invoice_id}
             if move.sale_line_id:
-                vals.update({
-                    "sale_line_ids": [(6, 0, [move.sale_line_id.id])],
-                    "shipping_type_decrease": move.company_id.get_discount_decrease_shipping(move.shipping_type),
-                }
+                vals.update(
+                    {
+                        "sale_line_ids": [(6, 0, [move.sale_line_id.id])],
+                        "shipping_type_decrease": move.company_id.get_discount_decrease_shipping(
+                            move.shipping_type
+                        ),
+                    }
                 )
                 if move.sale_line_id.order_id.financiable_payment:
                     vals[
                         "financiable_decrease"
                     ] = move.company_id.discount_decrease_financiable
+                if move.sale_line_id.order_id.phone_order:
+                    vals[
+                        "phone_decrease"
+                    ] = move.company_id.discount_decrease_phone
             invoice_line_vals.update(vals)
-            lines.append(self.env["account.invoice.line"].create(invoice_line_vals))
+            lines.append(
+                self.env["account.invoice.line"].create(invoice_line_vals)
+            )
         return lines
 
     @api.multi
@@ -93,6 +120,7 @@ class StockMove(models.Model):
         }
         return res
 
+
 class StockMoveLine(models.Model):
 
     _inherit = "stock.move.line"
@@ -104,12 +132,15 @@ class StockMoveLine(models.Model):
         for line in self.filtered (lambda x: x.sale_line and (x.move_id.shipping_type or line.batch_picking_id.shipping_type)):
             discount = line.sale_discount
             discount -= line.move_id.company_id.get_discount_decrease_shipping(
-                line.move_id.shipping_type or line.batch_picking_id.shipping_type
+                line.move_id.shipping_type
+                or line.batch_picking_id.shipping_type
             )
             if line.sale_line.order_id.financiable_payment:
                 discount -= (
                     line.move_id.company_id.discount_decrease_financiable
                 )
+            if line.sale_line.order_id.phone_order:
+                discount -= line.move_id.company_id.discount_decrease_phone
             line.computed_discount = discount
 
     @api.multi
@@ -162,7 +193,7 @@ class StockMoveLine(models.Model):
                 partner=line.partner_id,
             )
             if line.move_id.company_id.tax_calculation_rounding_method == (
-                    "round_globally"
+                "round_globally"
             ):
                 price_tax = sum(
                     t.get("amount", 0.0) for t in taxes.get("taxes", [])

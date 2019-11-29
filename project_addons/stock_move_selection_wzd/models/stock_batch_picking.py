@@ -53,7 +53,7 @@ class StockBatchPicking(models.Model):
     picking_type_id = fields.Many2one('stock.picking.type', string='Picking type', required=True, readonly=True, states={'draft': [('readonly', False)]},)
     draft_move_lines = fields.One2many('stock.move', 'draft_batch_picking_id', string='Movimientos')
     draft_picking_ids = fields.One2many('stock.picking', 'draft_batch_picking_id', string='Albaranes')
-
+    draft_move_line_ids = fields.One2many('stock.move.line', 'draft_batch_picking_id', string='Líneas de Movimientos')
     sga_integrated = fields.Boolean(related='picking_type_id.sga_integrated')
     sga_state = fields.Selection(SGA_STATES, default='no_integrated', string="SGA Estado", compute="get_sga_state")
     company_id = fields.Many2one(
@@ -123,8 +123,6 @@ class StockBatchPicking(models.Model):
                 batch.ready_to_transfer = True
             else:
                 batch.ready_to_transfer = False
-
-
 
     @api.multi
     def _get_nlines(self):

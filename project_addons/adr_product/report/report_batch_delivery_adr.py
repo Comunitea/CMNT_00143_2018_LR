@@ -3,7 +3,7 @@
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 
 from odoo import api, fields, models, _
-from odoo.exceptions import UserError
+from odoo.exceptions import ValidationError
 
 
 class BatchDeliveryCustomReport(models.AbstractModel):
@@ -26,7 +26,9 @@ class BatchDeliveryCustomReport(models.AbstractModel):
         batch_delivery_id = self.env[model].browse(docids)
         batch_delivery_id.ensure_one()
 
-        moves = batch_delivery_id.move_lines.filtered(lambda x: x.quantity_done != 0.00 and x.product_tmpl_id.adr_idnumonu != False)
+        moves = batch_delivery_id.move_lines.filtered(lambda x: x.quantity_done != 0.00 and x.product_tmpl_id.adr_idnumonu)
+        if not moves:
+            raise ValidationError(_("There are no ADR products in this order."))
 
         move_line_ids = self.env['stock.move.line'].search([('move_id', 'in', moves.ids)])
         pickings = moves.mapped('picking_id')
@@ -126,11 +128,14 @@ class BatchDeliveryCustomReport(models.AbstractModel):
         kgs_picking_11364 = 0.0
 
         for move in move_lines:
-            move_string = "{} [{}/{}]".format(move.picking_id.name, move.product_id.product_tmpl_id.adr_idnumonu.acc_signals or '', \
+            move_string = "{} [{}/{}]".format(move.picking_id.name, "LQ" if \
+                not move.product_id.product_tmpl_id.adr_exe22315 and \
+                move.product_id.product_tmpl_id.adr_idnumonu.qty_limit >= move.product_id.product_tmpl_id.weight else \
+                move.product_id.product_tmpl_id.adr_idnumonu.acc_signals or '', \
                 move.product_id.product_tmpl_id.adr_idnumonu.numero_onu or '')
             pickings.append(move_string)
         
-            if not move.product_id.product_tmpl_id.adr_exe22315 and not move.product_id.product_tmpl_id.adr_idnumonu.qty_limit > 0:
+            if not move.product_id.product_tmpl_id.adr_exe22315 and not move.product_id.product_tmpl_id.adr_idnumonu.qty_limit>= move.product_id.product_tmpl_id.weight:
                 real_kgs_picking = real_kgs_picking + move.qty_done*move.product_id.product_tmpl_id.weight
                 kgs_picking_11363 = kgs_picking_11363 + move.product_id.product_tmpl_id.adr_weight_x_kgrs_11363*move.qty_done
                 kgs_picking_11364 = kgs_picking_11364 + move.product_id.product_tmpl_id.adr_weight_x_kgrs_11364*move.qty_done
@@ -140,7 +145,7 @@ class BatchDeliveryCustomReport(models.AbstractModel):
             'pickings': pickings,
             'name': partner_id.name,
             'packs': len(move_lines.filtered(lambda x: not x.product_id.product_tmpl_id.adr_exe22315 and\
-                    not x.product_id.product_tmpl_id.adr_idnumonu.qty_limit > 0).mapped('result_package_id')) or 0.0,
+                    not x.product_id.product_tmpl_id.adr_idnumonu.qty_limit >= x.product_id.product_tmpl_id.weight).mapped('result_package_id')) or 0.0,
             'real_kgs_picking': real_kgs_picking,
             'kgs_picking_11363': kgs_picking_11363,
             'kgs_picking_11364': kgs_picking_11364,
@@ -217,12 +222,12 @@ class BatchDeliveryCustomReport(models.AbstractModel):
     def get_exec_type_data(self, exec_type, move_line_ids):
         if exec_type == '1136x':
             move_line_ids = move_line_ids.filtered(lambda x: not x.product_id.product_tmpl_id.adr_exe22315 and\
-                not x.product_id.product_tmpl_id.adr_idnumonu.qty_limit > 0)
+                not x.product_id.product_tmpl_id.adr_idnumonu.qty_limit >= x.product_id.product_tmpl_id.weight)
         elif exec_type == '22315':
-            move_line_ids = move_line_ids.filtered(lambda x: x.product_id.product_tmpl_id.adr_exe22315 and\
-                not x.product_id.product_tmpl_id.adr_idnumonu.qty_limit > 0)
+            move_line_ids = move_line_ids.filtered(lambda x: x.product_id.product_tmpl_id.adr_exe22315)
         elif exec_type == 'lq':
-            move_line_ids = move_line_ids.filtered(lambda x: x.product_id.product_tmpl_id.adr_idnumonu.qty_limit > 0)
+            move_line_ids = move_line_ids.filtered(lambda x: not x.product_id.product_tmpl_id.adr_exe22315 and\
+                x.product_id.product_tmpl_id.adr_idnumonu.qty_limit >= x.product_id.product_tmpl_id.weight)
 
         products = move_line_ids.mapped('product_id')
         categories = products.mapped('product_tmpl_id').mapped('adr_idnumonu').mapped('adr_category_id')
@@ -244,16 +249,31 @@ class BatchDeliveryCustomReport(models.AbstractModel):
                 qty_done += move.qty_done
             
             packages = len(moves.mapped('result_package_id'))
-              
-            product_string = "UN {} {} ({}) {} {} ({}) {}".format(product.product_tmpl_id.adr_idnumonu.numero_onu or '', \
-                product.product_tmpl_id.adr_idnumonu.official_name or '', product.product_tmpl_id.adr_denomtecnica or '', \
-                product.product_tmpl_id.adr_idnumonu.acc_signals or product.product_tmpl_id.adr_idnumonu.ranking or '', \
-                product.product_tmpl_id.adr_idnumonu.packing_group or '', product.product_tmpl_id.adr_idnumonu.t_code or '', \
-                '*Peligroso para el medioambiente' if product.product_tmpl_id.adr_peligroma else '')
+
+            product_string = "UN {} {}".format(product.product_tmpl_id.adr_idnumonu.numero_onu or '', \
+                product.product_tmpl_id.adr_idnumonu.official_name or '')
+            
+            if product.product_tmpl_id.adr_denomtecnica:
+                product_string += " ({})".format(product.product_tmpl_id.adr_denomtecnica)
+            
+            if product.product_tmpl_id.adr_idnumonu.acc_signals:
+                product_string += ", {}".format(product.product_tmpl_id.adr_idnumonu.acc_signals)
+
+            if product.product_tmpl_id.adr_idnumonu.packing_group:
+                product_string += ", {}".format(product.product_tmpl_id.adr_idnumonu.packing_group)
+            
+            if product.product_tmpl_id.adr_idnumonu.ranking:
+                product_string += ", {}".format(product.product_tmpl_id.adr_idnumonu.ranking)
+            
+            if product.product_tmpl_id.adr_idnumonu.t_code:
+                product_string += ", ({})".format(product.product_tmpl_id.adr_idnumonu.t_code)
+
+            if product.product_tmpl_id.adr_peligroma:
+                product_string += ", peligroso para el medioambiente"
             
             if exec_type == '11363':   
                 product_weight = "Peso: {} Kg.".format(qty_done*product.product_tmpl_id.adr_weight_x_kgrs_11363)
-            elif exec_type == '11634':
+            elif exec_type == '11364':
                 product_weight = "Peso: {} Kg.".format(qty_done*product.product_tmpl_id.adr_weight_x_kgrs_11364)
             else:
                 product_weight = "Peso: {} Kg.".format(qty_done*product.product_tmpl_id.weight)

@@ -27,6 +27,23 @@ class SBDWMoveLine(models.TransientModel):
     state = fields.Selection(related='move_id.state')
     draft_batch_picking_id = fields.Many2one(related='move_id.draft_batch_picking_id')
 
+    @api.multi
+    def action_packed_moves(self):
+        ctx = self._context.copy()
+        ctx.update(force_route_vals=True)
+
+        vals = {'shipping_type': self.shipping_type,
+                'delivery_route_path_id': self.delivery_route_path_id.id,
+                'carrier_id': self.carrier_id.id}
+
+        for partner_id in self.moves_to_pack_ids.mapped('partner_id'):
+            vals.update(partner_id=partner_id.id)
+            virtual_package = self.env['stock.quant.package'].with_context(ctx).create(vals)
+            vals.update(result_package_id=virtual_package.id)
+            self.with_context(ctx).moves_to_pack_ids.write(vals)
+        return self.autorefresh()
+
+
 
 class StockBatchDeliveryWzd(models.TransientModel):
     """Create a stock.batch.delivery from stock.moves or stock.quant.packages
@@ -70,7 +87,7 @@ class StockBatchDeliveryWzd(models.TransientModel):
     def get_child_vals(self):
         self.ensure_one()
         self.packages_ids = self.move_ids.mapped('result_package_id')
-        self.moves_to_pack_ids = self.move_ids.filtered(lambda x: x.state not in ('assigned', 'partially_available') and not x.result_package_id)
+        self.moves_to_pack_ids = self.move_ids.filtered(lambda x: x.state in ('assigned', 'partially_available') and not x.result_package_id)
         self.picking_ids = self.move_ids.mapped('picking_id')
         self.moves_to_batch_ids = self.move_ids.filtered(lambda x: not x.batch_id)
 
@@ -145,6 +162,7 @@ class StockBatchDeliveryWzd(models.TransientModel):
 
     @api.multi
     def action_packed_moves(self):
+
         ctx = self._context.copy()
         ctx.update(force_route_vals=True)
 
@@ -153,12 +171,10 @@ class StockBatchDeliveryWzd(models.TransientModel):
                 'carrier_id': self.carrier_id.id}
 
         for partner_id in self.moves_to_pack_ids.mapped('partner_id'):
-
             vals.update(partner_id=partner_id.id)
             virtual_package = self.env['stock.quant.package'].with_context(ctx).create(vals)
             vals.update(result_package_id=virtual_package.id)
             self.with_context(ctx).moves_to_pack_ids.write(vals)
-
         return self.autorefresh()
 
 

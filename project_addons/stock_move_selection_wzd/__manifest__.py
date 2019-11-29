@@ -27,6 +27,7 @@
         'views/stock_batch_delivery.xml',
         'views/delivery_route_path.xml',
         'views/picking_type.xml',
+        'views/product.xml',
         'views/res_partner_views.xml',
         'views/stock_batch_picking_views.xml',
         'views/stock_move.xml',

@@ -10,5 +10,14 @@
             <field name="purchase_ok" eval="False"/>
             <field name="list_price">0.0</field>
         </record>
+        <record id="shipping_product" model="product.product">
+            <field name="name">Gastos de envío</field>
+            <field name="default_code">ENVÍO</field>
+            <field name="type">service</field>
+            <field name="categ_id" ref="product.product_category_all"/>
+            <field name="sale_ok" eval="False"/>
+            <field name="purchase_ok" eval="False"/>
+            <field name="list_price">0.0</field>
+        </record>
     </data>
 </odoo>

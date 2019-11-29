@@ -6,7 +6,9 @@ from odoo import fields, models, tools, api, _
 from odoo.exceptions import UserError
 from ast import literal_eval
 
-import os
+import os, logging
+
+_logger = logging.getLogger(__name__)
 
 ADAIA_PARAMS = ['path_files', 'adaia_partner_code', 'adaia_partner_prefix', 'adaia_product_code', 'adaia_product_prefix',
  'adaia_product_template_code', 'adaia_product_template_prefix', 'adaia_barcode_code', 'adaia_barcode_prefix', 'adaia_stock_code', 'adaia_stock_prefix',
@@ -50,7 +52,6 @@ class ConfigAdaiaData(models.TransientModel):
         for param in ADAIA_PARAMS:
             value= ICP.get_param('sga_adaia_integration.{}'.format(param), False)
             res.update({param: value})
-        print (res)
         return res
 
     @api.multi
@@ -84,4 +85,5 @@ class ConfigAdaiaData(models.TransientModel):
     @api.model
     def sync_folders(self):
         super(ConfigAdaiaData, self).sync_folders()
+        _logger.info("Iniciando automatismos ADAIA.")
         self.env['sga.file'].process_sga_files()

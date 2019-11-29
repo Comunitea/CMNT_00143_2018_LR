@@ -11,27 +11,25 @@ class ResPartner(models.Model):
 
     _inherit ='res.partner'
     
-    partner_type = fields.Char(compute="_compute_partner_type")
+    partner_type = fields.Char(compute="compute_adaia_partner")
     sga_state = fields.Selection(SGA_STATES)
-    sga_ref = fields.Char(compute="compute_sga_ref")
+    sga_ref = fields.Char(compute="compute_adaia_partner")
 
     @api.multi
-    def compute_adaia_partner_ref(self):
+    def compute_adaia_partner(self):
         for partner in self:
             if partner.supplier:
                 partner.sga_ref = "{}{}".format(8, partner.ref)
             else:
                 partner.sga_ref = partner.ref
 
-    @api.model
-    def _compute_partner_type(self):
-        for partner in self:
             if not partner.customer and not partner.supplier:
                 partner.partner_type = 'TRA'
             elif partner.customer:
                 partner.partner_type = 'CLI'
             elif partner.supplier:
                 partner.partner_type = 'PRO'
+
 
     @api.multi
     def create_new_adaia_file_button(self):

@@ -22,6 +22,10 @@
                                 <field name="financiable_account_id"/>
                             </div>
                             <div class="row">
+                                <label string="Phone charges account" for="phone_account_id" class="col-md-3 o_light_label"/>
+                                <field name="phone_account_id" />
+                            </div>
+                            <div class="row">
                                 <label string="Shipping type charges account" for="shipping_type_account_id" class="col-md-3 o_light_label"/>
                                 <field name="shipping_type_account_id" />
                             </div>
