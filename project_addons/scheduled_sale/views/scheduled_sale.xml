@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_scheduled_sale_period_form" model="ir.ui.view">
+        <field name="name">view.scheduled_sale_period.form</field>
+        <field name="model">scheduled.sale.period</field>
+        <field name="arch" type="xml">
+            <form string="Schedule sale">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button" options='{"terminology": "archive"}'/>
+                        </button>
+                    </div>
+                    <group>
+                        <field name="name"/>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="from_date"/>
+                        </group>
+                        <group>
+                            <field name="to_date"/>
+                            <field name="first_order_date"/>
+                        </group>
+                    </group>
+                    <group string="Schedule sales">
+                        <field name="scheduled_sale_ids" nolabel="1"/>
+                    </group>
+
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_scheduled_sale_form" model="ir.ui.view">
+        <field name="name">view.scheduled.sale.form</field>
+        <field name="model">scheduled.sale</field>
+        <field name="arch" type="xml">
+            <form string="Schedule sale">
+                 <header>
+                     <button name="cancel_schedule" string="Cancel" type="object" class="btn-warning" states="draft"/>
+                     <button name="draft_schedule" string="Draft" type="object" class="btn-primary" states="confirm,cancel"/>
+                     <button name="confirm_schedule" string="Confirm" type="object" class="btn-primary" states="draft,done"/>
+                     <button name="done_schedule" string="Done" type="object" class="btn-primary" states="confirm"/>
+
+                     <field name="state" widget="statusbar" clickable="True" statusbar_visible="draft,done"/>
+                </header>
+                <div class="oe_button_box" name="button_box">
+                   <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                        <field name="active" widget="boolean_button" options='{"terminology": "archive"}'/>
+                   </button>
+
+                     <button name="action_view_order_lines" type="object" class="oe_stat_button"
+                    icon="fa-list" attrs="{'invisible': [('scheduled_order_lines_ids_count', '=', 0)]}">
+                        <field name="scheduled_order_lines_ids_count" widget="statinfo" string="Order lines"/>
+                </button>
+
+                   <button name="action_show_schedule_orders" type="object" class="oe_stat_button" icon="fa-list">
+                        <field name="scheduled_orders_ids_count" widget="statinfo" tring="Sale orders"/>
+                    </button>
+                    <button name="open_all_product_to_cancel" type="object" class="oe_stat_button" icon="fa-archive" context="{'all_products':True}">
+                           <field name="product_ids_count" widget="statinfo" string="Products"/>
+                        </button>
+                       <!--button name="open_product_to_cancel" type="object" class="oe_stat_button" icon="fa-list">
+                           <label string="Cancel products"/>
+                       </button-->
+                </div>
+                <group>
+                    <group>
+                        <field name="name"/>
+                    </group>
+                    <group>
+                        <field name="first_order_pricelist_id" class="oe_edit_only" options="{'no_create': True}"/>
+                        <field name="scheduled_pricelist_id" class="oe_edit_only" options="{'no_create': True}"/>
+                        <field name="pricelist_id" readonly="1" options="{'no_create': True}"/>
+                    </group>
+                </group>
+
+                <notebook>
+                    <page string="Config">
+                        <group>
+                            <group>
+                                <field name="company_id" options="{'no_create': True}"/>
+                                <field name="period_id" options="{'no_create': True}"/>
+                                <field name="code"/>
+                            </group>
+                            <group>
+                                <!--field name="product_brand_id" options="{'no_create': True}"/-->
+                                <field name="autounlink_products"/>
+                                <field name="autoconfirm_sales"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group string="Dates">
+                                <field name="from_date"/>
+                                <field name="to_date"/>
+                                <field name="first_order_date"/>
+                            </group>
+                            <group>
+
+                            </group>
+                        </group>
+
+                    </page>
+                    <page string="Products">
+
+                        <group>
+                            <div>
+                                <field name="product_ids" readonly="1">
+                                    <tree>
+                                        <field name="default_code" readonly="1"/>
+                                        <field name="display_name" readonly="1"/>
+                                        <field name="barcode" readonly="1"/>
+                                        <!--field name="attribute_value_ids"/-->
+                                        <field name="lst_price" readonly="1"/>
+                                        <button name="action_unlink_product" string="Cancel product" type="object" icon="fa-sign-in"
+                                            context="{'scheduled_sale_id': parent.id}"/>
+                                    </tree>
+                                </field>
+                            </div>
+                        </group>
+                    </page>
+                    <page string="Archived products">
+                        <div class="oe_button_box" name="button_box2">
+                           <!--button name="open_all_product_to_cancel" type="object" class="oe_stat_button" icon="fa-archive" context="{'all_products':True}">
+                           <field name="product_ids_count" widget="statinfo" string="Products"/>
+                        </button-->
+                        </div>
+                        <group>
+                            <div>
+                                <field name="product_ids_archived" readonly="1">
+                                    <tree decoration-danger="active==False">
+                                        <field name="default_code" readonly="1"/>
+                                        <field name="display_name" readonly="1"/>
+                                        <field name="barcode" readonly="1"/>
+                                        <!--field name="attribute_value_ids"/-->
+                                        <field name="lst_price" readonly="1"/>
+                                        <field name="active" invisible="1"/>
+                                        <button name="action_unlink_product" string="Cancel product" type="object" icon="fa-sign-in"
+                                            context="{'scheduled_sale_id': parent.id}"/>
+                                    </tree>
+                                </field>
+                            </div>
+                        </group>
+                    </page>
+                </notebook>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_scheduled_sale_period_tree" model="ir.ui.view">
+        <field name="name">scheduled.sale.period.tree</field>
+        <field name="model">scheduled.sale.period</field>
+        <field name="priority" eval="1"/>
+        <field name="arch" type="xml">
+            <tree string="Schedule sale periods">
+                <field name="active" invisible="1"/>
+                <field name="name"/>
+                <field name="from_date"/>
+                <field name="to_date" />
+
+            </tree>
+        </field>
+    </record>
+
+
+     <record id="view_scheduled_sale_tree" model="ir.ui.view">
+        <field name="name">scheduled.sale.tree</field>
+        <field name="model">scheduled.sale</field>
+        <field name="priority" eval="1"/>
+        <field name="arch" type="xml">
+            <tree string="Schedule sales" decoration-muted="state=='cancel'" decoration-success="state in ('draft','confirm')">
+                <field name="active" invisible="1"/>
+                <field name="state" invisible="1"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="period_id" />
+                <!--field name="product_brand_id"/-->
+            </tree>
+        </field>
+    </record>
+    <record id="view_scheduled_sale_search" model="ir.ui.view">
+        <field name="name">scheduled.sale.search</field>
+        <field name="model">scheduled.sale</field>
+        <field name="arch" type="xml">
+            <search string="Schedule sale">
+                <field name="name" string="Name"/>
+
+                <field name="code" string="Code"/>
+                <field name="period_id" string="Period"/>
+                <field name="company_id" string="Company"/>
+                <!--field name="product_brand_id" string="Brand"/-->
+                <field name="state"/>
+                <field name="active"/>
+                <separator/>
+                <filter name="canceled" string="Canceled" domain="[('state', '=', 'cancel')]"/>
+                <filter name="confirmed" string="Confirmed" domain="[('state', 'in', 'confirmed')]"/>
+                <filter name="current" string="Current" domain="[('state', 'in', ('draft', 'confirmed'))]"/>
+                <separator/>
+                <filter string="Active" name="active" domain="[('active', '=',True)]"/>
+                <filter string="Inactive" domain="[('active', '=', False)]"/>
+                <group expand="0" string="Group By">
+                        <filter string="Period" domain="[]" context="{'group_by':'period_id'}"/>
+                        <filter string="Company" domain="[]" context="{'group_by':'company_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+
+    <record id="view_scheduled_sale_period_search" model="ir.ui.view">
+        <field name="name">scheduled.sale.period.search</field>
+        <field name="model">scheduled.sale.period</field>
+        <field name="arch" type="xml">
+            <search string="Schedule period">
+                <field name="name" string="Name"/>
+                <field name="from_date" string="From"/>
+                <field name="to_date" string="To"/>
+            </search>
+        </field>
+    </record>
+
+
+    <record id="action_scheduled_sale_form" model="ir.actions.act_window">
+        <field name="name">Schedule sales</field>
+        <field name="res_model">scheduled.sale</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="scheduled_sale.view_scheduled_sale_tree"/>
+        <field name="search_view_id" ref="scheduled_sale.view_scheduled_sale_search"/>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+             Click to add a schedule sale.
+          </p>
+        </field>
+    </record>
+    <record id="action_scheduled_sale_period_form" model="ir.actions.act_window">
+        <field name="name">Schedule periods</field>
+        <field name="res_model">scheduled.sale.period</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="scheduled_sale.view_scheduled_sale_period_tree"/>
+        <field name="search_view_id" ref="scheduled_sale.view_scheduled_sale_period_search"/>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+             Click to add a schedule period.
+          </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_scheduled_sale"
+            name="Schedule sale"
+            parent="sale.sale_menu_root"
+            sequence="3"
+            groups="sales_team.group_sale_manager"/>
+
+
+    <record id="action_scheduled_sale_orders_tree" model="ir.actions.act_window">
+            <field name="name">Scheduled Orders</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="sale.sale_order_view_search_inherit_sale"/>
+            <field name="context">{'schedule_order_tree': True}</field>
+            <field name="domain">[('scheduled_sale_id','!=', False)]</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Create a new scheduled sale, the first step of a new schedule.
+                </p><p>
+                    Once the scheduled is confirmed, it becomes a sales order.
+                    You'll be able to invoice it and collect payments.
+                    From the <i>Sales Orders</i> menu, you can track delivery
+                    orders or services.
+                </p>
+            </field>
+    </record>
+    <menuitem action="action_scheduled_sale_orders_tree" id="menu_action_scheduled_sale_orders_form"
+        parent="menu_scheduled_sale" sequence="1" />
+    <menuitem action="action_scheduled_sale_form" id="menu_action_scheduled_sale_form"
+        parent="menu_scheduled_sale" sequence="2" />
+    <menuitem action="action_scheduled_sale_period_form" id="menu_action_scheduled_sale_period_form"
+        parent="menu_scheduled_sale" sequence="3" />
+
+
+
+</odoo>
+
+

@@ -31,12 +31,14 @@ class StockBatchPicking(models.Model):
     invoiced = fields.Boolean()
 
     def _compute_sale_ids(self):
+        ##todo revisar Un batch no debería de tener draft move lines una vez validado
         for pick in self:
             pick.sale_ids = pick.mapped("picking_ids.sale_id") + pick.mapped(
                 "draft_move_lines.picking_id.sale_id"
             )
 
     def _compute_currency_id(self):
+        ##todo revisar Un batch no debería de tener draft move lines una vez validado.
         for pick in self:
             sale = pick.mapped("picking_ids.sale_id") + pick.mapped(
                 "draft_move_lines.picking_id.sale_id"

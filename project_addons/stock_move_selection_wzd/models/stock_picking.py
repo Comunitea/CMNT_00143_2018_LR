@@ -155,8 +155,6 @@ class StockPicking(models.Model):
                     'location_dest_id': location_dest_id,
                     }
             picking_id = self.create(vals)
-
-
         sml = self.env['stock.move.line']
         for quant in quant_ids:
             sml_vals = {'product_id': quant.product_id.id,
@@ -173,7 +171,6 @@ class StockPicking(models.Model):
             sml.create(sml_vals)
         if auto:
             picking_id.do_transfer()
-
         return picking_id
 
 

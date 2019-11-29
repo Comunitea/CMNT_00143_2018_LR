@@ -26,7 +26,7 @@ import os, logging
 
 _logger = logging.getLogger(__name__)
 
-FTP_PARAMS = ['ftp_server', 'ftp_login', 'ftp_password', 'ftp_get_folder', 'ftp_sent_folder',
+FTP_PARAMS = ['activated', 'ftp_server', 'ftp_login', 'ftp_password', 'ftp_get_folder', 'ftp_sent_folder',
  'local_got_folder', 'local_to_send_folder', 'ftp_port', 'ftp_done_folder', 'local_done_folder',
  'move_local_files', 'move_remote_files', 'delete_remote_files']
 
@@ -34,6 +34,7 @@ class ConfigFTPConnection(models.TransientModel):
 
     _inherit = 'res.config.settings'
 
+    activated = fields.Boolean('Solo lectura')
     ftp_server = fields.Char('Server IP')
     ftp_login = fields.Char(string="Server Login")
     ftp_password = fields.Char(string="Server password")
@@ -80,10 +81,12 @@ class ConfigFTPConnection(models.TransientModel):
         except Exception as e:
             raise UserError(_('Error: {}').format(e))
 
-        self.get_files(ftp)
-        ftp.cwd('..')
-        self.send_files(ftp)
-        ftp.quit()
+        activated = self.env['ir.config_parameter'].get_param('ftp_folder_sync.activated', False)
+        if activated:
+            self.get_files(ftp)
+            ftp.cwd('..')
+            self.send_files(ftp)
+            ftp.quit()
     
     @api.model
     def get_files(self, ftp):

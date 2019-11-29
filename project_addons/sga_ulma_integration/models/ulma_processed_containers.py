@@ -14,9 +14,11 @@ class UlmaProcessedContainers(models.Model):
 
     matricula = fields.Char()
     tipo = fields.Char()
+    package_id = fields.Many2one('stock.quant.package')
 
     @api.multi
     def check_packages_from_adaia(self):
+        activated = self.env['ir.config_parameter'].get_param('sga_ulma_integration.ulma_activated', False)
         _logger.info("Comprobando si hay paquetes de ADAIA.")
         sql_select = "select matricula, tipo from ulma_cajas where confirmado = 'C' and procesado = 'N' and fecha > (NOW() - interval '1 day') group by matricula, tipo"
         self._cr.execute(sql_select)
@@ -40,10 +42,13 @@ class UlmaProcessedContainers(models.Model):
                 sql_update = "update ulma_cajas set ('procesado') values ('Y') where matricula = {}".format(package[0])
                 self.create({
                     'matricula': package[0],
-                    'tipo': 'Cajas' if package[1].startswith('C') else 'Palés'
+                    'tipo': 'Cajas' if package[1].startswith('C') else 'Palés',
+                    'package_id': package_odoo.id
                 })
-                #Descomentar cuando sea seguro probar
-                #self._cr.execute(sql_update)
-                #done = self._cr.fetchall()
-                
-                _logger.info("Procesado paquete {} con ID {}.".format(package_odoo.name, package_odoo.id))
+                if activated:
+                    _logger.info('Marco como procesado el contenedor/paquete {} ... '.format(package[0]))
+                    self._cr.execute(sql_update)
+                    done = self._cr.fetchall()
+                    _logger.info('Ok')
+                else:
+                    _logger.info("Procesado paquete {} con ID {}.".format(package_odoo.name, package_odoo.id))

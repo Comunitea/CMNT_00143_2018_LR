@@ -51,9 +51,9 @@ class StockBatchPicking(models.Model):
 
     batch_delivery_id = fields.Many2one('stock.batch.delivery', string="Delivery batch")
     picking_type_id = fields.Many2one('stock.picking.type', string='Picking type', required=True, readonly=True, states={'draft': [('readonly', False)]},)
-    draft_move_lines = fields.One2many('stock.move', 'draft_batch_picking_id', string='Movimientos')
+    draft_move_lines = fields.One2many('stock.move', 'draft_batch_picking_id', string='Movimientos', readonly=True, states={'draft': [('readonly', False)]})
     draft_picking_ids = fields.One2many('stock.picking', 'draft_batch_picking_id', string='Albaranes')
-    draft_move_line_ids = fields.One2many('stock.move.line', 'draft_batch_picking_id', string='Líneas de Movimientos')
+    draft_move_line_ids = fields.One2many('stock.move.line', 'draft_batch_picking_id')
     sga_integrated = fields.Boolean(related='picking_type_id.sga_integrated')
     sga_state = fields.Selection(SGA_STATES, default='no_integrated', string="SGA Estado", compute="get_sga_state")
     company_id = fields.Many2one(
@@ -65,7 +65,6 @@ class StockBatchPicking(models.Model):
     date_done = fields.Datetime('Realizado', copy=False, help="Fecha de transferencia")
     ready_to_transfer = fields.Boolean('Listo para transferir', compute="compute_ready_to_transfer")
     count_move_lines = fields.Integer('Nº líneas', compute="_get_nlines")
-
     delivery_route_path_ids = fields.Many2many('delivery.route.path', string="Rutas de transporte")
     payment_term_ids = fields.Many2many('account.payment.term', string='Plazos de pago')
     shipping_type_ids = fields.Selection(related='shipping_type')
@@ -143,7 +142,7 @@ class StockBatchPicking(models.Model):
         for batch in self:
             if batch.state == 'assigned':
                 batch.state = 'draft'
-            elif batch.state =='draft':
+            elif batch.state == 'draft':
                 batch.state = 'assigned'
 
     def check_allow_change_route_fields(self):

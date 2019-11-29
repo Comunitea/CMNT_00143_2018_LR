@@ -10,11 +10,14 @@ _logger = logging.getLogger(__name__)
 class UlmaMmminp(models.Model):
     _name = "ulma.processed.mmminp"
     _description = "Movements from Ulma"
-    
+
+
     picking_id = fields.Char(string='Picking ID')    
 
     @api.multi
-    def get_from_ulma(self):   
+    def get_from_ulma(self):
+        activated = self.env['ir.config_parameter'].get_param('sga_ulma_integration.ulma_activated', False)
+
         sql_select = "select id, mmmcmdref, mmmacccolcod, mmmres, mmmcanuni, mmmsecada from ulma_mmminp where mmmacccolcod in (select id from ulma_packinglist where status = 'P') order by momcre desc limit 25"
         _logger.info("Ejecutando consulta {}".format(sql_select))         
         self._cr.execute(sql_select)
@@ -22,18 +25,20 @@ class UlmaMmminp(models.Model):
         ulma_confirmed_pickings = self._cr.fetchall()
         
         _logger.info("Registros sin procesar encontrados: {}".format(len(ulma_confirmed_pickings)))
+
         filtered_list = filter(lambda x: x[3] == 'FIN', ulma_confirmed_pickings)
         batch_ids = []
         for pick in filtered_list:
             domain =[('id', '=', int(pick[2]))]
             real_picking = self.env['stock.picking'].search(domain, limit=1)
             if not real_picking:
+                _logger.info("\n------------ \n ERROR Procesando el picking con ID: {}\n ---------------".format(real_picking.id))
                 continue
 
             _logger.info("Procesando el picking con ID: {}".format(real_picking.id))
             
             if pick[1] == 'ERR':
-                _logger.info("Picking {} devuelto con error.".format(real_picking.id))
+                _logger.info("\n------------ \n Picking {} devuelto con error.\n--------------".format(real_picking.id))
                 real_picking.update({
                     'sga_state': 'import_error'
                 })
@@ -55,15 +60,14 @@ class UlmaMmminp(models.Model):
                                     'sga_state': 'done'}
                         move_line.write(vals)
             _logger.info("Actualizando estado del pick {} a procesado.".format(real_picking.id))
-            
-            sql_update = "update ulma_packinglist set ('status') values (2) where id = {}".format(pick[2])
+            if activated:
+                sql_update = "update ulma_packinglist set ('status') values (2) where id = {}".format(pick[2])
+                self._cr.execute(sql_update)
+                done = self._cr.fetchall()
             self.create({
                 'picking_id': real_picking.id
             })
             #Descomentar cuando sea seguro probar
-            self._cr.execute(sql_update)
-            done = self._cr.fetchall()
-
             # sga_auto_validate está en sga_adaia_integration. Mirar de meterlo en un sitio del que dependan ambos
             for batch in batch_ids:
                 if batch.picking_type_id and batch.picking_type_id.sga_auto_validate:

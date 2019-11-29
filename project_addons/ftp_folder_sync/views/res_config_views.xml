@@ -10,6 +10,7 @@
                 <div class="o_settings_container">
                     <group>
                         <group>
+                            <field name="activated"/>
                             <field name="ftp_server"/>
                             <field name="ftp_password"/>
                             <field name="ftp_get_folder"/>

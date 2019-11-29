@@ -15,7 +15,7 @@ class StockPicking(models.Model):
     sga_integrated = fields.Boolean(related='picking_type_id.sga_integrated')
     sga_integration_type = fields.Selection(related="picking_type_id.sga_integration_type")
 
-    def send_picking_to_ulma(self, batch, ulma_move='', date_expected=''):
+    def get_vals_picking_to_ulma(self, batch, ulma_move='', date_expected=''):
         partner_id = self.partner_id
         vals = batch.picking_type_id.get_ulma_vals('sale', partner_id, self)
         

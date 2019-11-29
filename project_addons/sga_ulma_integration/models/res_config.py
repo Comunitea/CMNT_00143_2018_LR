@@ -10,13 +10,14 @@ import logging
 _logger = logging.getLogger(__name__)
 
 ULMA_PARAMS = ['ulma_user', 'ulma_pass', 'ulma_host', 'ulma_port', 'ulma_sid',  'ulma_database', 'mmmout_table', 'mmminp_table', \
-'packing_table', 'fdw', 'oracle_extension', 'oracle_server', 'oracle_mmmout', 'oracle_mmminp', 'oracle_packing', 'ulma_cajas', 'ulma_cajas']
+'packing_table', 'fdw', 'oracle_extension', 'oracle_server', 'oracle_mmmout', 'oracle_mmminp', 'oracle_packing', 'ulma_cajas', 'ulma_cajas', 'ulma_activated']
 
 
 class ConfigUlmaData(models.TransientModel):
 
     _inherit = 'res.config.settings'
 
+    ulma_activated = fields.Boolean('Solo lectura')
     ulma_user = fields.Char('ULMA db user', help="User name needed to connect to the ULMA db")
     ulma_pass = fields.Char('ULMA db password', help="Password needed to connect to the ULMA db")
     ulma_host = fields.Char('ULMA db host', help="Host needed to connect to the ULMA db")
@@ -38,8 +39,8 @@ class ConfigUlmaData(models.TransientModel):
 
     @api.model
     def get_values(self):
-        ICP =self.env['ir.config_parameter'].sudo()
         res = super(ConfigUlmaData, self).get_values()
+        ICP = self.env['ir.config_parameter'].sudo()
         for param in ULMA_PARAMS:
             value= ICP.get_param('sga_ulma_integration.{}'.format(param), False)
             res.update({param: value})

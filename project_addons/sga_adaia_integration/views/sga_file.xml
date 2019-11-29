@@ -11,6 +11,7 @@
                     <group>
                         <field name="path_files"/>
                         <group>
+                            <field name="adaia_activated"/>
                             <field name="adaia_partner_code"/>
                             <field name="adaia_product_code"/>
                             <field name="adaia_product_template_code"/>

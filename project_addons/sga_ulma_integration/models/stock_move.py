@@ -19,7 +19,6 @@ class StockMoveLine(models.Model):
         else:
             cte1 = 'H'
         vals = self.move_id.picking_type_id.get_ulma_vals('move')
-
         update_vals = {
             'mmmartdes':  self.product_id.display_name[:40],
             'mmmartref': self.product_id.default_code,
