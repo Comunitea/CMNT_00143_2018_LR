@@ -253,19 +253,19 @@ class BatchDeliveryCustomReport(models.AbstractModel):
             product_string = "UN {} {}".format(product.product_tmpl_id.adr_idnumonu.numero_onu or '', \
                 product.product_tmpl_id.adr_idnumonu.official_name or '')
             
-            if product.product_tmpl_id.adr_denomtecnica:
+            if product.product_tmpl_id.adr_denomtecnica and product.product_tmpl_id.adr_denomtecnica= '':
                 product_string += " ({})".format(product.product_tmpl_id.adr_denomtecnica)
             
-            if product.product_tmpl_id.adr_idnumonu.acc_signals:
+            if product.product_tmpl_id.adr_idnumonu.acc_signals and product.product_tmpl_id.adr_idnumonu.acc_signals != '':
                 product_string += ", {}".format(product.product_tmpl_id.adr_idnumonu.acc_signals)
 
-            if product.product_tmpl_id.adr_idnumonu.packing_group:
+            if product.product_tmpl_id.adr_idnumonu.packing_group and product.product_tmpl_id.adr_idnumonu.packing_group != '':
                 product_string += ", {}".format(product.product_tmpl_id.adr_idnumonu.packing_group)
             
-            if product.product_tmpl_id.adr_idnumonu.ranking:
+            if product.product_tmpl_id.adr_idnumonu.ranking and product.product_tmpl_id.adr_idnumonu.ranking != '':
                 product_string += ", {}".format(product.product_tmpl_id.adr_idnumonu.ranking)
             
-            if product.product_tmpl_id.adr_idnumonu.t_code:
+            if product.product_tmpl_id.adr_idnumonu.t_code and product.product_tmpl_id.adr_idnumonu.t_code!= '':
                 product_string += ", ({})".format(product.product_tmpl_id.adr_idnumonu.t_code)
 
             if product.product_tmpl_id.adr_peligroma:
