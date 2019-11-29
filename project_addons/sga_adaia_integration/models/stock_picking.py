@@ -48,7 +48,7 @@ class StockPickingSGA(models.Model):
         for pick in self:
             if pick.shipping_type == 'route':
                 pick.adaia_code = 'NORM'
-                pick.adaia_dock = 110
+                pick.adaia_dock = 102
             elif pick.shipping_type == 'pasaran':
                 pick.adaia_code = 'PAS'
                 pick.adaia_dock = 107
