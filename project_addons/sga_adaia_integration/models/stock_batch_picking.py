@@ -31,7 +31,7 @@ class StockBatchPickingSGA(models.Model):
         for batch in self:
             if batch.shipping_type == 'route':
                 batch.adaia_code = 'NORM'
-                batch.adaia_dock = 110
+                batch.adaia_dock = 102
             elif batch.shipping_type == 'pasaran':
                 batch.adaia_code = 'PAS'
                 batch.adaia_dock = 107
