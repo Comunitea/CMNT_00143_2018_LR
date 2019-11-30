@@ -207,7 +207,6 @@ class StockBatchPicking(models.Model):
             batch.draft_move_lines._force_assign_create_lines()
             batch.move_lines._force_assign_create_lines()
 
-
     @api.multi
     def action_transfer(self):
         """
@@ -215,74 +214,70 @@ class StockBatchPicking(models.Model):
         #self.filtered(lambda x: x.picking_type_id.code == 'outgoing').compute_route_fields()
         effective = self.filtered(lambda x: x.draft_move_lines)
         normal = self.filtered(lambda x: not x.draft_move_lines and x.state != 'done')
-        if effective:
-            for batch in effective:
-                moves = batch.get_batch_moves_to_transfer()
-                #if all(x.qty_done == 0.00 for x in moves.mapped('move_line_ids')) and False:
-                #    for ml in moves.mapped('move_line_ids'):
-                #        ml.qty_done = ml.product_uom_qty
-                moves.write({'draft_batch_picking_id': False})
-                moves_to_do = moves.filtered(lambda x: x.state in ('partially_available', 'assigned')).mapped('move_line_ids')
+        if any(batch.batch_delivery_id for batch in self):
+            raise ValidationError (_('No puedes validar un alabrán de cliente asignado a una orden de carga. Deberás de validar la orden de carga'))
 
-                picks = moves_to_do.mapped('picking_id')
-                sale_count = len(picks)
-                move_count=len(moves_to_do)
-                pack_count = len(moves_to_do.mapped('result_package_id'))
-                for pick in picks:
-                    if all(x.quantity_done == 0 for x in pick.move_lines):
-                        for ml in moves_to_do:
-                            ml.qty_done = ml.product_uom_qty
-                picks_to_transfer = moves.mapped('picking_id')
 
-                if not picks_to_transfer:
-                    continue
-                picks_to_transfer.action_done()
-                picks_to_transfer.write({'batch_picking_id': batch.id,
-                                         'draft_batch_picking_id': False})
-                batch.verify_state()
+        for batch in effective:
+            moves = batch.get_batch_moves_to_transfer()
+            #if all(x.qty_done == 0.00 for x in moves.mapped('move_line_ids')) and False:
+            #    for ml in moves.mapped('move_line_ids'):
+            #        ml.qty_done = ml.product_uom_qty
+            moves.write({'draft_batch_picking_id': False})
+            moves_to_do = moves.filtered(lambda x: x.state in ('partially_available', 'assigned')).mapped('move_line_ids')
 
-                back_domain = [('backorder_id', 'in', picks_to_transfer.ids), ('state', '!=', 'cancel')]
-                backorders = self.env['stock.picking'].search(back_domain)
-                message = _(
-                    "Se ha validado el batch por "
-                    "<a href=# data-oe-model=res.user data-oe-id=%d>%s</a> <ul>"
-                    ) % (self.env.user.user_id.id, self.env.user.display_name)
+            picks = moves_to_do.mapped('picking_id')
+            sale_count = len(picks)
+            move_count=len(moves_to_do)
+            pack_count = len(moves_to_do.mapped('result_package_id'))
+            for pick in picks:
+                if all(x.quantity_done == 0 for x in pick.move_lines):
+                    for ml in moves_to_do:
+                        ml.qty_done = ml.product_uom_qty
+            picks_to_transfer = moves.mapped('picking_id')
 
-                if picks_to_transfer:
-                    pick_message = '<ul>Albaranes:'
+            if not picks_to_transfer:
+                continue
+            picks_to_transfer.action_done()
+            picks_to_transfer.write({'batch_picking_id': batch.id,
+                                     'draft_batch_picking_id': False})
+            batch.verify_state()
+
+            back_domain = [('backorder_id', 'in', picks_to_transfer.ids), ('state', '!=', 'cancel')]
+            backorders = self.env['stock.picking'].search(back_domain)
+            message = _(
+                "Se ha validado el batch por "
+                "<a href=# data-oe-model=res.user data-oe-id=%d>%s</a> <ul>"
+                ) % (self.env.user.user_id.id, self.env.user.display_name)
+
+            if picks_to_transfer:
+                pick_message = '<ul>Albaranes:'
+                message = "{}{}".format(message, pick_message)
+                for pick in picks_to_transfer:
+                    pick_message = "<li><a href=# data-oe-model=stock.picking data-oe-id=%d>%s</a>{}</li>"% (pick.id, pick.name)
                     message = "{}{}".format(message, pick_message)
-                    for pick in picks_to_transfer:
-                        pick_message = "<li><a href=# data-oe-model=stock.picking data-oe-id=%d>%s</a>{}</li>"% (pick.id, pick.name)
-                        message = "{}{}".format(message, pick_message)
-                    message = "{}</ul>".format(message)
+                message = "{}</ul>".format(message)
 
-                if backorders:
-                    pick_message = '<ul>Pendientes:'
+            if backorders:
+                pick_message = '<ul>Pendientes:'
+                message = "{}{}".format(message, pick_message)
+                for pick in backorders:
+                    pick_message = "<li><a href=# data-oe-model=stock.picking data-oe-id=%d>%s</a>{}</li>"% (pick.id, pick.name)
                     message = "{}{}".format(message, pick_message)
-                    for pick in backorders:
-                        pick_message = "<li><a href=# data-oe-model=stock.picking data-oe-id=%d>%s</a>{}</li>"% (pick.id, pick.name)
-                        message = "{}{}".format(message, pick_message)
-                    message = "{}</ul>".format(message)
-
-                batch.message_post(message)
-                batch.write({'state': 'done',
-                             'str_content': '{} / {} / {}'.format(sale_count, pack_count, move_count),
-                             'sale_count': sale_count,
-                             'move_count': move_count,
-                             'pack_count': pack_count,
-                             'date_done': fields.Datetime.now()})
-
-                batch.compute_route_fields()
-
-                if batch.picking_type_id.code == 'outgoing' and batch.picking_type_id.group_code != 'packaging':
-                    batch.create_batch_packaging_id()
-            #self.compute_counts()
+                message = "{}</ul>".format(message)
+            batch.message_post(message)
+            batch.write({'state': 'done',
+                         'str_content': '{} / {} / {}'.format(sale_count, pack_count, move_count),
+                         'sale_count': sale_count,
+                         'move_count': move_count,
+                         'pack_count': pack_count,
+                         'date_done': fields.Datetime.now()})
+            batch.compute_route_fields()
+            if batch.picking_type_id.code == 'outgoing' and batch.picking_type_id.group_code != 'packaging':
+                batch.create_batch_packaging_id()
 
         if normal.mapped('picking_ids'):
             return super(StockBatchPicking, normal).action_transfer()
-
-
-
 
     @api.multi
     def create_batch_packaging_id(self):
@@ -290,7 +285,6 @@ class StockBatchPicking(models.Model):
             package_ids = batch.move_lines.mapped('result_package_id')
             if package_ids:
                 batch.pack_lines_picking_id = package_ids.picking_pack_lines(batch)
-
 
     @api.onchange('picking_ids')
     def onchange_picking_ids(self):

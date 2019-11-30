@@ -39,6 +39,15 @@ class StockPicking(models.Model):
     delivery_route_group_id = fields.Many2one('delivery.route.path.group', 'Grupo de entrega', store=False)
 
     @api.multi
+    @api.depends('state', 'is_locked')
+    def _compute_show_validate(self):
+        picking_with_batch = self.move_line_ids.filtered(lambda x: x.draft_batch_picking_id).mapped('picking_id')
+        for picking in picking_with_batch:
+            picking.show_validate = False
+        super(StockPicking, self - picking_with_batch)._compute_show_validate()
+
+
+    @api.multi
     def _get_nlines(self):
         for pick in self:
             pick.count_move_lines = len(pick.move_lines)
@@ -102,12 +111,11 @@ class StockPicking(models.Model):
     @api.multi
     def button_validate(self):
         if not self._context.get('from_sga', False) and any(x.batch_picking_id or x.draft_batch_picking_id for x in self):
-            raise ValidationError (_("No puedes validar un albarán asigado a un batch"))
+            raise ValidationError (_("No puedes validar un albarán asignado a un batch"))
         return super().button_validate()
 
     @api.model
     def search(self, args, offset=0, limit=None, order=None, count=False):
-
         if self._context.get('para_hoy', False):
             today = fields.Date.today()
             hoy = ('date_expected', '>=', today)
