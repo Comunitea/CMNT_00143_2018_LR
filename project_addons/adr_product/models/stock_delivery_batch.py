@@ -31,6 +31,7 @@ class StockBatchDelivery(models.Model):
             move_lines = delivery_batch.move_lines.filtered(lambda x: x.product_uom_qty != 0.00 and x.product_tmpl_id.adr_idnumonu)
 
             if not move_lines:
+                return True
                 raise ValidationError(_("There are no ADR products in this delivery batch."))
 
             move_line_ids = self.env['stock.move.line'].search([('move_id', 'in', move_lines.ids)])

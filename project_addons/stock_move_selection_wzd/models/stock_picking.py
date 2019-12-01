@@ -27,12 +27,12 @@ class StockPicking(models.Model):
             else:
                 pick.draft_batch_picking_id = False
 
-
+    group_code = fields.Selection(related='picking_type_id.group_code')
     sga_integrated = fields.Boolean('Sga', help='Marcar si tiene un tipo de integración con el sga')
     sga_state = fields.Selection(SGA_STATES, default='no_integrated', string="SGA Estado", copy=False)
     #state = fields.Selection(selection_add=[('packaging', 'Empaquetado')])
     batch_delivery_id = fields.Many2one('stock.batch.delivery', string='Orden de carga', copy=False, store=False, compute="get_batch_delivery_id")
-    draft_batch_picking_id = fields.Many2one('stock.batch.picking', 'Batch', compute="get_draft_batch_picking_id")
+    draft_batch_picking_id = fields.Many2one('stock.batch.picking', 'Batch')
 
     excess = fields.Boolean(string='Franquicia')
     count_move_lines = fields.Integer('Nº líneas', compute="_get_nlines")
@@ -112,6 +112,8 @@ class StockPicking(models.Model):
     def button_validate(self):
         if not self._context.get('from_sga', False) and any(x.batch_picking_id or x.draft_batch_picking_id for x in self):
             raise ValidationError (_("No puedes validar un albarán asignado a un batch"))
+
+
         return super().button_validate()
 
     @api.model
@@ -133,7 +135,6 @@ class StockPicking(models.Model):
     @api.multi
     def _add_delivery_cost_to_so(self):
         return True
-
 
     @api.multi
     def button_unlink_from_batch(self):
@@ -181,5 +182,17 @@ class StockPicking(models.Model):
             picking_id.do_transfer()
         return picking_id
 
+    @api.multi
+    def action_add_to_batch_delivery(self):
+        if any(x.state in ('done', 'cancel') for x in self):
+            raise ValidationError (_('Estado incorrecto para los pedidos: {}'.format([x.name for x in self.filtered(lambda x: x.state in ('cancel', 'done'))])))
 
+        if len(self) == 1:
+            if self.batch_delivery_id:
+                self.move_lines.filtered(lambda x: x.state != 'done').write({'batch_delivery_id': False})
+                self.batch_delivery_id = False
+                return
 
+        action = self.env.ref('stock_move_selection_wzd.batch_delivery_wzd_act_window').read()[0]
+
+        return action

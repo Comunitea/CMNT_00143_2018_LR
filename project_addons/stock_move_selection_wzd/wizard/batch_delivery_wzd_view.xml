@@ -49,7 +49,7 @@
                     </page-->
                     <page string="Lineas" >
                         <field name="line_ids" create="false" delete="0">
-                            <tree   editable="bottom" decoration-warning="selected==False"
+                            <tree editable="bottom" decoration-warning="selected==False"
                                     decoration-muted="draft_batch_picking_id==False"
                                     decoration-success="draft_batch_picking_id!=False">
                                 <field name="selected"/>
@@ -66,7 +66,7 @@
                     <page string="Paquetes en la orden">
                         <h2>Lista de paquetes que se añaden a la orden de carga</h2>
                         <field name="packages_ids" readonly="1" >
-                            <tree >
+                            <tree>
                                 <field name="name"/>
                                 <field name="batch_picking_id"/>
                                 <field name="partner_id"/>

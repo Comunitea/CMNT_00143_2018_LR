@@ -280,8 +280,48 @@ class StockBatchPickingWzd(models.TransientModel):
     def action_create_batch(self):
         if len(self.mapped('picking_type_id'))>1:
             raise ValueError(_('No puedes crear un batch de con movimientos de distiont tipo'))
-
+        ## debería de crear un batch siempre, lo reescribo
         #self.move_line_ids.mapped('move_id').ids
+
+        new_batchs = self.env['stock.batch.picking']
+        move_ids = self.move_ids.filtered(lambda x: x.selected).mapped('move_id')
+        fields = self.picking_type_id.grouped_batch_field_ids
+
+        if not fields:
+            ## SI NO HAY NINGÚN AGRUPAMIENTO
+            new_batch = self.env['stock.batch.picking'].create(self.get_wzd_values())
+            move_ids.assign_batch_picking_id(new_batch)
+        else:
+            ## lo agrupo por alabranes
+            picking_ids = move_ids.mapped('picking_id')
+            for pick in picking_ids:
+                moves = move_ids.filtered(lambda x: x.picking_id == pick)
+                domain = pick.get_batch_domain()
+                if new_batchs:
+                    domain += [('id', 'in', new_batchs.ids)]
+                batch = self.env['stock.batch.picking'].search(domain,  order='id asc', limit=1)
+                if not batch:
+                    vals = self.get_wzd_values()
+                    vals.update(pick.get_batch_vals())
+                    batch = self.env['stock.batch.picking'].create(vals)
+
+                moves.assign_batch_picking_id(batch)
+                new_batchs |= batch
+        for batch in new_batchs:
+            note = 'Notas de los albaranes asociados'
+            for pick in batch.draft_picking_ids:
+                if pick.note:
+                    note = '{}\n{}\n{}'.format(note, pick.name, pick.note)
+                else:
+                    note = '{}\n{}'.format(note, pick.name)
+        if self._context.get('send', True):
+            new_batchs.send_to_sga()
+        action = self.env.ref('stock_batch_picking.action_stock_batch_picking_tree').read()[0]
+        action['domain'] = [('id', 'in', new_batchs.ids)]
+        return action
+
+
+
         fields = self.picking_type_id.grouped_batch_field_ids
         new_batchs = self.env['stock.batch.picking']
         ##tego que borrar los no seleccionados
@@ -289,7 +329,8 @@ class StockBatchPickingWzd(models.TransientModel):
         move_ids = self.move_ids.filtered(lambda x: x.selected).mapped('move_id')
         if not fields:
             new_batchs = self.env['stock.batch.picking'].create(self.get_wzd_values())
-            move_ids.write({'draft_batch_picking_id': new_batchs.id})
+            move_ids.assign_batch_picking_id(new_batchs)
+            #move_ids.write({'draft_batch_picking_id': new_batchs.id})
         else:
             for move in move_ids:
                 domain = move.get_batch_domain()
@@ -302,6 +343,8 @@ class StockBatchPickingWzd(models.TransientModel):
                     batch = self.env['stock.batch.picking'].create(vals)
                     move.draft_batch_picking_id = batch
                     new_batchs += batch
+
+
         for batch in new_batchs:
             note = 'Notas de los albaranes asociados'
             for pick in batch.draft_move_lines.mapped('picking_id'):
@@ -327,7 +370,9 @@ class StockBatchPickingWzd(models.TransientModel):
     @api.multi
     def action_assign_batch(self):
         if self.batch_picking_id:
+
             moves_to_link = self.move_ids.filtered(lambda x:x.selected).mapped('move_id')
+
             domain = [('draft_batch_picking_id', '=', self.batch_picking_id.id), ('id', 'not in', moves_to_link.ids)]
             moves_to_unlink = self.env['stock.move'].search(domain)
             moves_to_unlink.write({'draft_batch_picking_id': False})

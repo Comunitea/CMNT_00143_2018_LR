@@ -43,6 +43,7 @@
         'wizard/move_complete_package.xml',
         'wizard/create_package_picking_from_package.xml',
         'views/menu_views.xml',
+        'views/menu_views_stock_picking.xml',
     ],
     'installable': True,
 }

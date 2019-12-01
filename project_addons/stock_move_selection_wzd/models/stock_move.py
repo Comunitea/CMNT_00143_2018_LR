@@ -68,7 +68,7 @@ class StockMove(models.Model):
 
     visible_count_move_to_pick = fields.Boolean(related='picking_type_id.visible_count_move_to_pick')
     visible_count_move_unpacked = fields.Boolean(related='picking_type_id.visible_count_move_unpacked')
-    orig_picking_id = fields.Many2one(related='move_orig_ids.picking_id', string="Expedición SGA")
+    orig_picking_id = fields.Many2one(related='move_orig_ids.picking_id', string="Origen ...")
 
     @api.depends('state', 'picking_id')
     def _compute_is_initial_demand_editable(self):
@@ -168,7 +168,6 @@ class StockMove(models.Model):
     def action_add_moves_to_batch_picking(self):
         moves_ids = self.get_affected_moves()
         ## Cuando selecciono un movimiento o varios debo seleccionar todos los que van en el mismo paquete
-
         ctx = self._context.copy()
         if 'active_domain' in ctx.keys():
             ctx.pop('active_domain')
@@ -178,18 +177,68 @@ class StockMove(models.Model):
         action['target'] = 'new'
         #return action
 
-
         action = self.env.ref('stock_move_selection_wzd.open_view_create_batch_picking').read()[0]
         action['res_id'] = wzd_id.id
 
         return action
 
     @api.multi
+    def action_remove_moves_to_batch_picking(self):
+        for move in self:
+            if move.batch_delivery_id:
+                raise ValidationError (_('No puedes quitar de un albarán un movimiento que está en una orden de carga. Primero quita el albarán de la orden de carga'))
+            if move.result_package_id:
+                raise ValidationError (_('No puedes quitar de un albarán un movimiento empaquetado, desempaquetalo primero'))
+            move.draft_batch_picking_id = False
+            move.picking_id = False
+            move._assign_picking()
+
+
+    @api.multi
+    def assign_batch_picking_id(self, batch_picking_id):
+        if not batch_picking_id or batch_picking_id.state != 'draft':
+            raise ValidationError (_('No encuenttro un grupo disponible o está en estado incorrecto'))
+
+        picking_ids = self.mapped('picking_id')
+        #Escribo en todos los movmientos en todos los albaranes asociados el batch_picking_id
+        #Los movimientos que no estén incluidos, los paso a otro picking
+
+        error_picking = picking_ids.filtered(lambda x: x.state in ('done', 'cancel') or (
+                    x.draft_batch_picking_id and x.draft_batch_picking_id != batch_picking_id))
+        if error_picking:
+            raise ValidationError(
+                _('Albaranes de pedidos en estado inconsistente. {}'.format([x.name for x in error_picking])))
+        error_moves = self.filtered(lambda x: x.state in ('done', 'cancel') or (
+                    x.draft_batch_picking_id and x.draft_batch_picking_id != batch_picking_id))
+        if error_moves:
+            raise ValidationError(_('Movimientos en estado inconsistente. {}'.format([x.name for x in error_picking])))
+
+        val = {'draft_batch_picking_id': batch_picking_id.id}
+        #escribo en todos los movimientos el nuevo batch picking id
+        self.write(val)
+
+        for pick in picking_ids:
+            #import ipdb; ipdb.set_trace()
+            ##si el albarán no tiene picking se lo escribo
+            if pick.draft_batch_picking_id:
+                if pick.draft_batch_picking_id != batch_picking_id:
+                    raise ValidationError (_('Albaran ya asignado a un grupo'))
+            else:
+                pick.draft_batch_picking_id = batch_picking_id.id
+            ## reviso que movimientos del albaran tengo que reasignar
+            pick_moves = pick.move_lines.filtered(lambda x: x.draft_batch_picking_id != pick.draft_batch_picking_id)
+            if pick_moves:
+                pick_moves.write({'picking_id': False})
+                pick_moves._assign_picking()
+
+    @api.multi
     def button_unlink_from_batch(self):
-        self.write({'draft_batch_picking_id': False})
+        return self.action_remove_moves_to_batch_picking()
 
     @api.multi
     def action_add_to_batch_picking(self):
+
+
         to_add = self.filtered(lambda x: x.state != 'done' and not x.draft_batch_picking_id).get_affected_moves()
         to_remove = self.filtered(lambda x: x.state != 'done' and  x.draft_batch_picking_id).get_affected_moves()
         if to_add and to_remove:
@@ -388,6 +437,7 @@ class StockMove(models.Model):
 
     def _get_new_picking_domain(self):
         domain = super()._get_new_picking_domain()
+        domain += [('batch_picking_id', '=', False), ('draft_batch_picking_id', '=', False)]
         return domain
 
     def _action_done(self):

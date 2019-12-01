@@ -98,10 +98,85 @@ class StockBatchDeliveryWzd(models.TransientModel):
             'picking_type_id': picking_type_id.id,
             'state': 'assigned'
         }
+
+    def get_wzd_values(self):
+        return {
+            'date': self.date,
+            'notes': self.notes,
+            'picker_id': self.picker_id.id,
+            'picking_type_id': self.picking_type_id.id,
+            'state': 'draft',
+            'payment_term_id': self.payment_term_id and self.payment_term_id.id or False,
+            'carrier_id': self.carrier_id and self.carrier_id.id or False,
+            'delivery_route_path_id': self.delivery_route_path_id and self.delivery_route_path_id.id or False,
+            'shipping_type': self.shipping_type
+        }
+
+    def get_wzd_values(self, pick):
+
+        return {
+            'date': self.date,
+            'notes': self.notes,
+            'picker_id': self.picker_id.id,
+            'picking_type_id': pick.picking_type_id.id,
+            'state': 'draft',
+            'payment_term_id': pick.payment_term_id and pick.payment_term_id.id or False,
+            'carrier_id': self.carrier_id and self.carrier_id.id or False,
+            'delivery_route_path_id': self.delivery_route_path_id and self.delivery_route_path_id.id or False,
+            'shipping_type': self.shipping_type
+        }
     @api.multi
     def action_assign_partner_batch(self):
+        if len(self.move_ids.mapped('picking_type_id')) > 1:
+            raise ValueError(_('No puedes crear un batch de con movimientos de distinto tipo'))
+        code = self.move_ids.mapped('picking_type_id').mapped('code')
+        if len(code) != 1 and code[0] != 'outgoing':
+            raise ValueError(_('Solo puedes crear batch de tipo cliente (Albaranes de cliente)'))
+
+        ## debería de crear un batch siempre, lo reescribo
+        # self.move_line_ids.mapped('move_id').ids
+
+        new_batchs = self.env['stock.batch.picking']
+        move_ids = self.line_ids.filtered(lambda x: x.selected).mapped('move_id')
+        picking_type_ids = move_ids.mapped('picking_type_id')
+
+        for pt in picking_type_ids:
+            fields = pt.grouped_batch_field_ids
+            pt_move_ids = move_ids.filtered(lambda x: x.picking_type_id == pt)
+            if not fields:
+                ## SI NO HAY NINGÚN AGRUPAMIENTO
+                new_batch = self.env['stock.batch.picking'].create(self.get_wzd_values(pick))
+                pt_move_ids.assign_batch_picking_id(new_batch)
+            else:
+                ## lo agrupo por albranes
+                picking_ids = pt_move_ids.mapped('picking_id')
+                for pick in picking_ids:
+                    moves = pt_move_ids.filtered(lambda x: x.picking_id == pick)
+                    domain = pick.get_batch_domain()
+                    #if new_batchs:
+                    #    domain += [('id', 'in', new_batchs.ids)]
+                    batch = self.env['stock.batch.picking'].search(domain, order='id asc', limit=1)
+                    if not batch:
+                        vals = self.get_wzd_values(pick)
+                        vals.update(pick.get_batch_vals())
+                        batch = new_batchs.create(vals)
+                    moves.assign_batch_picking_id(batch)
+                    new_batchs |= batch
+            for batch in new_batchs:
+                note = 'Notas de los albaranes asociados'
+                for pick in batch.draft_picking_ids:
+                    if pick.note:
+                        note = '{}\n{}\n{}'.format(note, pick.name, pick.note)
+                    else:
+                        note = '{}\n{}'.format(note, pick.name)
+
+        new_batchs.write({'state': 'assigned'})
+        return self.autorefresh()
 
 
+
+    @api.multi
+    def action_assign_partner_batch_orig(self):
         if len(self.move_ids.mapped('picking_type_id')) > 1:
             raise ValueError(_('No puedes crear un batch de con movimientos de distinto tipo'))
         code = self.move_ids.mapped('picking_type_id').mapped('code')
@@ -186,7 +261,6 @@ class StockBatchDeliveryWzd(models.TransientModel):
         if self._context.get('active_model', 'stock_move') == 'stock.picking':
             domain = [('picking_id', 'in', active_ids), ('state', 'in', ('assigned', 'partially_available'))]
             moves = self.env['stock.move'].search(domain)
-
             domain = [('picking_id', 'in', active_ids), ('state', 'in', ('waiting', 'confirmed'))]
             moves_to_not_include = self.env['stock.move'].search(domain)
         else:

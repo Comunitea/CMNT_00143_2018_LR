@@ -232,6 +232,7 @@ class StockPackageBatch(models.Model):
         """ Call action_cancel for all batches pickings
         and set batches states to cancel too.
         """
+
         for batch in self:
             if not batch.picking_ids:
                 batch.write({'state': 'cancel'})

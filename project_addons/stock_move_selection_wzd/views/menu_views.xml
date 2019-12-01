@@ -258,7 +258,7 @@
     </record>
     <delete id="stock_move_selection_wzd.action_deassign_picking" model="ir.ui.menu"/>
     <delete id="stock_move_selection_wzd.action_assign_picking" model="ir.ui.menu"/>
-    <delete id="stock.stock_picking_type_menu" model="ir.ui.menu"/>
+    <!--delete id="stock.stock_picking_type_menu" model="ir.ui.menu"/-->
     <!--menuitem
             action="stock_picking_type_action"
             id="stock_picking_type_menu"

@@ -61,8 +61,6 @@
 
         </field>
     </record>
-
-
     <record id="stock_picking_type_kanban_moves" model="ir.ui.view">
             <field name="name">stock.picking.type.kanban.moves</field>
             <field name="model">stock.picking.type</field>
@@ -633,8 +631,6 @@
                 </kanban>
             </field>
     </record>
-
-
     <record id="view_pickingtype_filter" model="ir.ui.view">
         <field name="name">stock.picking.type.filter</field>
         <field name="model">stock.picking.type</field>
