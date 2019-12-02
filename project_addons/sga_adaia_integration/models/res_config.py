@@ -29,7 +29,7 @@ ODOO_WRITE_FOLDER = 'temp'
 class ConfigAdaiaData(models.TransientModel):
 
     _inherit = 'res.config.settings'
-    adaia_activated = fields.Boolean('Solo lectura')
+    adaia_activated = fields.Boolean('Enviar a SGA')
     path_files = fields.Char('Files Path', help="Path to SGA Adaia exchange files. Must content in, out, error, processed and history folders\nAlso a scheduled action is created: Archive SGA files")
     adaia_partner_code = fields.Char(string="Partner SGA Code", help="SGA Adaia partner file code")
     adaia_product_code = fields.Char(string="Product SGA Code", help="SGA Adaia product file code.")

@@ -34,7 +34,7 @@ class ConfigFTPConnection(models.TransientModel):
 
     _inherit = 'res.config.settings'
 
-    activated = fields.Boolean('Solo lectura')
+    activated = fields.Boolean('Enviar a SGA')
     ftp_server = fields.Char('Server IP')
     ftp_login = fields.Char(string="Server Login")
     ftp_password = fields.Char(string="Server password")
