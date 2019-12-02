@@ -17,7 +17,7 @@ class ConfigUlmaData(models.TransientModel):
 
     _inherit = 'res.config.settings'
 
-    ulma_activated = fields.Boolean('Solo lectura')
+    ulma_activated = fields.Boolean('Enviar a SGA')
     ulma_user = fields.Char('ULMA db user', help="User name needed to connect to the ULMA db")
     ulma_pass = fields.Char('ULMA db password', help="Password needed to connect to the ULMA db")
     ulma_host = fields.Char('ULMA db host', help="Host needed to connect to the ULMA db")

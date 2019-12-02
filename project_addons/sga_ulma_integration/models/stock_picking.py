@@ -32,11 +32,11 @@ class StockPicking(models.Model):
         update_vals = {
             'mmmexpordref': '{}{}'.format(shipping_type_letter, self.name.zfill(8)),
             'mmmsesid': 1 if batch.picking_type_id.ulma_type == 'SUBUNI' else 2,
-            'momcre': datetime.datetime.now(),
-            'mmmterref': partner_id.ref,
+            'momcre': "'{}'".format(datetime.datetime.now()),
+            'mmmterref': partner_id.ref or None,
             'mmmbatch': batch.name[-9:],
             'mmmacccolcod': self.id,
-            'mmmmomexp': datetime.datetime.now(),
+            'mmmmomexp': "'{}'".format(datetime.datetime.now()),
             'mmmurgnte': 'S' if batch.shipping_type == 'urgent' else 'N',
             'mmmtraref': '{}-{}'.format(self.delivery_route_path_id.name if self.delivery_route_path_id.name else 'Sin ruta', shipping_type_full)
         }

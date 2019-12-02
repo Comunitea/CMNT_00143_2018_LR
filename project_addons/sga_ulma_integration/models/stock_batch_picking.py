@@ -18,9 +18,9 @@ class StockBatchPicking(models.Model):
     def get_ulma_vals(self):
         vals = self.picking_type_id.get_ulma_vals('pick')
         update_vals= {
-            'momcre': datetime.datetime.now(),
+            'momcre': "'{}'".format(datetime.datetime.now()),
             'mmmbatch': self.name[-9:],
-            'mmmmomexp': datetime.datetime.now()
+            'mmmmomexp': "'{}'".format(datetime.datetime.now()),
         }
         vals.update(update_vals)
         return vals

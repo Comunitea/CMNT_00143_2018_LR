@@ -50,6 +50,7 @@ class UlmaProcessedMmmout(models.Model):
     mmmubidesref = fields.Char(max=16)
     mmmzondesref = fields.Char(max=4)
     mmmobs = fields.Char(max=255)
+    sent = fields.Boolean(default=False)
 
     @api.model
     def create(self, vals):
@@ -57,11 +58,12 @@ class UlmaProcessedMmmout(models.Model):
         print(vals)
         activated = self.env['ir.config_parameter'].get_param('sga_ulma_integration.ulma_activated', False)
         if activated:
-            sql_update = "insert into ulma_mmmout ('mmmcmdref', 'mmmdisref', 'mmmges', 'mmmres', 'mmmsesid', 'momcre', 'mmmartean', \
-                    'mmmbatch', 'mmmmomexp', 'mmmacccolcod', 'mmmentdes', 'mmmexpordref', 'mmmterref', 'mmmentdir1', 'mmmentdir2', \
-                    'mmmentdir3', 'mmmentdir4', 'mmmurgnte', 'mmmtraref', 'mmmartdes', 'mmmartref', 'mmmcanuni', 'mmmsecada', \
-                    'mmmacccod', 'mmmfeccad', 'mmmartapi', 'mmmminudsdis', 'mmmabclog', 'mmmdim', 'mmmcntdorref', 'mmmcrirot', \
-                    'mmmdorhue', 'mmmlot', 'mmmmonlot', 'mmmrecref', 'mmmubidesref', 'mmmzondesref', 'mmmobs') values \
+            _logger.info("Insertando línea en Oracle.")
+            sql_update = "insert into ulma_mmmout (mmmcmdref, mmmdisref, mmmges, mmmres, mmmsesid, momcre, mmmartean, \
+                    mmmbatch, mmmmomexp, mmmacccolcod, mmmentdes, mmmexpordref, mmmterref, mmmentdir1, mmmentdir2, \
+                    mmmentdir3, mmmentdir4, mmmurgnte, mmmtraref, mmmartdes, mmmartref, mmmcanuni, mmmsecada, \
+                    mmmacccod, mmmfeccad, mmmartapi, mmmminudsdis, mmmabclog, mmmdim, mmmcntdorref, mmmcrirot, \
+                    mmmdorhue, mmmlot, mmmmonlot, mmmrecref, mmmubidesref, mmmzondesref, mmmobs) values \
                     ({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {},\
                     {}, {}, {}, {}, {})".format(vals['mmmcmdref'], vals['mmmdisref'], vals['mmmges'], vals['mmmres'], vals['mmmsesid'], \
                     vals['momcre'], vals['mmmartean'], vals['mmmbatch'], vals['mmmmomexp'], vals['mmmacccolcod'], vals['mmmentdes'], \
@@ -71,70 +73,51 @@ class UlmaProcessedMmmout(models.Model):
                     vals['mmmminudsdis'], vals['mmmabclog'], vals['mmmdim'], vals['mmmcntdorref'], vals['mmmcrirot'], \
                     vals['mmmdorhue'], vals['mmmlot'], vals['mmmmonlot'], vals['mmmrecref'], \
                     vals['mmmubidesref'], vals['mmmzondesref'], vals['mmmobs'])
-            print(sql_update)
+            _logger.info("Resultado: {}.".format(sql_update))
             #Descomentar cuando sea seguro probar
             self._cr.execute(sql_update)
             done = self._cr.fetchall()
 
-            processed_vals = {
-                'mmmcmdref': vals['mmmcmdref'],
-                'mmmdisref': vals['mmmdisref'],
-                'mmmges': vals['mmmges'],
-                'mmmres': vals['mmmres'],
-                'mmmsesid': vals['mmmsesid'],
-                'momcre': vals['momcre'],
-                'mmmartean': vals['mmmartean'],
-                'mmmbatch': vals['mmmbatch'],
-                'mmmmomexp': vals['mmmmomexp'],
-                'mmmacccolcod': vals['mmmacccolcod'],
-                'mmmentdes': vals['mmmentdes'],
-                'mmmexpordref': vals['mmmexpordref'],
-                'mmmterref': vals['mmmterref'],
-                'mmmentdir1': vals['mmmentdir1'],
-                'mmmentdir2': vals['mmmentdir2'],
-                'mmmentdir3': vals['mmmentdir3'],
-                'mmmentdir4': vals['mmmentdir4'],
-                'mmmurgnte': vals['mmmurgnte'],
-                'mmmtraref': vals['mmmtraref'],
-                'mmmartdes': vals['mmmartdes'],
-                'mmmartref': vals['mmmartref'],
-                'mmmcanuni': vals['mmmcanuni'],
-                'mmmsecada': vals['mmmsecada'],
-                'mmmacccod': vals['mmmacccod'],
-                'mmmfeccad': vals['mmmfeccad'],
-                'mmmartapi': vals['mmmartapi'],
-                'mmmminudsdis': vals['mmmminudsdis'],
-                'mmmabclog': vals['mmmabclog'],
-                'mmmdim': vals['mmmdim'],
-                'mmmcntdorref': vals['mmmcntdorref'],
-                'mmmcrirot': vals['mmmcrirot'],
-                'mmmdorhue': vals['mmmdorhue'],
-                'mmmlot': vals['mmmlot'],
-                'mmmmonlot': vals['mmmmonlot'],
-                'mmmrecref': vals['mmmrecref'],
-                'mmmubidesref': vals['mmmubidesref'],
-                'mmmzondesref': vals['mmmzondesref'],
-                'mmmobs': vals['mmmobs']
-            }
-            return super().create(processed_vals)
-        else:
-            sql = "insert into ulma_processed_mmmout ('mmmcmdref', 'mmmdisref', 'mmmges', 'mmmres', 'mmmsesid', 'momcre', 'mmmartean', \
-                    'mmmbatch', 'mmmmomexp', 'mmmacccolcod', 'mmmentdes', 'mmmexpordref', 'mmmterref', 'mmmentdir1', 'mmmentdir2', \
-                    'mmmentdir3', 'mmmentdir4', 'mmmurgnte', 'mmmtraref', 'mmmartdes', 'mmmartref', 'mmmcanuni', 'mmmsecada', \
-                    'mmmacccod', 'mmmfeccad', 'mmmartapi', 'mmmminudsdis', 'mmmabclog', 'mmmdim', 'mmmcntdorref', 'mmmcrirot', \
-                    'mmmdorhue', 'mmmlot', 'mmmmonlot', 'mmmrecref', 'mmmubidesref', 'mmmzondesref', 'mmmobs') values \
-                    ({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {},\
-                    {}, {}, {}, {}, {})".format(vals['mmmcmdref'], vals['mmmdisref'], vals['mmmges'], vals['mmmres'], vals['mmmsesid'], \
-                    vals['momcre'], vals['mmmartean'], vals['mmmbatch'], vals['mmmmomexp'], vals['mmmacccolcod'], vals['mmmentdes'], \
-                    vals['mmmexpordref'], vals['mmmterref'], vals['mmmentdir1'], vals['mmmentdir2'], vals['mmmentdir3'], \
-                    vals['mmmentdir4'], vals['mmmurgnte'], vals['mmmtraref'], vals['mmmartdes'], vals['mmmartref'], \
-                    vals['mmmcanuni'], vals['mmmsecada'], vals['mmmacccod'], vals['mmmfeccad'], vals['mmmartapi'], \
-                    vals['mmmminudsdis'], vals['mmmabclog'], vals['mmmdim'], vals['mmmcntdorref'], vals['mmmcrirot'], \
-                    vals['mmmdorhue'], vals['mmmlot'], vals['mmmmonlot'], vals['mmmrecref'], \
-                    vals['mmmubidesref'], vals['mmmzondesref'], vals['mmmobs'])
-            print(sql)
-            #Descomentar cuando sea seguro probar
-            self._cr.execute(sql)
-            done = self._cr.fetchall()
-        
+        processed_vals = {
+            'mmmcmdref': vals['mmmcmdref'],
+            'mmmdisref': vals['mmmdisref'],
+            'mmmges': vals['mmmges'],
+            'mmmres': vals['mmmres'],
+            'mmmsesid': vals['mmmsesid'],
+            'momcre': vals['momcre'],
+            'mmmartean': vals['mmmartean'],
+            'mmmbatch': vals['mmmbatch'],
+            'mmmmomexp': vals['mmmmomexp'],
+            'mmmacccolcod': vals['mmmacccolcod'],
+            'mmmentdes': vals['mmmentdes'],
+            'mmmexpordref': vals['mmmexpordref'],
+            'mmmterref': vals['mmmterref'],
+            'mmmentdir1': vals['mmmentdir1'],
+            'mmmentdir2': vals['mmmentdir2'],
+            'mmmentdir3': vals['mmmentdir3'],
+            'mmmentdir4': vals['mmmentdir4'],
+            'mmmurgnte': vals['mmmurgnte'],
+            'mmmtraref': vals['mmmtraref'],
+            'mmmartdes': vals['mmmartdes'],
+            'mmmartref': vals['mmmartref'],
+            'mmmcanuni': vals['mmmcanuni'],
+            'mmmsecada': vals['mmmsecada'],
+            'mmmacccod': vals['mmmacccod'],
+            'mmmfeccad': vals['mmmfeccad'],
+            'mmmartapi': vals['mmmartapi'],
+            'mmmminudsdis': vals['mmmminudsdis'],
+            'mmmabclog': vals['mmmabclog'],
+            'mmmdim': vals['mmmdim'],
+            'mmmcntdorref': vals['mmmcntdorref'],
+            'mmmcrirot': vals['mmmcrirot'],
+            'mmmdorhue': vals['mmmdorhue'],
+            'mmmlot': vals['mmmlot'],
+            'mmmmonlot': vals['mmmmonlot'],
+            'mmmrecref': vals['mmmrecref'],
+            'mmmubidesref': vals['mmmubidesref'],
+            'mmmzondesref': vals['mmmzondesref'],
+            'mmmobs': vals['mmmobs'],
+            'sent': activated
+        }
+        return super().create(processed_vals)
 
