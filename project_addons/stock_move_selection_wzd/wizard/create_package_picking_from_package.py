@@ -23,8 +23,6 @@ class CreatePackagePickFromPackageWzd(models.TransientModel):
             move_ids = move_lines.mapped('move_id')
             batch_picking_id = move_ids.mapped('batch_picking_id')
             if not batch_picking_id:
-                batch_picking_id = move_ids.mapped('draft_batch_picking_id')
-            if not batch_picking_id:
                 return defaults
             if len(batch_picking_id)!= 1:
                 raise ValidationError (_('El paquete esta en varios albaranes'))

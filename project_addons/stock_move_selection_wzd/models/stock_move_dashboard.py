@@ -7,6 +7,9 @@ import json
 
 from odoo import models, api, _, fields
 
+from datetime import datetime, timedelta
+from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT, DEFAULT_SERVER_DATE_FORMAT
+
 class StockPickingType(models.Model):
     _inherit = 'stock.picking.type'
 
@@ -23,59 +26,41 @@ class StockPickingType(models.Model):
     def get_bar_graph_datas(self):
 
         state_pendientes = ('waiting', 'confirmed', 'assigned', 'partially_available')
+        today = datetime.now().strftime(DEFAULT_SERVER_DATE_FORMAT)
+        tomorrow = (datetime.now() + timedelta(days=1)).strftime(DEFAULT_SERVER_DATE_FORMAT)
+        stock_move = self.env['stock.move']
+
         for type in self:
-            ## sql generica para el picking_type
-            sql1 = "select count(*) from stock_move where company_id = {} and picking_type_id = {}".format(self.env.user.company_id.id, type.id)
-            ##RETRASADOS
-            sql = "{} and state in {} and date(date_expected) < current_date".format(sql1, state_pendientes)
-            self.env.cr.execute(sql)
-            res = self.env.cr.dictfetchall()
-            retrasados = res and res[0] or 0
+            comun_domain = [('picking_type_id', '=' , type.id)]
+            wait_domain = [('state', 'in', state_pendientes)]
 
-            ##HOY
-            sql = "{} and state in {} and date(date_expected) = current_date ".format(sql1, state_pendientes)
-            self.env.cr.execute(sql)
-            res = self.env.cr.dictfetchall()
-            hoy = res and res[0] or 0
+            later_domain = comun_domain + wait_domain + [('date_expected', '<=', today)]
+            retrasados = stock_move.search_count(later_domain)
 
-            ## PENDIENTES
-            sql = "{} and state in {} ".format(sql1, state_pendientes)
-            self.env.cr.execute(sql)
-            res = self.env.cr.dictfetchall()
-            pendientes = res and res[0] or 0
+            pendientes_domain = comun_domain + wait_domain
+            pendientes = stock_move.search_count(pendientes_domain)
 
-            ##Retornos
-            sql = "{} and state in {} and origin_returned_move_id isnull".format(sql1, state_pendientes)
-            self.env.cr.execute(sql)
-            res = self.env.cr.dictfetchall()
-            retornos = res and res[0] or 0
+            futuro_domain = comun_domain + wait_domain + [('date_expected', '>=', tomorrow)]
+            futuro = stock_move.search_count(futuro_domain)
 
-            ## Realizados Hoy
-            sql = "{} and state = 'done' and date(date) = current_date".format(sql1)
-            self.env.cr.execute(sql)
-            res = self.env.cr.dictfetchall()
-            done_today = res and res[0] or 0
+            hoy_domain = comun_domain + wait_domain + ['&', ('date_expected', '>=', today), ('date_expected', '<', tomorrow)]
+            done_today = stock_move.search_count(hoy_domain)
 
-            sql = "{} and state in {} and  date(date_expected) > current_date".format(sql1,state_pendientes)
-            self.env.cr.execute(sql)
-            res = self.env.cr.dictfetchall()
-            futuro = res and res[0] or 0
+            sql= "select count(*) from stock_move sm " \
+                  "where sm.picking_type_id = {} and sm.state = 'done' and date > (current_date - interval '{} day') and " \
+                  "(sm.product_uom_qty != sm.ordered_qty or sm.product_uom_qty != sm.product_uom_qty_orig or sm.sga_state in ('export_error', 'import_error'))".format(type.id, type.num_error_day)
 
-            sql = "select count(sm.id) from stock_move sm where (((select sum(qty_done) from stock_move_line sml where " \
-                  "sm.company_id= {} and " \
-                  "sm.picking_type_id = {} and  " \
-                  "sml.move_id = sm.id) != sm.ordered_qty " \
-                  "and state = 'done') or (sm.company_id= {} and sm.picking_type_id = {} and sm.sga_state in ('export_error', 'import_error'))) and " \
-                  "date > current_date - interval '{} day'".format(self.env.user.company_id.id, type.id, self.env.user.company_id.id, type.id, type.num_error_day)
+            #sql = "select count(*) from stock_move sm where sm.picking_type_id = {} and sm.state = 'done'".format(type.id)
+            print (sql)
             self.env.cr.execute(sql)
             res = self.env.cr.dictfetchall()
-            errores = res and res[0] or 0
+            #print ('{}\n--------\n{}'.format(sql, res) )
+            errores = res and res[0]['count'] or 0
 
             res = [{'values': [
-                     {'label': 'Pendientes.', 'value': pendientes['count'], 'type': 'past'},
-                     {'label': 'Hoy', 'value': done_today['count'], 'type': 'today'},
-                     #{'label': 'Retornos', 'value': retornos['count'], 'type': 'return'},
-                     {'label': 'Futuro', 'value': futuro['count'], 'type': 'future'},
-                     {'label': 'Errores', 'value': errores['count'], 'type': 'error'}],
+                     {'label': 'Pendientes.', 'value': pendientes, 'type': 'past'},
+                     {'label': 'Hoy', 'value': done_today, 'type': 'today'},
+                     {'label': 'Futuro', 'value': futuro, 'type': 'future'},
+                     {'label': 'Errores', 'value': errores, 'type': 'error'}],
             'title': 'Movimientos', 'key': 'Movimientos'}]
         return res

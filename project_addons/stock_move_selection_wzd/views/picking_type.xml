@@ -288,10 +288,9 @@
                                                         <div class="col-xs-6 text-primary" title="Pedidos pendientes">
                                                             <a name="get_action_tree" type="object" context="{'dest_model': 'stock.picking',
                                                                                                               'pick_domain': 'count_picking',
-                                                                                                              'search_default_available': 1,
-                                                                                                              'search_default_by_shipping_type':1,
-                                                                                                              'search_default_by_delivery_path_route_id':1,
-                                                                                                              'search_default_by_partner_id':1,}">
+                                                                                                              'filter_group_code': 'all',
+                                                                                                              'search_default_available': 1,}">
+
                                                                 Pendientes(Totales)
                                                             </a>
                                                         </div>
@@ -304,11 +303,10 @@
                                                         <div class="col-xs-6 text-primary" title="Pedidos sin batch">
                                                             <a name="get_action_tree" type="object" context="{'dest_model': 'stock.picking',
                                                                                                               'pick_domain': 'count_pick_to_batch',
+                                                                                                              'filter_group_code': 'all',
                                                                                                               'search_default_to_batch': 1,
-                                                                                                              'search_default_available': 1,
-                                                                                                              'search_default_by_shipping_type':1,
-                                                                                                              'search_default_by_delivery_path_route_id':1,
-                                                                                                              'search_default_by_partner_id':1,}">
+                                                                                                              'search_default_available': 1
+                                                                                                              }">
                                                                 Sin
                                                                 <t t-esc="record.batch_name.value"/>
                                                             </a>
@@ -318,7 +316,8 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div name="purchase_orders" t-if="record.group_code.raw_value == 'location'">
+                                                <div name="purchase_orders"
+                                                     t-if="record.group_code and record.group_code.code == 'location'">
                                                     <div class="row">
                                                          <div class="col-xs-6 text-muted">
                                                             <span class="text-muted h3">Compras</span>
@@ -328,9 +327,10 @@
                                                     <div t-if="record.visible_count_picking_ready.raw_value == true" class="row">
                                                         <div class="col-xs-6 text-primary" title="Pedidos pendientes">
                                                             <a name="get_action_tree" type="object" context="{'dest_model': 'stock.picking',
+                                                                                                              'filter_group_code': 'all',
                                                                                                               'pick_domain': 'count_picking',
                                                                                                               'search_default_available': 1,
-                                                                                                              'search_default_by_partner_id':1,}">
+                                                                                                              }">
                                                                 Pendientes(Totales)
                                                             </a>
                                                         </div>
@@ -343,9 +343,10 @@
                                                         <div class="col-xs-6 text-primary" title="Pedidos sin batch">
                                                             <a name="get_action_tree" type="object" context="{'dest_model': 'stock.picking',
                                                                                                               'pick_domain': 'count_pick_to_batch',
+                                                                                                              'filter_group_code': 'all',
                                                                                                               'search_default_to_batch': 1,
                                                                                                               'search_default_available': 1,
-                                                                                                              'search_default_by_partner_id':1,}">
+                                                                                                              }">
                                                                 Sin
                                                                 <t t-esc="record.batch_name.value"/>
                                                             </a>
@@ -469,7 +470,9 @@
                                                 <div t-if="record.ratio_object.raw_value == 'stock.picking'">
                                                     <span>
                                                         <a type="object" name="get_action_tree" title="Ordenes programados para hoy o realizados hoy"
-                                                            context="{'dest_model': 'stock.picking',
+                                                            context="{
+                                                            'dest_model': 'stock.picking',
+                                                            'filter_group_code': 'all',
                                                             'pick_domain': 'count_picking',
                                                             'search_default_last_day': 1,
                                                             'search_default_todo': 1}">
@@ -668,13 +671,13 @@
                 <filter string="A Futuro" name="filter_tomorrow" context="{'filter_day': 'tomorrow'}"/>
                 <filter string="Retrasado" name="filter_late" context="{'filter_day': 'late'}"/>
                 <separator/>
-                <filter string="Picking"  name="picking" domain="[('group_code','=','picking')]"/>
-                <filter string="Internal" name="internal" domain="[('group_code','=','internal')]"/>
-                <filter string="Incoming" name="incoming" domain="[('group_code','=','incoming')]"/>
-                <filter string="Outgoing" name="outgoing" domain="[('group_code','=','outgoing')]"/>
-                <filter string="Location" name="location" domain="[('group_code','=','location')]"/>
-                <filter string="Reposition" name="reposition" domain="[('group_code','=','reposition')]"/>
-                <filter string="Other" name="other" domain="[('group_code','=','other')]"/>
+                <filter string="Picking"  name="picking" domain="[('group_code.code','=','picking')]"/>
+                <filter string="Internal" name="internal" domain="[('group_code.code','=','internal')]"/>
+                <filter string="Incoming" name="incoming" domain="[('group_code.code','=','incoming')]"/>
+                <filter string="Outgoing" name="outgoing" domain="[('group_code.code','=','outgoing')]"/>
+                <filter string="Location" name="location" domain="[('group_code.code','=','location')]"/>
+                <filter string="Reposition" name="reposition" domain="[('group_code.code','=','reposition')]"/>
+                <filter string="Other" name="other" domain="[('group_code.code','=','other')]"/>
 
                 <separator/>
                 <group expand="0" string="Group By">

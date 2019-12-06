@@ -21,10 +21,14 @@
             <form string="Grupos">
                 <separator string="Grupos de albaranes"/>
                 <label string="Gestión de movimientos y albaranes en grupos. "/>
+                <div>
+                    <h3><field name="warning" readonly="1"/></h3>
+                </div>
                 <group invisible="context.get('hide_conf_vals', False)">
                     <group>
                         <field name="id" invisible="1"/>
-                        <field name="batch_picking_id" domain="[('state', 'in', ('draft', 'assigned')), ('picking_type_id', '=', picking_type_id)]"/>
+                        <field name="batch_picking_id" domain="[('id', 'in', batch_picking_ids)]"/>
+                        <field name="batch_picking_ids" invisible="1" />
                         <field name="picking_type_id" required="1" readonly="1"/>
                         <field name="sga_integrated" invisible="1"/>
                         <field name="date"/>
@@ -43,9 +47,9 @@
                 <notebook>
                     <page string="Movimientos" >
                         <field name="move_ids" create="false" delete="0">
-                            <tree   editable="bottom" decoration-warning="selected==False"
-                                    decoration-muted="draft_batch_picking_id==False"
-                                    decoration-success="draft_batch_picking_id!=False">
+                            <tree editable="bottom" decoration-warning="selected==False"
+                                    decoration-muted="batch_picking_id==False"
+                                    decoration-success="batch_picking_id!=False">
                                 <field name="selected"/>
                                 <field name="origin" readonly="1"/>
                                 <field name="info_route_str" readonly="1"/>
@@ -53,14 +57,14 @@
                                 <field name="product_uom_qty" readonly="1"/>
                                 <field name="result_package_id" readonly="1"/>
                                 <field name="state" readonly="1"/>
-                                <field name="draft_batch_picking_id" invisible="1" readonly="1"/>
+                                <field name="batch_picking_id" invisible="1" readonly="1"/>
                             </tree>
                         </field>
                     </page>
                     <page string="Pedidos" >
                         <field name="picking_ids" create="false" edit="false" delete="0">
-                            <tree decoration-muted="draft_batch_picking_id==False"
-                                decoration-success="draft_batch_picking_id!=False">
+                            <tree decoration-muted="batch_picking_id==False"
+                                decoration-success="batch_picking_id!=False">
                             <button name="button_unlink_from_batch"
                                 string="Eliminar del batch"
                                 type="object"
@@ -68,7 +72,7 @@
                                 groups="base.group_user"
                                 class="text-danger"
                                     />
-                                <field name="draft_batch_picking_id" invisible="1"/>
+                                <field name="batch_picking_id" invisible="1"/>
                                 <field name="origin"/>
                                 <field name="info_route_str"/>
                                 <field name="name"/>
@@ -83,7 +87,7 @@
                 <footer>
                     <button name="action_create_batch" context="{'send': False}" string="Crear batch" type="object" class="oe_highlight" attrs="{'invisible': [('batch_picking_id','!=', False)]}"/>
                     <button name="action_create_batch" context="{'send': True}"  string="Crear y enviar a Sga" type="object" attrs="{'invisible': ['|', ('sga_integrated','=', False), ('batch_picking_id','!=', False)]}"/>
-                    <button name="action_assign_batch" context="{'reload': True}" string="Asignar grupo" type="object" attrs="{'invisible': [('batch_picking_id','=', False)]}"/>
+                    <button name="action_create_batch" context="{'reload': True}" string="Asignar grupo" type="object" attrs="{'invisible': [('batch_picking_id','=', False)]}"/>
                     <button name="action_apply_info_envio" string="Aplicar Info envío" type="object" attrs="{'invisible': [('batch_picking_id','=', False)]}"/>
                     <button string="Cancel" class="oe_link" special="cancel"/>
                 </footer>

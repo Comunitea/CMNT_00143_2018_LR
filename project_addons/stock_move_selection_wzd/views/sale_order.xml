@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
+        <record id="view_quotation_tree_stmw" model="ir.ui.view">
+            <field name="name">sale.order.tree.stmw</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_quotation_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//tree" position="attributes">
+                     <attribute name="decoration-success">
+                          picking_ids_state == 'done'
+                     </attribute>
+                </xpath>
+                <field name="state" position="after">
+                    <field name="picking_ids_state" invisible="1"/>
+                </field>
+            </field>
+        </record>
+
         <record id="view_form_batch_picking_id" model="ir.ui.view">
             <field name="name">sale.order.form.batch</field>
             <field name="model">sale.order</field>
@@ -18,6 +34,7 @@
                     </button>
 
                     <field name="batch_delivery_ids" invisible="1"/>
+
                     <button type="object"
                         name="action_view_batch_delivery_ids"
                         class="oe_stat_button"
@@ -26,6 +43,13 @@
                         <field name="count_batch_delivery_ids" widget="statinfo" string="O. Entrega"/>
                     </button>
                 </xpath>
+
+                 <xpath expr="//button[@name='action_view_move_lines']" position="attributes">
+                     <attribute name="context">
+                          {'group_code': 'all'}
+                     </attribute>
+                 </xpath>
+
 
              <xpath expr="//field[@name='price_subtotal']" position="after">
                  <field name="qty_available_global"/>
@@ -36,4 +60,5 @@
             </field>
         </record>
     </data>
+
 </odoo>

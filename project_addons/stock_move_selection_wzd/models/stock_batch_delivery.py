@@ -131,8 +131,6 @@ class StockBatchDelivery(models.Model):
         'Peso', digits=2,
         help="The weight of the contents in Kg, not including any packaging, etc.")
 
-
-
     @api.multi
     @api.depends('move_lines.shipping_type', 'move_lines.delivery_route_path_id', 'move_lines.carrier_id')
     def compute_route_fields(self):
@@ -189,7 +187,7 @@ class StockBatchDelivery(models.Model):
         move_line_ids = move_lines.mapped('move_line_ids')
         package_ids = move_line_ids.mapped('result_package_id')
         package_packaging_ids = package_ids.mapped('packaging_line_ids')
-        sbp_ids = move_lines.mapped('batch_picking_id') + move_lines.mapped('draft_batch_picking_id')
+        sbp_ids = move_lines.mapped('batch_picking_id')
         vals ={
             'picking_ids': picking_ids,
             'batch_ids': sbp_ids,

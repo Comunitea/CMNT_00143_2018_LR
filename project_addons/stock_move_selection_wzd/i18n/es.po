@@ -199,7 +199,7 @@ msgstr "Empresa"
 #: model:ir.ui.view,arch_db:stock_move_selection_wzd.view_pickingtype_filter
 #: selection:stock.picking.type,group_code:0
 msgid "Picking"
-msgstr "Albarán"
+msgstr "Expedición"
 
 #. module: stock_move_selection_wzd
 #: model:ir.actions.server,name:stock_move_selection_wzd.stock_move_sel_action_picking
