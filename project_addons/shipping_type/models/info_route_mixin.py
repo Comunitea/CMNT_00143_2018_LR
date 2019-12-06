@@ -60,18 +60,17 @@ class InfoRouteMixin(models.AbstractModel):
     def get_info_route(self):
 
         for obj in self:
+
             if obj.shipping_type == 'pasaran':
                 name = 'Pasarán'
             elif obj.shipping_type == 'urgent':
                 name = 'Urgente'
-                if 'carrier_id' in obj.fields_get_keys() and obj.carrier_id:
-                    name = '{}: {}'.format(name, obj.carrier_id.name)
-
-            elif obj.shipping_type == 'route':
-                name = 'Ruta: {}'.format(obj.delivery_route_path_id and obj.delivery_route_path_id.name)
             else:
-                name = 'No definido'
+                name = 'Ruta'
+            if obj.delivery_route_path_id:
+                name = '{}: {}'.format(name, obj.delivery_route_path_id.name)
+            if 'carrier_id' in obj.fields_get_keys() and obj.carrier_id:
+                name = '{} ({})'.format(name, obj.carrier_id.name)
             if obj.payment_term_id:
-                obj.info_route_str = '{} / {}'.format(name, obj.payment_term_id.display_name)
-            else:
-                obj.info_route_str = name
+                name = '{} / {}'.format(name, obj.payment_term_id.display_name)
+            obj.info_route_str = name

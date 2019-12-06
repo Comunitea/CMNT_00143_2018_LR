@@ -25,10 +25,10 @@
         <field name="inherit_id" ref="stock_batch_picking.stock_batch_picking_tree"/>
         <field name="arch" type="xml">
             <field name="name" position="after">
-                <field name="shipping_type" invisible="1"/>
-                <field name="delivery_route_path_id" invisible="1"/>
-                <field name="payment_term_id" invisible="1"/>
-                <field name="carrier_id" invisible="1"/>
+                <field name="shipping_type" invisible="context.get('group_code', False) != 'outgoing'"/>
+                <field name="delivery_route_path_id" invisible="context.get('group_code', False) != 'outgoing'"/>
+                <field name="payment_term_id" invisible="context.get('group_code', False) != 'outgoing'"/>
+                <field name="carrier_id" invisible="context.get('group_code', False) != 'outgoing'"/>
                 <field name="info_route_str"/>
             </field>
 
