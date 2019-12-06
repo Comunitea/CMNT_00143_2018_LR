@@ -11,8 +11,12 @@ from odoo.tools import pycompat
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
-    reservation_days = fields.Integer (related='partner_id.reservation_days')
+    reservation_days = fields.Integer (string="Reservation days", default=0, help="Days to calculate when sale order lines are cancelled")
 
+    @api.onchange('partner_id')
+    def onchange_partner_id(self):
+        super(SaleOrder, self).onchange_partner_id()
+        self.reservation_days = self.partner_id and self.partner_id.reservation_days
 
 class SaleOrderLine(models.Model):
 
@@ -20,6 +24,7 @@ class SaleOrderLine(models.Model):
 
     split_moves = fields.Boolean('Split moves', default=True)
     hide_split_moves = fields.Boolean('Hide split moves', compute='compute_split_moves')
+
 
 
     @api.multi

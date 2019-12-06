@@ -5,15 +5,29 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
+
             <xpath expr="//field[@name='order_line']/tree/field[@name='product_uom_qty']" position="after">
-                <field name="split_moves" invisible="0" />
-                <field name="hide_split_moves" invisible="0"/>
+                <field name="split_moves" invisible="1" />
+                <field name="hide_split_moves" invisible="1"/>
                 <button name ='alternate_split_moves' string="If activated, split moves iif partiially available" type="object" icon="fa-random"
                         attrs="{'invisible': [('hide_split_moves', '=', True)], 'column_invisible': [('parent.state','in',('cancel', 'done'))]}"
                         options='{"fg_color":
                                     "green: split_moves == True;
-                                    gainsboro: split_moves == False"}'
+                                    red: split_moves == False"}'
                        />
+            </xpath>
+
+        </field>
+    </record>
+    <record id="view_order_form_inherit_sale_stock_reservation_days" model="ir.ui.view">
+        <field name="name">sale.order.form.split.moves.reserv.days</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale_stock.view_order_form_inherit_sale_stock"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='picking_policy']" position="after">
+                <field name="reservation_days" />
+
             </xpath>
 
         </field>
