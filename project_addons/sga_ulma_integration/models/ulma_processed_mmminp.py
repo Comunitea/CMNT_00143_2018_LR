@@ -46,8 +46,8 @@ class UlmaMmminp(models.Model):
                 ulma_move_lines_ids = filter(lambda x: x[3] not in ('FIN', 'FINCNT') and x[2] == pick[2], ulma_confirmed_pickings)
                 for ulma_move in ulma_move_lines_ids:
                     move_line = self.env['stock.move.line'].browse(int(ulma_move[5]))
-                    if move_line.draft_batch_picking_id:
-                        batch_ids.append(move_line.draft_batch_picking_id)
+                    if move_line.batch_picking_id:
+                        batch_ids.append(move_line.batch_picking_id)
                     if move_line.sga_state not in ['done', 'cancel']:
                         _logger.info("Confirmando cantidad de la línea: {} con cantidad {}.".format(ulma_move[5], ulma_move[4]))
                         if move_line.state != 'done':

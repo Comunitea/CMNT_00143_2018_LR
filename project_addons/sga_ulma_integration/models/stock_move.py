@@ -27,7 +27,7 @@ class StockMoveLine(models.Model):
             'mmmsecada': self.id,
             'momcre': datetime.datetime.now(),
             'mmmacccod': cont,
-            'mmmbatch': self.draft_batch_picking_id.name[-9:],
+            'mmmbatch': self.batch_picking_id.name[-9:],
             'mmmacccolcod': self.picking_id.id,
             'mmmmomexp': datetime.datetime.strptime(self.move_id.date_expected, '%Y-%m-%d %H:%M:%S'),
             'mmmfeccad': datetime.datetime.strptime(self.move_id.date_expected, '%Y-%m-%d %H:%M:%S'),

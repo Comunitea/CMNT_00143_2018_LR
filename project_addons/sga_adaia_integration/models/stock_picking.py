@@ -67,10 +67,10 @@ class StockPickingSGA(models.Model):
 
     @api.multi
     def get_adaia_lines(self):
-        batch_picking_id = self._context.get('draft_batch_picking_id', False)
+        batch_picking_id = self._context.get('batch_picking_id', False)
         if batch_picking_id:
             for pick in self:
-                domain = [('draft_batch_picking_id', '=', batch_picking_id), ('picking_id', '=', pick.id),
+                domain = [('batch_picking_id', '=', batch_picking_id), ('picking_id', '=', pick.id),
                  ('state', 'in', ('assigned', 'partially_available')), ('sga_state', '=', 'no_send')]
                 move_ids = self.env['stock.move'].search(domain)
                 pick.adaia_move_ids = move_ids
@@ -78,10 +78,10 @@ class StockPickingSGA(models.Model):
 
     @api.multi
     def compute_adaia_picking_name(self):
-        batch_picking_id = self._context.get('draft_batch_picking_id', False)
+        batch_picking_id = self._context.get('batch_picking_id', False)
         if batch_picking_id:
             for pick in self:
-                pick.sga_adaia_picking_name = "{}.{}".format(self._context.get('draft_batch_picking_name', pick.name), pick.id)
+                pick.sga_adaia_picking_name = "{}.{}".format(self._context.get('batch_picking_name', pick.name), pick.id)
 
     @api.multi
     @api.depends('partner_id')
@@ -391,8 +391,8 @@ class StockPickingSGA(models.Model):
                 pick_id.write({
                     'sga_state': 'done'
                 })
-                if pick_id.draft_batch_picking_id not in batch_ids:
-                    batch_ids.append(pick_id.draft_batch_picking_id)
+                if pick_id.batch_picking_id not in batch_ids:
+                    batch_ids.append(pick_id.batch_picking_id)
                 #if pick.picking_type_id and pick.picking_type_id.sga_auto_validate:
                 #    _logger.info("Autovalidando picking: {}.".format(pick.id))
                 #    ctx = pick._context.copy()
