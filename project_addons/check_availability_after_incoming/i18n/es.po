@@ -1,0 +1,103 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* check_availability_after_incoming
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 11.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-12-06 17:47+0000\n"
+"PO-Revision-Date: 2019-12-06 17:47+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: check_availability_after_incoming
+#: model:ir.model.fields,field_description:check_availability_after_incoming.field_stock_move_auto_assigned_move_id
+msgid "Auto Assigned Move"
+msgstr "Movimiento de la reserva"
+
+#. module: check_availability_after_incoming
+#: model:ir.model.fields,field_description:check_availability_after_incoming.field_stock_location_check_availability
+msgid "Check availability"
+msgstr "Auto asigna reservas"
+
+#. module: check_availability_after_incoming
+#: model:ir.ui.view,arch_db:check_availability_after_incoming.view_picking_form_check_availability
+msgid "Check jobs"
+msgstr "Comprobar reservas"
+
+#. module: check_availability_after_incoming
+#: model:ir.model.fields,field_description:check_availability_after_incoming.field_stock_move_check_availability_jobs_ids
+msgid "Connector Jobs"
+msgstr "Trabajos del conector"
+
+#. module: check_availability_after_incoming
+#: model:ir.model.fields,field_description:check_availability_after_incoming.field_res_config_settings_delay_check_availability
+msgid "Delay check availability"
+msgstr "Auto reservas en cola"
+
+#. module: check_availability_after_incoming
+#: model:ir.model.fields,help:check_availability_after_incoming.field_stock_location_check_availability
+msgid "If checked, all moves waiting availability with this origin are check in background"
+msgstr "Si está marcado, las reservas de esta ubicación se comprueban automaticamente al entrar stock en la ubicación"
+
+#. module: check_availability_after_incoming
+#: model:ir.ui.view,arch_db:check_availability_after_incoming.res_config_settings_ulma_form
+msgid "If checked, check avalability for products afterdone moves are done in queu job, else, JIT."
+msgstr "Si está marcado, las reservas se hace en cola, sino JIT."
+
+#. module: check_availability_after_incoming
+#: model:ir.model,name:check_availability_after_incoming.model_stock_location
+msgid "Inventory Locations"
+msgstr "Ubicaciones de inventario"
+
+#. module: check_availability_after_incoming
+#: code:addons/check_availability_after_incoming/models/stock_move.py:41
+#, python-format
+msgid "Location check availability is not checked"
+msgstr "La ubicación no esta marcada para auto asignar reservas"
+
+#. module: check_availability_after_incoming
+#: model:ir.model,name:check_availability_after_incoming.model_queue_job
+msgid "Queue Job"
+msgstr "Trabajo de Cola"
+
+#. module: check_availability_after_incoming
+#: model:ir.model,name:check_availability_after_incoming.model_stock_move
+msgid "Stock Move"
+msgstr "Movimiento de Stock"
+
+#. module: check_availability_after_incoming
+#: model:ir.model.fields,help:check_availability_after_incoming.field_stock_move_auto_assigned_move_id
+msgid "This move give availability for chech availability function"
+msgstr "Este el movimiento origen para reservar el movimiento (Auto reservado)"
+
+#. module: check_availability_after_incoming
+#: model:ir.model,name:check_availability_after_incoming.model_stock_picking
+msgid "Transfer"
+msgstr "Transferir"
+
+#. module: check_availability_after_incoming
+#: model:ir.model,name:check_availability_after_incoming.model_res_config_settings
+msgid "res.config.settings"
+msgstr "res.config.settings"
+
+#. module: check_availability_after_incoming
+#: model:ir.ui.view,name:check_availability_after_incoming.res_config_settings_ulma_form
+msgid "res.config.settings.ulma.form"
+msgstr "res.config.settings.ulma.form"
+
+#. module: check_availability_after_incoming
+#: model:ir.ui.view,name:check_availability_after_incoming.stock_location_form_check_availability
+msgid "stock.location.form.stock_location_form_check_availability"
+msgstr "stock.location.form.stock_location_form_check_availability"
+
+#. module: check_availability_after_incoming
+#: model:ir.ui.view,name:check_availability_after_incoming.view_picking_form_check_availability
+msgid "stock.picking.form.check_availability"
+msgstr "stock.picking.form.check_availability"
+

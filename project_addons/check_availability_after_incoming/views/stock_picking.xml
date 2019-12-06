@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_picking_form_check_availability" model="ir.ui.view">
+        <field name="name">stock.picking.form.check_availability</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="model">stock.picking</field>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='put_in_pack']" position="before" >
+                <button
+                        name="get_picking_queue_jobs" type="object" string="Check jobs"
+                        attrs="{'invisible': [('state', '!=', 'done')]}"
+                        groups="stock.group_stock_manager"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

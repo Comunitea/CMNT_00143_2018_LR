@@ -14,6 +14,8 @@
         "queue_job",
     ],
     "data": [
-
+        'views/stock_location_views.xml',
+        'views/stock_picking.xml',
+        'views/res_config_views.xml'
     ],
 }

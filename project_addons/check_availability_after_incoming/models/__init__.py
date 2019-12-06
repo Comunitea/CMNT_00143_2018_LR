@@ -2,3 +2,5 @@
 
 from . import stock_move
 from . import queue_job
+from . import stock_location
+from . import res_config
