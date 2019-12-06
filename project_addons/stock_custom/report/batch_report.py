@@ -19,7 +19,7 @@ class ReportPrintBatchPicking(models.AbstractModel):
     @api.model
     def _get_grouped_data(self, batch):
         grouped_data = {}
-        for picking in batch.picking_ids + batch.mapped('draft_move_lines.picking_id'):
+        for picking in batch.picking_ids:
             if picking.sale_id not in grouped_data:
                 grouped_data[picking.sale_id] = self.env["stock.move.line"]
             grouped_data[picking.sale_id] += picking.move_line_ids
