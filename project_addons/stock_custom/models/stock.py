@@ -14,7 +14,7 @@ class StockMoveLine(models.Model):
         for line in self:
             discount = line.sale_discount
             discount -= line.move_id.company_id.get_discount_decrease_shipping(
-                line.batch_picking_id.shipping_type
+                line.batch_picking_id.shipping_type or line.shipping_type
             )
             if line.sale_line.order_id.financiable_payment:
                 discount -= (

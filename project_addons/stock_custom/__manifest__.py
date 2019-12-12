@@ -25,6 +25,7 @@
         'views/report_batch_picking.xml',
         'views/res_company.xml',
         'views/sale.xml',
+        'views/res_partner.xml',
         'views/res_config_settings.xml',
         'views/account_invoice.xml',
         'wizard/sale_invoice_on_date.xml',

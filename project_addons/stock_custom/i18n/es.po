@@ -21,6 +21,12 @@ msgid "Excess Price"
 msgstr "Precio franquicia"
 
 #. module: stock_custom
+#: model:ir.model.fields,field_description:stock_custom.field_res_partner_amount_pending_to_send
+#: model:ir.model.fields,field_description:stock_custom.field_res_users_amount_pending_to_send
+msgid "Amount Pending To Send"
+msgstr "Importe pendiente de enviar"
+
+#. module: stock_custom
 #: model:ir.ui.view,arch_db:stock_custom.res_config_settings_view_form
 msgid "Shipping type charges account"
 msgstr "Cuenta de cargo por tipo de envío"
