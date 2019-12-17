@@ -5,6 +5,7 @@
 from odoo import api, fields, models, tools
 from odoo.exceptions import UserError
 import logging
+from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
 
@@ -55,28 +56,33 @@ class UlmaProcessedMmmout(models.Model):
     @api.model
     def create(self, vals):
         _logger.info("Creando nueva línea en MMMOUT.")
-        print(vals)
         activated = self.env['ir.config_parameter'].get_param('sga_ulma_integration.ulma_activated', False)
+        fields_to_update = ""
+        fields_values = ""
         if activated:
             _logger.info("Insertando línea en Oracle.")
-            sql_update = "insert into ulma_mmmout (mmmcmdref, mmmdisref, mmmges, mmmres, mmmsesid, momcre, mmmartean, \
-                    mmmbatch, mmmmomexp, mmmacccolcod, mmmentdes, mmmexpordref, mmmterref, mmmentdir1, mmmentdir2, \
-                    mmmentdir3, mmmentdir4, mmmurgnte, mmmtraref, mmmartdes, mmmartref, mmmcanuni, mmmsecada, \
-                    mmmacccod, mmmfeccad, mmmartapi, mmmminudsdis, mmmabclog, mmmdim, mmmcntdorref, mmmcrirot, \
-                    mmmdorhue, mmmlot, mmmmonlot, mmmrecref, mmmubidesref, mmmzondesref, mmmobs) values \
-                    ({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {},\
-                    {}, {}, {}, {}, {})".format(vals['mmmcmdref'], vals['mmmdisref'], vals['mmmges'], vals['mmmres'], vals['mmmsesid'], \
-                    vals['momcre'], vals['mmmartean'], vals['mmmbatch'], vals['mmmmomexp'], vals['mmmacccolcod'], vals['mmmentdes'], \
-                    vals['mmmexpordref'], vals['mmmterref'], vals['mmmentdir1'], vals['mmmentdir2'], vals['mmmentdir3'], \
-                    vals['mmmentdir4'], vals['mmmurgnte'], vals['mmmtraref'], vals['mmmartdes'], vals['mmmartref'], \
-                    vals['mmmcanuni'], vals['mmmsecada'], vals['mmmacccod'], vals['mmmfeccad'], vals['mmmartapi'], \
-                    vals['mmmminudsdis'], vals['mmmabclog'], vals['mmmdim'], vals['mmmcntdorref'], vals['mmmcrirot'], \
-                    vals['mmmdorhue'], vals['mmmlot'], vals['mmmmonlot'], vals['mmmrecref'], \
-                    vals['mmmubidesref'], vals['mmmzondesref'], vals['mmmobs'])
-            _logger.info("Resultado: {}.".format(sql_update))
+            for key in vals:
+                if vals[key]:
+                    if fields_to_update != "":
+                        fields_to_update += ", "
+                        fields_values += ", "
+
+                    fields_to_update += "{}".format(key)
+
+                    if type(vals[key] == str): 
+                        fields_values += "'{}'".format(vals[key])   
+                    else:
+                        fields_values += "{}".format(vals[key])
+                    
+            try:
+                sql_update = "insert into ulma_mmmout ({}) values \
+                    ({})".format(fields_to_update, fields_values)
+            except Exception as e:
+                self.response = e
+                return False
+            _logger.info("Consulta: {}.".format(sql_update))
             #Descomentar cuando sea seguro probar
             self._cr.execute(sql_update)
-            done = self._cr.fetchall()
 
         processed_vals = {
             'mmmcmdref': vals['mmmcmdref'],
