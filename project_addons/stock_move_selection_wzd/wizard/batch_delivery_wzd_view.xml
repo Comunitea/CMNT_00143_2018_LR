@@ -10,6 +10,7 @@
                 <br/>
                 <group>
                     <field name="state"/>
+                    <field name="id" invisible="1"/>
                     <field name="batch_delivery_id" domain="[
                         ('delivery_route_path_id', '=', delivery_route_path_id),
                         ('shipping_type', '=', shipping_type),
@@ -26,6 +27,7 @@
                     <field name="carrier_id"/>
                     <field name="driver_id"/>
                     <field name="plate_id"/>
+
 
                 </group>
                 <label for="notes"/>
@@ -45,15 +47,31 @@
                         </field>
 
                     </page-->
+                    <page string="Lineas" >
+                        <field name="line_ids" create="false" delete="0">
+                            <tree editable="bottom" decoration-warning="selected==False"
+                                    decoration-muted="draft_batch_picking_id==False"
+                                    decoration-success="draft_batch_picking_id!=False">
+                                <field name="selected"/>
+                                <field name="origin" readonly="1"/>
+                                <field name="info_route_str" readonly="1"/>
+                                <field name="product_id" readonly="1"/>
+                                <field name="product_uom_qty" readonly="1"/>
+                                <field name="result_package_id" readonly="1"/>
+                                <field name="state" readonly="1"/>
+                                <field name="draft_batch_picking_id" invisible="1" readonly="1"/>
+                            </tree>
+                        </field>
+                    </page>
                     <page string="Paquetes en la orden">
                         <h2>Lista de paquetes que se añaden a la orden de carga</h2>
                         <field name="packages_ids" readonly="1" >
-                            <tree >
+                            <tree>
                                 <field name="name"/>
                                 <field name="batch_picking_id"/>
                                 <field name="partner_id"/>
-
                                 <field name="info_route_str"/>
+
                             </tree>
                         </field>
                     </page>
@@ -66,7 +84,7 @@
                                 <field name="name"/>
                                 <field name="product_uom_qty"/>
                                 <field name="result_package_id"/>
-                                <field name="state" invisible="1"/>
+                                <field name="state"/>
                             </tree>
                         </field>
                     </page>
@@ -79,7 +97,7 @@
                                 <field name="sale_id"/>
                                 <field name="partner_id"/>
                                 <field name="result_package_id"/>
-                                <field name="state" invisible="1"/>
+                                <field name="state"/>
                             </tree>
                         </field>
                     </page>
@@ -92,8 +110,7 @@
                                 <field name="sale_id"/>
                                 <field name="partner_id"/>
                                 <field name="state" invisible="1"/>
-
-
+                                <field name="batch_delivery_id" invisible="1"/>
                             </tree>
                         </field>
                     </page>

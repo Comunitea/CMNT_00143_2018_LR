@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <record id="view_location_form_sel_wzd" model="ir.ui.view">
+        <field name="name">stock.location.form.sel_wzd</field>
+        <field name="model">stock.location</field>
+        <field name="inherit_id" ref="stock.view_location_form" />
+        <field name="arch" type="xml">
+            <field name="usage" position="after">
+                <field name="manual_pick"
+                    attrs="{'invisible': [('usage', '!=', 'internal')]}"/>
+            </field>
+        </field>
+    </record>
+
+     <record id="stock.action_picking_tree_all" model="ir.actions.act_window">
+       <field name="view_ids"
+              eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree', 'view_id': ref('stock_move_selection_wzd.pick_tree_custom')})]"/>
+
+    </record>
+
     <record id="view_picking_form_sga" model="ir.ui.view">
         <field name="name">view.picking.form.sga</field>
         <field name="model">stock.picking</field>
@@ -14,8 +33,17 @@
                             groups="base.group_user"
                             attrs="{'invisible':['|',('code','=','incoming'),('state','not in',('confirmed','assigned','partially_available'))]}"/>
             </button>
+            <button name="button_validate" position="attributes">
+                <attribute name="confirm">
+                    Estás seguro que quieres validar un albarán sin asignarlo a una expedición o una orden de carga?
+                </attribute>
+            </button>
+
             <field name="picking_type_id" position="after">
                 <field name="sga_integrated"></field>
+            </field>
+             <field name="group_id" position="before">
+                <field name="draft_batch_picking_id"/>
             </field>
             <notebook position="inside">
                 <page string="Integración SGA" attrs="{'invisible': [('sga_state','=', 'no_integrated')]}">
@@ -62,6 +90,11 @@
                 <field name="sga_state"/>
 
             </field>
+
+            <filter name="draft" position="before">
+                <filter name="actuales" string="Para hoy" context="{'para_hoy': True}" help="Albaranes para salir hoy, o en estado preparados y atrasados, ordenados por fecha de prevista de salida"/>
+                <separator/>
+            </filter>
             <filter name="picking_type" position="after">
                     <filter name="sga_integrated" string="SGA" domain="[('sga_integrated','=', True)]"/>
                     <filter name="waiting" string="SGA. Enviado" domain="[('sga_state','=', 'pending')]"/>
@@ -72,6 +105,7 @@
                     <field name="shipping_type" string="Tipo de envio"/>
                     <field name="carrier_id" string="Forma de envío"/>
                 <separator/>
+
                     <filter string="Pasarán" name="pasaran_route" domain="[('shipping_type','=', 'pasaran')]"/>
                     <filter string="Urgente" name="urgent_route" domain="[('shipping_type','=', 'urgent')]"/>
                     <filter string="Ruta" name="route_route" domain="[('shipping_type','=', 'route')]"/>
@@ -97,24 +131,31 @@
                       decoration-muted="state == 'cancel'"
                       decoration-danger="state not in ('cancel', 'done') and scheduled_date &lt; current_date"
                       string="Picking list">
+                    <field name="picking_type_id" invisible="context.get('filter_group_code', True) != True"/>
                     <field name="origin"/>
-                    <field name="shipping_type"/>
-                    <field name="delivery_route_path_id"/>
-                    <field name="carrier_id"/>
+                    <field name="shipping_type" invisible="context.get('filter_group_code', True) != True"/>
+                    <field name="delivery_route_path_id" invisible="context.get('filter_group_code', True) != True"/>
+                    <field name="info_route_str" invisible="context.get('filter_group_code', True) != False"/>
+                    <field name="batch_delivery_id" invisible="context.get('group_code', False) != 'outgoing'"/>
+                    <button name="action_add_to_batch_delivery" string="Enviar" type="object"
+                            context="{'object': 'stock.picking'}" icon="fa-truck" class="text-primary"
+                            attrs="{'invisible': ['|', ('group_code', 'not in', ('outgoing', 'dropship')), ('state', '!=', 'assigned')]}"/>
+                    <field name="carrier_id" invisible="context.get('filter_group_code', True) != False"/>
                     <field name="name"/>
                     <field name="count_move_lines"/>
-                    <field name="batch_delivery_id" invisible="context.get('group_code', False) != 'outgoing'"/>
+
                     <field name="draft_batch_picking_id"/>
-                    <field name="location_dest_id" groups="stock.group_stock_multi_locations"/>
+                    <field name="location_id" invisible="context.get('hide_location_id', False) != False" groups="stock.group_stock_multi_locations"/>
+                    <field name="location_dest_id" invisible="context.get('hide_location_dest_id', False) != False" groups="stock.group_stock_multi_locations"/>
                     <field name="partner_id"/>
                     <field name="date" invisible="1"/>
                     <field name="scheduled_date"/>
-                    <field name="origin"/>
                     <field name="group_id" invisible="1"/>
                     <field name="backorder_id"/>
                     <field name="state"/>
                     <field name="priority" invisible="1"/>
-                    <field name="picking_type_id" invisible="1"/>
+                    <field name="group_code" invisible="1"/>
+
                 </tree>
             </field>
         </record>

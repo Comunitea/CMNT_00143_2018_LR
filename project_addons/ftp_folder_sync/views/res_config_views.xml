@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_ftp_folder_sync" model="ir.ui.view">
+        <field name="name">res.config.settings.ftp.folder.sync</field>
+        <field name="inherit_id" ref="stock.res_config_settings_view_form"/>
+        <field name="model">res.config.settings</field>
+        <field name="arch" type="xml">
+            <xpath expr="//h2[@id='schedule_info']" position="before">
+                <h2>FTP Folder Sync Configuration</h2>
+                <div class="o_settings_container">
+                    <group>
+                        <group>
+                            <field name="activated"/>
+                            <field name="ftp_server"/>
+                            <field name="ftp_password"/>
+                            <field name="ftp_get_folder"/>
+                            <field name="ftp_done_folder"/>
+                            <field name="local_to_send_folder"/>
+                            <field name="move_local_files"/>
+                            <field name="delete_remote_files"/>
+                        </group>
+                        <group>
+                            <field name="ftp_login"/>
+                            <field name="ftp_port"/>
+                            <field name="ftp_sent_folder"/>
+                            <field name="local_got_folder"/>
+                            <field name="local_done_folder"/>
+                            <field name="move_remote_files"/>
+                        </group>
+                    </group>
+                </div>
+            </xpath>
+        </field>
+    </record>    
+</odoo>

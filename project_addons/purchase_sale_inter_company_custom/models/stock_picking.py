@@ -70,15 +70,10 @@ class StockPicking(models.Model):
             args += [('sale_id.auto_purchase_order_id', '!=', False)]
         elif not self._context.get('auto_purchase_order_id', True):
             args += [('sale_id.auto_purchase_order_id', '=', False)]
-
         return super().search(args, offset=offset, limit=limit, order=order, count=count)
-
-
 
     @api.multi
     def action_done(self):
-        #print ("Entro action done de {}".format(self.name))
-        #import ipdb; ipdb.set_trace()
 
         res = super().action_done()
         ctx = self._context.copy()

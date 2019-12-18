@@ -6,11 +6,13 @@ from odoo import fields, models, tools, api, _
 from odoo.exceptions import UserError
 from ast import literal_eval
 
-import os
+import os, logging
+
+_logger = logging.getLogger(__name__)
 
 ADAIA_PARAMS = ['path_files', 'adaia_partner_code', 'adaia_partner_prefix', 'adaia_product_code', 'adaia_product_prefix',
  'adaia_product_template_code', 'adaia_product_template_prefix', 'adaia_barcode_code', 'adaia_barcode_prefix', 'adaia_stock_code', 'adaia_stock_prefix',
- 'adaia_stock_picking_in', 'adaia_stock_picking_out']
+ 'adaia_stock_picking_in', 'adaia_stock_picking_out', 'adaia_activated']
 
 SGA_STATES = [('no_integrated', 'Sin integracion'),
               ('no_send', 'No enviado'),
@@ -20,14 +22,14 @@ SGA_STATES = [('no_integrated', 'Sin integracion'),
               ('done', 'Realizado'),
               ('cancel', 'Cancelado')]
 
-ODOO_READ_FOLDER = 'Send'
-ODOO_END_FOLDER = 'Receive'
+ODOO_READ_FOLDER = 'Receive'
+ODOO_END_FOLDER = 'Send'
 ODOO_WRITE_FOLDER = 'temp'
 
 class ConfigAdaiaData(models.TransientModel):
 
     _inherit = 'res.config.settings'
-
+    adaia_activated = fields.Boolean('Enviar a SGA')
     path_files = fields.Char('Files Path', help="Path to SGA Adaia exchange files. Must content in, out, error, processed and history folders\nAlso a scheduled action is created: Archive SGA files")
     adaia_partner_code = fields.Char(string="Partner SGA Code", help="SGA Adaia partner file code")
     adaia_product_code = fields.Char(string="Product SGA Code", help="SGA Adaia product file code.")
@@ -50,7 +52,6 @@ class ConfigAdaiaData(models.TransientModel):
         for param in ADAIA_PARAMS:
             value= ICP.get_param('sga_adaia_integration.{}'.format(param), False)
             res.update({param: value})
-        print (res)
         return res
 
     @api.multi
@@ -80,3 +81,9 @@ class ConfigAdaiaData(models.TransientModel):
                             os.makedirs(new_path)
                 except:
                     raise UserError("Error creating directories in %s" % self.path_files)
+
+    @api.model
+    def sync_folders(self):
+        super(ConfigAdaiaData, self).sync_folders()
+        _logger.info("Iniciando automatismos ADAIA.")
+        self.env['sga.file'].process_sga_files()

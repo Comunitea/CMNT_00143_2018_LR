@@ -3,6 +3,75 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import models, fields, api, _
+import odoo.addons.decimal_precision as dp
+import logging
+_logger = logging.getLogger(__name__)
+
+class ResCompany(models.Model):
+
+    _inherit = 'res.company'
+
+    @api.multi
+    def cancel_orders(self):
+        sales = self.env['sale.order'].search([('state', '=', 'sale')])
+        _logger.info('\n-------------------\nVENTAS\n-------------------')
+        for sale in sales:
+            _logger.info('Procesando venta{}'.format(sale.name))
+            try:
+                sale.action_cancel()
+            except:
+                _logger.info('No se ha podido cancelar la venta {}'.format(sale.name))
+        purchases = self.env['purchase.order'].search([('state', '!=', 'purchase')])
+        _logger.info('\n-------------------\nCOMPRAS\n-------------------')
+        for purchase in purchases:
+            _logger.info('Procesando compra{}'.format(purchase.name))
+            try:
+                purchase.button_cancel()
+            except:
+                _logger.info('No se ha podido cancelar la compra {}'.format(purchase.name))
+
+        pickings = self.env['stock.picking'].search([('state', 'not in', ('done', 'cancel'))])
+        _logger.info('\n-------------------\nPICKS\n-------------------')
+        for pick in pickings:
+            _logger.info('Procesando pick {}'.format(pick.name))
+            try:
+                pick.action_cancel()
+            except:
+                _logger.info('No se ha podido cancelar el albaran {}'.format(pick.name))
+
+        moves = self.env['stock.move'].search([('state', 'not in', ('done', 'cancel'))])
+        _logger.info('\n-------------------\nMOVES\n-------------------')
+        for move in moves:
+            _logger.info('Procesando movimiento{}'.format(move.name))
+            try:
+                move.action_cancel_for_pda()
+            except:
+                _logger.info('No se ha podido cancelar el movimiento {}'.format(move.name))
+
+        batchs = self.env['stock.batch.picking'].search([('state', '!=', 'done')])
+        _logger.info('\n-------------------\nBATCHS\n-------------------')
+        for batch in batchs:
+            _logger.info('Procesando batc h{}'.format(batch.name))
+            try:
+                batch.unlink()
+            except:
+                _logger.info('No se ha podido eliminar el batch {}'.format(batch.name))
+
+        batchs = self.env['stock.batch.delivery'].search([('state', '!=', 'done')])
+        _logger.info('\n-------------------\nDELIVER\n-------------------')
+        for batch in batchs:
+            _logger.info('Procesando orden de carga{}'.format(batch.name))
+            try:
+                batch.unlink()
+            except:
+                _logger.info('No se ha podido eliminar el batch {}'.format(batch.name))
+
+        return True
+
+class SaleOrderLine(models.Model):
+    _inherit = 'sale.order.line'
+
+    qty_available_global = fields.Float(related='product_id.qty_available_global')
 
 class SaleOrder(models.Model):
     _inherit = 'sale.order'

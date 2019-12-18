@@ -13,16 +13,21 @@
         'stock_picking_imp',
         'stock_picking_group',
         'shipping_type',
-        'purchase_sale_inter_company_custom'
+        'stock_available_global',
+        'purchase_sale_inter_company_custom',
+        'stock_custom',
+        #'portal'
     ],
     'data': [
         'data/stock_batch_picking_sequence.xml',
         'data/stock_batch_delivery.xml',
         'security/ir.model.access.csv',
         'report/report_delivery_batch_views.xml',
+        'report/report_batch_picking.xml',
         'views/stock_batch_delivery.xml',
         'views/delivery_route_path.xml',
         'views/picking_type.xml',
+        'views/product.xml',
         'views/res_partner_views.xml',
         'views/stock_batch_picking_views.xml',
         'views/stock_move.xml',
@@ -35,7 +40,10 @@
         'wizard/move_change_quant_wzd.xml',
         'wizard/config_stock_delivery.xml',
         'wizard/batch_picking_excess.xml',
+        'wizard/move_complete_package.xml',
+        'wizard/create_package_picking_from_package.xml',
         'views/menu_views.xml',
+        'views/menu_views_stock_picking.xml',
     ],
     'installable': True,
 }

@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem
+        id="stock_move_selection_wzd.wh_monitor_picks_parent_menu"
+        parent="stock.menu_stock_root"
+        sequence="0" name="Monitor de pedidos"/>
+
+    <record id="action_smsw_stock_picking_tree" model="ir.actions.act_window">
+            <field name="name">Pickings</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,kanban</field>
+            <field name="context">{
+                'filter_group_code': False,
+                'hide_location_dest_id': True,
+                'hide_location_id': True,
+                'search_default_confirmed': True,
+                'search_default_picking_type': True,
+                'group_code': 'picking',
+                }</field>
+            <field name="domain">
+                [('picking_type_id.group_code', '=', 'picking')]
+            </field>
+            <field name="view_id" ref="stock_move_selection_wzd.pick_tree_custom"/>
+    </record>
+    <menuitem
+        action="action_smsw_stock_picking_tree"
+        parent="stock_move_selection_wzd.wh_monitor_picks_parent_menu"
+        id="stock_move_selection_wzd.menu_smsw_stock_picking_tree"
+        sequence="0" name="Expediciones"/>
+
+    <record id="action_smsw_stock_picking_tree_customer" model="ir.actions.act_window">
+            <field name="name">Clientes</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,kanban</field>
+            <field name="context">{
+                'filter_group_code': False,
+                'hide_location_dest_id': True,
+                'hide_location_id': True,
+                'search_default_confirmed': True,
+                'group_code': 'outgoing',
+                }</field>
+            <field name="domain">
+                [('picking_type_id.group_code', '=', 'outgoing')]
+            </field>
+            <field name="view_id" ref="stock_move_selection_wzd.pick_tree_custom"/>
+    </record>
+    <menuitem
+        action="action_smsw_stock_picking_tree_customer"
+        parent="stock_move_selection_wzd.wh_monitor_picks_parent_menu"
+        id="stock_move_selection_wzd.menu_smsw_stock_picking_tree_customer"
+        sequence="0" name="Clientes"/>
+
+    <record id="action_smsw_stock_picking_tree_supplier" model="ir.actions.act_window">
+            <field name="name">Proveedores</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,kanban</field>
+            <field name="context">{
+                'filter_group_code': False,
+                'hide_location_dest_id': True,
+                'hide_location_id': True,
+                'search_default_confirmed': True,
+                'group_code': 'incoming',
+                }</field>
+            <field name="domain">
+                [('picking_type_id.group_code', '=', 'incoming')]
+            </field>
+            <field name="view_id" ref="stock_move_selection_wzd.pick_tree_custom"/>
+    </record>
+    <menuitem
+        action="action_smsw_stock_picking_tree_supplier"
+        parent="stock_move_selection_wzd.wh_monitor_picks_parent_menu"
+        id="stock_move_selection_wzd.menu_smsw_stock_picking_tree_supplier"
+        sequence="0" name="Proveedores"/>
+
+    <record id="action_smsw_stock_picking_tree_location" model="ir.actions.act_window">
+            <field name="name">Ubicaciones</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,kanban</field>
+            <field name="context">{
+                'filter_group_code': False,
+                'hide_location_dest_id': False,
+                'hide_location_id': False,
+                'search_default_confirmed': True,
+                'group_code': 'location',
+                }</field>
+            <field name="domain">
+                [('picking_type_id.group_code', '=', 'location')]
+            </field>
+            <field name="view_id" ref="stock_move_selection_wzd.pick_tree_custom"/>
+    </record>
+    <menuitem
+        action="action_smsw_stock_picking_tree_location"
+        parent="stock_move_selection_wzd.wh_monitor_picks_parent_menu"
+        id="stock_move_selection_wzd.menu_smsw_stock_picking_tree_location"
+        sequence="0" name="Ubicaciones"/>
+
+    <record id="action_smsw_stock_picking_tree_all" model="ir.actions.act_window">
+            <field name="name">Todos</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,kanban</field>
+            <!--field name="context">{
+                'filter_group_code': False,
+                'hide_location_dest_id': False,
+                'hide_location_id': False,
+                'search_default_confirmed': True,
+                }</field-->
+
+             <field name="context">{
+                'filter_group_code': False,
+                'hide_location_dest_id': False,
+                'hide_location_id': False,
+                'search_default_confirmed': True,
+                'search_default_picking_type': True,
+                }</field>
+            <!--field name="domain">
+                [('picking_type_id.group_code', '=', 'location')]
+            </field-->
+            <field name="view_id" ref="stock_move_selection_wzd.pick_tree_custom"/>
+    </record>
+    <menuitem
+        action="action_smsw_stock_picking_tree_all"
+        parent="stock_move_selection_wzd.wh_monitor_picks_parent_menu"
+        id="stock_move_selection_wzd.menu_smsw_stock_picking_tree_all"
+        sequence="0" name="Todos"/>
+
+</odoo>

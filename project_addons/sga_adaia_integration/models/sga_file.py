@@ -10,8 +10,8 @@ import os
 
 DELETE_FILE = False
 ERRORS = 3
-ODOO_READ_FOLDER = 'Send'
-ODOO_END_FOLDER = 'Receive'
+ODOO_READ_FOLDER = 'Receive'
+ODOO_END_FOLDER = 'Send'
 ODOO_WRITE_FOLDER = 'temp'
 
 class AdaiaVars(models.Model):
@@ -220,7 +220,11 @@ class AdaiaFileHeader(models.Model):
         if sga_filename:
             file_prefix = sga_filename.rsplit('.', 1)[0]
             if file_prefix == 'TREXP':
-                return 'SBP'
+                return 'OUT'
+            if file_prefix == 'TRREC':
+                return 'INR'
+            if file_prefix == 'TRSTOMOV':
+                return 'TRS'
         else:
             return False
 
@@ -230,8 +234,8 @@ class AdaiaFileHeader(models.Model):
             return version
         elif sga_filename:
             file_prefix = sga_filename.rsplit('.', 1)[0]
-            if file_prefix == 'TREXP':
-                return 0
+            if file_prefix in ('TREXP', 'TRREC', 'TRSTOMOV'):
+                return 1
         else:
             return False
 
@@ -257,22 +261,27 @@ class AdaiaFileHeader(models.Model):
 
         length, length_int, length_dec = length_in
         value = value or fillchar
-        if not value:
-            val = "0" * length
-            return val
+        # Comment if fill option
+        value = str(value).split(".")
 
-        if length_dec == 0:
+        return value[0]
+        # Uncomment to fill
+        #if not value:
+        #    val = "0" * length
+        #    return val
+
+        #if length_dec == 0:
             # Formato entero
-            val = '%s' % int(value)
-            val = val.rjust(length, fillchar)
-        else:
+        #    val = '%s' % int(value)
+        #    val = val.rjust(length, fillchar)
+        #else:
             # Formato decimal
-            value = float(value)
-            int_ = int(value)
-            dec_ = int((value - int_) * 10 ** length_dec)
-            val = str(int_).rjust(length_int, fillchar)
-            val += str(dec_).ljust(length_dec, fillchar)
-        return val
+        #    value = float(value)
+        #    int_ = int(value)
+        #    dec_ = int((value - int_) * 10 ** length_dec)
+        #    val = str(int_).rjust(length_int, fillchar)
+        #    val += str(dec_).ljust(length_dec, fillchar)
+        #return val
 
     def format_from_adaia_number(self, value, length_in=(12, 7, 5), default=False, fillchar='0'):
         length, length_int, length_dec = length_in
@@ -462,10 +471,17 @@ class AdaiaFileHeader(models.Model):
         process = []
         proc_error = False
         try:
-            if self.file_code == "SBP":
-                self.write_log("Desde adaia picking SBP ...")
-                #process = self.env['stock.picking'].import_adaia_OUT(self.id)
-                process = self.env['stock.batch.picking'].import_adaia_OUT(self.id)
+            if self.file_code == "OUT":
+                self.write_log("Desde adaia picking OUT ...")
+                process = self.env['stock.picking'].import_adaia(self.id, 'OUT')
+            
+            if self.file_code == "INR":
+                self.write_log("Desde adaia picking INR ...")
+                process = self.env['stock.picking'].import_adaia(self.id, 'INR')
+            
+            if self.file_code == "TRS":
+                self.write_log("Desde adaia picking TRS ...")
+                process = self.env['stock.warehouse'].import_adaia(self.id, 'TRS')
 
             if process:
                 self.move_file('archive', self.name)
@@ -473,9 +489,9 @@ class AdaiaFileHeader(models.Model):
             else:
                 proc_error = True
                 self.write_log("-- ERROR >> %s\n--------------\n%s\n----------------------\n" %(self.sga_file, process))
-        except:
+        except Exception as e:
             proc_error = True
-            self.write_log("-- ERROR >> %s\n--------------\n%s\n----------------------\n" % (self.sga_file, "Error de archivo. No se puede mover"))
+            self.write_log("-- ERROR >> %s\n--------------\n%s\n----------------------\n" % (self.sga_file, "Error de archivo: {}".format(e)))
 
         if not process:
             self.move_file('error', self.name)
@@ -489,14 +505,10 @@ class AdaiaFileHeader(models.Model):
 
         res_file = False
         global_path = u'%s/%s' %(self.get_global_path(), folder)
-        #self.write_log("Buscando ficheros en >> %s" % global_path)
         pool_ids = []
         for path, directories, files in os.walk(global_path, topdown=False):
             for name in files:
                 file_prefix = name.rsplit('.', 1)[0]
-                if file_type:
-                    if file_code != file_type:
-                        continue
 
                 sga_file = self.check_sga_name(name, path)
                 if sga_file:
@@ -562,14 +574,15 @@ class AdaiaFileHeader(models.Model):
         # con la lista de campos/longitud field_list_ids
 
         def get_line(sgavar, model_pool):
+            ctx = self._context.copy()
             # TODO Revisar si hace falta contador para los
             # todo numeros de lineas o vale el id de los _ids
             cont = 0
             res = ''
-            line_ids = False
             if sgavar.file_filter:
-                model_pool = model_pool.filtered(eval(sgavar.file_filter))
+                model_pool = model_pool.with_context(ctx).filtered(eval(sgavar.file_filter))
             for model in model_pool:
+                model
 
                 cont += 1
                 model_str = ''
@@ -580,6 +593,7 @@ class AdaiaFileHeader(models.Model):
                     new_sga_file.write_log('    Modelo: {}'.format(model), header_line=False)
 
                 for val in sgavar.sga_file_var_ids:
+                    line_ids = False
 
                     value = False
                     length = [val.length, val.length_int, val.length_dec]
@@ -597,7 +611,7 @@ class AdaiaFileHeader(models.Model):
                             value = u'[]'
                         var_str = value
 
-                    # No es Listado de lineas
+                    #No es listado de líneas
                     elif val.adaia_type != "L":
                         if val.name == "num_lim" and not val.odoo_name:
                             value = cont
@@ -617,16 +631,19 @@ class AdaiaFileHeader(models.Model):
                         # Listado de lineas
                         new_model = model[val.odoo_name.name]
                         new_sgavar = self.env['sgavar.file'].search([('code', '=', val.default)], limit=1)
+
                         if new_sgavar.file_filter:
                             new_model = new_model.filtered(eval(new_sgavar.file_filter))
                         value = len(new_model) or 0
                         var_str = self.odoo_to_adaia(value, length, val.adaia_type, val.default, val.fillchar)
                         line_ids = True
 
-                    model_str += var_str.strip()+'|'
+                    if not line_ids:
+                        model_str += var_str.strip()+'|'
                     # Esta es para el formato seguido sin separador.
                     #model_str += var_str 
-                res += model_str + '\n'
+                if model_str and model_str != '':
+                    res += model_str + '\n'
 
                 if line_ids:
                     res += get_line(new_sgavar, new_model)
@@ -696,7 +713,11 @@ class AdaiaFileHeader(models.Model):
                 val = " " * length_int
             else:
                 new_val = '%s' %(value or default)
-                val = new_val.ljust(length_int, fillchar)
+                # Uncomment to fill with 0
+                val = new_val
+                #val = new_val.ljust(length_int, fillchar)
+            # We need to replace all the line breaks
+            val = val.replace('\n', ' ').replace('\r', '')
             return val
 
         def type_B(value):
@@ -710,7 +731,6 @@ class AdaiaFileHeader(models.Model):
             return new_val
 
         def type_N(value):
-
             val = self.format_to_adaia_float(value, length_in, fillchar)
             return val
 

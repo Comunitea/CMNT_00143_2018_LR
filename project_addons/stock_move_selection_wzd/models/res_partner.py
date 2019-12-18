@@ -8,3 +8,7 @@ class ResPartner(models.Model):
     _inherit = 'res.partner'
 
     route_driver = fields.Boolean('Route driver')
+
+    def get_route_order(self, delivery_route_path_id):
+
+        return 1

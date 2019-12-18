@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="stock_location_form_adaia" model="ir.ui.view">
+        <field name="name">stock.location.form.adaia</field>
+        <field name="inherit_id" ref="stock.view_location_form"/>
+        <field name="model">stock.location</field>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='usage']" position="after">
+                <field name="sga_integration_type" string="Sga integration type" />
+            </xpath>
+        </field>
+    </record>
+</odoo>

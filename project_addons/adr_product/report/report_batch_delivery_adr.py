@@ -3,8 +3,7 @@
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 
 from odoo import api, fields, models, _
-from odoo.exceptions import UserError
-from pprint import pprint
+from odoo.exceptions import ValidationError
 
 
 class BatchDeliveryCustomReport(models.AbstractModel):
@@ -16,90 +15,73 @@ class BatchDeliveryCustomReport(models.AbstractModel):
         partner_pickings = []
         exe11363_total_weight = 0.0
         exe11364_total_weight = 0.0
-        exe22315_total_weight = 0.0
+        real_total_weight_1136x = 0.0
         category_max_weight = 0
         regular_total_weight = 0
-        lq_total_weight = 0.0
-        counter_22315 = 0
-        counter_lq = 0
+        real_total_weight = 0
         exention_type = None
-
-        categories_ids = []
-        elements = []
 
         docids = docids
         model = 'stock.batch.delivery'
         batch_delivery_id = self.env[model].browse(docids)
         batch_delivery_id.ensure_one()
 
-        moves = batch_delivery_id.move_lines.filtered(lambda x: x.quantity_done != 0.00 and x.product_tmpl_id.adr_idnumonu != False)
-        sale_picks = batch_delivery_id.picking_ids
-        partner_ids = batch_delivery_id.partner_ids
+        moves = batch_delivery_id.move_lines.filtered(lambda x: x.quantity_done != 0.00 and x.product_tmpl_id.adr_idnumonu)
+        if not moves:
+            raise ValidationError(_("There are no ADR products in this order."))
+
+        move_line_ids = self.env['stock.move.line'].search([('move_id', 'in', moves.ids)])
+        pickings = moves.mapped('picking_id')
+        product_ids = moves.mapped('product_id')
+        partner_ids = pickings.mapped('partner_id')
+        packages = move_line_ids.mapped('result_package_id')
+
+        # 1136x
+        exec1136x_data = self.get_exec_type_data('1136x', move_line_ids)
+        real_total_weight = exec1136x_data['cats_weight']['real'] if exec1136x_data['cats_weight']['real'] else 0.0
+
+        # 22315
+        exec22315_data = self.get_exec_type_data('22315', move_line_ids)
+
+        # LQ
+        execlq_data = self.get_exec_type_data('lq', move_line_ids)
+
+        if len(exec1136x_data['categories']) > 1:
+            exention_type = '1.1.3.6.3'
+            regular_total_weight = exec1136x_data['cats_weight']['weight_11363'] if exec1136x_data['cats_weight']['weight_11363'] else 0.0
+        else:
+            if len(exec1136x_data['categories']) == 1:
+                exention_type = '1.1.3.6.4'
+                regular_total_weight = exec1136x_data['cats_weight']['weight_11364'] if exec1136x_data['cats_weight']['weight_11364'] else 0.0
+
+        packages_count = len(packages)
 
         for partner_id in partner_ids:
-            partners_data.append(self.get_partner_data(partner_id))
+            partners_data.append(self.get_partner_data(partner_id, move_line_ids))
+        
+        partners_data.sort(key=lambda x: x['adr_sequence'], reverse=False)
 
-        pickings = sale_picks
         company_id = pickings and pickings[0].company_id
         for pick in pickings:
 
-            for line in pick.move_line_ids:
-                product_tmpl_line = line.product_id.product_tmpl_id
-                move_line = line.move_id
-
-                if product_tmpl_line.adr_idnumonu:
-                    ## Metemos el id en partners para tener un listado de los destinatarios.
-                    partner_pickings.append({
-                        'partner_id': line.move_id.partner_id.id,
-                        'line_id': line.id,
-                        'origin': move_line.origin,
-                        'name': product_tmpl_line.name,
-                        'default_code': product_tmpl_line.default_code,
-                        'adr_denomtecnica': product_tmpl_line.adr_idnumonu.denomtecnica,
-                        'adr_qty_limit': product_tmpl_line.adr_idnumonu.qty_limit,
-                        'product_qty': line.qty_done,
-                        'adr_bultodesc': product_tmpl_line.adr_idnumonu.bultodesc,
-                        'packing_group': product_tmpl_line.adr_idnumonu.packing_group,
-                        'official_name': product_tmpl_line.adr_idnumonu.official_name,
-                        'ranking_id': product_tmpl_line.adr_idnumonu.ranking,
-                        't_code': product_tmpl_line.adr_idnumonu.t_code,
-                        'adr_exe22315': product_tmpl_line.adr_idnumonu.exe22315,
-                        'adr_peligroma': product_tmpl_line.adr_idnumonu.peligroma,
-                        'adr_weight_x_kgrs_11363': product_tmpl_line.adr_weight_x_kgrs_11363*line.qty_done,
-                        'adr_weight_x_kgrs_11364': product_tmpl_line.adr_weight_x_kgrs_11364*line.qty_done,
-                        'adr_acc_signals': product_tmpl_line.adr_idnumonu.acc_signals,
-                        'adr_idnumonu': product_tmpl_line.adr_idnumonu.numero_onu,
-                        'adr_regular_weight': product_tmpl_line.weight*line.qty_done,
-                        'picking_id': line.picking_id.name,
-                        'result_package_id': line.result_package_id and line.result_package_id.name,
-                    })
-
-                    if not product_tmpl_line.adr_idnumonu.exe22315 and not product_tmpl_line.adr_idnumonu.qty_limit > 0:
-                        exe11363_total_weight = exe11363_total_weight + product_tmpl_line.adr_weight_x_kgrs_11363*line.qty_done
-                        exe11364_total_weight = exe11364_total_weight + product_tmpl_line.adr_weight_x_kgrs_11364*line.qty_done
-                        ## Guardamos las categorías diferentes
-                        if not product_tmpl_line.adr_idnumonu.adr_category_id.id in categories_ids:
-                            categories_ids.append(product_tmpl_line.adr_idnumonu.adr_category_id.id)
-                    else:
-                        if product_tmpl_line.adr_idnumonu.exe22315 and not product_tmpl_line.adr_idnumonu.qty_limit > 0:
-                            exe22315_total_weight = exe22315_total_weight + product_tmpl_line.weight*line.qty_done
-                            counter_22315 = counter_22315 + 1
-                        else:
-                            lq_total_weight = lq_total_weight + product_tmpl_line.weight*line.qty_done
-                            counter_lq = counter_lq + 1
-
-        if len(categories_ids) > 1:
-            exention_type = '1.1.3.6.3'
-            # Saco el máximo igualmente por no ponerlo directamente igual a 1000. Así al menos es modificable.
-            category_obj = self.env['adr.code.category'].browse(categories_ids[0])
-            category_max_weight = category_obj.max_weight_11363
-            regular_total_weight = exe11363_total_weight
-        else:
-            if len(categories_ids) == 1:
-                exention_type = '1.1.3.6.4'
-                category_obj = self.env['adr.code.category'].browse(categories_ids[0])
-                category_max_weight = category_obj.max_weight_11364
-                regular_total_weight = exe11364_total_weight
+            pick_header = "{}".format(pick.name)
+            pick_lines = []
+            tracking = []
+            real_kgs_picking = 0.0
+            kgs_picking_11363 = 0.0
+            kgs_picking_11364 = 0.0
+            for line in move_line_ids.filtered(lambda x: x.picking_id == pick):
+                pick_lines.append({
+                    'result_package_id' : line.result_package_id and line.result_package_id.name,
+                    'product_qty': line.qty_done,
+                    'name': line.product_id.product_tmpl_id.name,
+                    'default_code': line.product_id.product_tmpl_id.default_code
+                })
+            
+            partner_pickings.append({
+                'header': pick_header,
+                'lines': pick_lines
+            })
         
         company_data = {
             'logo_web': company_id.logo_web,
@@ -110,43 +92,199 @@ class BatchDeliveryCustomReport(models.AbstractModel):
             'vat': batch_delivery_id.driver_id.vat,
             'vehicle': batch_delivery_id.plate_id.name
         }
-        
-        #Ordeno el listado por orden de venta.
-
-        partner_pickings.sort(key=lambda x: x['origin'], reverse=False)
-
-        elements.append({
-            'partners': partners_data,
-            'movements': partner_pickings,
-            'categories_ids': categories_ids
-        })
 
         docargs = {
+            'exec1136x_data': exec1136x_data,
+            'exec22315_data': exec22315_data,
+            'execlq_data': execlq_data,
             'doc_ids': docids,
             'doc_model': model,
             'docs': batch_delivery_id,
-            'elements': elements,
             'exention_type': exention_type,
             'category_max_weight': category_max_weight,
             'regular_total_weight': "%.2f" % round(regular_total_weight,2),
-            'exe22315_total_weight': "%.2f" % round(exe22315_total_weight,2),
-            'counter_22315': counter_22315,
-            'lq_total_weight': "%.2f" % round(lq_total_weight,2),
-            'counter_lq': counter_lq,
+            'real_total_weight': "%.2f" % round(real_total_weight,2),
             'company_data': company_data,
             'company_id': company_id,
-            'delivery_carrier_data': delivery_carrier_data
+            'delivery_carrier_data': delivery_carrier_data,
+            'packages_count': packages_count,
+            'partners': partners_data,
+            'partner_pickings': partner_pickings
         }
         return docargs
 
-    def get_partner_data(self, partner_id):
+    def get_partner_data(self, partner_id, move_line_ids):
+
+        partner_string = "{} {} {} - {} - {} - {}".format(partner_id.name, partner_id.street if partner_id.street else '', \
+            partner_id.street2 if partner_id.street2 else '', partner_id.zip if partner_id.zip else '', \
+            partner_id.state_id.name if partner_id.state_id else '', partner_id.country_id.name if partner_id.country_id else '')
+        
+        pickings = []
+
+        move_lines = self.env['stock.move.line'].search([('id', 'in', move_line_ids.ids), ('partner_id', '=', partner_id.id)])
+
+        real_kgs_picking = 0.0
+        kgs_picking_11363 = 0.0
+        kgs_picking_11364 = 0.0
+
+        for move in move_lines:
+            move_string = "{} [{}/{}]".format(move.picking_id.name, "LQ" if \
+                not move.product_id.product_tmpl_id.adr_exe22315 and \
+                move.product_id.product_tmpl_id.adr_idnumonu.qty_limit >= move.product_id.product_tmpl_id.weight else \
+                move.product_id.product_tmpl_id.adr_idnumonu.acc_signals or '', \
+                move.product_id.product_tmpl_id.adr_idnumonu.numero_onu or '')
+            pickings.append(move_string)
+        
+            if not move.product_id.product_tmpl_id.adr_exe22315 and not move.product_id.product_tmpl_id.adr_idnumonu.qty_limit>= move.product_id.product_tmpl_id.weight:
+                real_kgs_picking = real_kgs_picking + move.qty_done*move.product_id.product_tmpl_id.weight
+                kgs_picking_11363 = kgs_picking_11363 + move.product_id.product_tmpl_id.adr_weight_x_kgrs_11363*move.qty_done
+                kgs_picking_11364 = kgs_picking_11364 + move.product_id.product_tmpl_id.adr_weight_x_kgrs_11364*move.qty_done
+
         return {
-            'id': partner_id.id,
+            'partner_string': partner_string,
+            'pickings': pickings,
             'name': partner_id.name,
-            'street': partner_id.street,
-            'street2': partner_id.street2,
-            'zip': partner_id.zip,
-            'city': partner_id.city,
-            'state_id': partner_id.state_id.name,
-            'country_id': partner_id.country_id.name
+            'packs': len(move_lines.filtered(lambda x: not x.product_id.product_tmpl_id.adr_exe22315 and\
+                    not x.product_id.product_tmpl_id.adr_idnumonu.qty_limit >= x.product_id.product_tmpl_id.weight).mapped('result_package_id')) or 0.0,
+            'real_kgs_picking': real_kgs_picking,
+            'kgs_picking_11363': kgs_picking_11363,
+            'kgs_picking_11364': kgs_picking_11364,
+            'adr_sequence': partner_id.adr_sequence
         }
+
+    def get_exec_type_weight_strings(self, exec_type, move_line_ids, products):
+        real_weight = 0.0
+        weight_11363 = 0.0
+        weight_11364 = 0.0
+
+        cat_weight = [0.0,0.0,0.0,0.0,0.0]
+
+        for cat_id in [1,2,3,4]:
+            cat_weight_11363 = 0.0
+            cat_weight_11364 = 0.0
+            cat_weight[cat_id] = 0.0
+            
+            for move_line in move_line_ids.filtered(lambda x: x.product_id.product_tmpl_id.adr_idnumonu.\
+                adr_category_id.id == cat_id):
+                real_weight = real_weight + move_line.product_id.product_tmpl_id.weight*move_line.qty_done
+
+                if exec_type == '1136x':
+                    weight_11363 = weight_11363 + \
+                        move_line.product_id.product_tmpl_id.adr_weight_x_kgrs_11363*move_line.qty_done
+                    weight_11364 = weight_11364 + \
+                        move_line.product_id.product_tmpl_id.adr_weight_x_kgrs_11364*move_line.qty_done
+                    cat_weight_11363 = cat_weight_11363 + move_line.product_id.product_tmpl_id.adr_weight_x_kgrs_11363*move_line.qty_done
+                    cat_weight_11364 = cat_weight_11364 + move_line.product_id.product_tmpl_id.adr_weight_x_kgrs_11364*move_line.qty_done
+                else:
+                    cat_weight[cat_id] = cat_weight[cat_id] + move_line.product_id.product_tmpl_id.weight*move_line.qty_done
+
+            if exec_type == '1136x':
+                cat_weight[cat_id] = {
+                    '11363': cat_weight_11363,
+                    '11364': cat_weight_11364
+                }
+        
+        if exec_type == '1136x':
+            string_11363 = "Peso total: {}<1000. Transporte acogido a la exención 1.1.3.6.3 ADR".format(weight_11363)
+            string_11364 = "Peso total: {}<1000. Transporte acogido a la exención 1.1.3.6.4 ADR".format(weight_11364)
+            string_cats_11363 = "Peso cat. 1: {} Peso cat. 2: {} Peso cat. 3: {} Peso cat. 4: {}".format(cat_weight[1]['11363'] \
+                if cat_weight[1] != 0.0 else 0.0, cat_weight[2]['11363'] if cat_weight[2] != 0.0 else 0.0, \
+                cat_weight[3]['11363']  if cat_weight[3] != 0.0 else 0.0, cat_weight[4]['11363'] if cat_weight[4] != 0.0 else 0.0)
+            string_cats_11364 = "Peso cat. 1: {} Peso cat. 2: {} Peso cat. 3: {} Peso cat. 4: {}".format(cat_weight[1]['11364'] \
+                if cat_weight[1] != 0.0 else 0.0, cat_weight[2]['11364'] if cat_weight[2] != 0.0 else 0.0, \
+                cat_weight[3]['11364'] if cat_weight[3] != 0.0 else 0.0, cat_weight[4]['11364'] if cat_weight[4] != 0.0 else 0.0)
+
+            return {
+                'real': real_weight,
+                'weight_11363': weight_11363,
+                'weight_11364': weight_11364,
+                'string_11363': string_11363,
+                'string_11364': string_11364,
+                'string_cats_11363': string_cats_11363,
+                'string_cats_11364': string_cats_11364,
+                'product_data_11363': self.get_product_data('11363', products, move_line_ids),
+                'product_data_11364': self.get_product_data('11364', products, move_line_ids)
+            }
+        else:
+            if exec_type == '22315':
+                string = "Peso total: {}. Transporte acogido a la exención 2.2.3.1.5 ADR".format(real_weight)
+            else:
+                string = "Peso total: {}. Transporte acogido a la exención por cantidades limitadas".format(real_weight)
+            string_cats = "Peso cat. 1: {}  Peso cat. 2: {}  Peso cat. 3: {}  Peso cat. 4: {}".format(cat_weight[1], \
+                cat_weight[2], cat_weight[3], cat_weight[4])
+
+            return {
+                'string': string,
+                'string_cats': string_cats,
+                'product_data': self.get_product_data(exec_type, products, move_line_ids)
+            }
+
+    def get_exec_type_data(self, exec_type, move_line_ids):
+        if exec_type == '1136x':
+            move_line_ids = move_line_ids.filtered(lambda x: not x.product_id.product_tmpl_id.adr_exe22315 and\
+                not x.product_id.product_tmpl_id.adr_idnumonu.qty_limit >= x.product_id.product_tmpl_id.weight)
+        elif exec_type == '22315':
+            move_line_ids = move_line_ids.filtered(lambda x: x.product_id.product_tmpl_id.adr_exe22315)
+        elif exec_type == 'lq':
+            move_line_ids = move_line_ids.filtered(lambda x: not x.product_id.product_tmpl_id.adr_exe22315 and\
+                x.product_id.product_tmpl_id.adr_idnumonu.qty_limit >= x.product_id.product_tmpl_id.weight)
+
+        products = move_line_ids.mapped('product_id')
+        categories = products.mapped('product_tmpl_id').mapped('adr_idnumonu').mapped('adr_category_id')
+        cats_weight = self.get_exec_type_weight_strings(exec_type, move_line_ids, products)
+
+        return {
+            'move_lines': move_line_ids,
+            'products': products,
+            'categories': categories,
+            'cats_weight': cats_weight
+        }
+
+    def get_product_data(self, exec_type, products, move_line_ids):
+        product_data = []
+        for product in products:
+            moves = move_line_ids.filtered(lambda x: x.product_id == product)
+            qty_done = 0.0
+            for move in moves:
+                qty_done += move.qty_done
+            
+            packages = len(moves.mapped('result_package_id'))
+
+            product_string = "UN {} {}".format(product.product_tmpl_id.adr_idnumonu.numero_onu or '', \
+                product.product_tmpl_id.adr_idnumonu.official_name or '')
+            
+            if product.product_tmpl_id.adr_denomtecnica and product.product_tmpl_id.adr_denomtecnica != '':
+                product_string += " ({})".format(product.product_tmpl_id.adr_denomtecnica)
+            
+            if product.product_tmpl_id.adr_idnumonu.acc_signals and product.product_tmpl_id.adr_idnumonu.acc_signals != '':
+                product_string += ", {}".format(product.product_tmpl_id.adr_idnumonu.acc_signals)
+
+            if product.product_tmpl_id.adr_idnumonu.packing_group and product.product_tmpl_id.adr_idnumonu.packing_group != '':
+                product_string += ", {}".format(product.product_tmpl_id.adr_idnumonu.packing_group)
+            
+            if product.product_tmpl_id.adr_idnumonu.ranking and product.product_tmpl_id.adr_idnumonu.ranking != '':
+                product_string += ", {}".format(product.product_tmpl_id.adr_idnumonu.ranking)
+            
+            if product.product_tmpl_id.adr_idnumonu.t_code and product.product_tmpl_id.adr_idnumonu.t_code != '':
+                product_string += ", ({})".format(product.product_tmpl_id.adr_idnumonu.t_code)
+
+            if product.product_tmpl_id.adr_peligroma:
+                product_string += ", peligroso para el medioambiente"
+            
+            if exec_type == '11363':   
+                product_weight = "Peso: {} Kg.".format(qty_done*product.product_tmpl_id.adr_weight_x_kgrs_11363)
+            elif exec_type == '11364':
+                product_weight = "Peso: {} Kg.".format(qty_done*product.product_tmpl_id.adr_weight_x_kgrs_11364)
+            else:
+                product_weight = "Peso: {} Kg.".format(qty_done*product.product_tmpl_id.weight)
+            product_qty = "Bultos: {} Uds: {}".format(packages, qty_done)
+            product_box = "Descripción embalaje: {}".format(product.product_tmpl_id.adr_bultodesc or '')
+
+            product_data.append({
+                'product_string': product_string,
+                'product_qty': product_qty,
+                'product_weight': product_weight,
+                'product_box': product_box,
+            })
+        
+        return product_data

@@ -42,7 +42,7 @@
 
                 </group>
                 <footer>
-                    <button name="action_apply_changes" attrs="{'invisible': [('new_date', '!=', '')]}" string="Aplicar cambios" type="object" class="oe_highlight"/>
+                    <button name="action_apply_changes" string="Aplicar cambios" type="object" class="oe_highlight"/>
                     <button name="action_apply_new_date"  attrs="{'invisible': [('new_date', '=', '')]}" string="Aplicar nueva fecha" type="object" class="btn-danger"/>
                     <button string="Cancel" class="oe_link" special="cancel"/>
                 </footer>

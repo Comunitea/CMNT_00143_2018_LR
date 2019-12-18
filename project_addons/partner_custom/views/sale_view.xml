@@ -7,14 +7,15 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//group[@name='sale_pay']" position="after">
+            <xpath expr="//field[@name='payment_mode_id']/.." position="after">
                 <group string="Las rias">
                     <group>
                         <field name="associate"/>
                         <field name="direct"/>
                     </group>
-                    <group attrs="{'invisible': [('associate', '=', False)]}">
-                        <field name="financiable_payment"/>
+                    <group>
+                        <field name="financiable_payment" attrs="{'invisible': [('associate', '=', False)]}"/>
+                        <field name="phone_order"/>
                     </group>
                 </group>
             </xpath>

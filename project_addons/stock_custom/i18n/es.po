@@ -349,6 +349,16 @@ msgid "Stock History"
 msgstr "Histórico rotaciones de stock"
 
 #. module: stock_custom
+#: model:ir.model.fields,field_description:stock_custom.field_res_company_discount_decrease_phone
+msgid "Discount decrease for orders maked by phone"
+msgstr "Decrecimiento de descuento para pedidos telefónicos"
+
+#. module: stock_custom
+#: model:ir.ui.view,arch_db:stock_custom.res_config_settings_view_form
+msgid "Phone charges account"
+msgstr "Cuenta de cargo por pedido telefónico"
+
+#. module: stock_custom
 #: model:ir.model,name:stock_custom.model_stock_move
 msgid "Stock Move"
 msgstr "Movimiento de Stock"

@@ -25,15 +25,10 @@ class ProductAdrCode(models.Model):
     def name_get(self):
         res=[]
         for adr in self:
-            name = '%s - %s' % (adr.denomtecnica, adr.official_name or adr.numero_onu)
+            name = '%s - %s' % (adr.numero_onu or '', adr.official_name or '')
             res.append((adr.id, name))
         return res
 
-
-    denomtecnica = fields.Char('Denominación técnica')
-    peligroma = fields.Boolean('Artículo peligroso')
-    exe22315 = fields.Boolean ('Sujeto a la exención 22315')
-    bultodesc = fields.Char("Descripción del bulto")
 
     numero_onu = fields.Char('Nombre')
     official_name = fields.Char('Descripción oficial')

@@ -10,6 +10,7 @@
                 <div class="o_settings_container">
                     <group>
                         <group>
+                            <field name="ulma_activated"/>
                             <field name="ulma_user"/>
                             <field name="ulma_pass"/>
                             <field name="ulma_host"/>
@@ -22,6 +23,7 @@
                             <field name="mmmout_table"/>
                             <field name="mmminp_table"/>
                             <field name="packing_table"/>
+                            <field name="ulma_cajas"/>
                         </group>
                     </group>
                     <group>
@@ -41,12 +43,16 @@
                             <button name="create_table_mmminp" string="Create table MMMINP" class="oe_highlight" type="object" attrs="{'invisible': [('oracle_mmminp', '=', True)]}"/>
                             <field name="oracle_packing" readonly="1"/>
                             <button name="create_table_packing" string="Create table packing" class="oe_highlight" type="object" attrs="{'invisible': [('oracle_packing', '=', True)]}"/>
+                            <field name="oracle_cajas" readonly="1"/>
+                            <button name="create_table_cajas" string="Create table cajas" class="oe_highlight" type="object" attrs="{'invisible': [('oracle_cajas', '=', True)]}"/>
                         </group>
                         <group>
+                            <button name="drop_server" string="Drop server" class="oe_highlight" type="object" attrs="{'invisible': [('oracle_server', '!=', True)]}"/>
                             <button name="drop_tables" string="Drop tables" class="oe_highlight" type="object" attrs="{'invisible': [('oracle_mmmout', '=', False),('oracle_mmminp', '=', False),('oracle_packing', '=', False)]}"/>
                             <button name="drop_mmmout" string="Drop mmmout table" class="oe_highlight" type="object" attrs="{'invisible': [('oracle_mmmout', '=', False)]}"/>
                             <button name="drop_mmminp" string="Drop mmminp table" class="oe_highlight" type="object" attrs="{'invisible': [('oracle_mmminp', '=', False)]}"/>
                             <button name="drop_packinglist" string="Drop packinglist table" class="oe_highlight" type="object" attrs="{'invisible': [('oracle_packing', '=', False)]}"/>
+                            <button name="drop_cajas" string="Drop cajas table" class="oe_highlight" type="object" attrs="{'invisible': [('oracle_cajas', '=', False)]}"/>
                         </group>
                     </group>
                 </div>

@@ -15,6 +15,7 @@ class StockQuantPackagePackLine(models.Model):
     package_id = fields.Many2one('stock.quant.package', 'Paquete')
     product_id = fields.Many2one('product.product', 'Producto de empaquetado', required="1", domain=get_domain)
     qty = fields.Integer('Cantidad')
+    packaging_move_id = fields.Many2one('stock.move', string="Movimiento de salida asociado")
 
     @api.multi
     def action_add_pack(self):
@@ -50,14 +51,14 @@ class StockQuantPackage(models.Model):
     packaging_line_ids = fields.One2many('stock.quant.package.pack.line', 'package_id', 'Empaquetado')
     move_lines = fields.One2many('stock.move', compute=get_picking_ids)
 
+
     @api.multi
     @api.depends('move_line_ids.state', 'move_line_ids.batch_delivery_id')
     def get_batch_delivery_id(self):
-
         for pack in self.filtered(lambda x: x.move_lines):
             batch_id = pack.move_lines.mapped('batch_delivery_id')
-            if len(batch_id)>1:
-                raise ValueError (_('Error. El paquete tiene movimientos en varias ordenes de carga'))
+            if len(batch_id) > 1:
+                raise exceptions.ValidationError (_('Error. El paquete tiene movimientos en varias ordenes de carga'))
             pack.batch_delivery_id = batch_id
 
     @api.multi
@@ -75,11 +76,11 @@ class StockQuantPackage(models.Model):
     @api.multi
     @api.depends('move_line_ids.state', 'move_line_ids.draft_batch_picking_id', 'move_line_ids.batch_picking_id')
     def get_batch_picking_id(self):
+
         for pack in self.filtered(lambda x: x.move_lines):
             batch_id = pack.move_lines.mapped('batch_id')
-            if len(batch_id)>1:
-                raise ValueError (_('Error. El paquete tiene movimientos en varias batchs'))
-            pack.batch_picking_id = batch_id
+            if batch_id and len(batch_id)  == 1:
+                pack.batch_picking_id = batch_id
 
 
     def get_packaging_lines(self, vals):
@@ -254,14 +255,93 @@ class StockQuantPackage(models.Model):
 
         for pack in self:
             if any(move.state in ('done', 'cancel') for move in pack.move_line_ids):
-                raise ValueError('No puedes cambiar en un movimiento hecho o cancelado')
+                raise exceptions.ValidationError('No puedes cambiar en un movimiento hecho o cancelado')
 
             if pack.batch_delivery_id :
-                raise ValueError('No puedes cambiar en un paquete que ya está en una orden de carga')
+                raise exceptions.ValidationError('No puedes cambiar en un paquete que ya está en una orden de carga')
 
             moves = pack.move_line_ids.mapped('move_id')
             moves.write(vals)
             moves.assign_picking()
+
+    @api.multi
+    def picking_pack_lines(self, batch_picking_id=False):
+        lines = self.mapped('packaging_line_ids').filtered(lambda x: not x.packaging_move_id)
+        if not lines:
+            return False
+        if not batch_picking_id:
+            batch_picking_id = self.batch_picking_id
+        if not batch_picking_id:
+            raise ValueError(_('Debes asignar primero a un albarán de cliente'))
+
+        picking_type_id = self.env['stock.picking.type'].search([('code', '=', 'outgoing'), ('group_code', '=', 'packaging')], limit=1)
+        # crea un stock picking para las líneas de los m0vimientos
+        move_ids = self.env['stock.move']
+        lines = self.mapped('packaging_line_ids')
+        partner_id = self.mapped('move_line_ids').mapped('partner_id')
+        #move_ids = self.mapped('move_line_ids').mapped('move_id')
+
+        if len(partner_id)!=1:
+            raise ValueError(_('No puedes crearlo de varios clientes al mismo tiempos'))
+        moves = {}
+        for line in lines:
+            if line.product_id in moves:
+                moves[line.product_id].product_qty += line.qty
+            else:
+                val = {
+                    'name': line.product_id.display_name,
+                    'partner_id': partner_id.id,
+                    'product_id': line.product_id.id,
+                    'product_uom': line.product_id.uom_id.id,
+                    'product_uom_qty': line.qty,
+                    'location_id': picking_type_id.default_location_src_id.id,
+                    'location_dest_id': picking_type_id.default_location_dest_id.id,
+                    'picking_type_id': picking_type_id.id,
+                    'shipping_type': batch_picking_id.shipping_type,
+                    'delivery_route_path_id': batch_picking_id.delivery_route_path_id and batch_picking_id.delivery_route_path_id.id or False,
+                    'carrier_id': batch_picking_id.carrier_id and batch_picking_id.carrier_id.id or False,
+                }
+
+                new_move = move_ids.create(val)
+                line.write({'packaging_move_id': new_move.id})
+                new_move._action_confirm()
+                new_move._action_assign()
+                new_move._assign_picking()
+                moves[line.product_id] = new_move
+                move_ids |= new_move
+
+
+        picking_id = move_ids.mapped('picking_id')
+
+        new_batch_vals = {
+            'name': picking_id.name,
+            'partner_id': partner_id.id,
+            'orig_batch_picking_id': batch_picking_id.id,
+            #'location_id': picking_id.location_id.id,
+            #'location_dest_id': picking_id.location_dest_id.id,
+            'picking_type_id': picking_type_id.id,
+            'picking_ids': [(6,0, [picking_id.id])]
+
+        }
+        batch = self.env['stock.batch.picking'].create(new_batch_vals)
+        batch_picking_id.pack_lines_picking_id = batch
+        if batch_picking_id.state == 'done':
+            batch.action_transfer()
+        return batch
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

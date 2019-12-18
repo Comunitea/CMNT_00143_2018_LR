@@ -12,10 +12,22 @@ from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT, DEFAULT_SERVER_DATE_FORMA
 
 
 from .stock_picking_type import SGA_STATES
+from odoo.osv import expression
 
 class StockPicking(models.Model):
     _inherit = 'stock.picking'
 
+    @api.multi
+    def get_draft_batch_picking_id(self):
+
+        for pick in self:
+            draft_batch_picking_id = pick.move_lines.mapped('draft_batch_picking_id')
+            if len(draft_batch_picking_id) == 1:
+                pick.draft_batch_picking_id = draft_batch_picking_id
+            else:
+                pick.draft_batch_picking_id = False
+
+    group_code = fields.Selection(related='picking_type_id.group_code')
     sga_integrated = fields.Boolean('Sga', help='Marcar si tiene un tipo de integración con el sga')
     sga_state = fields.Selection(SGA_STATES, default='no_integrated', string="SGA Estado", copy=False)
     #state = fields.Selection(selection_add=[('packaging', 'Empaquetado')])
@@ -24,6 +36,16 @@ class StockPicking(models.Model):
 
     excess = fields.Boolean(string='Franquicia')
     count_move_lines = fields.Integer('Nº líneas', compute="_get_nlines")
+    delivery_route_group_id = fields.Many2one('delivery.route.path.group', 'Grupo de entrega', store=False)
+
+    @api.multi
+    @api.depends('state', 'is_locked')
+    def _compute_show_validate(self):
+        picking_with_batch = self.move_line_ids.filtered(lambda x: x.draft_batch_picking_id).mapped('picking_id')
+        for picking in picking_with_batch:
+            picking.show_validate = False
+        super(StockPicking, self - picking_with_batch)._compute_show_validate()
+
 
     @api.multi
     def _get_nlines(self):
@@ -88,6 +110,89 @@ class StockPicking(models.Model):
 
     @api.multi
     def button_validate(self):
-        if any(x.batch_picking_id or x.draft_batch_picking_id for x in self):
-            raise ValidationError (_("No puedes validar un albarán asigado a un batch"))
+        if not self._context.get('from_sga', False) and any(x.batch_picking_id or x.draft_batch_picking_id for x in self):
+            raise ValidationError (_("No puedes validar un albarán asignado a un batch"))
+
+
         return super().button_validate()
+
+    @api.model
+    def search(self, args, offset=0, limit=None, order=None, count=False):
+        if self._context.get('para_hoy', False):
+            today = fields.Date.today()
+            hoy = ('date_expected', '>=', today)
+            ayer = ('date_expected', '<', today)
+            d_1 = expression.AND([[hoy], ['&', ('picking_id', '!=', False), ('state', 'not in', ('draft', 'cancel'))]])
+            d_2 = ['&', ayer, ('state', 'in', ('assigned', 'confirmed', 'partially_available'))]
+            domain = expression.OR([d_1,d_2])
+            moves = self.env['stock.move'].read_group(domain, ['picking_id'], ['picking_id'])
+            picking_ids = [x['picking_id'][0] for x in moves if x['picking_id']]
+            args_para_hoy = [('id', 'in', picking_ids)]
+            args = expression.normalize_domain(args)
+            args = expression.AND([args_para_hoy, args])
+        return super().search(args, offset=offset, limit=limit, order=order, count=count)
+
+    @api.multi
+    def _add_delivery_cost_to_so(self):
+        return True
+
+    @api.multi
+    def button_unlink_from_batch(self):
+        draft_batch_picking_id = self._context.get('draft_batch_picking_id', False)
+        if draft_batch_picking_id:
+            moves = self.mapped('move_lines').filtered(lambda x: x.draft_batch_picking_id==draft_batch_picking_id)
+            moves.button_unlink_from_batch()
+
+    @api.multi
+    def transfer_package(self, package_id, location_dest_id, auto=False, unpack=False):
+
+        picking_id = self.env['stock.picking']
+        quant_ids = self.env['stock.quant'].search([('package_id', '=', package_id)])
+        if not quant_ids:
+            return False
+        location_id = quant_ids[0].location_id.id
+
+        if not (picking_id and picking_id.location_id == location_id):
+            domain = [('default_location_src_id', '=', location_id),
+                      ('default_location_dest_id', '=', location_dest_id), ]
+            picking_type_id = self.env['stock.picking.type'].search(domain, limit=1)
+            if not picking_type_id:
+                domain =[('code', '=', 'internal')]
+                picking_type_id = self.env['stock.picking.type'].search(domain, limit=1)
+            vals = {'picking_type_id': picking_type_id.id,
+                    'location_id': location_id,
+                    'location_dest_id': location_dest_id,
+                    }
+            picking_id = self.create(vals)
+        sml = self.env['stock.move.line']
+        for quant in quant_ids:
+            sml_vals = {'product_id': quant.product_id.id,
+                        'location_id': quant.location_id.id,
+                        'location_dest_id': location_dest_id,
+                        'qty_done': quant.quantity,
+                        'package_id': package_id,
+                        'result_package_id': unpack and False or package_id,
+                        'picking_id': picking_id.id,
+                        'product_uom_id': quant.product_uom_id.id
+                        }
+            if unpack:
+                sml_vals['result_package_id'] = False
+            sml.create(sml_vals)
+        if auto:
+            picking_id.do_transfer()
+        return picking_id
+
+    @api.multi
+    def action_add_to_batch_delivery(self):
+        if any(x.state in ('done', 'cancel') for x in self):
+            raise ValidationError (_('Estado incorrecto para los pedidos: {}'.format([x.name for x in self.filtered(lambda x: x.state in ('cancel', 'done'))])))
+
+        if len(self) == 1:
+            if self.batch_delivery_id:
+                self.move_lines.filtered(lambda x: x.state != 'done').write({'batch_delivery_id': False})
+                self.batch_delivery_id = False
+                return
+
+        action = self.env.ref('stock_move_selection_wzd.batch_delivery_wzd_act_window').read()[0]
+
+        return action

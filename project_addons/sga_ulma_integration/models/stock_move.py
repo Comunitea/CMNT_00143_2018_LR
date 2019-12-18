@@ -19,20 +19,19 @@ class StockMoveLine(models.Model):
         else:
             cte1 = 'H'
         vals = self.move_id.picking_type_id.get_ulma_vals('move')
-
         update_vals = {
-            'mmmartdes':  self.product_id.display_name[:40],
-            'mmmartref': self.product_id.default_code,
+            'mmmartdes': self.product_id.display_name[:40],
+            'mmmartref': self.product_id.default_code or None,
             'mmmcanuni': self.product_uom_qty,
             'mmmexpordref': '{}{}'.format(cte1, self.picking_id.name),
             'mmmsecada': self.id,
-            'momcre': datetime.datetime.now(),
+            'momcre': "{}".format(datetime.datetime.now()),
             'mmmacccod': cont,
             'mmmbatch': self.draft_batch_picking_id.name[-9:],
             'mmmacccolcod': self.picking_id.id,
             'mmmmomexp': datetime.datetime.strptime(self.move_id.date_expected, '%Y-%m-%d %H:%M:%S'),
             'mmmfeccad': datetime.datetime.strptime(self.move_id.date_expected, '%Y-%m-%d %H:%M:%S'),
-            }
+        }
         vals.update(update_vals)
         return vals
 
@@ -42,4 +41,29 @@ class StockMove(models.Model):
 
     def get_new_vals(self):
         return super().get_new_vals()
+
+    def get_move_ulma_vals(self, cont=0, picking_id=False):
+
+        if self.picking_id.shipping_type == 'pasaran':
+            cte1 = 'P'
+        elif self.picking_id.shipping_type == 'route':
+            cte1 = 'N'
+        else:
+            cte1 = 'H'
+        vals = self.picking_type_id.get_ulma_vals('move')
+        update_vals = {
+            'mmmartdes': self.product_id.display_name[:40],
+            'mmmartref': self.product_id.default_code or None,
+            'mmmcanuni': self.product_uom_qty,
+            'mmmexpordref': '{}{}'.format(cte1, self.picking_id.name),
+            'mmmsecada': self.id,
+            'momcre': "{}".format(datetime.datetime.now()),
+            'mmmacccod': cont,
+            'mmmbatch': self.draft_batch_picking_id.name[-9:],
+            'mmmacccolcod': self.picking_id.id,
+            'mmmmomexp': datetime.datetime.strptime(self.date_expected, '%Y-%m-%d %H:%M:%S'),
+            'mmmfeccad': datetime.datetime.strptime(self.date_expected, '%Y-%m-%d %H:%M:%S'),
+        }
+        vals.update(update_vals)
+        return vals
 

@@ -15,18 +15,18 @@ class SaleOrder(models.Model):
             'mmmentdes': '{} ({})'.format(self.partner_id.name, self.name),
             'mmmexpordref': 'N' + self.name,
             'mmmsesid': 1 if batch.picking_type_id.ulma_type == 'SUBUNI' else 2,
-            'momcre': datetime.datetime.now(),
-            'mmmterref': partner_id.ref,
-            'mmmentdir1': str(partner_id.street) + str(partner_id.street2) or '',
-            'mmmentdir2': partner_id.city,
-            'mmmentdir3': partner_id.state_id.name,
-            'mmmentdir4': partner_id.zip,
+            'momcre': "'{}'".format(datetime.datetime.now()),
+            'mmmterref': partner_id.ref or None,
+            'mmmentdir1': str(partner_id.street) + str(partner_id.street2) or None,
+            'mmmentdir2': partner_id.city or None,
+            'mmmentdir3': partner_id.state_id.name or None,
+            'mmmentdir4': partner_id.zip or None,
             'mmmbatch': batch.name[-9:],
             'mmmacccolcod': batch.id,
             'mmmmomexp': datetime.datetime.strptime(self.effective_date, '%Y-%m-%d'),
             'mmmurgnte': '' if batch.urgent else 'N',
-            'mmmtraref': str(batch.shipping_type) or '' + '-N'
-            }
+            'mmmtraref': str(batch.shipping_type) + '-N' or None
+        }
 
         vals.update(update_vals)
         return vals

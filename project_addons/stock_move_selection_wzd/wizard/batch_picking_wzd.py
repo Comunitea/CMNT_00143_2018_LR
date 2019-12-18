@@ -14,6 +14,53 @@ class OpenBatchWzd(models.TransientModel):
         domain = [('id', 'in', self._context.get('active_ids'))]
         return self.env['stock.move'].search(domain).action_add_to_batch_picking()
 
+class SBPWMoveLine(models.TransientModel):
+    _name = 'sbpw.move.line'
+
+    wzd_id = fields.Many2one('stock.batch.picking.wzd')
+    selected = fields.Boolean(string="Seleccionado")
+    move_id = fields.Many2one('stock.move')
+    product_id = fields.Many2one(related='move_id.product_id')
+    partner_id = fields.Many2one(related='move_id.partner_id')
+    orig_picking_id = fields.Many2one(related='move_id.orig_picking_id')
+    product_uom_qty = fields.Many2one(related='move_id.product_uom_qty')
+    quantity_done = fields.Float(related='move_id.quantity_done')
+    reserved_availability = fields.Float(related='move_id.reserved_availability')
+    product_uom_qty = fields.Float(related='move_id.product_uom_qty')
+    origin = fields.Char(related='move_id.origin')
+    info_route_str = fields.Char(related='move_id.info_route_str')
+    result_package_id = fields.Many2one(related='move_id.result_package_id')
+    state = fields.Selection(related='move_id.state')
+    draft_batch_picking_id = fields.Many2one(related='move_id.draft_batch_picking_id')
+
+class SBPWPickLine(models.TransientModel):
+    _name = 'sbpw.pick.line'
+
+    wzd_id = fields.Many2one('stock.batch.picking.wzd')
+    picking_id = fields.Many2one('stock.picking')
+    draft_batch_picking_id = fields.Many2one(related='picking_id.draft_batch_picking_id')
+    partner_id = fields.Many2one(related='picking_id.partner_id')
+    info_route_str = fields.Char(related='picking_id.info_route_str')
+    name = fields.Char(related='picking_id.name')
+    origin = fields.Char(related='picking_id.origin')
+    count_move_lines = fields.Integer(related='picking_id.count_move_lines')
+    state = fields.Selection(related='picking_id.state')
+
+
+    def button_unlink_from_batch(self):
+
+        for line in self:
+            moves = self.wzd_id.move_ids
+            moves.filtered(lambda x: x.move_id.picking_id.id == line.picking_id.id).unlink()
+
+        action = self.wzd_id.get_formview_action()
+        action['target'] = 'new'
+        # return action
+
+        action['res_id'] = self.wzd_id.id
+        self.unlink()
+        return action
+
 class StockBatchPickingWzd(models.TransientModel):
     """Create a stock.batch.picking from stock.picking
     """
@@ -35,14 +82,17 @@ class StockBatchPickingWzd(models.TransientModel):
     )
     notes = fields.Text('Notes', help='free form remarks')
     picking_type_id = fields.Many2one('stock.picking.type', string='Tipo de operación')
-    move_ids = fields.Many2many('stock.move', string="Movimientos")
+    #move_ids_2 = fields.Many2many('stock.move', string="Movimientos")
     shipping_type = fields.Selection(SHIPPING_TYPE_SEL, default=DEFAULT_SHIPPING_TYPE, string=STRING_SHIPPING_TYPE,
                                      help=HELP_SHIPPING_TYPE)
     delivery_route_path_id = fields.Many2one('delivery.route.path', string="Ruta de entrega")
     carrier_id = fields.Many2one("delivery.carrier", string="Forma de envío")
     sga_integrated = fields.Boolean(related='picking_type_id.sga_integrated')
-    picking_ids = fields.Many2many('stock.picking', string="Albaranes")
+    #picking_ids = fields.Many2many('stock.picking', string="Albaranes")
     payment_term_id = fields.Many2one('account.payment.term', string='Plazos de pago')
+
+    move_ids = fields.One2many('sbpw.move.line', 'wzd_id')
+    picking_ids = fields.One2many('sbpw.pick.line', 'wzd_id')
 
     def create_from(self, model='stock.move', ids=[]):
         vals = self.get_vals(model, ids=ids)
@@ -50,6 +100,7 @@ class StockBatchPickingWzd(models.TransientModel):
         return wzd_id
 
     def get_vals(self, model='stock.move', ids = []):
+
         if model=='stock.move':
             moves = self.env[model].browse(ids)
             picking_ids = moves.mapped('picking_id')
@@ -60,24 +111,35 @@ class StockBatchPickingWzd(models.TransientModel):
             return {}
 
         picking_type_id = moves.mapped('picking_type_id')
-        if len(picking_type_id)>1:
+        if picking_type_id and len(picking_type_id) != 1:
             raise UserError(_('No se pueden agrupar alabranes de distinto tipo'))
-
+        g_fields = picking_type_id.grouped_batch_field_ids.mapped('name')
         delivery_route_path_id = moves.mapped('delivery_route_path_id')
-        if len(delivery_route_path_id) == 1:
+        if len(delivery_route_path_id) != 1:
+            if 'delivery_route_path_id' in g_fields:
+                raise UserError (_('No se puede agrupar este tipo de albarnes por distintas valores para el campo ruta: {}'.format([x.name for x in delivery_route_path_id])))
             delivery_route_path_id = False
 
-        payment_term_id = moves.mapped('payment_term_id')
-        if len(payment_term_id)>1:
-            if picking_type_id.code == 'outgoing':
-                raise UserError(_('No se pueden agrupar albaranes con formas de pago distintas'))
-            payment_term_id = self.env['account.payment.term']
 
-        batch_picking = moves.mapped('draft_batch_picking_id')
-        if len(batch_picking)>1:
-            raise UserError(_('Ya tienes seleccionados varios batchs: {}'.format(batch_picking.mapped('name'))))
-        batch_picking_id = len(batch_picking) == 1 and batch_picking.id
-        picker_id = batch_picking and batch_picking.picker_id and batch_picking.picker_id.id
+        carrier_id = moves.mapped('carrier_id')
+        if len(carrier_id) != 1:
+            if 'carrier_id' in g_fields:
+                raise UserError (_('No se puede agrupar este tipo de albaranes por distintas valores para el campo entrega: {}'.format([x.name for x in carrier_id])))
+            carrier_id = False
+
+        payment_term_id = moves.mapped('payment_term_id')
+        if len(payment_term_id) != 1:
+            if 'payment_term_id' in g_fields:
+                raise UserError(_(
+                    'No se puede agrupar este tipo de albaranes por distintas valores para el campo plazos de pago: {}'.format(
+                        [x.name for x in payment_term_id])))
+            payment_term_id = False
+
+        batch_picking_id = moves.mapped('draft_batch_picking_id')
+        if len(batch_picking_id) > 1:
+            raise UserError(_('Ya tienes seleccionados varios batchs: {}'.format(batch_picking_id.mapped('name'))))
+
+        picker_id = batch_picking_id and batch_picking_id.picker_id or False
 
         note = 'Notas de los albaranes asociados'
         for pick in picking_ids:
@@ -99,22 +161,26 @@ class StockBatchPickingWzd(models.TransientModel):
         else:
             moves_to_sga = moves_not_sga = self.env['stock.move']
 
-        date = min(moves.mapped('picking_id').mapped('scheduled_date'))
+        dates = moves.mapped('picking_id').mapped('scheduled_date')
+        dates.append(fields.Datetime.now())
+        date = min(dates)
         if date < fields.Date.today():
             date = fields.Date.today()
 
+        move_vals = self.env['stock.batch.picking'].return_move_vals(moves, picking_ids,complete=True)
+        pick_vals =  self.env['stock.batch.picking'].return_pick_vals(picking_ids,complete=True)
         vals = {
-            'date':date,
+            'date': date,
             'picking_type_id': picking_type_id and picking_type_id.id or False,
-            'batch_picking_id': batch_picking and batch_picking_id or False,
-            'picker_id': picker_id and picker_id.id or False,
+            'batch_picking_id': batch_picking_id and batch_picking_id.id or False,
+            'picker_id': picker_id and picker_id.id  or False,
             'notes': note,
             'payment_term_id': payment_term_id and payment_term_id.id or False,
-            'carrier_id': self.carrier_id and self.carrier_id.id or False,
-            'move_ids': [(6, 0, moves.ids)],
-
-            'delivery_route_path_id': delivery_route_path_id and delivery_route_path_id.id or False,
-            }
+            'carrier_id': carrier_id and carrier_id.id  or False,
+            'move_ids': move_vals,
+            'picking_ids': pick_vals ,
+            'delivery_route_path_id': delivery_route_path_id and delivery_route_path_id.id  or False,
+        }
         shipping_type = []
         for move in moves:
 
@@ -123,17 +189,18 @@ class StockBatchPickingWzd(models.TransientModel):
         if len(shipping_type) == 1:
             vals.update(shipping_type=shipping_type[0])
 
-        if model == 'stock.picking':
-            vals.update(picking_ids=[(6,0,picking_ids.ids)])
         return vals
 
     @api.model
     def default_get(self, fields):
-
         defaults = super().default_get(fields)
+        if self._context.get('reload'):
+            return defaults
         model = self._context.get('model', self._context.get('active_model', 'stock.move'))
         new_ids = self._context.get('active_ids', [])
-        defaults.update(self.get_vals(model, ids=new_ids))
+        vals = self.get_vals(model, ids=new_ids)
+        if self._context.get('get_vals', True):
+            defaults.update(vals)
         return defaults
 
     def _default_picker_id(self):
@@ -148,6 +215,20 @@ class StockBatchPickingWzd(models.TransientModel):
                 ('company_id', '=', self.env.user.company_id.id)
             ], limit=1)
         return warehouse.default_picker_id
+
+    @api.multi
+    def action_apply_info_envio(self):
+
+        vals = {}
+        if self.shipping_type:
+            vals.update(shipping_type = self.shipping_type)
+        if self.delivery_route_path_id:
+            vals.update(delivery_route_path_id=self.delivery_route_path_id.id)
+        if self.carrier_id:
+            vals.update(carrier_id=self.carrier_id.id)
+        self.move_ids.mapped('move_id').write(vals)
+        self.picking_ids.mapped('picking_id').compute_route_fields()
+        return self.reload_wzd()
 
     @api.multi
     def action_create_batch_split(self):
@@ -187,7 +268,7 @@ class StockBatchPickingWzd(models.TransientModel):
             'notes': self.notes,
             'picker_id': self.picker_id.id,
             'picking_type_id': self.picking_type_id.id,
-            'state': 'assigned',
+            'state': 'draft',
             'payment_term_id': self.payment_term_id and self.payment_term_id.id or False,
             'carrier_id': self.carrier_id and self.carrier_id.id or False,
             'delivery_route_path_id': self.delivery_route_path_id and self.delivery_route_path_id.id or False,
@@ -199,15 +280,59 @@ class StockBatchPickingWzd(models.TransientModel):
     def action_create_batch(self):
         if len(self.mapped('picking_type_id'))>1:
             raise ValueError(_('No puedes crear un batch de con movimientos de distiont tipo'))
-
+        ## debería de crear un batch siempre, lo reescribo
         #self.move_line_ids.mapped('move_id').ids
+
+        new_batchs = self.env['stock.batch.picking']
+        move_ids = self.move_ids.filtered(lambda x: x.selected).mapped('move_id')
+        fields = self.picking_type_id.grouped_batch_field_ids
+
+        if not fields:
+            ## SI NO HAY NINGÚN AGRUPAMIENTO
+            new_batch = self.env['stock.batch.picking'].create(self.get_wzd_values())
+            move_ids.assign_batch_picking_id(new_batch)
+        else:
+            ## lo agrupo por alabranes
+            picking_ids = move_ids.mapped('picking_id')
+            for pick in picking_ids:
+                moves = move_ids.filtered(lambda x: x.picking_id == pick)
+                domain = pick.get_batch_domain()
+                if new_batchs:
+                    domain += [('id', 'in', new_batchs.ids)]
+                batch = self.env['stock.batch.picking'].search(domain,  order='id asc', limit=1)
+                if not batch:
+                    vals = self.get_wzd_values()
+                    vals.update(pick.get_batch_vals())
+                    batch = self.env['stock.batch.picking'].create(vals)
+
+                moves.assign_batch_picking_id(batch)
+                new_batchs |= batch
+        for batch in new_batchs:
+            note = 'Notas de los albaranes asociados'
+            for pick in batch.draft_picking_ids:
+                if pick.note:
+                    note = '{}\n{}\n{}'.format(note, pick.name, pick.note)
+                else:
+                    note = '{}\n{}'.format(note, pick.name)
+        if self._context.get('send', True):
+            new_batchs.send_to_sga()
+        action = self.env.ref('stock_batch_picking.action_stock_batch_picking_tree').read()[0]
+        action['domain'] = [('id', 'in', new_batchs.ids)]
+        return action
+
+
+
         fields = self.picking_type_id.grouped_batch_field_ids
         new_batchs = self.env['stock.batch.picking']
+        ##tego que borrar los no seleccionados
+        self.move_ids.filtered(lambda x: not x.selected).mapped('move_id').write({'draft_batch_picking_id': False})
+        move_ids = self.move_ids.filtered(lambda x: x.selected).mapped('move_id')
         if not fields:
             new_batchs = self.env['stock.batch.picking'].create(self.get_wzd_values())
-            self.move_ids.write({'draft_batch_picking_id': new_batchs.id})
+            move_ids.assign_batch_picking_id(new_batchs)
+            #move_ids.write({'draft_batch_picking_id': new_batchs.id})
         else:
-            for move in self.move_ids:
+            for move in move_ids:
                 domain = move.get_batch_domain()
                 batch = self.env['stock.batch.picking'].search(domain,  order='id asc', limit=1)
                 if batch:
@@ -218,6 +343,8 @@ class StockBatchPickingWzd(models.TransientModel):
                     batch = self.env['stock.batch.picking'].create(vals)
                     move.draft_batch_picking_id = batch
                     new_batchs += batch
+
+
         for batch in new_batchs:
             note = 'Notas de los albaranes asociados'
             for pick in batch.draft_move_lines.mapped('picking_id'):
@@ -243,10 +370,24 @@ class StockBatchPickingWzd(models.TransientModel):
     @api.multi
     def action_assign_batch(self):
         if self.batch_picking_id:
-            self.move_ids.write({'draft_batch_picking_id': self.batch_picking_id.id})
-            self.move_ids.mapped('picking_id').write({'draft_batch_picking_id': self.batch_picking_id.id})
-        return self.batch_picking_id.get_formview_action()
 
+            moves_to_link = self.move_ids.filtered(lambda x:x.selected).mapped('move_id')
+
+            domain = [('draft_batch_picking_id', '=', self.batch_picking_id.id), ('id', 'not in', moves_to_link.ids)]
+            moves_to_unlink = self.env['stock.move'].search(domain)
+            moves_to_unlink.write({'draft_batch_picking_id': False})
+            moves_to_link.write({'draft_batch_picking_id': self.batch_picking_id.id})
+            self.batch_picking_id.compute_route_fields()
+        else:
+            return self.reload_wzd()
+
+    @api.multi
+    def reload_wzd(self):
+        self.ensure_one()
+        action = self.get_formview_action()
+        action['target'] = 'new'
+        action['res_id'] = self._context.get('active_id', self.id)
+        return action
 
     @api.multi
     def write(self, vals):

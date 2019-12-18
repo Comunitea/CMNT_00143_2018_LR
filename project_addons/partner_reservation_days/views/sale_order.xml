@@ -8,12 +8,12 @@
             <xpath expr="//field[@name='order_line']/tree/field[@name='product_uom_qty']" position="after">
                 <field name="split_moves" invisible="0" />
                 <field name="hide_split_moves" invisible="0"/>
-                <button name ='alternate_split_moves' string="Update split moves" type="object" icon="fa-random"
+                <button name ='alternate_split_moves' string="If activated, split moves iif partiially available" type="object" icon="fa-random"
                         attrs="{'invisible': [('hide_split_moves', '=', True)], 'column_invisible': [('parent.state','in',('cancel', 'done'))]}"
                         options='{"fg_color":
                                     "green: split_moves == True;
                                     gainsboro: split_moves == False"}'
-                        help ="if green,this line split moves if not available"/>
+                       />
             </xpath>
 
         </field>

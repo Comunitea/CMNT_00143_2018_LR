@@ -1,3 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_sale_order_line_delivery,access_sale_order_line_delivery,model_sale_order_line_delivery,base.group_user,1,1,1,1
 access_stock_rotation_history,access_stock_rotation_history,model_stock_rotation_history,base.group_user,1,1,1,1
+access_res_company_shipping_type_price,access_res_company_shipping_type_price,model_res_company_shipping_type_price,stock.group_stock_user,1,1,1,1
+

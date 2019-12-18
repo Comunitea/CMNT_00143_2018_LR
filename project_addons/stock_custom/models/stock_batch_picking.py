@@ -31,12 +31,18 @@ class StockBatchPicking(models.Model):
     invoiced = fields.Boolean()
 
     def _compute_sale_ids(self):
+        ##todo revisar Un batch no debería de tener draft move lines una vez validado
         for pick in self:
-            pick.sale_ids = pick.mapped("picking_ids.sale_id")
+            pick.sale_ids = pick.mapped("picking_ids.sale_id") + pick.mapped(
+                "draft_move_lines.picking_id.sale_id"
+            )
 
     def _compute_currency_id(self):
+        ##todo revisar Un batch no debería de tener draft move lines una vez validado.
         for pick in self:
-            sale = pick.picking_ids and pick.picking_ids[0].sale_id or False
+            sale = pick.mapped("picking_ids.sale_id") + pick.mapped(
+                "draft_move_lines.picking_id.sale_id"
+            )
             if not sale:
                 pick.currency_id = False
             else:
@@ -54,8 +60,19 @@ class StockBatchPicking(models.Model):
             for _tax_id, tax_group in pick.get_taxes_values().items():
                 amount_tax += round_curr(tax_group["amount"])
             amount_untaxed = sum(
-                l.sale_price_subtotal for l in pick.move_line_ids
+                l.sale_price_subtotal
+                for l in (pick.move_line_ids + pick.draft_move_line_ids)
             )
+            excess_line_vals = pick.get_excess_invoice_line_vals(
+                pick.sale_ids[0], get_tax_obj=True
+            )
+            amount_untaxed += excess_line_vals["price_unit"]
+
+            shipping_line_vals = pick.get_shipping_invoice_line_vals(
+                pick.sale_ids[0], get_tax_obj=True
+            )
+            if shipping_line_vals:
+                amount_untaxed += shipping_line_vals["price_unit"]
             pick.update(
                 {
                     "amount_untaxed": amount_untaxed,
@@ -73,8 +90,13 @@ class StockBatchPicking(models.Model):
             self.with_context(lang=self.partner_id.lang).env,
             currency_obj=currency,
         )
-        for line in self.move_line_ids:
-            for tax in line.sale_line.tax_id:
+        for line in self.move_line_ids + self.draft_move_line_ids:
+            if line.sale_line:
+                tax_id = line.sale_line.tax_id
+            else:
+                tax_id = line.move_id._compute_tax_id()
+
+            for tax in tax_id:
                 tax_id = tax.id
                 if tax_id not in tax_grouped:
                     tax_grouped[tax_id] = {
@@ -84,6 +106,41 @@ class StockBatchPicking(models.Model):
                     }
                 else:
                     tax_grouped[tax_id]["base"] += line.sale_price_subtotal
+        excess_line_vals = self.get_excess_invoice_line_vals(
+            self.sale_ids[0], get_tax_obj=True
+        )
+        for tax in excess_line_vals["invoice_line_tax_ids"]:
+            tax_id = tax.id
+            if tax_id not in tax_grouped:
+                tax_grouped[tax_id] = {
+                    "base": excess_line_vals["price_unit"],
+                    "base_str": fmt(excess_line_vals["price_unit"]),
+                    "tax": tax,
+                }
+            else:
+                tax_grouped[tax_id]["base"] += excess_line_vals["price_unit"]
+                tax_grouped[tax_id]["base_str"] = fmt(
+                    tax_grouped[tax_id]["base"]
+                )
+        shipping_line_vals = self.get_shipping_invoice_line_vals(
+            self.sale_ids[0], get_tax_obj=True
+        )
+        if shipping_line_vals:
+            for tax in shipping_line_vals["invoice_line_tax_ids"]:
+                tax_id = tax.id
+                if tax_id not in tax_grouped:
+                    tax_grouped[tax_id] = {
+                        "base": shipping_line_vals["price_unit"],
+                        "base_str": fmt(shipping_line_vals["price_unit"]),
+                        "tax": tax,
+                    }
+                else:
+                    tax_grouped[tax_id]["base"] += shipping_line_vals[
+                        "price_unit"
+                    ]
+                    tax_grouped[tax_id]["base_str"] = fmt(
+                        tax_grouped[tax_id]["base"]
+                    )
         for tax_id, tax_group in tax_grouped.items():
             tax_grouped[tax_id]["amount"] = tax_group["tax"].compute_all(
                 tax_group["base"], self.currency_id
@@ -96,13 +153,13 @@ class StockBatchPicking(models.Model):
     def _get_invoice_values(self):
         sale = self.sale_ids[0]
         invoice_vals = sale._prepare_invoice()
-        invoice_vals["shipping_type"] = self.shipping_type
-        invoice_vals["financiable_payment"] = sale.financiable_payment
+        # invoice_vals["shipping_type"] = self.shipping_type
+        # invoice_vals["financiable_payment"] = sale.financiable_payment
         return invoice_vals
 
-    def create_excess_invoice_line(self, order, invoice):
-        price = self.company_id.excess_price
-        product = self.env.ref("stock_custom.excess_product")
+    def get_invoice_line_vals(
+        self, order, product, price=False, invoice=False, get_tax_obj=False
+    ):
         account = (
             product.property_account_income_id
             or product.categ_id.property_account_income_categ_id
@@ -131,7 +188,6 @@ class StockBatchPicking(models.Model):
             else taxes
         )
         res = {
-            "invoice_id": invoice.id,
             "name": product.name,
             "sequence": 99,
             "origin": order.name,
@@ -144,38 +200,60 @@ class StockBatchPicking(models.Model):
             "invoice_line_tax_ids": [(6, 0, taxes.ids)],
             "account_analytic_id": order.analytic_account_id.id,
         }
+        if invoice:
+            res["invoice_id"] = invoice.id
+        if get_tax_obj:
+            res["invoice_line_tax_ids"] = taxes
+        return res
+
+    def get_excess_invoice_line_vals(
+        self, order, invoice=False, get_tax_obj=False
+    ):
+        price = self.company_id.excess_price
+        product = self.env.ref("stock_custom.excess_product")
+        return self.get_invoice_line_vals(
+            order, product, price, invoice, get_tax_obj
+        )
+
+    def get_shipping_invoice_line_vals(
+        self, order, invoice=False, get_tax_obj=False
+    ):
+        shipping_cost_perc = self.company_id.get_shipping_cost_line_percentage(
+            self.shipping_type
+        )
+        if shipping_cost_perc:
+
+            price = sum(
+                l.sale_price_unit * (l.qty_done or l.product_qty)
+                for l in (self.move_line_ids + self.draft_move_line_ids)
+            ) * (shipping_cost_perc / 100)
+            product = self.env.ref("stock_custom.shipping_product")
+            return self.get_invoice_line_vals(
+                order, product, price, invoice, get_tax_obj
+            )
+
+    def create_excess_invoice_line(self, order, invoice):
+        res = self.get_excess_invoice_line_vals(order, invoice)
         self.env["account.invoice.line"].create(res)
 
+    @api.multi
     def create_invoice(self):
         invoices = self.env["account.invoice"]
         for batch_picking in self:
             invoice_vals = batch_picking._get_invoice_values()
             invoice = self.env["account.invoice"].create(invoice_vals)
-            for move in batch_picking.move_lines:
-                invoice_line_vals = move.sale_line_id._prepare_invoice_line(
-                    move.quantity_done
+            batch_picking.move_lines.create_invoice_line(invoice.id)
+            if batch_picking.pack_lines_picking_id:
+                batch_picking.pack_lines_picking_id.move_lines.create_invoice_line(
+                    invoice.id
                 )
-                invoice_line_vals.update(
-                    {
-                        "invoice_id": invoice.id,
-                        "sale_line_ids": [(6, 0, [move.sale_line_id.id])],
-                    }
-                )
-                invoice_line_vals[
-                    "shipping_type_decrease"
-                ] = move.company_id.get_discount_decrease_shipping(
-                    batch_picking.shipping_type
-                )
-                if move.sale_line_id.order_id.financiable_payment:
-                    invoice_line_vals[
-                        "financiable_decrease"
-                    ] = move.company_id.discount_decrease_financiable
-                self.env["account.invoice.line"].create(invoice_line_vals)
-            if batch_picking.excess:
+
+            if batch_picking.sale_ids:
                 batch_picking.create_excess_invoice_line(
                     batch_picking.sale_ids[0], invoice
                 )
-            batch_picking.sale_ids.create_service_invoice_lines(invoice)
+                batch_picking.sale_ids.create_service_invoice_lines(invoice)
+
             invoice.compute_taxes()
             if not invoice.invoice_line_ids:
                 raise UserError(_("There is no invoiceable line."))

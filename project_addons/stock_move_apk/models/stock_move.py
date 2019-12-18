@@ -171,11 +171,9 @@ class StockMoveLine(models.Model):
     def update_to_new_package(self, new_package_ids):
         create = True
         for pack in new_package_ids:
-            ok = pack.update_info_route_vals() == self.update_info_route_vals()
-            if ok:
-                self.move_id.write({'result_package_id': pack.id})
-                create = False
-                break
+            self.move_id.write({'result_package_id': pack.id})
+            create = False
+            break
         if create:
             vals_0 = self.update_info_route_vals()
             new_result_package_id = self.env['stock.quant.package'].create(vals_0)

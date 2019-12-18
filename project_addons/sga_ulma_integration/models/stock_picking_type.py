@@ -23,35 +23,69 @@ class StockPickingTypeSGA(models.Model):
         else:
             raise ValidationError ('Tipo no permitido')
 
-        vals = {'mmmdisref': self.ulma_type,
-                'mmmsesid': 1 if self.ulma_type == 'SUBUNI' else 2,
+        vals = {
                 'mmmcmdref': mmmCMDREF,
-                'mmmartean': 'ean13',
+                'mmmdisref': self.ulma_type or None,
                 'mmmges': 'ULMA',
-                'mmmres': 'FINPED'}
+                'mmmres': 'FINPED',
+                'mmmsesid': 1 if self.ulma_type == 'SUBUNI' else 2,
+                'momcre': None,
+                'mmmartean': 'ean13',
+                'mmmbatch': None,
+                'mmmmomexp': None,
+                'mmmacccolcod': None,
+                'mmmentdes': None,
+                'mmmexpordref': None,
+                'mmmterref': None,
+                'mmmentdir1': None,
+                'mmmentdir2': None,
+                'mmmentdir3': None,
+                'mmmentdir4': None,
+                'mmmurgnte': None,
+                'mmmtraref': None,
+                'mmmartdes': None,
+                'mmmartref': None,
+                'mmmcanuni': None,
+                'mmmsecada': None,
+                'mmmacccod': None,
+                'mmmfeccad': None,
+                'mmmartapi': None,
+                'mmmminudsdis': None,
+                'mmmabclog': None,
+                'mmmdim': None,
+                'mmmcntdorref': None,
+                'mmmcrirot': None,
+                'mmmdorhue': None,
+                'mmmlot': None,
+                'mmmmonlot': None,
+                'mmmrecref': None,
+                'mmmubidesref': None,
+                'mmmzondesref': None,
+                'mmmobs': None
+            }
 
         if type =="sale":
             vals.update({
                 'mmmres': 'FIN',
                 'mmmentdes': '{} ({})'.format(partner_id.name, picking_id.name),
-                'mmmentdir1': '{} {}'.format(partner_id.street, partner_id.street2 if partner_id.street2 else ''),
-                'mmmentdir2': partner_id.city,
-                'mmmentdir3': partner_id.state_id.name if partner_id.state_id else partner_id.city,
-                'mmmentdir4': partner_id.zip,
+                'mmmentdir1': '{} {}'.format(partner_id.street, partner_id.street2 if partner_id.street2 else None),
+                'mmmentdir2': partner_id.city or None,
+                'mmmentdir3': partner_id.state_id.name if partner_id.state_id else partner_id.city or None,
+                'mmmentdir4': partner_id.zip or None,
                 'mmmacccolcod': picking_id.id
             })
 
         if type == "move":
             vals.update({
                 'mmmartapi': 0,
-                'mmmres':'',
+                'mmmres':None,
                 'mmmminudsdis': 1})
 
         if type == "hueco":
             vals.update({
-                'mmmres': '',
+                'mmmres': None,
                 'mmmubidesref': '01P010011',
-                'mmmartean': '',
+                'mmmartean': None,
                 'mmmmonlot': 1,
                 'mmmrecref': 0,
                 'mmmartapi': 0,
@@ -61,8 +95,8 @@ class StockPickingTypeSGA(models.Model):
             vals.update({
                 'mmmres': 'FIN',
                 'mmmubidesref': '01P010011',
-                'mmmartean': '',
-                'mmmmonlot': '',
+                'mmmartean': None,
+                'mmmmonlot': None,
                 'mmmrecref': 0,
                 'mmmartapi': 0
             })

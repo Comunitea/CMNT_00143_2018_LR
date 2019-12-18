@@ -82,6 +82,7 @@ class MoveChangeQuantWzd(models.TransientModel):
         vals['reserved_move_ids'] = [(6, 0, reserved_move_ids.ids)]
         vals['quant_ids'] = [(0, 0, self._prepare_quant(x)) for x in quants]
         vals['move_id'] = move_id.id
+        print (vals)
         return vals
 
     @api.model
@@ -118,9 +119,11 @@ class MoveChangeQuantWzd(models.TransientModel):
                 field = 'location_id'
 
             new_location = quant.location_id
+            new_move_id = self.move_id._split(quant_id.new_quantity)
+            new_move = self.env['stock.move'].browse(new_move_id)
             if new_location.picking_type_id and new_location.picking_type_id != self.move_id.location_id.picking_type_id:
-                new_move_id = self.move_id._split(quant_id.new_quantity)
-                new_move = self.env['stock.move'].browse(new_move_id)
+
+
                 ##tengo que cambiarlod e albarán
                 new_loc_vals = {
                     field: new_location.id,

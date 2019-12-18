@@ -4,7 +4,7 @@
 
 from odoo import _, api, fields, models
 
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
 
 
 class StockPackageBatch(models.Model):
@@ -131,6 +131,56 @@ class StockPackageBatch(models.Model):
                     'entire_package_detail_ids'),
             })
 
+    def open_tree_to_add(self):
+        model = self._context.get('model', 'stock.move')
+        if not self.picking_type_id:
+            raise ValidationError (_('Necesitas un tipo de albarán para generar el lote'))
+
+
+        states = ('confirmed', 'assigned', 'partially_available')
+        domain = [('pìcking_id', '!=', False), ('draft_batch_picking_id', '=', False),
+                  ('picking_type_id', '=', self.picking_type_id.id), ('state', 'in', states)]
+
+        if self.delivery_route_path_ids:
+            domain += ['|', ('delivery_route_path_id', 'in', self.delivery_route_path_ids.ids), ('delivery_route_path_id', '=', False)]
+
+        if self.shipping_type_ids:
+            domain += [('shipping_type', '=', self.shipping_type_ids)]
+
+        if self.payment_term_ids.ids:
+            domain += ['|', ('payment_term_id', 'in', self.payment_term_ids.ids),
+                       ('payment_term_ids', '=', False)]
+
+        if model == 'stock.move':
+            objs = self.search_read(domain, ['id'])
+            active_ids = [x['id'] for x in objs]
+        elif model == 'stock.picking':
+            objs = self.search_read(domain, ['picking_id'])
+            active_ids = [x['picking_id'][0] for x in objs if objs['picking_id']]
+
+        moves_ids = self.get_affected_moves()
+        ## Cuando selecciono un movimiento o varios debo seleccionar todos los que van en el mismo paquete
+
+        ctx = self._context.copy()
+        if 'active_domain' in ctx.keys():
+            ctx.pop('active_domain')
+        obj = self.env['stock.batch.picking.wzd']
+        wzd_id = obj.create_from('stock.move', moves_ids.ids)
+        action = wzd_id.get_formview_action()
+        action['target'] = 'new'
+        #return action
+
+
+        action = self.env.ref('stock_move_selection_wzd.open_view_create_batch_picking').read()[0]
+        action['res_id'] = wzd_id.id
+
+        return action
+
+
+        return
+
+
+
     def get_not_empties(self):
         """ Return all batches in this recordset
         for which picking_ids is not empty.
@@ -182,6 +232,7 @@ class StockPackageBatch(models.Model):
         """ Call action_cancel for all batches pickings
         and set batches states to cancel too.
         """
+
         for batch in self:
             if not batch.picking_ids:
                 batch.write({'state': 'cancel'})

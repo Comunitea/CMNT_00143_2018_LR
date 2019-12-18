@@ -28,8 +28,8 @@
 
         <record id="adr_code_category_4" model="adr.code.category">
             <field name="code">Categoría 4</field>
-            <field name="x_kgrs_11363">1</field>
-            <field name="x_kgrs_11364">1</field>
+            <field name="x_kgrs_11363">0</field>
+            <field name="x_kgrs_11364">0</field>
             <field name="max_weight_11363">1000</field>
             <field name="max_weight_11364">0</field>
         </record>

@@ -37,11 +37,12 @@ class SaleOrderLine(models.Model):
 
     @api.multi
     def _action_launch_procurement_rule(self):
-
         super()._action_launch_procurement_rule()
         moves = self.get_moves_to_split()
         for move in moves:
-            move._split(move.product_uom_qty - move.reserved_availability)
-
+            new_move = move._split(move.product_uom_qty - move.reserved_availability)
+            new_move = move.browse(new_move)
+            if new_move.picking_type_id != move.picking_type_id:
+                new_move._assign_picking()
         return True
 
