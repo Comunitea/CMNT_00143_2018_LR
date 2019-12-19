@@ -5,7 +5,7 @@ from odoo import _, models
 
 
 class VatNumberXlsx(models.AbstractModel):
-    _name = 'report.l10n_es_vat_book_prev.l10n_es_vat_book_prev_xlsx'
+    _name = 'report.l10n_es_vat_book_prev.l10n_es_vat_book_xlsx'
     _inherit = 'report.report_xlsx.abstract'
 
     def generate_xlsx_report(self, workbook, data, objects):
