@@ -106,7 +106,6 @@ class UlmaMmminp(models.Model):
                 if activated:
                     sql_update = "update ulma_packinglist set status = 2 where id = {}".format(int(pick[2]))
                     self._cr.execute(sql_update)
-                    done = self._cr.fetchall()
                 self.create({
                     'picking_id': real_picking.id
                 })
