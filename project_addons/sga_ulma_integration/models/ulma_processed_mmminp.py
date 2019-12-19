@@ -111,7 +111,7 @@ class UlmaMmminp(models.Model):
                 })
                 #Descomentar cuando sea seguro probar
                 # sga_auto_validate está en sga_adaia_integration. Mirar de meterlo en un sitio del que dependan ambos
-                batch_ids = move_ids.mapped('draft_batch_picking_id').filtered(lambda x: x.picking_type_id.autovalidate)
+                batch_ids = move_ids.mapped('draft_batch_picking_id').filtered(lambda x: x.picking_type_id.sga_auto_validate)
                 if batch_ids:
                     _logger.info("Validando stock batch picking con ID: {} / {}.".format(batch_ids.id, batch.name))
                     ctx = batch._context.copy()
