@@ -114,6 +114,6 @@ class UlmaMmminp(models.Model):
                 batch_ids = move_ids.mapped('draft_batch_picking_id').filtered(lambda x: x.picking_type_id.sga_auto_validate)
                 if batch_ids:
                     _logger.info("Validando stock batch picking con ID: {} / {}.".format(batch_ids.id, batch_ids.name))
-                    ctx = batch._context.copy()
+                    ctx = batch_ids._context.copy()
                     ctx.update(from_sga=True)
                     batch_ids.with_context(ctx).action_transfer()
