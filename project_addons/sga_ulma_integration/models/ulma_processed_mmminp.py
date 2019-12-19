@@ -98,7 +98,7 @@ class UlmaMmminp(models.Model):
                             _logger.info("\n------------ \n ERROR de estado en el MOVIMIENTO con ID: {}\n ---------------".format(int(ulma_move[5])))
 
                 if line_values:
-                    _logger.info("Proceso las move_line_ids: {}.".format(move_line_ids))
+                    _logger.info("Proceso las move_line_ids: {}.".format(line_values))
                     move_line_ids = self.apply_move_lines(line_values)
                     _logger.info("Procesadas las move_line_ids: {}.".format(move_line_ids))
 
