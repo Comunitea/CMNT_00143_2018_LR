@@ -5,6 +5,7 @@
 from odoo import fields, models, tools, api, _
 import datetime, time
 from odoo.exceptions import UserError
+from odoo.addons.stock_move_selection_wzd.models.stock_picking_type import SGA_STATES
 
 
 class StockPicking(models.Model):
@@ -14,6 +15,13 @@ class StockPicking(models.Model):
     ulma_error = fields.Text(default="", string="Error msg in case the Ulma integration failed")
     sga_integrated = fields.Boolean(related='picking_type_id.sga_integrated')
     sga_integration_type = fields.Selection(related="picking_type_id.sga_integration_type")
+
+    @api.multi
+    def get_picks_ulma_pending(self):
+        sm = self.env['stock.move']
+        sm_domain = [('picking_type_id.sga_integration_type', '=', 'sga_ulma'), ('sga_state', '=', 'pending'), ('state', 'not in', ('done', 'cancel'))]
+        ids = sm.search(sm_domain).mapped('picking_id')
+        return ids
 
     def get_vals_picking_to_ulma(self, batch, ulma_move='', date_expected=''):
         partner_id = self.partner_id

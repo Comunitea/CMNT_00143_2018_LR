@@ -28,7 +28,7 @@ class StockPickingSGA(models.Model):
     sga_priority = fields.Integer("Priority", default=100)
 
     sga_company = fields.Char(related="partner_id.name")
-    sga_state = fields.Selection(SGA_STATES, compute="get_sga_state")
+    sga_state = fields.Selection(SGA_STATES)
 
     do_backorder = fields.Selection([('default', 'Por defecto'), ('yes', 'Si'), ('no', 'No')], "Crea entrega parcial", default='default')
     sga_integrated = fields.Boolean(related="picking_type_id.sga_integrated")
@@ -42,12 +42,6 @@ class StockPickingSGA(models.Model):
     adaia_dock = fields.Integer(compute="compute_route_fields")    
     adaia_group = fields.Char(compute="compute_adaia_group")
 
-    @api.multi
-    @api.depends('adaia_move_ids.sga_state')
-    def get_sga_state(self):
-        for pick in self:
-            lines = pick.adaia_move_ids
-            pick.sga_state = self.env['stock.picking.type'].get_parent_state(lines)
 
     @api.multi
     @api.depends('adaia_move_ids.shipping_type', 'adaia_move_ids.delivery_route_path_id', 'adaia_move_ids.carrier_id')
@@ -211,10 +205,8 @@ class StockPickingSGA(models.Model):
     def import_adaia(self, file_id, code):
 
         def get_picking_from_line(n_line, codigo):
-            codigo = codigo.rsplit('.', 1)[1]
-            print(codigo)
-            domain = [('id', '=', codigo), ('state', 'in', ['assigned', 'waiting', 'confirmed']),
-                    ('sga_state', 'in', ['pending'])]
+            codigo = codigo.rsplit('.', 1)[1]            
+            domain = [('id', '=', codigo), ('state', 'in', ['assigned', 'waiting', 'confirmed'])]
             pick = self.env['stock.picking'].search(domain, order = 'id desc', limit=1)
             _logger.info("Procesando el picking: {}".format(pick))
             if not pick:
@@ -312,18 +304,18 @@ class StockPickingSGA(models.Model):
                 
                 _logger.info("Container: {}, línea: {}".format(CNTDORREF, EXPORDLIN))
                 actual_line = self.env['stock.move'].search([('id', '=', EXPORDLIN)])
+                
                 if not actual_line:
                     error_message = u'Op %s no encontrada en el albarán %s' % (EXPORDLIN, actual_pick.name)
                     self.create_sga_file_error(sga_file_obj, n_line,'OUT',actual_pick,'Op no encontrada', error_message)
                     bool_error = False
                 else:
                     move_line_id = {'move_id': int(EXPORDLIN), 'qty_done': CAN}
-
                     package = self.env['stock.quant.package'].search([('name', '=', CNTDORREF)])
                     if not package:
                         package = self.env['stock.quant.package'].create({
                             'name': CNTDORREF,
-                            'shipping_type': actual_line.move_id.shipping_type
+                            'shipping_type': actual_line.shipping_type
                         })
                         
                     move_line_id.update({
