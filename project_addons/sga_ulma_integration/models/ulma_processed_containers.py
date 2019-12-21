@@ -38,7 +38,7 @@ class UlmaProcessedContainers(models.Model):
                     _logger.info("Moviendo paquete {} con ID {} a palés.".format(package_odoo.name, package_odoo.id))
                     location_dest_id = self.env['stock.location'].search_read([('ulma_type', '=', 'SUBPAL')], fields=['id'])
 
-                self.env['stock.picking'].transfer_package(package_odoo, location_dest_id)
+                self.env['stock.picking'].transfer_package(package_odoo.id, location_dest_id)
                 sql_update = "update ulma_cajas set ('procesado') values ('Y') where matricula = {}".format(package[0])
                 self.create({
                     'matricula': package[0],
