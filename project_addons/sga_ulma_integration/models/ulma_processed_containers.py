@@ -49,7 +49,7 @@ class UlmaProcessedContainers(models.Model):
                 if activated:
                     _logger.info('Marco como procesado el contenedor/paquete {} ... '.format(package[0]))
                     self._cr.execute(sql_update)
-                    done = self._cr.fetchall()
+                    
                     _logger.info('Ok')
                 else:
                     _logger.info("Procesado paquete {} con ID {}.".format(package_odoo.name, package_odoo.id))
