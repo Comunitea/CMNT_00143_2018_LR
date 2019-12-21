@@ -27,7 +27,7 @@ class UlmaProcessedContainers(models.Model):
         _logger.info("Número de paquetes encontrados: {}.".format(len(packages)))
         for package in packages:
             _logger.info("Buscando paquete con matrícula: {}.".format(package[0]))
-            package_odoo = self.env['stock.quant.package'].search_read([('name', '=', package[0])], fields=['id'])
+            package_odoo = self.env['stock.quant.package'].search([('name', '=', package[0])])
             
             if package_odoo:
                 _logger.info("Actualizando paquete con matrícula: {}.".format(package_odoo.name))
