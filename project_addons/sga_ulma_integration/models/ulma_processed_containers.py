@@ -40,7 +40,7 @@ class UlmaProcessedContainers(models.Model):
                 print(location_dest_id)
                 print(package_odoo)
                 self.env['stock.picking'].transfer_package(package_odoo.id, location_dest_id)
-                sql_update = "update ulma_cajas set procesado = 'Y' where matricula = {}".format(package[0])
+                sql_update = "update ulma_cajas set procesado = 'Y' where matricula = '{}'".format(package[0])
                 self.create({
                     'matricula': package[0],
                     'tipo': 'Cajas' if package[1].startswith('C') else 'Palés',
