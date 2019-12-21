@@ -33,11 +33,12 @@ class UlmaProcessedContainers(models.Model):
                 _logger.info("Actualizando paquete con matrícula: {}.".format(package_odoo.name))
                 if package[1].startswith('C'):
                     _logger.info("Moviendo paquete {} con ID {} a cajas.".format(package_odoo.name, package_odoo.id))
-                    location_dest_id = self.env['stock.location'].search_read([('ulma_type', '=', 'SUBUNI')], fields=['id'])
+                    location_dest_id = self.env['stock.location'].search_read([('ulma_type', '=', 'SUBUNI')], fields=['id'], limit=1)[0]["id"]
                 else:
                     _logger.info("Moviendo paquete {} con ID {} a palés.".format(package_odoo.name, package_odoo.id))
-                    location_dest_id = self.env['stock.location'].search_read([('ulma_type', '=', 'SUBPAL')], fields=['id'])
-
+                    location_dest_id = self.env['stock.location'].search_read([('ulma_type', '=', 'SUBPAL')], fields=['id'], limit=1)[0]["id"]
+                print(location_dest_id)
+                print(package_odoo)
                 self.env['stock.picking'].transfer_package(package_odoo.id, location_dest_id)
                 sql_update = "update ulma_cajas set ('procesado') values ('Y') where matricula = {}".format(package[0])
                 self.create({
