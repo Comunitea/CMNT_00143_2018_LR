@@ -170,7 +170,7 @@ class StockPickingSGA(models.Model):
         return val
 
 
-    def apply_move_lines(self, line_vals):
+    def apply_move_lines(self, line_vals, code):
         ##recuperar todos los stock_moves
         ##anular sus move_line
         ##recrear move_lines
@@ -196,7 +196,7 @@ class StockPickingSGA(models.Model):
             move_id = move_ids.filtered(lambda x:x.id == val['move_id'])
             move_line_vals = prepare_line_vals(move_id)
             move_line_vals.update(qty_done = float(val['qty_done']))
-            if val['result_package_id']:
+            if val['result_package_id'] and code == 'INR':
                 move_line_vals.update(result_package_id=val['result_package_id'])
             move_line_ids |= move_line_ids.create(move_line_vals)
             
@@ -418,7 +418,7 @@ class StockPickingSGA(models.Model):
 
         if line_values:
             print("line_values: {}".format(line_values))
-            move_line_ids = self.apply_move_lines(line_values)
+            move_line_ids = self.apply_move_lines(line_values, code)
             print("move_line_ids: {}".format(move_line_ids))
             picking_ids = move_line_ids.mapped('picking_id')
             print("picking_ids: {}".format(picking_ids))
