@@ -196,7 +196,7 @@ class StockPickingSGA(models.Model):
             move_id = move_ids.filtered(lambda x:x.id == val['move_id'])
             move_line_vals = prepare_line_vals(move_id)
             move_line_vals.update(qty_done = float(val['qty_done']))
-            if val['result_package_id'] and code == 'INR':
+            if val['result_package_id']:
                 move_line_vals.update(result_package_id=val['result_package_id'])
             move_line_ids |= move_line_ids.create(move_line_vals)
             
@@ -318,10 +318,6 @@ class StockPickingSGA(models.Model):
                             'shipping_type': actual_line.shipping_type
                         })
                         
-                    move_line_id.update({
-                        'result_package_id': package.id
-                    })
-
                     print("OUT: {}".format(move_line_id))
 
                     return move_line_id
