@@ -81,7 +81,6 @@ class UlmaProcessedMmmout(models.Model):
                 self.response = e
                 return False
             _logger.info("Consulta: {}.".format(sql_update))
-            #Descomentar cuando sea seguro probar
             self._cr.execute(sql_update)
 
         processed_vals = {
