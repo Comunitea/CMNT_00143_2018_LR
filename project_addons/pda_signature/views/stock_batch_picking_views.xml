@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="assets_backend" name="Signature pda assets" inherit_id="web.assets_backend">
+        <xpath expr="." position="inside">
+            <script type="text/javascript" src="/pda_signature/static/js/signature_pda.js"/>
+        </xpath>
+    </template>
+
+    <record model="ir.ui.view" id="stock_batch_picking_pda_form">
+        <field name="name">stock.batch.picking.move.selection.form</field>
+        <field name="model">stock.batch.picking</field>
+        <field name="inherit_id" ref="stock_batch_picking.stock_batch_picking_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Firma">
+                    <label for="digital_signature" string="Firmar" class="oe_edit_only"/>
+                <h2>
+                    <field name="digital_signature" widget="signature"/>
+                    <group>
+                        <field name="signature_firstName"/>
+                        <field name="signature_lastName"/>
+                        <field name="signature_email"/>
+                        <field name="signature_location"/>
+                        <button name="send_to_signature_pda" class="pda_call"  type="object" string="Send" />
+                    </group>
+                </h2>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>
