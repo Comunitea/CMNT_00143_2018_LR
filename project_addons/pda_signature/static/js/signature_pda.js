@@ -39,18 +39,18 @@ odoo.define('pda_signature.signature_pda', function (require) {
             fields: fields
         })
         .then(function(data){
-            var message  =  {  
-                "firstName":  data[0]['signature_firstName'],  
-                "lastName":  data[0]['signature_lastName'],  
-                "eMail":  data[0]['signature_email'],  
-                "location":  data[0]['signature_location'], 
-                "imageFormat":  1,  
-                "imageX":  imgWidth,  
+            var message  =  {                  
+                "firstName": data[0]['signature_firstName'],  
+                "lastName": data[0]['signature_lastName'],  
+                "eMail": data[0]['signature_email'],  
+                "location": data[0]['signature_location'], 
+                "imageFormat": 1,  
+                "imageX": imgWidth,  
                 "imageY": imgHeight,  
                 "imageTransparency": false,  
-                "imageScaling":  false,  
-                "maxUpScalePercent":  0.0,  
-                "rawDataFormat":  "ENC", 
+                "imageScaling": false,  
+                "maxUpScalePercent": 0.0,  
+                "rawDataFormat": "ENC", 
                 "minSigPoints": 2
             };
 
@@ -68,7 +68,30 @@ odoo.define('pda_signature.signature_pda', function (require) {
                 var str = event.target.getAttribute("SigCaptureWeb_msgAttri");
                 var obj = JSON.parse(str);
                 console.log(obj);
-                SetValues(obj, imgWidth, imgHeight);
+
+                var signature_data = {
+                    signature_firstName: data[0]['signature_firstName'],
+                    signature_lastName: data[0]['signature_lastName'],
+                    signature_email: data[0]['signature_email'],
+                    signature_location: data[0]['signature_location'],
+                    signature_error: obj['errorMsg'],
+                    signature_image_data: obj['imageData'],
+                    signature_is_signed: obj['isSigned'],
+                    signature_pad_info: obj['padInfo'],
+                    signature_raw_data: obj['rawData'],
+                    signature_sig_string: obj['sigString']
+                }
+                
+                console.log(obj['errorMsg']);
+                rpc.query({
+                    model: 'stock.batch.picking',
+                    method: 'save_pda_data',
+                    args: [id, signature_data],
+                })
+                .then(function () {
+                    console.log("Datos guardados");
+                })
+                
             } 
         });
     });

@@ -33,8 +33,19 @@ class StockBatchPicking(models.Model):
     signature_lastName = fields.Char('Last name')
     signature_email = fields.Char('E-mail')
     signature_location = fields.Char('Location')
+    signature_error = fields.Char('Signature error')
+    signature_image_data = fields.Char('Signature image data')
+    signature_is_signed = fields.Boolean('Is signed')
+    signature_pad_info = fields.Char('Pad info')
+    signature_raw_data = fields.Char('Raw data')
+    signature_sig_string = fields.Char('Sig String')
 
     @api.multi
     def send_to_signature_pda(self):
         self.ensure_one()
         pass
+
+    @api.multi
+    def save_pda_data(self, args):
+        for batch in self:
+            batch.sudo().update(args)

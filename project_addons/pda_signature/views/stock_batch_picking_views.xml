@@ -13,8 +13,9 @@
         <field name="arch" type="xml">
             <xpath expr="//notebook" position="inside">
                 <page string="Firma">
-                    <label for="digital_signature" string="Firmar" class="oe_edit_only"/>
                 <h2>
+                    <label for="digital_signature" string="Firmar" class="oe_edit_only"/>
+                </h2>
                     <field name="digital_signature" widget="signature"/>
                     <group>
                         <field name="signature_firstName"/>
@@ -23,7 +24,11 @@
                         <field name="signature_location"/>
                         <button name="send_to_signature_pda" class="pda_call"  type="object" string="Send" />
                     </group>
-                </h2>
+                    <group>
+                        <field name="signature_error" attrs="{'invisible': [('signature_is_signed', '=', True)]}"/>
+                        <field name="signature_is_signed"/>
+                        <field name="signature_pad_info"/>
+                    </group>
                 </page>
             </xpath>
         </field>
