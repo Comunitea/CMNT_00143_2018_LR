@@ -28,10 +28,12 @@
     'license': 'AGPL-3',
     'depends': [
         'contract_digitized_signature',
-        'stock_move_selection_wzd'
+        'stock_move_selection_wzd',
+        'report_xlsx'
     ],
     'data': [
-        'views/stock_batch_picking_views.xml'
+        'views/stock_batch_picking_views.xml',
+        'report/report_batch_picking.xml'
     ],
     'installable': True,
     'auto_install': False,

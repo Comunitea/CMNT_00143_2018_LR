@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_batch_picking_pda_signature" name="Signature pda assets" inherit_id="stock_custom.report_batch_picking_document">
+        <xpath expr="//div[@id='total']" position="after">
+            <div class="row" t-if="doc.signature_image_data">
+                <span class="col-xs-4"/>
+                <span class="col-xs-8 text-center">
+                    <img t-att-src="'data:image/png;base64,%s' % to_text(doc.signature_image_data)"/>
+                </span>
+            </div>
+            <div t-else="">
+                Sin firmar
+            </div>
+        </xpath>
+    </template>
+</odoo>

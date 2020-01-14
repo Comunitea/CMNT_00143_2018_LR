@@ -39,6 +39,7 @@ class StockBatchPicking(models.Model):
     signature_pad_info = fields.Char('Pad info')
     signature_raw_data = fields.Char('Raw data')
     signature_sig_string = fields.Char('Sig String')
+    signature_full_response = fields.Char('Full response')
 
     @api.multi
     def send_to_signature_pda(self):

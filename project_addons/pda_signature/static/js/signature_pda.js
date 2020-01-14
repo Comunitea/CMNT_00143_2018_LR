@@ -79,7 +79,8 @@ odoo.define('pda_signature.signature_pda', function (require) {
                     signature_is_signed: obj['isSigned'],
                     signature_pad_info: obj['padInfo'],
                     signature_raw_data: obj['rawData'],
-                    signature_sig_string: obj['sigString']
+                    signature_sig_string: obj['sigString'],
+                    signature_full_response: obj
                 }
                 
                 console.log(obj['errorMsg']);
