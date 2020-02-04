@@ -72,7 +72,7 @@ class TestL10nEsAeatVatBook(TestL10nEsAeatModBase):
         ).render(vat_book.ids)
         self.assertGreaterEqual(len(report_pdf[0]), 1)
         # Export to XLSX
-        report_name = 'l10n_es_vat_book.l10n_es_vat_book_xlsx'
+        report_name = 'l10n_es_vat_book_prev.l10n_es_vat_book_xlsx'
         report_xlsx = self.env.ref(report_name).render(vat_book.ids)
         self.assertGreaterEqual(len(report_xlsx[0]), 1)
         self.assertEqual(report_xlsx[1], 'xlsx')

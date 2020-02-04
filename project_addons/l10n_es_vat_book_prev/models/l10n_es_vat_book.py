@@ -442,7 +442,7 @@ class L10nEsVatBookPrev(models.Model):
             'name': 'VAT book XLSX report',
             'model': 'l10n.es.vat.book.prev',
             'type': 'ir.actions.report',
-            'report_name': 'l10n_es_vat_book.l10n_es_vat_book_xlsx',
+            'report_name': 'l10n_es_vat_book_prev.l10n_es_vat_book_xlsx',
             'report_type': 'xlsx',
             'report_file': 'l10n.es.vat.book.prev',
             'context': context,

@@ -16,6 +16,9 @@
         'account_payment_partner'
     ],
     'data': [
-        'views/account_invoice.xml'
+        'views/account_invoice.xml',
+        'report/account_invoice_tax_report_view.xml',
+        'security/ir.model.access.csv',
+        'security/account_invoice_custom_security.xml'
     ]
 }
