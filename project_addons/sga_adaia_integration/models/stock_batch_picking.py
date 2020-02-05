@@ -17,17 +17,14 @@ class StockBatchPickingSGA(models.Model):
 
     sga_state = fields.Selection(SGA_STATES)
     #draft_move_line_ids = fields.One2many('stock.move.line', 'draft_batch_picking_id', string='Líneas de Movimientos')
-    adaia_code = fields.Char(compute="compute_route_fields")
-    adaia_dock = fields.Integer(compute="compute_route_fields")    
+    adaia_code = fields.Char(compute="compute_adaia_fields")
+    adaia_dock = fields.Integer(compute="compute_adaia_fields")
     adaia_group = fields.Char(compute="compute_adaia_group")
     adaia_import_partner_ref = fields.Char(compute="import_partner_ref")
     adaia_picking_ids = fields.One2many('stock.picking', compute='get_adaia_picking_ids')    
 
-
     @api.multi
-    @api.depends('move_lines.shipping_type', 'move_lines.delivery_route_path_id', 'move_lines.carrier_id')
-    def compute_route_fields(self):
-        super(StockBatchPickingSGA, self).compute_route_fields()
+    def compute_adaia_fields(self):
         for batch in self:
             if batch.shipping_type == 'route':
                 batch.adaia_code = 'NORM'

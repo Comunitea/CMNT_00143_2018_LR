@@ -38,13 +38,12 @@ class StockPickingSGA(models.Model):
     sga_adaia_partner_ref = fields.Char(compute="compute_adaia_partner_ref")
 
     adaia_move_ids = fields.One2many('stock.move', compute='get_adaia_lines')
-    adaia_code = fields.Char(compute="compute_route_fields")
-    adaia_dock = fields.Integer(compute="compute_route_fields")    
+    adaia_code = fields.Char(compute="compute_adaia_fields")
+    adaia_dock = fields.Integer(compute="compute_adaia_fields")
     adaia_group = fields.Char(compute="compute_adaia_group")
 
     @api.multi
-    @api.depends('adaia_move_ids.shipping_type', 'adaia_move_ids.delivery_route_path_id', 'adaia_move_ids.carrier_id')
-    def compute_route_fields(self):
+    def compute_adaia_fields(self):
         for pick in self:
             if pick.shipping_type == 'route':
                 pick.adaia_code = 'NORM'
