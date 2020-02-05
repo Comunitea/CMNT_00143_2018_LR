@@ -9,6 +9,7 @@
                 <sheet>
                     <group>
                         <group>
+                            <field name="sent"/>
                             <field name="id"/>
                             <field name="mmmcmdref"/>
                             <field name="mmmges"/>

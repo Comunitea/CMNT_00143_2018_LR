@@ -18,9 +18,9 @@ class StockBatchPicking(models.Model):
     def get_ulma_vals(self):
         vals = self.picking_type_id.get_ulma_vals('pick')
         update_vals= {
-            'momcre': datetime.datetime.now(),
+            'momcre': "{}".format(datetime.datetime.now()),
             'mmmbatch': self.name[-9:],
-            'mmmmomexp': datetime.datetime.now()
+            'mmmmomexp': "{}".format(datetime.datetime.now()),
         }
         vals.update(update_vals)
         return vals
@@ -60,9 +60,9 @@ class StockBatchPicking(models.Model):
             for pick in picking_ids:
                 vals = pick.get_vals_picking_to_ulma(batch)
                 ulma_pick = ulma_out.create(vals)
-                pick_lines = line_ids.filtered(lambda x: x.picking_id == pick).mapped('move_line_ids')
+                pick_lines = line_ids.filtered(lambda x: x.picking_id == pick)
                 for move in pick_lines:
-                    vals = move.get_move_line_ulma_vals(cont=cont)
+                    vals = move.get_move_ulma_vals(cont=cont)
                     ulma_move = ulma_out.create(vals)
                     cont += 1
                     move_outs += ulma_move
