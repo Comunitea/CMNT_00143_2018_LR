@@ -1,6 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+     <record model="ir.ui.view" id="view_delivery_partner_order_tree">
+        <field name="name">delivery.partner.order.tree</field>
+        <field name="model">delivery.partner.order</field>
+        <field name="arch" type="xml">
+            <tree string="Oden de ruta" editable="top" create="0" delete="0">
+                <field name="sequence" widget="handle"/>
+                <field name="delivery_id" readonly="1" invisible="context.get('default_delivery_id', False)"/>
+                <field name="partner_id" readonly="1"/>
+                <field name="city" readonly="1"/>
+                <field name="zip" readonly="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_show_delivery_partner_orders" model="ir.actions.act_window">
+            <field name="name">Orden en la ruta</field>
+            <field name="res_model">delivery.partner.order</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_delivery_partner_order_tree"/>
+    </record>
     <!-- stock.batch.picking form view -->
     <record model="ir.ui.view" id="stock_batch_delivery_form">
         <field name="name">stock.batch.delivery.form</field>
@@ -8,13 +30,16 @@
         <field name="arch" type="xml">
             <form string="Batch delivery">
                 <header>
+
+
                     <!--button name="action_assign" class="oe_highlight" string="Reserve All"
                             states="draft" type="object"/-->
                     <button name="action_transfer" states="ready" string="Validar" type="object"/>
                     <button name="action_confirm" states="draft" string="Confirmar" type="object"/>
                     <button name="action_draft" states="ready" string="Cancelar" type="object"/>
-                    <field name="state" widget="statusbar" statusbar_visible="draft,confirm"/>
 
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirm"/>
+                    <button name="action_show_filter_wzd" states="draft" string="Contenido" type="object"/>
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
@@ -22,7 +47,7 @@
                                 class="oe_stat_button"
                                 icon="fa-truck"
                                 type="object">
-                                <field name="count_picking_ids" widget="statinfo" string="Albaranes"/>
+                                <field name="count_batch_ids" widget="statinfo" string="Albaranes"/>
                         </button>
                         <button name="action_view_stock_package"
                                 class="oe_stat_button"
@@ -37,6 +62,14 @@
                                 type="object">
                                 <field name="count_move_lines" widget="statinfo" string="Líneas"/>
                         </button>
+                        <button name="action_view_delivery_partner_orders"
+                                class="oe_stat_button"
+                                icon="fa-arrows"
+
+                                type="object">
+                                <field name="count_partner_ids" widget="statinfo" string="Ruta"/>
+                        </button>
+
                     </div>
                     <div class="oe_title">
                         <div class="oe_edit_only">
@@ -67,6 +100,18 @@
                                 <field name="picking_ids" widget="many2many_tags" />
                                 <field name="move_lines" widget="many2many_tags" />
                             </group-->
+                        </page>
+                        <page string='Orden de carga'>
+                             <button class="oe_link oe_right"
+                                    name="update_partner_order" type="object"
+                                     string="↳Actualizar orden de la ruta" states="draft,ready"/>
+                            <field name="partner_order_ids" editable="bottom">
+                                <tree>
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="partner_id" readonly="1"/>
+                                </tree>
+
+                            </field>
                         </page>
                     </notebook>
                 </sheet>
@@ -135,6 +180,13 @@
             model="ir.actions.act_window">
         <field name="name">Ordenes de carga</field>
         <field name="res_model">stock.batch.delivery</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+     <record id="action_package_tree_view"
+            model="ir.actions.act_window">
+        <field name="name">Paquetes</field>
+        <field name="res_model">stock.quant.package</field>
         <field name="view_mode">tree,form</field>
     </record>
 

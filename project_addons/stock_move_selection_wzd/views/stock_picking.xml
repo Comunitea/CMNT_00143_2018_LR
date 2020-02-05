@@ -31,8 +31,10 @@
                             type="object"
                             icon="fa-tags"
                             groups="base.group_user"
-                            attrs="{'invisible':['|',('code','=','incoming'),('state','not in',('confirmed','assigned','partially_available'))]}"/>
+                            attrs="{'invisible':['|',('code','=','incoming'), ('state','not in',('confirmed','assigned','partially_available'))]}"/>
             </button>
+
+
             <button name="button_validate" position="attributes">
                 <attribute name="confirm">
                     Estás seguro que quieres validar un albarán sin asignarlo a una expedición o una orden de carga?
@@ -41,9 +43,6 @@
 
             <field name="picking_type_id" position="after">
                 <field name="sga_integrated"></field>
-            </field>
-             <field name="group_id" position="before">
-                <field name="draft_batch_picking_id"/>
             </field>
             <notebook position="inside">
                 <page string="Integración SGA" attrs="{'invisible': [('sga_state','=', 'no_integrated')]}">
@@ -110,8 +109,8 @@
                     <filter string="Urgente" name="urgent_route" domain="[('shipping_type','=', 'urgent')]"/>
                     <filter string="Ruta" name="route_route" domain="[('shipping_type','=', 'route')]"/>
                 <separator string="TEST"/>
-                    <filter string="Con batch" name="with_batch" domain="[('draft_batch_picking_id','!=', False)]"/>
-                    <filter string="Sin batch" name="to_batch" domain="[('draft_batch_picking_id','=', False)]"/>
+                    <filter string="Con batch" name="with_batch" domain="[('batch_picking_id','!=', False)]"/>
+                    <filter string="Sin batch" name="to_batch" domain="[('batch_picking_id','=', False)]"/>
             </filter>
 
             <filter name="picking_type" position="after">
@@ -131,20 +130,26 @@
                       decoration-muted="state == 'cancel'"
                       decoration-danger="state not in ('cancel', 'done') and scheduled_date &lt; current_date"
                       string="Picking list">
-                    <field name="picking_type_id" invisible="context.get('filter_group_code', True) != True"/>
+                    <field name="picking_type_id" invisible="context.get('filter_group_code', '') == 'all'"/>
                     <field name="origin"/>
                     <field name="shipping_type" invisible="context.get('filter_group_code', True) != True"/>
                     <field name="delivery_route_path_id" invisible="context.get('filter_group_code', True) != True"/>
                     <field name="info_route_str" invisible="context.get('filter_group_code', True) != False"/>
                     <field name="batch_delivery_id" invisible="context.get('group_code', False) != 'outgoing'"/>
+                     <!-- Quitamos la opción de agregar desde pickings a ordenes de entrega
                     <button name="action_add_to_batch_delivery" string="Enviar" type="object"
                             context="{'object': 'stock.picking'}" icon="fa-truck" class="text-primary"
-                            attrs="{'invisible': ['|', ('group_code', 'not in', ('outgoing', 'dropship')), ('state', '!=', 'assigned')]}"/>
+                            attrs="{'invisible': ['|', '|', ('group_code', 'not in', ('outgoing', 'dropship')), ('batch_picking_id', '=', False), ('state', '!=', 'assigned')]}"/>
+                            -->
                     <field name="carrier_id" invisible="context.get('filter_group_code', True) != False"/>
                     <field name="name"/>
                     <field name="count_move_lines"/>
-
-                    <field name="draft_batch_picking_id"/>
+                    <field name="batch_picking_id"/>
+                    <button name="action_add_to_batch_picking"
+                            string="(Des)Asignar batch" type="object"
+                            context="{'model': 'picking'}" icon="fa-tasks"
+                            class="text-primary"
+                            attrs="{'invisible': [ '|', ('state', 'not in', ('assigned', 'partially_available')), ('batch_delivery_id', '!=', False)]}"/>
                     <field name="location_id" invisible="context.get('hide_location_id', False) != False" groups="stock.group_stock_multi_locations"/>
                     <field name="location_dest_id" invisible="context.get('hide_location_dest_id', False) != False" groups="stock.group_stock_multi_locations"/>
                     <field name="partner_id"/>

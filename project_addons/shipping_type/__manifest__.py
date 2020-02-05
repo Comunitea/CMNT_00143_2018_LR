@@ -19,12 +19,13 @@
 
     ],
     'data': [
+        'security/ir.model.access.csv',
         'views/res_partner_view.xml',
         'views/sale_order.xml',
         'views/stock_quant_package.xml',
         'views/stock_picking.xml',
         'views/stock_move.xml',
         'views/stock_batch_picking.xml',
-        #'views/delivery_route_path.xml'
+        'views/delivery_route_path.xml'
     ],
 }

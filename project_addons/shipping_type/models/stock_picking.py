@@ -15,27 +15,35 @@ class StockPicking(models.Model):
     carrier_id = fields.Many2one("delivery.carrier", string="Carrier")
 
     @api.multi
-    def compute_route_fields(self):
-        for pick in self:
-            moves = pick.move_lines
-            if moves:
-                shipping_type_ids = []
-                for move in moves:
-                    if move.shipping_type in shipping_type_ids:
-                        continue
-                    shipping_type_ids.append(move.shipping_type)
-                if shipping_type_ids[0] and len(shipping_type_ids) == 1:
-                    pick.shipping_type = shipping_type_ids[0]
-                delivery_route_path_ids = moves.mapped('delivery_route_path_id')
-                if len(delivery_route_path_ids) == 1:
-                    pick.delivery_route_path_id = delivery_route_path_ids[0]
-                carrier_ids = moves.mapped('carrier_id')
-                if len(carrier_ids) == 1:
-                    pick.carrier_id = carrier_ids[0]
-                payment_term_ids = moves.mapped('payment_term_id')
-                if len(payment_term_ids) == 1:
-                    pick.payment_term_id = payment_term_ids[0]
-    @api.multi
     def write(self, vals):
-        return super().write(vals)
+        res = super().write(vals)
+        r_vals = ['payment_term_id', 'shipping_type', 'delivery_route_path_id', 'carrier_id', 'campaign_id']
+        vals = list(set([x for x in vals.keys()]) & set(r_vals))
+        if not vals:
+            return res
+        ctx = self._context.copy()
+        ctx.update(from_parent=True)
+        for obj in self:
+            if obj.state == 'done':
+                raise ValidationError(_('No puedes hacer cambiar estos valores en ordenes ya realizadas'))
+
+            domain = [('picking_id', '=', obj.id), ('result_package_id', '=', False)]
+            move_ids = self.env['stock.move.line'].search(domain).mapped('move_id')
+
+            domain = [('picking_id', '=', obj.id), ('result_package_id', '!=', False)]
+            package_ids = self.env['stock.move.line'].search(domain).mapped('result_package_id')
+
+            if not self._context.get('from_parent', False):
+                ## Si no viene de una orden de carga, entonces ....
+                if move_ids:
+                    if any(x in ('done', 'cancel') for x in move_ids.mapped('state')):
+                        raise ValidationError(_('No puedes hacer cambiar estos valores en movimientos ya realizados'))
+                    if obj.batch_picking_id:
+                        raise ValidationError(_('No puedes hacer cambiar estos valores en ordenes ya albaranadas'))
+
+            package_ids.with_context(ctx).write(obj.update_info_route_vals())
+            move_ids.with_context(ctx).write(obj.update_info_route_vals())
+
+        return res
+
 

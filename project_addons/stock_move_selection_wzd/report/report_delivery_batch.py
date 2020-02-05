@@ -20,9 +20,17 @@ class DeliveryBatchReport(models.AbstractModel):
 
         info_partner_ids = []
         ctx = self._context.copy()
-        for partner_id in move_ids.mapped('partner_id'):
+
+        seq_partner_ids = self.env['delivery.partner.order'].search([('delivery_id', '=', delivery_id.id)])
+        if not seq_partner_ids:
+            seq_partner_ids = delivery_id.create_partner_order()
+
+
+        for order_line in seq_partner_ids:
+
+            partner_id = order_line.partner_id
             delivery_route_id = delivery_id.delivery_route_path_id
-            partner_order = partner_id.get_route_order(delivery_route_id)
+            partner_order = order_line.sequence
             ctx.update(partner_id=partner_id.id)
             info_partner = delivery_id.get_delivery_info (partner_id=partner_id)
             str_pick = ''
@@ -32,7 +40,7 @@ class DeliveryBatchReport(models.AbstractModel):
                 else:
                     str_pick = picking_id['name']
 
-            manual_moves = move_ids.filtered(lambda x: x.product_id.manual_picking)
+            manual_moves = move_ids.filtered(lambda x: x.partner_id == partner_id and x.product_id.manual_picking)
             info_partner.update({
                 'route': delivery_route_id,
                 'partner_id': partner_id,

@@ -7,6 +7,18 @@ from odoo import _, api, fields, models
 from odoo.exceptions import UserError,ValidationError
 from odoo.addons.shipping_type.models.info_route_mixin import SHIPPING_TYPE_SEL, DEFAULT_SHIPPING_TYPE, STRING_SHIPPING_TYPE, HELP_SHIPPING_TYPE
 
+
+class DeliveryPartnerOrder(models.Model):
+
+    _name = 'delivery.partner.order'
+    _order = 'delivery_id, sequence asc'
+
+    delivery_id = fields.Many2one('stock.batch.delivery', 'Orden de carga')
+    partner_id = fields.Many2one('res.partner')
+    sequence = fields.Integer(string="Sequence", default=10)
+    city = fields.Char(related='partner_id.city')
+    zip = fields.Char(related='partner_id.zip')
+
 class StockBatchDelivery(models.Model):
     """ This object allow to manage multiple stock.batch.delivery
     """
@@ -14,7 +26,27 @@ class StockBatchDelivery(models.Model):
     _inherit = ['info.route.mixin', 'mail.thread', 'mail.activity.mixin']
     _name = 'stock.batch.delivery'
 
-    #@api.depends('move_lines.date_expected')
+    @api.multi
+    def update_partner_order(self):
+        import ipdb; ipdb.set_trace()
+        ##todo review
+        dpo_ids = self.env['delivery.partner.order']
+
+        for delivery_id in self:
+            delivery_id.partner_order_ids = False
+            route_ids = delivery_id.move_lines.mapped('delivery_route_path_id')
+            for partner_id in delivery_id.partner_ids:
+                domain = [('partner_id', '=', partner_id.id), ('route_id', 'in', route_ids.ids)]
+                sequences = self.env['route.partner.order'].search_read(domain, ['sequence'], limit=1)
+                if sequences:
+                    seq = sequences[0]['sequence']
+                else:
+                    seq = 10
+                new_dpe = {'delivery_id': delivery_id.id,
+                           'partner_id': partner_id.id,
+                           'sequence': seq}
+                self.env['delivery.partner.order'].create(new_dpe)
+
     @api.multi
     def _get_dates(self):
         for batch in self:
@@ -81,14 +113,10 @@ class StockBatchDelivery(models.Model):
         },
         help='the user who prepare this batch'
     )
-    batch_ids = fields.One2many('stock.batch.picking', string='Grupo', compute = '_get_picking_ids')
-    picking_ids = fields.One2many(
-        'stock.picking', string='Albaranes',
-        compute='_get_picking_ids',
-        help='List of picking related to this batch.'
-    )
-
-    count_picking_ids = fields.Integer('Nº albaranes', compute='_get_picking_ids')
+    batch_ids = fields.One2many('stock.batch.picking', 'batch_delivery_id', string='Grupo', )
+    picking_ids = fields.One2many('stock.picking', 'batch_delivery_id', string='Albaranes', help='List of picking related to this batch.')
+    count_batch_ids = fields.Integer('Nº albaranes', compute='_get_picking_ids')
+    count_picking_ids = fields.Integer('Nº pedidos', compute='_get_picking_ids')
     move_lines = fields.One2many(
         'stock.move', 'batch_delivery_id',
         string='Movimientos',
@@ -96,15 +124,15 @@ class StockBatchDelivery(models.Model):
     )
     count_move_lines = fields.Integer('Nº líneas', compute='_get_picking_ids')
     move_line_ids = fields.One2many(
-        'stock.move.line',
+        'stock.move.line', 'batch_delivery_id',
         string='Operaciones',
-        compute='_get_picking_ids',
         help='List of picking related to this batch.'
 
     )
     partner_ids = fields.One2many('res.partner', compute='_get_picking_ids', string="Empresa")
+    count_partner_ids = fields.Integer('Nº clientes', compute='_get_picking_ids')
     package_ids = fields.One2many(
-        'stock.quant.package', compute='_get_picking_ids',
+        'stock.quant.package', 'batch_delivery_id',
         string='Paquetes',
         help='Those are the entire packages of a picking shown in the view of '
              'operations',
@@ -116,6 +144,7 @@ class StockBatchDelivery(models.Model):
                                       help='Carrier driver for this batch picking.',
                                       domain="[('route_driver', '=', True)]")
     plate_id = fields.Many2one('delivery.plate', string='Matrícula', help='Plate for this batch picking.')
+
     company_id = fields.Many2one(
         'res.company', 'Company',
         default=lambda self: self.env['res.company']._company_default_get(),
@@ -130,8 +159,10 @@ class StockBatchDelivery(models.Model):
     weight = fields.Float(
         'Peso', digits=2,
         help="The weight of the contents in Kg, not including any packaging, etc.")
-
-
+    partner_order_ids = fields.One2many('delivery.partner.order', 'delivery_id', string="Partner order")
+    delivery_route_path_ids = fields.Many2many('delivery.route.path', string="Rutas de transporte")
+    payment_term_ids = fields.Many2many('account.payment.term', string='Plazos de pago')
+    shipping_type_ids = fields.Many2many('delivery.route.path', string="Tipos de envío")
 
     @api.multi
     @api.depends('move_lines.shipping_type', 'move_lines.delivery_route_path_id', 'move_lines.carrier_id')
@@ -182,6 +213,7 @@ class StockBatchDelivery(models.Model):
             moves.write(vals)
 
     def get_delivery_info(self, partner_id=False):
+
         move_lines = self.move_lines
         if partner_id:
             move_lines = move_lines.filtered(lambda x:x.partner_id == partner_id)
@@ -189,7 +221,7 @@ class StockBatchDelivery(models.Model):
         move_line_ids = move_lines.mapped('move_line_ids')
         package_ids = move_line_ids.mapped('result_package_id')
         package_packaging_ids = package_ids.mapped('packaging_line_ids')
-        sbp_ids = move_lines.mapped('batch_picking_id') + move_lines.mapped('draft_batch_picking_id')
+        sbp_ids = move_lines.mapped('batch_picking_id')
         vals ={
             'picking_ids': picking_ids,
             'batch_ids': sbp_ids,
@@ -211,20 +243,13 @@ class StockBatchDelivery(models.Model):
 
     @api.multi
     def _get_picking_ids(self):
-        partner_id = self._context.get('partner_id', False)
-        for delivery_batch in self:
-
-            vals = delivery_batch.get_delivery_info(partner_id=partner_id)
-            print(vals)
-            delivery_batch.count_move_lines= vals['count_move_lines']
-            delivery_batch.count_package_packaging_ids = vals['count_package_packaging_ids']
-            delivery_batch.count_picking_ids = vals['count_picking_ids']
-            delivery_batch.count_package_ids = vals['count_package_ids']
-            delivery_batch.package_ids = vals['package_ids']
-            delivery_batch.batch_ids = vals['batch_ids']
-            #delivery_batch.batch_picking_ids = vals['batch_picking_ids']
-
-            #delivery_batch.write(delivery_batch.get_delivery_info(partner_id=partner_id))
+        for delivery_id in self:
+            delivery_id.count_package_ids = len(delivery_id.package_ids)
+            delivery_id.count_batch_ids = len(delivery_id.batch_ids)
+            delivery_id.count_picking_ids = len(delivery_id.picking_ids)
+            delivery_id.count_move_lines = len(delivery_id.move_lines)
+            delivery_id.partner_ids = delivery_id.picking_ids.mapped('partner_id')
+            delivery_id.count_partner_ids = len(delivery_id.partner_ids)
 
 
     @api.multi
@@ -240,6 +265,15 @@ class StockBatchDelivery(models.Model):
     @api.multi
     def action_confirm(self):
         self.write({'state': 'ready'})
+
+    @api.multi
+    def action_view_delivery_partner_orders(self):
+
+        self.ensure_one()
+        action = self.env.ref('stock_move_selection_wzd.action_show_delivery_partner_orders').read([])[0]
+        action['domain'] = [('id', 'in', self.partner_order_ids.ids)]
+        action['context'] = {'default_delivery_id': self.id}
+        return action
 
     @api.multi
     def action_view_stock_package(self):
@@ -298,3 +332,26 @@ class StockBatchDelivery(models.Model):
                 obj.info_route_str = '{}: {}'.format(shipping_type, name2)
             else:
                 obj.info_route_str = False
+
+
+    @api.multi
+    def action_show_filter_wzd(self):
+
+        self.ensure_one()
+        val = {'delivery_id': self.id,
+               'type': 'package',
+               'shipping_type_ids': self.shipping_type,
+               'delivery_route_path_ids': [(6,0,self.delivery_route_path_id.ids)],
+               'partner_ids': [(6,0, self.partner_ids.ids)],
+               'package_ids': [(6,0, self.package_ids.ids)],
+               'move_ids': [(6,0,self.move_ids.ids)],
+               'move_line_ids': [(6, 0, self.move_line_ids.ids)],
+               'picking_ids': [(6, 0, self.picking_ids.ids)]}
+
+
+        new_wzd = self.env[('stock.batch.delivery.filter.wzd')].create(val)
+
+        self.ensure_one()
+        action = self.env.ref('stock_move_selection_wzd.action_batch_delivery_filter').read([])[0]
+        action['res_id'] = new_wzd.id
+        return action

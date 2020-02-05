@@ -201,16 +201,11 @@ class ReportPrintBatchPicking(models.AbstractModel):
 
     @api.model
     def _get_grouped_data(self, batch):
-        print ('Datos del Batch {} / {}'.format(batch.name, batch.picking_type_id.group_code))
+        print ('Datos del Batch {} / {}'.format(batch.name, batch.picking_type_id.group_code.code))
         grouped_data = {}
-        code = batch.picking_type_id.group_code
-
-        if batch.state == 'done':
-            op_ids = batch.move_line_ids
-            move_ids = op_ids.mapped('move_id')
-        else:
-            move_ids = batch.draft_move_lines
-            op_ids = batch.draft_move_lines.mapped('move_line_ids')
+        code = batch.picking_type_id.group_code.code
+        op_ids = batch.move_line_ids
+        move_ids = op_ids.mapped('move_id')
 
         #prev_picks = move_ids.mapped('move_orig_ids').mapped("picking_id")
         #sales = move_ids.mapped('sale_line_id').mapped('order_id')

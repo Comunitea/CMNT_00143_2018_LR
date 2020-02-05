@@ -12,57 +12,8 @@ class StockBatchPicking(models.Model):
     _name = 'stock.batch.picking'
 
     campaign_id = fields.Many2one('campaign', 'Campaign')
-    carrier_id = fields.Many2one("delivery.carrier", string="Carrier", compute='compute_route_fields',
-                                 inverse='set_route_fields')
-    shipping_type = fields.Selection(compute='compute_route_fields', inverse='set_route_fields', store=True)
-    delivery_route_path_id = fields.Many2one('delivery.route.path', compute='compute_route_fields',
-                                             inverse='set_route_fields', store=True)
-    payment_term_id = fields.Many2one('account.payment.term', string='Plazos de pago', compute='compute_route_fields',
-                                      inverse='set_route_fields', store=True)
-
-    @api.multi
-    def compute_route_fields(self):
-        for pick in self:
-            moves = pick.move_lines
-            if moves:
-                shipping_type_ids = []
-                for move in moves:
-                    if move.shipping_type in shipping_type_ids:
-                        continue
-                    shipping_type_ids.append(move.shipping_type)
-                if shipping_type_ids[0] and len(shipping_type_ids) == 1:
-                    pick.shipping_type = shipping_type_ids[0]
-                delivery_route_path_ids = moves.mapped('delivery_route_path_id')
-                if len(delivery_route_path_ids) == 1:
-                    pick.delivery_route_path_id = delivery_route_path_ids[0]
-                carrier_ids = moves.mapped('carrier_id')
-                if len(carrier_ids) == 1:
-                    pick.carrier_id = carrier_ids[0]
-                payment_term_ids = moves.mapped('payment_term_id')
-                if len(payment_term_ids) == 1:
-                    pick.payment_term_id = payment_term_ids[0]
-
-    def check_allow_change_route_fields(self):
-        return True
-        if any(move.state == 'done' for move in self.move_lines):
-            raise ValidationError(_('No puedes cambiar en movimientos ya realizados'))
-        return True
-
-    @api.multi
-    def set_route_fields(self):
-        for pick in self:
-            pick.check_allow_change_route_fields()
-            moves = pick.move_lines
-            vals = {}
-            if pick.shipping_type:
-                vals.update({'shipping_type': pick.shipping_type})
-            if pick.delivery_route_path_id:
-                vals.update({'delivery_route_path_id': pick.delivery_route_path_id.id})
-            if pick.carrier_id:
-                vals.update({'carrier_id': pick.carrier_id.id})
-            if pick.payment_term_id:
-                vals.update({'payment_term_id': pick.payment_term_id.id})
-            moves.write(vals)
+    payment_term_id = fields.Many2one('account.payment.term', string='Plazos de pago')
+    carrier_id = fields.Many2one("delivery.carrier", string="Carrier")
 
     @api.multi
     @api.constrains('shipping_type', 'delivery_route_path_id', 'payment_term_id', 'picking_type_id')
@@ -71,5 +22,20 @@ class StockBatchPicking(models.Model):
 
     @api.multi
     def write(self, vals):
-        return super().write(vals)
-
+        res = super().write(vals)
+        r_vals = ['payment_term_id', 'shipping_type', 'delivery_route_path_id', 'carrier_id', 'campaign_id']
+        vals = list(set([x for x in vals.keys()]) & set(r_vals))
+        if not vals:
+            return res
+        ctx = self._context.copy()
+        ctx.update(from_parent=True)
+        for obj in self:
+            picking_ids = obj.picking_ids
+            if not self._context.get('from_parent', False):
+                ## Si no viene de una orden de carga, entonces ....
+                if any(x in ('done', 'cancel') for x in obj.picking_ids.mapped('state')):
+                    raise ValidationError(_('No puedes hacer cambiar estos valores con picks ya realizados'))
+                if obj.batch_delivery_id:
+                    raise ValidationError(_('No puedes hacer cambiar estos valores en albaranes con una orden de carga'))
+            picking_ids.with_context(ctx).write(obj.update_info_route_vals())
+        return res

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-
-    <record id="stock_move_selection_wzd_delivery_route_path_form_adr_sequence" model="ir.ui.view">
+    <delete id="delivery_route_path_form_adr_sequence" model="ir.ui.view"/>
+    <!--record id="stock_move_selection_wzd_delivery_route_path_form_adr_sequence" model="ir.ui.view">
         <field name="name">stock_move_selection_wzd_delivery_route_path_form_adr_sequence</field>
         <field name="model">delivery.route.path</field>
         <field name="inherit_id" ref="stock_move_selection_wzd.delivery_route_path_form"/>
@@ -15,6 +15,6 @@
                 </field>
             </xpath>
         </field>
-    </record>
+    </record-->
 
 </odoo>

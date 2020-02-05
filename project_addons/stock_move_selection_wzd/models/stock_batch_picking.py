@@ -17,16 +17,6 @@ class StockBatchPicking(models.Model):
     _inherit = ['stock.batch.picking', 'mail.thread', 'mail.activity.mixin']
     _name = 'stock.batch.picking'
 
-    @api.multi
-    def _get_draft_move_lines(self):
-        for batch_picking_id in self:
-            if batch_picking_id.picking_type_id.sga_integrated:
-                batch_picking_id.draft_move_lines = batch_picking_id.move_lines.filtered(
-                    lambda x: x.sga_state not in ('ready', 'done', 'cancel') and x.reserved_availability > 0)
-            else:
-                batch_picking_id.draft_move_lines = batch_picking_id.move_lines.filtered(
-                    lambda x: x.reserved_availability > 0)
-
     @api.model
     def _get_parner_ids_domain(self):
         domain = [('state', 'not in', [('cancel', 'done')])]
@@ -37,7 +27,7 @@ class StockBatchPicking(models.Model):
     @api.multi
     def _get_batch_partner_id(self):
         for batch in self:
-            moves = batch.move_lines | batch.draft_move_lines
+            moves = batch.move_lines
             partner= moves.mapped('partner_id')
             batch.partner_id = len(partner) == 1 and partner or False
 
@@ -48,12 +38,22 @@ class StockBatchPicking(models.Model):
     access_token = fields.Char(
         'Security Token', copy=False,
         default=_get_default_access_token)
+    move_lines = fields.One2many(
+        'stock.move', 'batch_picking_id', string='Related stock moves',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        help='List of picking managed by this batch.'
+    )
+    move_line_ids = fields.One2many(
+        'stock.move.line', 'batch_picking_id', string='Related pack operations',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        help='List of picking managed by this batch.'
+    )
 
     batch_delivery_id = fields.Many2one('stock.batch.delivery', string="Delivery batch")
-    picking_type_id = fields.Many2one('stock.picking.type', string='Picking type', required=True, readonly=True, states={'draft': [('readonly', False)]},)
-    draft_move_lines = fields.One2many('stock.move', 'draft_batch_picking_id', string='Movimientos', readonly=True, states={'draft': [('readonly', False)]})
-    draft_picking_ids = fields.One2many('stock.picking', 'draft_batch_picking_id', string='Albaranes')
-    draft_move_line_ids = fields.One2many('stock.move.line', 'draft_batch_picking_id')
+    picking_type_id = fields.Many2one('stock.picking.type', string='Picking type', required=True, readonly=True,
+                                      states={'draft': [('readonly', False)]}, )
     sga_integrated = fields.Boolean(related='picking_type_id.sga_integrated')
     sga_state = fields.Selection(SGA_STATES, default='no_integrated', string="SGA Estado", compute="get_sga_state")
     company_id = fields.Many2one(
@@ -61,6 +61,7 @@ class StockBatchPicking(models.Model):
         default=lambda self: self.env['res.company']._company_default_get('stock.move'),
         index=True, required=True)
     code = fields.Selection(related='picking_type_id.code')
+    group_code = fields.Many2one(related='picking_type_id.group_code', store=True)
     excess = fields.Boolean(string='Franquicia')
     date_done = fields.Datetime('Realizado', copy=False, help="Fecha de transferencia")
     ready_to_transfer = fields.Boolean('Listo para transferir', compute="compute_ready_to_transfer")
@@ -69,13 +70,11 @@ class StockBatchPicking(models.Model):
     payment_term_ids = fields.Many2many('account.payment.term', string='Plazos de pago')
     shipping_type_ids = fields.Selection(related='shipping_type')
     partner_ids = fields.Many2many('res.partner', string='Clientes', domain=_get_parner_ids_domain)
-
     pack_count = fields.Integer('Nº de paquetes')
     move_count = fields.Integer('Nº de líneas')
     sale_count = fields.Integer('Nº de pedidos')
     partner_id = fields.Many2one('res.partner', compute=_get_batch_partner_id)
     str_content = fields.Char('Contenido')
-
     pack_lines_picking_id = fields.Many2one('stock.batch.picking')
     orig_batch_picking_id = fields.Many2one('stock.batch.picking')
 
@@ -84,6 +83,18 @@ class StockBatchPicking(models.Model):
         oldname="signature_image",
     )
     signup_url = fields.Char(compute='_compute_signup_url', string='Signup URL')
+
+
+    @api.multi
+    def set_notes(self):
+        for batch in self:
+            note = 'Notas de los albaranes asociados'
+            for pick in batch.picking_ids:
+                if pick.note:
+                    note = '{}\n{}\n{}'.format(note, pick.name, pick.note)
+                else:
+                    note = '{}\n{}'.format(note, pick.name)
+            batch.notes = note
 
     @api.multi
     def _compute_signup_url(self):
@@ -101,23 +112,15 @@ class StockBatchPicking(models.Model):
         """
 
         self.ensure_one()
-        pickings = self.mapped('picking_ids') + self.draft_move_lines.mapped('picking_id')
+        pickings = self.mapped('picking_ids')
         action = self.env.ref('stock.action_picking_tree_all').read([])[0]
         action['domain'] = [('id', 'in', pickings.ids)]
         return action
 
-    @api.depends('picking_ids', 'draft_picking_ids')
-    def _compute_move_lines(self):
-        for batch in self.filtered(lambda x: not x.draft_move_lines):
-            batch.move_lines = batch.picking_ids.mapped("move_lines")
-
-        for batch in self.filtered(lambda x: x.draft_move_lines):
-            batch.move_lines = batch.draft_move_lines
-
     @api.multi
     def compute_ready_to_transfer(self):
         for batch in self:
-            moves = batch.draft_move_lines or batch.move_lines
+            moves = batch.move_lines
             if moves and all(x.state in ('assigned', 'partially_available') for x in moves):
                 batch.ready_to_transfer = True
             else:
@@ -126,10 +129,7 @@ class StockBatchPicking(models.Model):
     @api.multi
     def _get_nlines(self):
         for pick in self:
-            if pick.draft_move_lines and pick.state != 'done':
-                pick.count_move_lines = len(pick.draft_move_lines)
-            else:
-                pick.count_move_lines = len(pick.move_lines)
+            pick.count_move_lines = len(pick.move_lines)
 
     def get_excess_domain(self):
         from_time = self.env['stock.picking.type'].get_excess_time()
@@ -147,21 +147,20 @@ class StockBatchPicking(models.Model):
 
     def check_allow_change_route_fields(self):
         super().check_allow_change_route_fields()
-        if any((move.state != 'done' and move.batch_delivery_id) for move in self.draft_move_lines) and not self._context.get('force_route_vals', False):
+        if any((move.state != 'done' and move.batch_delivery_id) for move in self.move_lines) and not self._context.get(
+                'force_route_vals', False):
             raise ValidationError(_('No puedes cambiar en movimientos de una orden de carga'))
         return True
 
-
-
     @api.multi
-    @api.depends('draft_move_lines.sga_state')
+    @api.depends('move_lines.sga_state')
     def get_sga_state(self):
         for batch in self:
-            lines = batch.draft_move_lines
+            lines = batch.move_lines
             batch.sga_state = self.env['stock.picking.type'].get_parent_state(lines)
 
     def get_batch_moves_to_transfer(self):
-        return self.draft_move_lines
+        return self.move_lines
 
     @api.multi
     def set_as_sga_done(self):
@@ -169,14 +168,13 @@ class StockBatchPicking(models.Model):
             moves = batch.get_batch_moves_to_transfer().filtered(lambda x: x.quantity_done > 0.00)
             moves.write({'sga_state': 'done'})
 
-    @api.depends('picking_ids.partner_id', 'draft_move_lines.partner_id')
+    @api.depends('picking_ids.partner_id', 'move_lines.partner_id')
     @api.multi
     def get_partner_id(self):
         for batch in self:
             if batch.picking_ids:
                 partner_id = batch.picking_ids.mapped('partner_id')
-            else:
-                partner_id = batch.draft_move_lines.mapped('partner_id')
+
             if len(partner_id) == 1:
                 batch.partner_id = partner_id[0]
             else:
@@ -185,7 +183,6 @@ class StockBatchPicking(models.Model):
     @api.multi
     def unlink(self):
         if self.mapped('batch_delivery_id'):
-            self.draft_move_lines.batch_delivery_id
             raise ValidationError(_('No puedes eliminar un grupo que ya está en una orden de carga. Priemro debes sacarlo de la orden de carga'))
         return super().unlink()
 
@@ -204,80 +201,7 @@ class StockBatchPicking(models.Model):
     @api.multi
     def force_assign_create_lines(self):
         for batch in self:
-            batch.draft_move_lines._force_assign_create_lines()
             batch.move_lines._force_assign_create_lines()
-
-    @api.multi
-    def action_transfer(self):
-        """
-        """
-        #self.filtered(lambda x: x.picking_type_id.code == 'outgoing').compute_route_fields()
-        effective = self.filtered(lambda x: x.draft_move_lines)
-        normal = self.filtered(lambda x: not x.draft_move_lines and x.state != 'done')
-        if any(batch.batch_delivery_id for batch in self):
-            raise ValidationError (_('No puedes validar un alabrán de cliente asignado a una orden de carga. Deberás de validar la orden de carga'))
-
-
-        for batch in effective:
-            moves = batch.get_batch_moves_to_transfer()
-            #if all(x.qty_done == 0.00 for x in moves.mapped('move_line_ids')) and False:
-            #    for ml in moves.mapped('move_line_ids'):
-            #        ml.qty_done = ml.product_uom_qty
-            moves.write({'draft_batch_picking_id': False})
-            moves_to_do = moves.filtered(lambda x: x.state in ('partially_available', 'assigned')).mapped('move_line_ids')
-
-            picks = moves_to_do.mapped('picking_id')
-            sale_count = len(picks)
-            move_count=len(moves_to_do)
-            pack_count = len(moves_to_do.mapped('result_package_id'))
-            for pick in picks:
-                if all(x.quantity_done == 0 for x in pick.move_lines):
-                    for ml in moves_to_do:
-                        ml.qty_done = ml.product_uom_qty
-            picks_to_transfer = moves.mapped('picking_id')
-
-            if not picks_to_transfer:
-                continue
-            picks_to_transfer.action_done()
-            picks_to_transfer.write({'batch_picking_id': batch.id,
-                                     'draft_batch_picking_id': False})
-            batch.verify_state()
-
-            back_domain = [('backorder_id', 'in', picks_to_transfer.ids), ('state', '!=', 'cancel')]
-            backorders = self.env['stock.picking'].search(back_domain)
-            message = _(
-                "Se ha validado el batch por "
-                "<a href=# data-oe-model=res.user data-oe-id=%d>%s</a> <ul>"
-                ) % (self.env.user.user_id.id, self.env.user.display_name)
-
-            if picks_to_transfer:
-                pick_message = '<ul>Albaranes:'
-                message = "{}{}".format(message, pick_message)
-                for pick in picks_to_transfer:
-                    pick_message = "<li><a href=# data-oe-model=stock.picking data-oe-id=%d>%s</a>{}</li>"% (pick.id, pick.name)
-                    message = "{}{}".format(message, pick_message)
-                message = "{}</ul>".format(message)
-
-            if backorders:
-                pick_message = '<ul>Pendientes:'
-                message = "{}{}".format(message, pick_message)
-                for pick in backorders:
-                    pick_message = "<li><a href=# data-oe-model=stock.picking data-oe-id=%d>%s</a>{}</li>"% (pick.id, pick.name)
-                    message = "{}{}".format(message, pick_message)
-                message = "{}</ul>".format(message)
-            batch.message_post(message)
-            batch.write({'state': 'done',
-                         'str_content': '{} / {} / {}'.format(sale_count, pack_count, move_count),
-                         'sale_count': sale_count,
-                         'move_count': move_count,
-                         'pack_count': pack_count,
-                         'date_done': fields.Datetime.now()})
-            batch.compute_route_fields()
-            if batch.picking_type_id.code == 'outgoing' and batch.picking_type_id.group_code != 'packaging':
-                batch.create_batch_packaging_id()
-
-        if normal.mapped('picking_ids'):
-            return super(StockBatchPicking, normal).action_transfer()
 
     @api.multi
     def create_batch_packaging_id(self):
@@ -355,7 +279,7 @@ class StockBatchPicking(models.Model):
     @api.multi
     def send_to_sga(self):
         for batch in self:
-            lines =  batch.draft_move_lines
+            lines = batch.move_lines
             sga_done_vals = {'sga_state': 'pending'}
             lines.write(sga_done_vals)
             ##PARA HEREDAR EN ULMA Y ADAIA
@@ -364,7 +288,7 @@ class StockBatchPicking(models.Model):
                 "<a href=# data-oe-model=stock.batch.picking data-oe-id=%d>%s</a> <ul>") % (batch.id, batch.name)
 
             batch_message = message
-            for pick in batch.draft_picking_ids:
+            for pick in batch.picking_ids:
                 batch_message = '{} <li> El albarán {} ha sido incluido en el lote</li>'.format(batch_message, "<a href=# data-oe-model=stock.picking data-oe-id=%d>%s</a> (%s)"%(pick.id, pick.name, pick.origin))
 
 
@@ -377,10 +301,9 @@ class StockBatchPicking(models.Model):
                 lines_str = '{}</ul>'.format(lines_str)
                 pick.message_post('{}{}'.format(message, lines_str))
 
-
             batch_message = '{}</ul>'.format(batch_message)
             batch.message_post(batch_message)
-            batch.draft_picking_ids.write({'sga_state': 'pending'})
+            batch.picking_ids.write({'sga_state': 'pending'})
             batch.sga_state = 'pending'
 
         return True
@@ -390,11 +313,11 @@ class StockBatchPicking(models.Model):
         return True
 
     def return_move_vals(self, moves, picking_ids, complete=False):
-        #pickings = moves.mapped('picking_id')
+        # pickings = moves.mapped('picking_id')
 
         vals = []
         for pick in picking_ids:
-            if pick.draft_batch_picking_id or all(not move.draft_batch_picking_id for move in pick.move_lines):
+            if pick.batch_picking_id or all(not move.batch_picking_id for move in pick.move_lines):
                 selected = True
             else:
                 selected = False
@@ -409,9 +332,9 @@ class StockBatchPicking(models.Model):
                                 'product_uom_qty': move.product_uom_qty,
                                 'result_package_id': move.result_package_id.id,
                                 'state': move.state,
-                                'draft_batch_picking_id': move.draft_batch_picking_id.id
+                                'batch_picking_id': move.batch_picking_id.id
                                 })
-                vals.append ((0,0,val))
+                vals.append((0, 0, val))
         return vals
 
     def return_pick_vals(self, picking_ids, complete=False):
@@ -426,10 +349,24 @@ class StockBatchPicking(models.Model):
                             'count_move_lines': pick.count_move_lines,
                             'partner_id': pick.partner_id.id,
                             'state': pick.state,
-                            'draft_batch_picking_id': pick.draft_batch_picking_id.id
-                                })
-            vals.append ((0,0,val))
+                            'batch_picking_id': pick.batch_picking_id.id
+                            })
+            vals.append((0, 0, val))
         return vals
+
+    @api.multi
+    def action_add_to_batch_delivery(self):
+        if any(x.state in ('done', 'cancel') for x in self):
+            raise ValidationError (_('Estado incorrecto para los albaranes: {}'.format([x.name for x in self.filtered(lambda x: x.state in ('cancel', 'done'))])))
+
+        if len(self) == 1:
+            if self.batch_delivery_id:
+                #self.move_lines.filtered(lambda x: x.state != 'done').write({'batch_delivery_id': False})
+                self.batch_delivery_id = False
+                return
+
+        action = self.env.ref('stock_move_selection_wzd.batch_delivery_wzd_act_window').read()[0]
+        return action
 
     @api.multi
     def open_tree_to_add(self):

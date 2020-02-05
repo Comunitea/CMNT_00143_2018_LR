@@ -27,7 +27,7 @@
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="view_id" ref="batch_pick_tree_custom"/>
+            <field name="view_id" ref="stock_batch_picking_tree"/>
             <!--field name="search_view_id" ref="stock_move_view_sel_search"/-->
             <field name="context">{}</field>
     </record>

@@ -6,6 +6,14 @@ from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 
 
+class DeliveryPartnerOrder(models.Model):
+
+    _name = "route.partner.order"
+
+    route_id = fields.Many2one('delivery.route.path')
+    sequence = fields.Integer('Orden en ruta', default=10)
+    partner_id = fields.Many2one('res.partner', 'Cliente', domain=[('customer', '=', True)])
+
 
 class DeliveryCarrier(models.Model):
 
@@ -28,5 +36,4 @@ class DeliveryRoutePath(models.Model):
     name = fields.Char('Route code')
     description = fields.Char("Description")
     day_ids = fields.Many2many('delivery.route.path.day')
-
-
+    partner_order_ids = fields.One2many('route.partner.order', 'route_id')

@@ -8,6 +8,9 @@
                 <separator string="Orden"/>
                 <label string="Asistente para envíos."/>
                 <br/>
+                <div>
+                    <h3 style="color:red"><field name="warning" readonly="1"/></h3>
+                </div>
                 <group>
                     <field name="state"/>
                     <field name="id" invisible="1"/>
@@ -50,8 +53,8 @@
                     <page string="Lineas" >
                         <field name="line_ids" create="false" delete="0">
                             <tree editable="bottom" decoration-warning="selected==False"
-                                    decoration-muted="draft_batch_picking_id==False"
-                                    decoration-success="draft_batch_picking_id!=False">
+                                    decoration-muted="batch_picking_id==False"
+                                    decoration-success="batch_picking_id!=False">
                                 <field name="selected"/>
                                 <field name="origin" readonly="1"/>
                                 <field name="info_route_str" readonly="1"/>
@@ -59,7 +62,7 @@
                                 <field name="product_uom_qty" readonly="1"/>
                                 <field name="result_package_id" readonly="1"/>
                                 <field name="state" readonly="1"/>
-                                <field name="draft_batch_picking_id" invisible="1" readonly="1"/>
+                                <field name="batch_picking_id" invisible="1" readonly="1"/>
                             </tree>
                         </field>
                     </page>
@@ -68,7 +71,6 @@
                         <field name="packages_ids" readonly="1" >
                             <tree>
                                 <field name="name"/>
-                                <field name="batch_picking_id"/>
                                 <field name="partner_id"/>
                                 <field name="info_route_str"/>
 

@@ -104,6 +104,7 @@
                     <field name="count_move_unpacked"/>
                     <field name="visible_count_move_unpacked"/>
 
+                    <field name="count_move_reservas"/>
 
                     <field name="count_picking_waiting"/>
                     <field name="visible_count_picking_waiting"/>
@@ -215,7 +216,7 @@
                                                                                                               'move_domain': 'count_move_ready',
                                                                                                               'search_default_with_no_package': 1}">
 
-                                                                Para empaquetar
+                                                                Empaquetado
                                                             </a>
                                                         </div>
                                                         <div class="col-xs-3">
@@ -288,10 +289,9 @@
                                                         <div class="col-xs-6 text-primary" title="Pedidos pendientes">
                                                             <a name="get_action_tree" type="object" context="{'dest_model': 'stock.picking',
                                                                                                               'pick_domain': 'count_picking',
-                                                                                                              'search_default_available': 1,
-                                                                                                              'search_default_by_shipping_type':1,
-                                                                                                              'search_default_by_delivery_path_route_id':1,
-                                                                                                              'search_default_by_partner_id':1,}">
+                                                                                                              'filter_group_code': 'all',
+                                                                                                              'search_default_available': 1,}">
+
                                                                 Pendientes(Totales)
                                                             </a>
                                                         </div>
@@ -304,11 +304,10 @@
                                                         <div class="col-xs-6 text-primary" title="Pedidos sin batch">
                                                             <a name="get_action_tree" type="object" context="{'dest_model': 'stock.picking',
                                                                                                               'pick_domain': 'count_pick_to_batch',
+                                                                                                              'filter_group_code': 'all',
                                                                                                               'search_default_to_batch': 1,
-                                                                                                              'search_default_available': 1,
-                                                                                                              'search_default_by_shipping_type':1,
-                                                                                                              'search_default_by_delivery_path_route_id':1,
-                                                                                                              'search_default_by_partner_id':1,}">
+                                                                                                              'search_default_available': 1
+                                                                                                              }">
                                                                 Sin
                                                                 <t t-esc="record.batch_name.value"/>
                                                             </a>
@@ -318,7 +317,8 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div name="purchase_orders" t-if="record.group_code.raw_value == 'location'">
+                                                <div name="purchase_orders"
+                                                     t-if="record.group_code and record.group_code.code == 'location'">
                                                     <div class="row">
                                                          <div class="col-xs-6 text-muted">
                                                             <span class="text-muted h3">Compras</span>
@@ -328,9 +328,10 @@
                                                     <div t-if="record.visible_count_picking_ready.raw_value == true" class="row">
                                                         <div class="col-xs-6 text-primary" title="Pedidos pendientes">
                                                             <a name="get_action_tree" type="object" context="{'dest_model': 'stock.picking',
+                                                                                                              'filter_group_code': 'all',
                                                                                                               'pick_domain': 'count_picking',
                                                                                                               'search_default_available': 1,
-                                                                                                              'search_default_by_partner_id':1,}">
+                                                                                                              }">
                                                                 Pendientes(Totales)
                                                             </a>
                                                         </div>
@@ -343,9 +344,10 @@
                                                         <div class="col-xs-6 text-primary" title="Pedidos sin batch">
                                                             <a name="get_action_tree" type="object" context="{'dest_model': 'stock.picking',
                                                                                                               'pick_domain': 'count_pick_to_batch',
+                                                                                                              'filter_group_code': 'all',
                                                                                                               'search_default_to_batch': 1,
                                                                                                               'search_default_available': 1,
-                                                                                                              'search_default_by_partner_id':1,}">
+                                                                                                              }">
                                                                 Sin
                                                                 <t t-esc="record.batch_name.value"/>
                                                             </a>
@@ -412,7 +414,6 @@
                                                             <a name="get_action_tree" type="object" context="{'dest_model': 'stock.move',
                                                                                                               'move_domain': 'count_move_waiting',
                                                                                                               }">
-
                                                                 En espera
                                                             </a>
                                                         </div>
@@ -438,11 +439,9 @@
 
                                                     <div t-if="record.visible_count_move_backorders.raw_value == true" class="row">
                                                          <div class="col-xs-6 text-warning" title="Movimientos sin stock o pendientes de otro movimiento">
-
                                                             <a name="get_action_tree" type="object" context="{'dest_model': 'stock.move',
                                                                                                               'move_domain': 'count_move_backorders',
                                                                                                               }">
-
                                                                 Back Orders
                                                             </a>
                                                         </div>
@@ -454,45 +453,48 @@
                                             </div>
 
                                             <div t-if="record.visible_ratio.raw_value == true" class="row col-xs-4 text-center">
-                                                <div t-if="record.ratio_object.raw_value == 'stock.move'">
+                                                <div t-if="record.count_move_todo_today.value>0 and record.ratio_object.raw_value == 'stock.move'">
                                                     <span>
                                                         <a type="object"
-                                                            name="get_action_tree" title="Movimientos programados para hoy o realizados hoy"
+                                                            name="get_action_tree"
+                                                            title="Movimientos programados para hoy o realizados hoy"
                                                             context="{  'dest_model': 'stock.move',
                                                                         'move_domain': 'count_move_todo_today',
                                                                         'search_default_last_day': 1,
-                                                                        'search_default_todo': 1}">
+                                                                        'search_default_todo': 1}">Movs:
                                                         <field name="count_move_todo_today"/>
                                                         </a>
                                                     </span>
                                                 </div>
-                                                <div t-if="record.ratio_object.raw_value == 'stock.picking'">
+                                                <div t-if="record.count_picking.value>0 and record.ratio_object.raw_value == 'stock.picking'">
                                                     <span>
                                                         <a type="object" name="get_action_tree" title="Ordenes programados para hoy o realizados hoy"
-                                                            context="{'dest_model': 'stock.picking',
+                                                            context="{
+                                                            'dest_model': 'stock.picking',
+                                                            'filter_group_code': 'all',
                                                             'pick_domain': 'count_picking',
                                                             'search_default_last_day': 1,
-                                                            'search_default_todo': 1}">
+                                                            'search_default_todo': 1}">Ords:
                                                             <field name="count_picking"/>
                                                         </a>
                                                     </span>
                                                 </div>
 
-                                                    <div t-if="record.visible_count_move_unpacked.raw_value == true" >
-                                                        <span class="o_label">
-                                                            <field name="rate_packed_undone" widget="gauge" style="cursor: pointer;"/>
-                                                        </span>
-                                                    </div>
-                                                    <div t-if="record.sga_integrated.raw_value == true">
-                                                        <span class="o_label">
-                                                           <field name="rate_sga_undone" widget="gauge" style="cursor: pointer;"/>
-                                                        </span>
-                                                    </div>
-                                                    <div>
-                                                        <span class="o_label">
-                                                            <field name="rate_undone" widget="gauge" style="cursor: pointer;"/>
-                                                        </span>
-                                                    </div>
+                                                <div t-if="record.rate_packed_undone and record.visible_count_move_unpacked.raw_value == true" >
+                                                    <span class="o_label">
+                                                        <field name="rate_packed_undone" widget="gauge" style="cursor: pointer;"/>
+                                                    </span>
+                                                </div>
+                                                <div t-if="record.rate_sga_undone and record.sga_integrated.raw_value == true">
+                                                    <span class="o_label">
+                                                       <field name="rate_sga_undone" widget="gauge" style="cursor: pointer;"/>
+                                                    </span>
+                                                </div>
+                                                <div t-if="record.rate_undone">
+                                                    <span class="o_label">
+                                                        <field name="rate_undone" widget="gauge" style="cursor: pointer;"/>
+                                                    </span>
+                                                </div>
                                             </div>
 
 
@@ -510,12 +512,12 @@
                                                     <span>Movimientos</span>
                                                 </div>
                                                 <div t-if="record.sga_integrated.raw_value == true" class="row">
-                                                    <div class="col-xs-5 text-primary" title="Movimientos de SGA (Totales)">
+                                                    <div class="col-xs-5 text-primary" title="Movimientos pendientes de SGA (Totales)">
                                                         <a name="get_action_tree" type="object" context="{'dest_model': 'stock.move',
                                                                                                           'move_domain': 'count_move_ready',
                                                                                                           'domain': [('sga_integrated', '=', True)],
                                                                                                           'search_default_waiting_sga': 1}">
-                                                            Pendientes de SGA
+                                                            SGA
                                                         </a>
                                                     </div>
                                                     <div class="col-xs-1">
@@ -526,7 +528,8 @@
 
                                                 <div t-if="record.visible_count_move_ready.raw_value == true" class="row">
                                                     <div class="col-xs-5 text-primary" title="Movimientos que ya tienen reserva total o parcial y pueden ser procesados">
-                                                        <a name="get_action_tree" type="object" context="{'dest_model': 'stock.move', 'move_domain': 'count_move_ready'}">
+                                                        <a name="get_action_tree" type="object" context="{'dest_model': 'stock.move',
+                                                                                                          'move_domain': 'count_move_ready'}">
                                                             Preparados
                                                         </a>
                                                     </div>
@@ -534,14 +537,25 @@
                                                         <span><t t-esc="record.count_move_ready.value"/></span>
                                                     </div>
                                                 </div>
+                                                <div class="row">
 
+                                                    <div class="col-xs-5 text-primary" title="Resrevas">
+                                                        <a name="get_action_tree" type="object" context="{'dest_model': 'stock.move',
+                                                                                                          'move_domain': 'count_move_reservas'}">
+                                                            Reservas
+                                                        </a>
+                                                    </div>
+                                                    <div  class="col-xs-1">
+                                                        <span ><t t-esc="record.count_move_reservas.value"/></span>
+                                                    </div>
+                                                </div>
                                                 <div t-if="record.visible_count_move_unpacked.raw_value == true" class="row">
                                                     <div class="col-xs-5 text-primary" title="Para empaquetar  (Totales)">
                                                         <a name="get_action_tree" type="object" context="{'dest_model': 'stock.move',
                                                                                                           'move_domain': 'count_move_ready',
                                                                                                           'domain': [('sga_integrated', '=', True)],
                                                                                                           'search_default_waiting_sga': 1}">
-                                                            Para empaquetar
+                                                            Empaquetado
                                                         </a>
                                                     </div>
                                                     <div class="col-xs-1">
@@ -553,7 +567,7 @@
                                                     <div class="col-xs-5 text-primary" title="Movimientos que no han sido asignados a un grupo">
                                                         <a name="get_action_tree" type="object" context="{'dest_model': 'stock.move',
                                                                                                           'move_domain': 'count_move_to_pick'}">
-                                                            Para albaranar
+                                                            Albaranado
                                                         </a>
                                                     </div>
                                                     <div class="col-xs-1">
@@ -590,19 +604,19 @@
                                                 <div class="o_kanban_card_manage_title">
                                                     <span>Otra info</span>
                                                 </div>
-                                                <div class="col-xs-6 text-primary" title="Pendientes (Todos)">
+                                                <div class="col-xs-6 text-primary" title="Estado de franquicia (Todos)">
                                                     <a name="get_action_tree" type="object" context="{'dest_model': 'stock.batch.picking',
                                                                                                       'batch_domain': 'affected_excess',
                                                                                                       'search_default_groupby_partner_id':1,
                                                                                                       'code': 'outgoing',
                                                                                                       'this_context':True
                                                                                                       }">
-                                                        Estado Franquicia
+                                                        Franquicia
                                                     </a>
                                                 </div>
-                                                        <div class="col-xs-3">
-                                                            <span><t t-esc="record.affected_excess.value"/> de <t t-esc="record.count_batch.value"/></span>
-                                                        </div>
+                                                <div class="col-xs-3">
+                                                    <span><t t-esc="record.affected_excess.value"/> de <t t-esc="record.count_batch.value"/></span>
+                                                </div>
 
 
                                             </div>
@@ -668,13 +682,13 @@
                 <filter string="A Futuro" name="filter_tomorrow" context="{'filter_day': 'tomorrow'}"/>
                 <filter string="Retrasado" name="filter_late" context="{'filter_day': 'late'}"/>
                 <separator/>
-                <filter string="Picking"  name="picking" domain="[('group_code','=','picking')]"/>
-                <filter string="Internal" name="internal" domain="[('group_code','=','internal')]"/>
-                <filter string="Incoming" name="incoming" domain="[('group_code','=','incoming')]"/>
-                <filter string="Outgoing" name="outgoing" domain="[('group_code','=','outgoing')]"/>
-                <filter string="Location" name="location" domain="[('group_code','=','location')]"/>
-                <filter string="Reposition" name="reposition" domain="[('group_code','=','reposition')]"/>
-                <filter string="Other" name="other" domain="[('group_code','=','other')]"/>
+                <filter string="Picking"  name="picking" domain="[('group_code.code','=','picking')]"/>
+                <filter string="Internal" name="internal" domain="[('group_code.code','=','internal')]"/>
+                <filter string="Incoming" name="incoming" domain="[('group_code.code','=','incoming')]"/>
+                <filter string="Outgoing" name="outgoing" domain="[('group_code.code','=','outgoing')]"/>
+                <filter string="Location" name="location" domain="[('group_code.code','=','location')]"/>
+                <filter string="Reposition" name="reposition" domain="[('group_code.code','=','reposition')]"/>
+                <filter string="Other" name="other" domain="[('group_code.code','=','other')]"/>
 
                 <separator/>
                 <group expand="0" string="Group By">

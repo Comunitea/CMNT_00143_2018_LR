@@ -101,6 +101,7 @@ class MoveChangeQuantWzd(models.TransientModel):
         return vals
 
     def action_apply_quant(self):
+        import ipdb; ipdb.set_trace()
         quant_ids = self.quant_ids.filtered(lambda x: x.new_quantity>0.00)
         if not quant_ids:
             return
@@ -122,8 +123,6 @@ class MoveChangeQuantWzd(models.TransientModel):
             new_move_id = self.move_id._split(quant_id.new_quantity)
             new_move = self.env['stock.move'].browse(new_move_id)
             if new_location.picking_type_id and new_location.picking_type_id != self.move_id.location_id.picking_type_id:
-
-
                 ##tengo que cambiarlod e albarán
                 new_loc_vals = {
                     field: new_location.id,
@@ -167,6 +166,8 @@ class MoveChangeQuantWzd(models.TransientModel):
 
         moves._action_assign()
         moves.move_sel_assign_picking()
+        self.move_id._recompute_state()
+        moves._recompute_state()
         return self.env['stock.picking.type'].return_action_show_moves(domain=[('id', 'in', moves.ids)])
 
 

@@ -12,11 +12,23 @@ class StockMoveLine(models.Model):
     sga_integrated = fields.Boolean(related='move_id.picking_type_id.sga_integrated')
     sga_state = fields.Selection(related='move_id.sga_state', store=True)
     batch_picking_id = fields.Many2one(related='picking_id.batch_picking_id')
-    draft_batch_picking_id = fields.Many2one(related='move_id.draft_batch_picking_id')
-    batch_delivery_id = fields.Many2one(related='move_id.batch_delivery_id')
+    batch_delivery_id = fields.Many2one(related='picking_id.batch_delivery_id')
+
+    @api.constrains('result_package_id', 'partner_id')
+    def check_partner(self):
+        import ipdb; ipdb.set_trace()
+        for line in self.filtered(lambda x: x.move_id.picking_type_id.group_code.code =='outgoing'):
+            if not line.result_package_id:
+                continue
+            partner_ids = line.result_package_id.mapped('move_line_ids').mapped('partner_id')
+            if partner_ids and len(partner_ids)!= 1 or partner_ids != line.partner_id:
+                raise ValueError(_('No es posible empaquetar para distintos clientes en las operaciones de salida'))
 
     @api.multi
     def write(self, vals):
+        if 'result_package_id' in vals:
+            result_package_id = self.env['stock.quant.package'].browse(vals.get('result_package_id'))
+
         return super().write(vals)
 
     @api.multi

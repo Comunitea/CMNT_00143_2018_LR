@@ -4,13 +4,13 @@
 
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
-from .stock_picking_type import PICKING_TYPE_GROUP
+from odoo.addons.stock_picking_type_group.models.stock_picking_type import PICKING_TYPE_GROUP
 from .stock_picking_type import SGA_STATES
 from odoo.osv import expression
+from odoo.addons import decimal_precision as dp
 
 class StockMove(models.Model):
     _inherit = 'stock.move'
-
 
 
     @api.multi
@@ -55,12 +55,11 @@ class StockMove(models.Model):
     delivery_route_group_id = fields.Many2one('delivery.route.path.group', 'Grupo de entrega', store=False)
     sga_integrated = fields.Boolean(related="picking_type_id.sga_integrated")
     sga_state = fields.Selection(SGA_STATES, default='no_integrated', string="SGA Estado", copy=False)
-    batch_delivery_id = fields.Many2one('stock.batch.delivery', string='Orden de carga', copy=False, store=True)
+    batch_delivery_id = fields.Many2one(related='picking_id.batch_delivery_id', string='Orden de carga', copy=False, store=True)
     batch_picking_id = fields.Many2one(related='picking_id.batch_picking_id', string='Grupo', store=True)
     draft_batch_picking_id = fields.Many2one('stock.batch.picking', string='Grupo', copy=False)
-    batch_id = fields.Many2one('stock.batch.picking', compute="get_effective_batch_id", inverse='set_effective_batch_id', string='Grupo')
     code = fields.Selection(related='picking_type_id.code')
-    group_code = fields.Selection(related='picking_type_id.group_code')
+    group_code = fields.Many2one(related='picking_type_id.group_code', store=True)
     decoration = fields.Char(compute = get_color_status)
     ghost_qty_done = fields.Integer(string="Cant. actual hecha",
                                     store=False,
@@ -69,6 +68,12 @@ class StockMove(models.Model):
     visible_count_move_to_pick = fields.Boolean(related='picking_type_id.visible_count_move_to_pick')
     visible_count_move_unpacked = fields.Boolean(related='picking_type_id.visible_count_move_unpacked')
     orig_picking_id = fields.Many2one(related='move_orig_ids.picking_id', string="Origen ...")
+    product_uom_qty_orig = fields.Float('Demanda Original', digits=dp.get_precision('Product Unit of Measure'))
+
+    def _action_done(self):
+        for move in self:
+            move.product_uom_qty_orig = move.product_uom_qty
+        return super()._action_done()
 
     @api.depends('state', 'picking_id')
     def _compute_is_initial_demand_editable(self):
@@ -82,20 +87,9 @@ class StockMove(models.Model):
 
     def check_allow_change_route_fields(self):
         super().check_allow_change_route_fields()
-        if any(move.batch_id for move in self.move_line_ids) and not self._context.get('force_route_vals', False):
+        if any(move.batch_picking_id for move in self.move_line_ids) and not self._context.get('force_route_vals', False):
             raise ValidationError (_('No puedes cambiar en movimientos en un batch'))
         return True
-
-    @api.multi
-    @api.depends('state', 'draft_batch_picking_id', 'batch_picking_id')
-    def get_effective_batch_id(self):
-
-        for move in self:
-            move.batch_id = move.batch_picking_id if move.state == 'done' else move.draft_batch_picking_id
-
-    @api.multi
-    def set_effective_batch_id(self):
-        self.filtered(lambda x: x.state not in ('done', 'cancel')).write({'draft_batch_picking_id': self.batch_id})
 
     @api.multi
     def unpack(self):
@@ -166,7 +160,10 @@ class StockMove(models.Model):
             return self
 
     def action_add_moves_to_batch_picking(self):
-        moves_ids = self.get_affected_moves()
+
+        if any(x.result_package_id for x in self):
+            raise ValidationError (_('No puedes modificar los grupos de movimientos empaquetados'))
+        moves_ids = self
         ## Cuando selecciono un movimiento o varios debo seleccionar todos los que van en el mismo paquete
         ctx = self._context.copy()
         if 'active_domain' in ctx.keys():
@@ -184,67 +181,116 @@ class StockMove(models.Model):
 
     @api.multi
     def action_remove_moves_to_batch_picking(self):
+        if any(x.result_package_id for x in self):
+            raise ValidationError(_('No puedes modificar los grupos de movimientos empaquetados'))
         for move in self:
             if move.batch_delivery_id:
-                raise ValidationError (_('No puedes quitar de un albarán un movimiento que está en una orden de carga. Primero quita el albarán de la orden de carga'))
+                raise ValidationError(_(
+                    'No puedes quitar de un albarán un movimiento que está en una orden de carga. Primero quita el albarán de la orden de carga'))
             if move.result_package_id:
-                raise ValidationError (_('No puedes quitar de un albarán un movimiento empaquetado, desempaquetalo primero'))
-            move.draft_batch_picking_id = False
+                raise ValidationError(
+                    _('No puedes quitar de un albarán un movimiento empaquetado, desempaquetalo primero'))
             move.picking_id = False
+            move.batch_picking_id = False
             move._assign_picking()
-
 
     @api.multi
     def assign_batch_picking_id(self, batch_picking_id):
+        print('\n------------\nPasando por assign_batch_picking_id Y ASIGNANDO EL {}'.format(batch_picking_id.name))
+        ## Todas las asginaciones de batch picking a los movimientos deben de pasar por aquí
         if not batch_picking_id or batch_picking_id.state != 'draft':
-            raise ValidationError (_('No encuenttro un grupo disponible o está en estado incorrecto'))
+            raise ValidationError(_('No encuentro un grupo disponible o está en estado incorrecto'))
 
         picking_ids = self.mapped('picking_id')
-        #Escribo en todos los movmientos en todos los albaranes asociados el batch_picking_id
-        #Los movimientos que no estén incluidos, los paso a otro picking
-
-        error_picking = picking_ids.filtered(lambda x: x.state in ('done', 'cancel') or (
-                    x.draft_batch_picking_id and x.draft_batch_picking_id != batch_picking_id))
+        error_picking = picking_ids.filtered(lambda x: x.state in ('done', 'cancel'))
         if error_picking:
             raise ValidationError(
                 _('Albaranes de pedidos en estado inconsistente. {}'.format([x.name for x in error_picking])))
+        if batch_picking_id:
+            val = {'batch_picking_id': batch_picking_id.id}
+            error_picking = picking_ids.filtered(
+                lambda x: x.batch_picking_id and x.batch_picking_id != batch_picking_id)
+            if error_picking:
+                raise ValidationError(
+                    _(
+                        'Albaranes de pedidos en con albarán distinto. Quitalos del albarán antes de asignar uno nuevo. {}'.format(
+                            [x.name for x in error_picking])))
+        else:
+            val = {'batch_picking_id': False}
         error_moves = self.filtered(lambda x: x.state in ('done', 'cancel') or (
-                    x.draft_batch_picking_id and x.draft_batch_picking_id != batch_picking_id))
+                x.batch_picking_id and x.batch_picking_id != batch_picking_id))
         if error_moves:
             raise ValidationError(_('Movimientos en estado inconsistente. {}'.format([x.name for x in error_picking])))
 
-        val = {'draft_batch_picking_id': batch_picking_id.id}
-        #escribo en todos los movimientos el nuevo batch picking id
-        self.write(val)
-
         for pick in picking_ids:
-            #import ipdb; ipdb.set_trace()
-            ##si el albarán no tiene picking se lo escribo
-            if pick.draft_batch_picking_id:
-                if pick.draft_batch_picking_id != batch_picking_id:
-                    raise ValidationError (_('Albaran ya asignado a un grupo'))
+            pick_moves = self.filtered(lambda x: x.picking_id)
+            if batch_picking_id:
+                ## Asigno los que hay y los otreos los saco
+                pick_moves_to_unlink = pick.move_lines - pick_moves
+                if pick_moves_to_unlink:
+                    pick_moves_to_unlink.write({'picking_id': False})
+                pick.write(val)
+                pick_moves_to_unlink._assign_picking()
             else:
-                pick.draft_batch_picking_id = batch_picking_id.id
-            ## reviso que movimientos del albaran tengo que reasignar
-            pick_moves = pick.move_lines.filtered(lambda x: x.draft_batch_picking_id != pick.draft_batch_picking_id)
-            if pick_moves:
-                pick_moves.write({'picking_id': False})
-                pick_moves._assign_picking()
+                ## Los que hay los dejo, pero los que vienen los saco
+                if pick_moves:
+                    pick_moves.write({'picking_id': False})
+                    pick_moves._assign_picking()
 
     @api.multi
     def button_unlink_from_batch(self):
         return self.action_remove_moves_to_batch_picking()
 
     @api.multi
+    def action_add_to_batch_delivery(self):
+        action = self.env.ref('stock_move_selection_wzd.batch_delivery_wzd_act_window').read()[0]
+        if self._context.get('object') == 'move':
+            self.get_affected_moves().filtered(lambda x: x.batch_delivery_id).write({'batch_delivery_id': False})
+            return
+        elif self._context.get('object') == 'package':
+            if self.result_package_id and self.batch_delivery_id:
+                ctx = self._context.copy()
+                ctx.update(force_route_vals=True)
+                package = self.with_context(ctx).result_package_id
+                package.batch_delivery_id = False
+                package.move_line_ids.write({'batch_delivery_id': False})
+
+                return
+            object = 'package'
+        return action
+
+    @api.multi
+    def assign_info_envio(self, vals):
+        picking_ids = self.mapped('picking_id')
+        for picking_id in picking_ids:
+            pick_moves = self.filtered(lambda x:x.picking_id == picking_id)
+            moves_to_unlink = picking_id.move_lines - pick_moves
+            if moves_to_unlink:
+                moves_to_unlink.write({'picking_id': False})
+            pick_moves.write(vals)
+            picking_id.write(vals)
+            if moves_to_unlink:
+                moves_to_unlink._assign_picking()
+    @api.multi
     def action_add_to_batch_picking(self):
 
+        if any(x.result_package_id for x in self):
+            raise ValidationError(_('No puedes modificar los grupos de movimientos empaquetados'))
+        if any(x.state in ('done', 'cancel') for x in self):
+            raise ValidationError(_('Algunos movieminteos están en estado incorrecto'))
+        to_add = self.filtered(lambda x: not x.batch_picking_id)
+        to_remove = self.filtered(lambda x: x.batch_picking_id)
 
-        to_add = self.filtered(lambda x: x.state != 'done' and not x.draft_batch_picking_id).get_affected_moves()
-        to_remove = self.filtered(lambda x: x.state != 'done' and  x.draft_batch_picking_id).get_affected_moves()
         if to_add and to_remove:
-            raise ValidationError (_('Selección inconsiste. Hay movimientos con y sin batch'))
+            raise ValidationError(_('Selección inconsistente. Hay movimientos con y sin batch'))
+
         if to_remove:
-            to_remove.write({'draft_batch_picking_id': False})
+            picking_ids = self.mapped('picking_id')
+            for pick in picking_ids:
+                to_remove_pick = to_remove.filtered(lambda x: x.picking_id == pick)
+                to_remove_pick.write({'picking_id': False})
+                to_remove_pick._assign_picking()
+
         elif to_add:
             ctx = self._context.copy()
             if 'active_domain' in ctx.keys():
@@ -278,23 +324,7 @@ class StockMove(models.Model):
         return super(StockMove, self.with_context(ctx)).search(new_args, offset=offset, limit=limit, order=order, count=count)
 
 
-    @api.multi
-    def action_add_to_batch_delivery(self):
-        action = self.env.ref('stock_move_selection_wzd.batch_delivery_wzd_act_window').read()[0]
-        if self._context.get('object') == 'move':
-            self.get_affected_moves().filtered(lambda x:x.batch_delivery_id).write({'batch_delivery_id': False})
-            return
-        elif self._context.get('object') == 'package':
-            if self.result_package_id and self.batch_delivery_id:
-                ctx = self._context.copy()
-                ctx.update(force_route_vals=True)
-                package = self.with_context(ctx).result_package_id
-                package.batch_delivery_id= False
-                package.move_line_ids.write({'batch_delivery_id': False})
 
-                return
-            object = 'package'
-        return action
 
     @api.multi
     def button_reasignar_origen_wzd(self):
@@ -305,6 +335,7 @@ class StockMove(models.Model):
             wzd_obj = self.env['move.change.quant.wzd']
             vals = wzd_obj.return_move_vals(self)
             wzd_id = wzd_obj.create(vals)
+            ##todo recisar este ctx
             ctx = {
                     'lang': 'es_ES',
                     'tz': 'Europe/Madrid',
@@ -437,7 +468,10 @@ class StockMove(models.Model):
 
     def _get_new_picking_domain(self):
         domain = super()._get_new_picking_domain()
-        domain += [('batch_picking_id', '=', False), ('draft_batch_picking_id', '=', False)]
+        if self._context.get('batch_picking_id', False):
+            domain += [('batch_picking_id', '=', self._context['batch_picking_id'])]
+        else:
+            domain += [('batch_picking_id', '=', False)]
         return domain
 
     def _action_done(self):
@@ -471,11 +505,12 @@ class StockMove(models.Model):
             self.env['stock.move.line'].create(move._prepare_move_line_vals(quantity=missing_reserved_quantity))
             move.write({'state': 'assigned'})
 
-
-
-
     def get_batch_domain(self):
         domain = super().get_batch_domain()
         domain += [('batch_delivery_id', '=', False)]
         return domain
 
+    def get_to_check_availability_domain(self):
+        domain = super().get_to_check_availability_domain()
+        domain += [('picking_id.batch_picking_id', '=', False)]
+        return domain

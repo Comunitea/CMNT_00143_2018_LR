@@ -57,7 +57,6 @@ class StockMove(models.Model):
         vals.update(self.update_info_route_vals())
         return vals
 
-
     def _get_new_picking_domain(self):
         return super()._get_new_picking_domain()
 

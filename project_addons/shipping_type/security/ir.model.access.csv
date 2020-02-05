@@ -1,21 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_user_delivery_route_path,access_user_delivery_route_path,model_delivery_route_path,sales_team.group_sale_salesman,1,0,0,0
-access_manager_delivery_route_path,access_manager_delivery_route_path,model_delivery_route_path,sales_team.group_sale_manager,1,1,1,1
 
-access_user_delivery_route_path_group,access_user_delivery_route_path_group,model_delivery_route_path_group,sales_team.group_sale_salesman,1,0,0,0
-access_manager_delivery_route_path_group,access_manager_delivery_route_path_group,model_delivery_route_path_group,sales_team.group_sale_manager,1,1,1,1
-
-
-access_user_delivery_plate,access_user_delivery_plate,model_delivery_plate,sales_team.group_sale_salesman,1,0,0,0
-access_manager_delivery_plate,access_manager_delivery_plate,model_delivery_plate,sales_team.group_sale_manager,1,1,1,1
-
-access_stock_batch_delivery_user,stock.delivery.user,model_stock_batch_delivery,stock.group_stock_user,1,1,0,0
-access_stock_batch_delivery_manager,stock.picking.delivery.manager,model_stock_batch_delivery,stock.group_stock_manager,1,1,1,1
-
-access_stock_quant_package_pack_line,stock.quant.package.pack.line.user,model_stock_quant_package_pack_line,stock.group_stock_user,1,1,1,1
-access_picking_type_group_code_user,picking.type.group.code.user,model_picking_type_group_code,stock.group_stock_user,1,0,0,0
-access_picking_type_group_code_manager,picking.type.group.code.manager,model_picking_type_group_code,stock.group_stock_manager,1,1,1,1
-
-access_delivery_partner_order_user,delivery_partner_order.user,model_delivery_partner_order,stock.group_stock_user,1,1,1,1
 access_route_partner_order_user,route_partner_order.user,model_route_partner_order,stock.group_stock_user,1,1,1,1
 

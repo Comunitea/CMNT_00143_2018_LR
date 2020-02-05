@@ -80,14 +80,27 @@ class SaleOrder(models.Model):
         return super().get_new_vals()
 
     @api.multi
-    #@api.depends('order_line.move_ids.batch_picking_ids', 'order_line.move_ids.batch_delivery_ids')
-    def get_batch_ids(self):
-
+    def _compute_picking_ids_state(self):
         for order in self:
-            domain = order.get_moves_domain()
-            move_ids = self.env['stock.move'].search(domain)
-            order.batch_picking_ids = move_ids.mapped('batch_id')
-            order.batch_delivery_ids = move_ids.mapped('batch_delivery_id')
+            picks = order.picking_ids.filtered(lambda x: x.state not in ('cancel', 'draft'))
+            print("{}. {}".format(order.name, picks))
+            if not picks:
+                continue
+            if all(x.state == picks[0].state for x in picks):
+                state = picks[0].state
+            elif any(x.state in ('waiting', 'confirmed') for x in picks):
+                state = 'waiting'
+            elif any(x.state == 'assigned' for x in picks):
+                state = 'assigned'
+            else:
+                state = 'draft'
+            order.picking_ids_state = state
+
+    @api.multi
+    def get_batch_ids(self):
+        for order in self:
+            order.batch_picking_ids = order.picking_ids.mapped('batch_picking_id')
+            order.batch_delivery_ids = order.picking_ids.mapped('batch_delivery_id')
             order.count_batch_picking_ids = len(order.batch_picking_ids)
             order.count_batch_delivery_ids = len(order.batch_delivery_ids)
 
@@ -95,6 +108,14 @@ class SaleOrder(models.Model):
     batch_delivery_ids = fields.One2many('stock.batch.delivery', compute=get_batch_ids)
     count_batch_picking_ids = fields.Integer(compute=get_batch_ids)
     count_batch_delivery_ids = fields.Integer(compute=get_batch_ids)
+    picking_ids_state = fields.Selection([
+        ('draft', 'Draft'),
+        ('waiting', 'Waiting Another Operation'),
+        ('confirmed', 'Waiting'),
+        ('assigned', 'Ready'),
+        ('done', 'Done'),
+        ('cancel', 'Cancelled')], string='En almacén', compute='_compute_picking_ids_state')
+
 
     @api.multi
     def action_view_batch_picking_ids(self):
