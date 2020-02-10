@@ -189,13 +189,13 @@
         </xpath>
     </template>
 
-    <template id="option_collapse_categories_recursive_catalogue" name="Collapse Category Recursive Catalogue">
+    <template id="option_collapse_categories_recursive_not_empty" name="Collapse Category Recursive Catalogue">
         <li t-att-class="'active' if categ.id == int(category or 0) else None">
             <i t-if="categ.child_id" t-attf-class="text-primary fa #{'fa-chevron-down' if categ.id in parent_category_ids else 'fa-chevron-right'}" />
             <a t-att-href="keep('/catalogue/category/' + slug(categ), category=0)" t-field="categ.name"></a>
             <ul t-if="categ.child_id" class="nav nav-pills nav-stacked nav-hierarchy" t-att-style="'display:block;' if categ.id in parent_category_ids else 'display:none;'">
                 <t t-foreach="categ.child_id" t-as="categ">
-                    <t t-call="theme_rias.option_collapse_categories_recursive_catalogue" />
+                    <t t-if="categ.product_ids" t-call="theme_rias.option_collapse_categories_recursive_catalogue" />
                 </t>
             </ul>
         </li>
@@ -208,7 +208,7 @@
                     <a t-att-href="keep('/catalogue',category=0)" class="o_not_editable">All Products</a>
                 </li>
                 <t t-foreach="categories" t-as="categ">
-                    <t t-call="theme_rias.option_collapse_categories_recursive_catalogue" />
+                    <t t-call="theme_rias.option_collapse_categories_recursive_not_empty" />
                 </t>
             </ul>
         </xpath>

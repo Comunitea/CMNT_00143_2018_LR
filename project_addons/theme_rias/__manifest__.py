@@ -38,6 +38,7 @@
         'website_slides',
         'website_form',
         'website_base_rias',
+        'website_sale_hide_empty_category'
     ],
     'data': [
         'data/menu_data.xml',
@@ -58,6 +59,7 @@
         'templates/forms.xml',
         'templates/page_pricelist.xml',
         'views/category.xml',
+        'templates/shop.xml'
     ],
     'images': [
         '/static/description/icon.png',

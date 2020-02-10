@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+<template id="option_collapse_categories_recursive_not_empty" inherit_id="website_sale.option_collapse_categories_recursive" name="Collapse Category Recursive not Empty">
+    <xpath expr="//t[@t-call='website_sale.option_collapse_categories_recursive']" position="replace">
+        <t t-if="categ.product_ids" t-call="website_sale.option_collapse_categories_recursive" />
+    </xpath>
+</template>
+
+</odoo>

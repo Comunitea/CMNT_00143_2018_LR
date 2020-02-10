@@ -173,7 +173,10 @@ class WebsiteSaleCatalogue(WebsiteSale):
         if attrib_list:
             post['attrib'] = attrib_list
 
-        categs = request.env['product.public.category'].search([('parent_id', '=', False)])
+        categs = request.env['product.public.category'].search([
+            ('product_ids.website_published', '=', True), 
+            ('product_ids', '!=', False)
+        ]).mapped('parent_id')
         Product = request.env['product.template']
 
         parent_category_ids = []
@@ -234,7 +237,10 @@ class WebsiteSaleCatalogue(WebsiteSale):
 
         keep = QueryURL('/catalogue', category=category and category.id, search=search, attrib=attrib_list)
 
-        categs = ProductCategory.search([('parent_id', '=', False)])
+        categs = request.env['product.public.category'].search([
+            ('product_ids.website_published', '=', True), 
+            ('product_ids', '!=', False)
+        ]).mapped('parent_id')
 
         pricelist = request.website.get_current_pricelist()
 
@@ -323,6 +329,39 @@ class WebsiteSaleCatalogue(WebsiteSale):
 
             return request.render('theme_rias.rias_pricelist_form_template')
 
+class WebsiteSaleFilteredCategories(WebsiteSale):
+
+    @http.route([
+        '/shop',
+        '/shop/page/<int:page>',
+        '/shop/category/<model("product.public.category"):category>',
+        '/shop/category/<model("product.public.category"):category>/page/<int:page>'
+    ], type='http', auth="public", website=True)
+    def shop(self, page=0, category=None, search='', ppg=False, **post):
+        res = super(WebsiteSaleFilteredCategories, self).shop(page=page, category=category, search=search, ppg=ppg, **post)
+        categories_in_products = request.env['product.public.category'].search([
+            ('product_ids.website_published', '=', True), 
+            ('product_ids', '!=', False)
+        ]).mapped('parent_id')
+        res.qcontext.update({
+            'categories': categories_in_products
+        })
+        return res        
+
+    @http.route([
+        '/category/<path:path>',
+        '/category/<path:path>/page/<int:page>'
+    ], type='http', auth='public', website=True)
+    def _shop(self, path, page=0, category=None, search='', ppg=False, **post):
+        res = super(WebsiteSaleFilteredCategories, self)._shop(path=path, page=page, category=category, search=search, ppg=ppg, **post)
+        categories_in_products = request.env['product.public.category'].search([
+            ('product_ids.website_published', '=', True), 
+            ('product_ids', '!=', False)
+        ]).mapped('parent_id')
+        res.qcontext.update({
+            'categories': categories_in_products
+        })
+        return res     
 
 class WebsiteForm(WebsiteForm):
 
