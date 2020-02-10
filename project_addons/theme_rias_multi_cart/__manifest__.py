@@ -9,7 +9,7 @@
     'author': "Comunitea, ",
     'depends': [
         'theme_rias',
-        'campaign',
+        'campaign'
     ],
     'data': [
         'data/page_data.xml',
