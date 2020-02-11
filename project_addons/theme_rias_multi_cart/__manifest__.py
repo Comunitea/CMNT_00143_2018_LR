@@ -13,7 +13,6 @@
     ],
     'data': [
         'data/page_data.xml',
-        'data/menu_data.xml',
         'templates/head.xml',
         'templates/shop.xml',
         'templates/portal.xml',
