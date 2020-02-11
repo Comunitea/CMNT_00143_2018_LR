@@ -149,16 +149,16 @@ class Website(models.Model):
     def get_active_campaigns(self):
         today = datetime.today().strftime('%Y-%m-%d')
 
-        campaigns = self.env['campaign'].sudo().search(['|', ('purchases_start_date', '<=', today), \
-                ('purchases_start_date', '=', False), '|', ('purchases_end_date', '>=', today), \
+        campaigns = self.env['campaign'].sudo().search(['|', ('purchases_start_date', '<=', today),
+                ('purchases_start_date', '=', False), '|', ('purchases_end_date', '>=', today),
                 ('purchases_end_date', '=', False)])
         return campaigns
 
     @api.multi
     def count_active_campaigns(self):
         today = datetime.today().strftime('%Y-%m-%d')
-        campaigns = self.env['campaign'].sudo().search(['|', ('purchases_start_date', '<=', today), \
-                ('purchases_start_date', '=', False), '|', ('purchases_end_date', '>=', today), \
+        campaigns = self.env['campaign'].sudo().search(['|', ('purchases_start_date', '<=', today),
+                ('purchases_start_date', '=', False), '|', ('purchases_end_date', '>=', today),
                 ('purchases_end_date', '=', False)])
         return len(campaigns)
 
@@ -166,9 +166,9 @@ class Website(models.Model):
     def check_if_campaign_is_active(self, campaign_id):
         today = datetime.today().strftime('%Y-%m-%d')
         campaign = self.env['campaign'].sudo().search([
-            '|', ('purchases_start_date', '<=', today), \
-            ('purchases_start_date', '=', False), '|', ('purchases_end_date', '>=', today), \
-            ('purchases_end_date', '=', False)
+            '|', ('purchases_start_date', '<=', today),
+            ('purchases_start_date', '=', False), '|', ('purchases_end_date', '>=', today),
+            ('purchases_end_date', '=', False), 
             ('id', '=', campaign_id)])
         if campaign:
             return True

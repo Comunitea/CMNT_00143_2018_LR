@@ -153,7 +153,12 @@ class CustomerPortalCarts(CustomerPortal):
 
         sale_order = request.website.get_campaign_cart(campaign)
         if sale_order:
-            return request.redirect('/shop')
+            if post:
+                request.env['sale.order.line'].create({
+                    'order_id': sale_order.id,
+                    'product_id': int(post['product_id'])
+                })
+            return request.redirect('/shop/cart')
     
     @http.route([
         '/my/carts/<int:order>',

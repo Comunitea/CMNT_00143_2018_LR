@@ -216,9 +216,16 @@
             <div class="purchase_msg"/>
         </xpath>
         <xpath expr="//tr/td[4]" position="inside">
-            <a title="Ir o crear pedido de campaña." t-if="allowed_purchase['status'] == 'warning' and allowed_purchase['campaign_id']" t-attf-href="/my/campaigns/select/#{ allowed_purchase['campaign_id'] }" class="btn btn-primary">
+            <!-- <a title="Ir o crear pedido de campaña." t-if="allowed_purchase['status'] == 'warning' and allowed_purchase['campaign_id']" t-attf-href="/my/campaigns/select/#{ allowed_purchase['campaign_id'] }" class="btn btn-primary">
                 <i class="fa fa-shopping-cart"/>
-            </a>
+            </a> -->
+            <form t-if="allowed_purchase['status'] == 'warning' and allowed_purchase['campaign_id']" t-attf-action="/my/campaigns/select/#{allowed_purchase['campaign_id']}" method="post">
+                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                <input name="product_id" t-att-value="wish.product_id.id" type="hidden"/>
+                <button type="submit" class="btn btn-primary text-danger">
+                    <i class="fa fa-shopping-cart"/>
+                </button>
+            </form>
         </xpath>
 
     </template>
