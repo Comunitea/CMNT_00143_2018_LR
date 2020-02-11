@@ -4,7 +4,6 @@
 from odoo import models, fields, api
 from odoo.http import request
 from datetime import datetime
-from pprint import pprint
 
 class Website(models.Model):
     _inherit = 'website'
@@ -32,7 +31,9 @@ class Website(models.Model):
         user_id = self.env.user.partner_id.id
         if user_id:
             today = datetime.today().strftime('%Y-%m-%d')
-            campaigns = self.env['campaign'].sudo().search([('purchases_start_date', '<=', today), ('purchases_end_date', '>=', today)])
+            campaigns = self.env['campaign'].sudo().search(['|', ('purchases_start_date', '<=', today), \
+                ('purchases_start_date', '=', False), '|', ('purchases_end_date', '>=', today), \
+                ('purchases_end_date', '=', False)])
             sale_orders = self.env['sale.order'].sudo().search([('partner_id', '=', user_id), ('state', '=', 'draft'), '|', ('campaign_id', 'in', campaigns.ids), ('campaign_id', '=', False)])
         else:
             raise ValueError(
@@ -43,9 +44,7 @@ class Website(models.Model):
     @api.multi
     def count_user_draft_carts(self):
         self.ensure_one()
-        user_id = self.env.user.partner_id.id
-        if user_id:
-            sale_orders = self.env['sale.order'].sudo().search([('partner_id', '=', user_id), ('state', '=', 'draft')])
+        sale_orders = self.get_user_draft_carts()
         return len(sale_orders)
 
     @api.multi
@@ -150,26 +149,26 @@ class Website(models.Model):
     def get_active_campaigns(self):
         today = datetime.today().strftime('%Y-%m-%d')
 
-        campaigns = self.env['campaign'].sudo().search([
-            ('web_publication_date', '<=', today),
-            ('end_web_publication_date', '>=', today)])
+        campaigns = self.env['campaign'].sudo().search(['|', ('purchases_start_date', '<=', today), \
+                ('purchases_start_date', '=', False), '|', ('purchases_end_date', '>=', today), \
+                ('purchases_end_date', '=', False)])
         return campaigns
 
     @api.multi
     def count_active_campaigns(self):
         today = datetime.today().strftime('%Y-%m-%d')
-        campaigns = self.env['campaign'].sudo().search([
-            ('web_publication_date', '<=', today),
-            ('end_web_publication_date', '>=', today)
-        ])
+        campaigns = self.env['campaign'].sudo().search(['|', ('purchases_start_date', '<=', today), \
+                ('purchases_start_date', '=', False), '|', ('purchases_end_date', '>=', today), \
+                ('purchases_end_date', '=', False)])
         return len(campaigns)
 
     @api.multi
     def check_if_campaign_is_active(self, campaign_id):
         today = datetime.today().strftime('%Y-%m-%d')
         campaign = self.env['campaign'].sudo().search([
-            ('web_publication_date', '<=', today),
-            ('end_web_publication_date', '>=', today),
+            '|', ('purchases_start_date', '<=', today), \
+            ('purchases_start_date', '=', False), '|', ('purchases_end_date', '>=', today), \
+            ('purchases_end_date', '=', False)
             ('id', '=', campaign_id)])
         if campaign:
             return True
@@ -200,8 +199,9 @@ class Website(models.Model):
     def product_in_active_campaigns(self, product_id):
         today = datetime.today().strftime('%Y-%m-%d')
         active_campaigns = self.env['campaign'].sudo().search([
-            ('web_publication_date', '<=', today),
-            ('end_web_publication_date', '>=', today)
+            '|', ('purchases_start_date', '<=', today), \
+            ('purchases_start_date', '=', False), '|', ('purchases_end_date', '>=', today), \
+            ('purchases_end_date', '=', False)
         ])
         in_campaign = self.env['campaign.article.line'].sudo().search([('campaign_id', 'in', active_campaigns.ids), ('product_id', '=', product_id)])
 

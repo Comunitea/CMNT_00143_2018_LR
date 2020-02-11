@@ -14,4 +14,25 @@
             </li>
         </xpath>
     </template>
+
+    <template id="portal_order_page_multi_cart" inherit_id="sale.portal_order_page" name="Sales Order Multi Cart">
+        <xpath expr="//div[@id='shipping_address']" position="after">
+            <div class="col-md-12">
+                <div t-if="order.state != 'draft'">
+                    <strong>Description: </strong><span t-field="order.user_cart_description"/>
+                </div>
+                <div t-else="">
+                    <strong>Description: </strong>
+                    <form  t-attf-action="/my/carts/#{order.id}?#{keep_query()}" method="post">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <input type="text" class="input-group" name="user_cart_description" t-att-value="order.user_cart_description"/>
+                        <button type="submit" class="btn btn-primary mt8">
+                            Confirm
+                            <span class="fa fa-long-arrow-right" />
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </xpath>
+    </template>
 </odoo>

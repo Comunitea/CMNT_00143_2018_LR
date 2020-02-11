@@ -169,6 +169,9 @@ class CustomerPortalCarts(CustomerPortal):
         order = request.env['sale.order'].browse([order])
         order_sudo = order.sudo()
 
+        if order:
+            order.update(post)
+
         values = self._order_get_page_view_values(order_sudo, access_token, **post)
         return request.render("sale.portal_order_page", values)
 

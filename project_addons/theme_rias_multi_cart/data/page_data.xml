@@ -17,7 +17,7 @@
                     </div>
                 </div>
                 <t t-if="not orders">
-                    <p>There are currently no orders for your account.</p>
+                    <p>There are currently no carts for your account.</p>
                 </t>
                 <div t-if="orders" class="panel panel-default">
                     <div class="table-responsive">
@@ -31,6 +31,9 @@
                                         <span class='hidden-xs'>View Cart</span>
                                         <span class='visible-xs'>Ref.</span>
                                     </th>
+                                    <th>
+                                        Description
+                                    </th>
                                     <th>Cart Date</th>
                                     <th>Campaign</th>
                                     <th>Total</th>
@@ -43,6 +46,9 @@
                                     </td>
                                     <td>
                                         <a t-attf-href="/my/carts/{{order.id}}?{{keep_query()}}"><t t-esc="order.name"/></a>
+                                    </td>
+                                    <td>
+                                        <span t-field="order.user_cart_description"/>
                                     </td>
                                     <td>
                                         <span t-field="order.date_order" t-options="{'widget': 'date'}"/>&amp;nbsp;
