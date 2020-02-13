@@ -46,7 +46,7 @@
                             <div class='col-md-2'>
                                 <span t-field="product.default_code" />
                                 <t t-if="show_publish">
-                                    <div id="website_published_button" class="" groups="sales_team.group_sale_manager">
+                                    <div id="website_published_button" groups="sales_team.group_sale_manager">
                                         <t t-call="website.publish_management">
                                             <t t-set="object" t-value="product" />
                                             <t t-set="publish_edit" t-value="True" />

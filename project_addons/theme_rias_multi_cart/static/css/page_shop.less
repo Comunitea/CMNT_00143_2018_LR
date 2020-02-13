@@ -18,3 +18,23 @@ div.shoppage > main {
         border-bottom: solid black 1px;
     }
 }
+
+/* Website publish button on shop and catalogue views by list view active */
+#website_published_button {
+    // Shop
+    & .btn, button.dropdown-toggle {
+        padding: 2px 6px 2px 6px;
+    }
+    & div {
+        float: none !important;
+    }
+    // Catalogue
+    &.products_item_multi_cart {
+        & div {
+            float: right !important;
+        }
+        & button.dropdown-toggle {
+            padding: 12px 7px 8px 6px;
+        }
+    }
+}
