@@ -159,11 +159,12 @@
 
     <!-- Add to cart button-->
     <template id="categories_recursive_catalogue" name="Category list Catalogue">
-        <li t-att-class="'active' if c.id == int(category or 0) else None">
-            <a t-att-href="keep('/catalogue/category/' + slug(c), category=0)" t-field="c.name"></a>
-            <ul t-if="c.child_id" class="nav nav-pills nav-stacked nav-hierarchy">
-                <t t-foreach="c.child_id" t-as="c">
-                    <t t-call="theme_rias.categories_recursive_catalogue" />
+        <li t-att-class="'active' if categ.id == int(category or 0) else None">
+            <i t-if="categ.child_id" t-attf-class="text-primary fa #{'fa-chevron-down' if categ.id in parent_category_ids else 'fa-chevron-right'}" />
+            <a t-att-href="'/catalogue/category/%s' % categ.slug if categ.slug else keep('/catalogue/category/' + slug(categ), category=0)" t-field="categ.name"></a>
+            <ul t-if="categ.child_id" class="nav nav-pills nav-stacked nav-hierarchy" t-att-style="'display:block;' if categ.id in parent_category_ids else 'display:none;'">
+                <t t-foreach="categ.child_id" t-as="categ">
+                    <t t-if="categ.product_ids" t-call="theme_rias.categories_recursive_catalogue" />
                 </t>
             </ul>
         </li>
@@ -171,12 +172,11 @@
 
     <template id="products_categories_catalogue" inherit_id="theme_rias.products_catalogue" active="True" customize_show="True" name="eCommerce Categories Catalogue">
         <xpath expr="//div[@id='products_grid_before']" position="inside">
-            <ul class="nav nav-pills nav-stacked mt16">
+            <ul class="nav nav-pills nav-stacked mt16" id="o_shop_collapse_category">
                 <li t-att-class=" '' if category else 'active' ">
                     <a t-att-href="keep('/catalogue',category=0)" class="o_not_editable">All Products</a>
                 </li>
-                <t t-set="categories" t-value="website.get_child_category(category)" />
-                <t t-foreach="categories" t-as="c">
+                <t t-foreach="categories" t-as="categ">
                     <t t-call="theme_rias.categories_recursive_catalogue" />
                 </t>
             </ul>
@@ -186,31 +186,6 @@
         </xpath>
         <xpath expr="//div[@id='products_grid']" position="attributes">
             <attribute name="class">col-md-9 col-sm-8</attribute>
-        </xpath>
-    </template>
-
-    <template id="option_collapse_categories_recursive_not_empty" name="Collapse Category Recursive Catalogue">
-        <li t-att-class="'active' if categ.id == int(category or 0) else None">
-            <i t-if="categ.child_id" t-attf-class="text-primary fa #{'fa-chevron-down' if categ.id in parent_category_ids else 'fa-chevron-right'}" />
-            <a t-att-href="keep('/catalogue/category/' + slug(categ), category=0)" t-field="categ.name"></a>
-            <ul t-if="categ.child_id" class="nav nav-pills nav-stacked nav-hierarchy" t-att-style="'display:block;' if categ.id in parent_category_ids else 'display:none;'">
-                <t t-foreach="categ.child_id" t-as="categ">
-                    <t t-if="categ.product_ids" t-call="theme_rias.option_collapse_categories_recursive_catalogue" />
-                </t>
-            </ul>
-        </li>
-    </template>
-
-    <template id="option_collapse_products_categories_catalogue" name="Collapsible Category List Catalogue" inherit_id="theme_rias.products_categories_catalogue" active="False" customize_show="True">
-        <xpath expr="//div[@id='products_grid_before']/ul" position="replace">
-            <ul class="nav nav-pills nav-stacked mt16" id="o_shop_collapse_category">
-                <li t-att-class=" '' if category else 'active' ">
-                    <a t-att-href="keep('/catalogue',category=0)" class="o_not_editable">All Products</a>
-                </li>
-                <t t-foreach="categories" t-as="categ">
-                    <t t-call="theme_rias.option_collapse_categories_recursive_not_empty" />
-                </t>
-            </ul>
         </xpath>
     </template>
 
@@ -265,17 +240,6 @@
         </xpath>
     </template>
 
-    <template id="products_list_view_catalogue" inherit_id="theme_rias.products_catalogue" active="False" customize_show="True" name="Catalogue List View">
-        <xpath expr="//div[@id='products_grid']//table" position="replace">
-            <t t-foreach="products" t-as="product">
-                <div class="oe_product oe_list oe_product_cart" t-att-data-publish="product.website_published and 'on' or 'off'">
-                    <t t-call="theme_rias.products_item_catalogue">
-                        <t t-set="show_publish" t-value="True" />
-                    </t>
-                </div>
-            </t>
-        </xpath>
-    </template>
 
     <!-- /shop/product product page -->
     <template id="product_edit_options_catalogue" inherit_id="website.user_navbar" name="Catalogue Edit Product Options">
@@ -723,6 +687,69 @@
                     </div>
                 </div>
             </div>
+        </xpath>
+    </template>
+
+    <!-- infinite scroll -->
+
+    <template id="products_catalogue_list_view" inherit_id="theme_rias.products_catalogue" active="False" customize_show="True" name="Products Catalogue List View" priority="50">        
+        <xpath expr="//div[@id='products_grid']//table" position="replace">
+            <t t-foreach="products" t-as="product">
+                <div class="oe_product oe_list oe_product_cart sgeede-infinite-get" t-att-data-publish="product.website_published and 'on' or 'off'">
+                    <t t-call="theme_rias.products_item_catalogue">
+                        <t t-set="show_publish" t-value="True" />
+                    </t>
+                </div>
+            </t>
+            <t t-if="category">
+                <div class="sgeede-infinite-pagination">
+                    <t t-if="int(pager['page']['num']) + 1 &lt;= int(pager['page_count'])">
+                        <a t-att-href="pager['page_next']['url']" style="display: none">Page <span t-esc="int(pager['page']['num']) + 1"/>
+                        </a>
+                    </t>
+                    <span class="max-page" t-esc="pager['page_count']" style="display: none"/>
+                </div>
+            </t>
+            <t t-if="not category">
+                <div class="sgeede-infinite-pagination">
+                    <t t-if="int(pager['page']['num']) + 1 &lt;= int(pager['page_count'])">
+                        <a t-att-href="pager['page_next']['url']" style="display: none">Page <span t-esc="int(pager['page']['num']) + 1"/>
+                        </a>
+                    </t>
+                    <span class="max-page" t-esc="pager['page_count']" style="display: none"/>
+                </div>
+            </t>
+        </xpath>
+    </template>
+
+    <template id="products_catalogue_infinite_scroll" inherit_id="theme_rias.products_catalogue" active="True" customize_show="True" name="Products Catalogue SGEEDE Infinite Scroll" priority="40">
+        <xpath expr="//div[@id='products_grid']" position="attributes">
+            <attribute name="class" add="sgeede-infinite-scroll" separator=" "/>
+        </xpath>
+
+        <xpath expr="//div[@id='products_grid']//table//tbody//tr[@t-foreach='bins']" position="attributes">
+            <attribute name="t-attf-class">sgeede-infinite-get</attribute>
+        </xpath>
+
+        <xpath expr="//div[@id='products_grid']//table//tbody" position="inside">
+            <t t-if="category">
+                <tr class="sgeede-infinite-pagination">
+                    <t t-if="int(pager['page']['num']) + 1 &lt;= int(pager['page_count'])">
+                        <td><a t-att-href="pager['page_next']['url']" style="display: none">Page <span t-esc="int(pager['page']['num']) + 1"/>
+                        </a></td>
+                    </t>
+                    <td><span class="max-page" t-esc="pager['page_count']" style="display: none"/></td>
+                </tr>
+            </t>
+            <t t-if="not category">
+                <tr class="sgeede-infinite-pagination">
+                    <t t-if="int(pager['page']['num']) + 1 &lt;= int(pager['page_count'])">
+                        <td><a t-att-href="pager['page_next']['url']" style="display: none">Page <span t-esc="int(pager['page']['num']) + 1"/>
+                        </a></td>
+                    </t>
+                    <td><span class="max-page" t-esc="pager['page_count']" style="display: none"/></td>
+                </tr>
+            </t>
         </xpath>
     </template>
     
