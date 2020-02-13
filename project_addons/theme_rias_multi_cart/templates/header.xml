@@ -18,6 +18,7 @@
     <template id="header" inherit_id="website.layout" name="Header Shop My Cart Link">
         <xpath expr="//header//ul[@id='top_menu']/li" position="attributes">
             <attribute name="t-att-class">''</attribute>
+            <attribute name="t-if">not request.env.user._is_public()</attribute>
         </xpath>
     </template>
 </odoo>
