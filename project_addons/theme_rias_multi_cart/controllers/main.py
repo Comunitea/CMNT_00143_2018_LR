@@ -154,7 +154,7 @@ class CustomerPortalCarts(CustomerPortal):
         sale_order = request.website.get_campaign_cart(campaign)
         if sale_order:
             if post:
-                sale_order._cart_update(product_id=int(post['product_id']), add_qty=1)
+                sale_order.sudo()._cart_update(product_id=int(post['product_id']), add_qty=1)
             return request.redirect('/shop/cart')
     
     @http.route([
