@@ -6,11 +6,11 @@
             <t t-set="carts_count" t-value="website.count_user_draft_carts()"/>
             <li t-if="campaigns_count" class="list-group-item">
                 <span class="badge" t-esc="campaigns_count"/>
-                <a href="/my/campaigns">Campaigns</a>
+                <a href="/my/campaigns" alt="Campaigns" title="Campaigns" rel="nofollow, noindex">Campaigns</a>
             </li>
             <li t-if="carts_count" class="list-group-item">
                 <span class="badge" t-esc="carts_count"/>
-                <a href="/my/carts">My Carts</a>
+                <a href="/my/carts" alt="Carts" title="Carts" rel="nofollow, noindex">Carts</a>
             </li>
         </xpath>
     </template>

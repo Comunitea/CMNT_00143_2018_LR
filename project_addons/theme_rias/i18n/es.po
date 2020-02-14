@@ -421,6 +421,11 @@ msgid "Catalogue Show Sort by"
 msgstr "Catalogue Show Sort by"
 
 #. module: theme_rias
+#: model:ir.ui.view,name:theme_rias.sort_catalogue
+msgid "Catalogue"
+msgstr "Catálogo"
+
+#. module: theme_rias
 #: model:website.page,name:theme_rias.rias_catalogues_page
 msgid "Catalogues"
 msgstr "Catálogos"

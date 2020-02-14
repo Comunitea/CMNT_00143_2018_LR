@@ -5,6 +5,7 @@
     <template id="rias__multi_cart_website_assets_frontend" inherit_id="theme_rias.rias_website_assets_frontend">
         <xpath expr="link[last()]" position="after">
             <link href="/theme_rias_multi_cart/static/css/page_shop.less" rel="stylesheet" type="text/less"/>
+            <link href="/theme_rias_multi_cart/static/css/wishlist.less" rel="stylesheet" type="text/less"/>
         </xpath>
 
         <!--Add custom scripts-->

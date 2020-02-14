@@ -1,3 +1,4 @@
+/* List view elements */
 div.shoppage > main {
 
     i.info-button-campaign {
@@ -10,20 +11,29 @@ div.shoppage > main {
 
     div.oe_product.oe_list.oe_product_cart.sgeede-infinite-get {
         padding-left: unset;
-        min-height: unset;
+        min-height: 50px;
         padding-bottom: unset;
+        margin-top: 0.8rem;
     }
 
     div.col-header{
         border-bottom: solid black 1px;
+        margin-bottom: 1rem;
+    }
+
+    div.product_price {
+        margin-top: 0.8rem;
     }
 }
 
 /* Website publish button on shop and catalogue views by list view active */
 #website_published_button {
     // Shop
-    & .btn, button.dropdown-toggle {
+    & .btn-success, button.dropdown-toggle {
         padding: 2px 6px 2px 6px;
+    }
+    & .btn-danger {
+        padding: 2px 3px 2px 3px;
     }
     & div {
         float: none !important;

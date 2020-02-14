@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <template id="website_sale_wishlist_product_wishlist" name="Wishlist Page Las Rias" inherit_id="website_sale_wishlist.product_wishlist">
+        <!-- Change button add to cart -->
+        <xpath expr="//table//td[hasclass('text-center', 'td-wish-btn')]//a" position="replace">
+            <a title="Add to Current Cart" alt="Add to Current Cart" rel="nofollow, noindex"
+               class="btn btn-primary btn-block o_wish_add mt8" ><span class='hidden-xs'>Add to </span><i class="fa fa-shopping-cart"/>
+            </a>
+        </xpath>
+    </template>
+
+</odoo>

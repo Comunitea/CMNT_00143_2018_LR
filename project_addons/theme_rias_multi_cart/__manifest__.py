@@ -17,6 +17,7 @@
         'templates/shop.xml',
         'templates/portal.xml',
         'templates/header.xml',
+        'templates/wishlist.xml',
         ],
     'images': [
         '/static/description/icon.png',
