@@ -219,6 +219,17 @@ class InvoiceSupplierImportWzd(models.TransientModel):
             vals = self._get_invoice_vals(hvals)
             if vals:
                 new_invoice = inv_pool.create(vals)
+                pay_mode = new_invoice.payment_mode_id
+                if (
+                    pay_mode and
+                    pay_mode.payment_type == 'outbound' and
+                    pay_mode.payment_method_id.bank_account_required and
+                    new_invoice.commercial_partner_id.bank_ids
+                ):
+                    new_invoice.partner_bank_id = \
+                        new_invoice.commercial_partner_id.bank_ids.filtered(
+                            lambda b: b.company_id == new_invoice.company_id or not
+                            b.company_id)[:1]
                 res += new_invoice
                 invoice_date = fields.Date.from_string(
                     new_invoice.date_invoice)
