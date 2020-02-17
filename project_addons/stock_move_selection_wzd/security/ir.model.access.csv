@@ -13,9 +13,6 @@ access_stock_batch_delivery_user,stock.delivery.user,model_stock_batch_delivery,
 access_stock_batch_delivery_manager,stock.picking.delivery.manager,model_stock_batch_delivery,stock.group_stock_manager,1,1,1,1
 
 access_stock_quant_package_pack_line,stock.quant.package.pack.line.user,model_stock_quant_package_pack_line,stock.group_stock_user,1,1,1,1
-access_picking_type_group_code_user,picking.type.group.code.user,model_picking_type_group_code,stock.group_stock_user,1,0,0,0
-access_picking_type_group_code_manager,picking.type.group.code.manager,model_picking_type_group_code,stock.group_stock_manager,1,1,1,1
 
 access_delivery_partner_order_user,delivery_partner_order.user,model_delivery_partner_order,stock.group_stock_user,1,1,1,1
-
 
