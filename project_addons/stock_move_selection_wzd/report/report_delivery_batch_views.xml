@@ -308,7 +308,7 @@
                                 </div>
                                 <div class="col-xs-2" style="width: 25%">
                                     <strong style="font-weight: bold; color: rgb(0,51,102); font-family: Arial">Peso:</strong>
-                                    <span t-esc="doc.weight"/> Kgrs.</p>
+                                    <span t-esc="doc.weight"/> Kgrs.
                                 </div>
 
                                 <div class="col-xs-2" style="width: 25%">
