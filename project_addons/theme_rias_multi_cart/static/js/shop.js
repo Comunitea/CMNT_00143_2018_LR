@@ -132,11 +132,11 @@ odoo.define('theme_rias.website_sale', function(require) {
             ]})
             .then(function(data){
                 if (data[0]['barcode'].length == 13){
-                    modal_content = '<img src="/report/barcode/?type=EAN13&value='+data[0]['barcode']+'&width=600&height=150" style="width:100%;height:20%;" />';
+                    modal_content = '<img class="img-responsive" src="/report/barcode/?type=EAN13&value='+data[0]['barcode']+'&width=600&height=150" style="width:100%;height:20%;" />';
                 } else if (data['barcode'] == 8) {
-                    modal_content = '<img src="/report/barcode/?type=EAN8&value='+data[0]['barcode']+'&width=600&height=150" style="width:100%;height:20%;" />';
+                    modal_content = '<img class="img-responsive" src="/report/barcode/?type=EAN8&value='+data[0]['barcode']+'&width=600&height=150" style="width:100%;height:20%;" />';
                 } else {
-                    modal_content = '<img src="/report/barcode/?type=Code128&value='+data[0]['barcode']+'&width=600&height=150" style="width:100%;height:20%;" />';
+                    modal_content = '<img class="img-responsive" src="/report/barcode/?type=Code128&value='+data[0]['barcode']+'&width=600&height=150" style="width:100%;height:20%;" />';
                 }
 
                 var html =  '<div class="modal fade" id="modalWindow" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">';
@@ -184,7 +184,7 @@ odoo.define('theme_rias.website_sale', function(require) {
                 "display_name",
             ]})
             .then(function(data){
-                modal_content = '<img src="/website/image/'+model+'/'+data[0]['id']+'/image" alt="'+data[0]['display_name']+'"></img>';
+                modal_content = '<img class="img-responsive" src="/website/image/'+model+'/'+data[0]['id']+'/image" alt="'+data[0]['display_name']+'"></img>';
 
                 var html =  '<div class="modal fade" id="modalWindow" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">';
                 html += '<div class="modal-dialog" role="document">';
