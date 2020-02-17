@@ -206,37 +206,40 @@ class StockBatchDelivery(models.Model):
         for delivery in self:
             delivery.partner_order_ids.unlink()
             route_ids = delivery.delivery_route_path_ids
+            #partner_picking_ids = delivery.partner_picking_ids
+            #if not partner_picking_ids:
+            partner_picking_ids = delivery.picking_ids.partner_id
+            route_partner = []
             if route_ids:
                 if len(route_ids) == 1:
                     w1 = 'route_id = {}'.format(route_ids.id)
                 else:
                     w1 = 'route_id in {}'.format(tuple(route_ids.ids))
 
-            partner_picking_ids = delivery.partner_picking_ids
-            if not partner_picking_ids:
-                partner_picking_ids = delivery.picking_ids.partner_id
-            if len(partner_picking_ids) == 1:
-                w2 = 'partner_id = {}'.format(partner_picking_ids.id)
-            else:
-                w2 = 'partner_id in {}'.format(tuple(partner_picking_ids.ids))
+                if len(partner_picking_ids) == 1:
+                    w2 = 'partner_id = {}'.format(partner_picking_ids.id)
+                else:
+                    w2 = 'partner_id in {}'.format(tuple(partner_picking_ids.ids))
 
-            sql = "select min(sequence), partner_id from route_partner_order where {} and {} group by partner_id".format(w1, w2)
-            self._cr.execute(sql)
-            res = self._cr.fetchall()
-            print (sql)
-            print(res)
-            route_partner = []
-            for val in res:
-                values = {'delivery_id': delivery.id,
-                          'partner_id': val[1],
-                          'sequence': val[0]}
-                route_partner.append(val[1])
-                dpo.create(values)
+                if route_ids and partner_picking_ids:
+                    sql = "select min(sequence), partner_id from route_partner_order where {} and {} group by partner_id".format(w1, w2)
+                    self._cr.execute(sql)
+                    res = self._cr.fetchall()
+                    print (sql)
+                    print(res)
+
+                    for val in res:
+                        values = {'delivery_id': delivery.id,
+                                  'partner_id': val[1],
+                                  'sequence': val[0]}
+                        route_partner.append(val[1])
+                        dpo.create(values)
+
 
             for p_id in partner_picking_ids.filtered(lambda x: x.id not in route_partner):
                 values = {'delivery_id': delivery.id,
                           'partner_id': p_id.id,
-                          'sequence': 0}
+                          'sequence': 10}
                 dpo.create(values)
 
 
