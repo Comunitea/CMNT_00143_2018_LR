@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="stock_batch_picking_wzd_form" model="ir.ui.view">
+        <field name="name">stock.batch.picking.sbpw</field>
+        <field name="model">stock.batch.picking</field>
+        <field name="inherit_id" ref="stock_move_selection_wzd.stock_batch_picking_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='create_invoice']" position="after">
+                <button name="add_more_orders" states="draft,ready" string="Añadir pedidos" type="object" class="bt-secondary"/>
+                <button name="add_more_moves" states="draft,ready" string="Añadir líneas" type="object" class="bt-secondary"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
