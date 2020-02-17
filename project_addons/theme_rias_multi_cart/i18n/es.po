@@ -16,6 +16,35 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: theme_rias_multi_cart
+#: model:ir.ui.view,arch_db:theme_rias_multi_cart.website_sale_cart
+#: model:ir.ui.view,arch_db:theme_rias_multi_cart.website_sale_cart_popover
+msgid "<strong>Cart Description: </strong>"
+msgstr "<strong>Descripción del Carrito: </strong>"
+
+#. module: theme_rias_multi_cart
+#: model:ir.ui.view,arch_db:theme_rias_multi_cart.website_sale_cart
+#: model:ir.ui.view,arch_db:theme_rias_multi_cart.website_sale_cart_popover
+msgid "<strong>Cart Type: </strong>"
+msgstr "<strong>Tipo de Carrito: </strong>"
+
+#. module: theme_rias_multi_cart
+#: model:ir.ui.view,arch_db:theme_rias_multi_cart.website_sale_cart
+#: model:ir.ui.view,arch_db:theme_rias_multi_cart.website_sale_cart_popover
+msgid "It is a Campaign Cart <i class=\"text-danger fa fa-shopping-cart\"/>"
+msgstr "Es un Carrito de Campaña <i class=\"text-danger fa fa-shopping-cart\"/>"
+
+#. module: theme_rias_multi_cart
+#: model:ir.ui.view,arch_db:theme_rias_multi_cart.website_sale_cart
+#: model:ir.ui.view,arch_db:theme_rias_multi_cart.website_sale_cart_popover
+msgid "It is a Normal Cart <i class=\"text-primary fa fa-shopping-cart\"/>"
+msgstr "Es un Carrito Normal <i class=\"text-primary fa fa-shopping-cart\"/>"
+
+#. module: theme_rias_multi_cart
+#: model:ir.ui.view,arch_db:theme_rias_multi_cart.portal_order_page_multi_cart
+msgid "Confirm Description"
+msgstr "Confirmar Descripción"
+
+#. module: theme_rias_multi_cart
 #: model:ir.ui.view,arch_db:theme_rias_multi_cart.website_sale_wishlist_product_wishlist
 msgid "<span class=\"hidden-xs\">Add to </span><i class=\"fa fa-shopping-cart\"/>"
 msgstr "<span class=\"hidden-xs\">Añadir </span><i class=\"fa fa-shopping-cart\"/>"
@@ -84,6 +113,16 @@ msgid "<strong>Description: </strong>"
 msgstr "<strong>Descripción: </strong>"
 
 #. module: theme_rias_multi_cart
+#: model:ir.ui.view,arch_db:theme_rias_multi_cart.portal_order_page_multi_cart
+msgid "<strong>Order Type: </strong>"
+msgstr "<strong>Tipo de Pedido: </strong>"
+
+#. module: theme_rias_multi_cart
+#: model:ir.ui.view,arch_db:theme_rias_multi_cart.portal_order_page_multi_cart
+msgid "No description"
+msgstr "Sin descripción"
+
+#. module: theme_rias_multi_cart
 #: model:ir.ui.view,arch_db:theme_rias_multi_cart.products_list_view_multi_cart
 msgid "<strong>Image</strong>"
 msgstr "<strong>Imagen</strong>"
@@ -119,6 +158,17 @@ msgid "<strong>Unit Price</strong>"
 msgstr "<strong>Precio Unidad</strong>"
 
 #. module: theme_rias_multi_cart
+#: model:ir.ui.view,arch_db:theme_rias_multi_cart.portal_order_page_multi_cart
+msgid "Normal <i class=\"text-primary fa fa-shopping-cart\"/>"
+msgstr "Normal <i class=\"text-primary fa fa-shopping-cart\"/>"
+
+#. module: theme_rias_multi_cart
+#: model:ir.ui.view,arch_db:theme_rias_multi_cart.portal_order_page_multi_cart
+msgid "Campaign <i class=\"text-danger fa fa-shopping-cart\"/>"
+msgstr "Campaña <i class=\"text-danger fa fa-shopping-cart\"/>"
+
+#. module: theme_rias_multi_cart
+#: model:ir.ui.view,arch_db:theme_rias_multi_cart.portal_order_page_multi_cart
 #: model:ir.ui.view,arch_db:theme_rias_multi_cart.rias_multi_cart_my_draft_orders_ir_ui_view
 #: model:ir.ui.view,arch_db:theme_rias_multi_cart.rias_multi_cart_my_draft_orders_view
 #: model:website.page,arch_db:theme_rias_multi_cart.rias_multi_cart_my_draft_orders
@@ -148,13 +198,6 @@ msgstr "Fecha del carrito"
 #: model:website.page,arch_db:theme_rias_multi_cart.rias_multi_cart_my_draft_orders
 msgid "Carts"
 msgstr "Carritos"
-
-#. module: theme_rias_multi_cart
-#: model:ir.ui.view,arch_db:theme_rias_multi_cart.portal_order_page_multi_cart
-msgid "Confirm\n"
-"                            <span class=\"fa fa-long-arrow-right\"/>"
-msgstr "Confirmar\n"
-"                            <span class=\"fa fa-long-arrow-right\"/>"
 
 #. module: theme_rias_multi_cart
 #: model:ir.ui.view,arch_db:theme_rias_multi_cart.rias_multi_cart_my_draft_orders_ir_ui_view

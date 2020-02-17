@@ -1,6 +1,38 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
 
+    <template id="website_sale_cart" inherit_id="website_sale.cart" name="Shopping Cart Las Rias">
+        <xpath expr="//div[hasclass('o_website_sale_rightfit')]" position="inside">
+            <hr/>
+            <p class="text-left"><strong>Cart Type: </strong>
+                <span class="text-left" t-if="website_sale_order.campaign_id">It is a Campaign Cart <i class="text-danger fa fa-shopping-cart"/></span>
+                <span class="text-left" t-else="">It is a Normal Cart <i class="text-primary fa fa-shopping-cart"/></span>
+            </p>
+            <p class="text-left mb0"><strong>Cart Description: </strong>
+                <span class="text-left"><span t-field="website_sale_order.user_cart_description"/></span>
+            </p>
+            <hr/>
+        </xpath>
+    </template>
+
+    <template id="website_sale_cart_popover" inherit_id="website_sale.cart_popover" name="Cart Popover Las Rias">
+        <xpath expr="." position="inside">
+            <div class="row" t-if="website_sale_order">
+                <hr class="mb0 mt8"/>
+                <p class="text-left mb8 ml16 mr16"><strong>Cart Type: </strong>
+                    <span class="text-left" t-if="website_sale_order.campaign_id">It is a Campaign Cart <i class="text-danger fa fa-shopping-cart"/></span>
+                    <span class="text-left" t-else="">It is a Normal Cart <i class="text-primary fa fa-shopping-cart"/></span>
+                </p>
+                <div t-if="website_sale_order.user_cart_description">
+                    <hr class="mt0 mb0"/>
+                    <p class="text-left mb0 ml16 mr16"><strong>Cart Description: </strong>
+                        <span class="text-left"><span t-field="website_sale_order.user_cart_description"/></span>
+                    </p>
+                </div>
+            </div>
+        </xpath>
+    </template>
+
     <template id="products_list_view_multi_cart" inherit_id="website_sale.products_list_view" name="List View Multi Cart">
         <xpath expr="//t[@t-foreach='products']" position="before">
             <t t-set="pageName" t-value="'shoppage'"/>
