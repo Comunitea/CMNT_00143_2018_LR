@@ -26,6 +26,43 @@ div.shoppage > main {
     }
 }
 
+/*
+    CSS media part MAX-WIDTH 400 px
+*/
+@media (max-width: 400px){
+    #wrapwrap.shoppage > main div.oe_product.oe_list.oe_product_cart.sgeede-infinite-get {
+        margin-top: 5%;
+        margin-bottom: 5%;
+        text-align: left;
+        background: transparent;
+        & section {
+            background: transparent;
+            & > div > div.col-md-1.product_price {
+                float: right;
+            }
+            & > div >div:last-child{
+                margin-bottom: 2%;
+            }
+        }
+        div#website_published_button {
+            float: right;
+        }
+    }
+}
+
+@media screen and (min-width: 768px) {
+    #products_grid_before {
+        display: block;
+    }
+}
+
+/* toggle button style */
+@media screen and (max-width: 768px) {
+    #products_grid_before_toggle {
+        border: unset;
+    }
+}
+
 /* Website publish button on shop and catalogue views by list view active */
 #website_published_button {
     // Shop
