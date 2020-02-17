@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <data>
+    <data noupdate="1">
 
         <!-- // Portal part -->
         <template id="rias_portal_my_home_view" name="My Portal Rías View" inherit_id="portal.portal_my_home"/>

@@ -6,12 +6,41 @@
             <t t-set="carts_count" t-value="website.count_user_draft_carts()"/>
             <li t-if="campaigns_count" class="list-group-item">
                 <span class="badge" t-esc="campaigns_count"/>
-                <a href="/my/campaigns">Campaigns</a>
+                <a href="/my/campaigns" alt="Campaigns" title="Campaigns" rel="nofollow, noindex">Campaigns</a>
             </li>
             <li t-if="carts_count" class="list-group-item">
                 <span class="badge" t-esc="carts_count"/>
-                <a href="/my/carts">My Carts</a>
+                <a href="/my/carts" alt="Carts" title="Carts" rel="nofollow, noindex">Carts</a>
             </li>
+        </xpath>
+    </template>
+
+    <template id="portal_order_page_multi_cart" inherit_id="sale.portal_order_page" name="Sales Order Multi Cart">
+        <xpath expr="//div[@id='shipping_address']" position="after">
+            <div class="col-md-12">
+                <strong>Order Type: </strong>
+                <span t-if="order.campaign_id">Campaign <i class="text-danger fa fa-shopping-cart"/></span>
+                <span t-else="">Normal <i class="text-primary fa fa-shopping-cart"/></span>
+            </div>
+            <div class="col-md-12" t-if="order.state != 'draft'">
+                <strong>Description: </strong>
+                <span t-field="order.user_cart_description" t-if="order.user_cart_description"/>
+                <span t-else="">No description</span>
+            </div>
+            <div t-else="">
+                <div class="col-md-12">
+                    <strong>Description: </strong>
+                </div>
+                <form t-attf-action="/my/carts/#{order.id}?#{keep_query()}" method="post">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <div class="form-group form-inline pull-left col-md-12">
+                        <input type="text" class="form-control" name="user_cart_description" t-att-value="order.user_cart_description" style="width: 50%;"/>
+                        <button type="submit" class="btn btn-primary" alt="Confirm Description" title="Confirm Description" rel="nofollow, noindex">
+                            Confirm Description
+                        </button>
+                    </div>
+                </form>
+            </div>
         </xpath>
     </template>
 </odoo>

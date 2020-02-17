@@ -153,7 +153,9 @@ class CustomerPortalCarts(CustomerPortal):
 
         sale_order = request.website.get_campaign_cart(campaign)
         if sale_order:
-            return request.redirect('/shop')
+            if post:
+                sale_order.sudo()._cart_update(product_id=int(post['product_id']), add_qty=1)
+            return request.redirect('/shop/cart')
     
     @http.route([
         '/my/carts/<int:order>',
@@ -168,6 +170,9 @@ class CustomerPortalCarts(CustomerPortal):
 
         order = request.env['sale.order'].browse([order])
         order_sudo = order.sudo()
+
+        if order:
+            order.update(post)
 
         values = self._order_get_page_view_values(order_sudo, access_token, **post)
         return request.render("sale.portal_order_page", values)
@@ -289,7 +294,7 @@ class WebsiteSaleContext(WebsiteSale):
 
             product_count = Product.search_count(domain)
             pager = request.website.pager(url=url, total=product_count, page=page, step=ppg, scope=7, url_args=post)
-            products = Product.sudo().search(domain, limit=ppg, offset=pager['offset'], order=self._get_search_order(post))
+            products = Product.search(domain, limit=ppg, offset=pager['offset'], order=self._get_search_order(post))
 
             ProductAttribute = request.env['product.attribute']
             if products:
@@ -314,5 +319,45 @@ class WebsiteSaleContext(WebsiteSale):
             })
 
         return res
+
+class WebsiteSaleCategoriesCampaign(WebsiteSale):
+
+    @http.route([
+        '/shop',
+        '/shop/page/<int:page>',
+        '/shop/category/<model("product.public.category"):category>',
+        '/shop/category/<model("product.public.category"):category>/page/<int:page>'
+    ], type='http', auth="public", website=True)
+    def shop(self, page=0, category=None, search='', ppg=False, **post):
+        res = super(WebsiteSaleCategoriesCampaign, self).shop(page=page, category=category, search=search, ppg=ppg, **post)
+        cart = request.website.sale_get_order()
+        if cart.campaign_id:
+            public_categ_ids = cart.campaign_id.article_ids.mapped('product_id').mapped('product_tmpl_id').mapped('public_categ_ids').ids
+            categories_in_products = request.env['product.public.category'].search([
+                ('product_ids.website_published', '=', True), 
+                ('id', 'in', public_categ_ids),
+            ]).mapped('parent_id')
+            res.qcontext.update({
+                'categories': categories_in_products
+            })
+        return res        
+
+    @http.route([
+        '/category/<path:path>',
+        '/category/<path:path>/page/<int:page>'
+    ], type='http', auth='public', website=True)
+    def _shop(self, path, page=0, category=None, search='', ppg=False, **post):
+        res = super(WebsiteSaleCategoriesCampaign, self)._shop(path=path, page=page, category=category, search=search, ppg=ppg, **post)
+        cart = request.website.sale_get_order()
+        if cart.campaign_id:
+            public_categ_ids = cart.campaign_id.article_ids.mapped('product_id').mapped('product_tmpl_id').mapped('public_categ_ids').ids
+            categories_in_products = request.env['product.public.category'].search([
+                ('product_ids.website_published', '=', True), 
+                ('id', 'in', public_categ_ids),
+            ]).mapped('parent_id')
+            res.qcontext.update({
+                'categories': categories_in_products
+            })
+        return res    
 
     

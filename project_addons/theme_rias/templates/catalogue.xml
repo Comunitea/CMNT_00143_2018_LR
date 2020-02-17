@@ -26,7 +26,7 @@
                         <h1 class="mt32">Product not found!</h1>
                         <p>Sorry, this product is not available anymore.</p>
                         <p>
-                            <a t-attf-href="/catalogue">Return to the product list.</a>
+                            <a t-attf-href="/catalogue" title="Return to the product list." alt="Return to the product list." rel="nofollow, noindex">Return to the product list.</a>
                         </p>
                     </div>
                 </div>
@@ -44,11 +44,12 @@
                 </div>
                 <div class="oe_product_image">
                     <a itemprop="url" t-att-href="keep('/catalogue/product/%s' % slug(product), page=(pager['page']['num'] if pager['page']['num']&gt;1 else None))">
-                        <span itemprop="image" t-attf-content="{{request.httprequest.url_root}}web/image/product.template/{{product.id}}/image" t-field="product.image" t-options="{'widget': 'image', 'resize': None if product_image_big else '300x300', 'zoom': 'image'}" t-att-alt="product.name" />
+                        <span itemprop="image" t-attf-content="{{request.httprequest.url_root}}web/image/product.template/{{product.id}}/image" t-field="product.image"
+                              t-options="{'widget': 'image', 'resize': None if product_image_big else '300x300', 'zoom': 'image'}" t-att-alt="product.name" t-att-title="product.name" />
                     </a>
                 </div>
                 <t t-if="show_publish">
-                    <div id="website_published_button" class="" groups="sales_team.group_sale_manager">
+                    <div id="website_published_button" class="products_item_multi_cart" groups="sales_team.group_sale_manager">
                         <t t-call="website.publish_management">
                             <t t-set="object" t-value="product" />
                             <t t-set="publish_edit" t-value="True" />
@@ -59,7 +60,8 @@
                 <section class="text-center">
                     <h5>
                         <strong>
-                            <a itemprop="name" t-att-href="keep('/catalogue/product/%s' % slug(product), page=(pager['page']['num'] if pager['page']['num']&gt;1 else None))" t-att-content="product.name" t-field="product.name" />
+                            <a itemprop="name" t-att-href="keep('/catalogue/product/%s' % slug(product), page=(pager['page']['num'] if pager['page']['num']&gt;1 else None))"
+                               t-att-content="product.name" t-field="product.name" t-att-alt="product.name" t-att-title="product.name"/>
                         </strong>
                     </h5>
                     <p t-field="product.description_short" />
@@ -70,7 +72,7 @@
 
     <!-- /shop product listing -->
     <template id="products_catalogue" name="Products Catalogue">
-        <div id="rpc_modal"></div>
+        <div id="rpc_modal"/>
         <t t-set="pageName" t-value="'cataloguepage'"/>
         <t t-call="website.layout">
             <t t-set="additional_title">Shop</t>
@@ -86,12 +88,12 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="hidden" id="products_grid_before"></div>
+                        <div class="hidden" id="products_grid_before"/>
                         <div class="col-md-12" id="products_grid">
                             <table width="100%">
                                 <tbody>
                                     <tr t-ignore="true">
-                                        <td t-foreach="range(0,rows)" t-as="row" t-attf-width="#{100/rows}%"></td>
+                                        <td t-foreach="range(0,rows)" t-as="row" t-attf-width="#{100/rows}%"/>
                                     </tr>
                                     <tr t-foreach="bins" t-as="tr_product">
                                         <t t-foreach="tr_product" t-as="td_product">
@@ -136,18 +138,22 @@
             ]"/>
             <t t-set="website_sale_sortable_current" t-value="[sort for sort in website_sale_sortable if sort[1]==request.params.get('order', '')]"/>
             <div class="dropdown btn-group dropdown_sorty_by">
-                <a href="#" class="dropdown-toggle btn btn-default" data-toggle="dropdown">
+                <a href="#" class="dropdown-toggle btn btn-default" data-toggle="dropdown"
+                   t-att-alt="'Sorting by' if len(website_sale_sortable_current) else 'Sort by'" t-att-title="'Sorting by' if len(website_sale_sortable_current) else 'Sort by'">
                     <t t-if='len(website_sale_sortable_current)'>
                         <span>Sorting by : <t t-raw='website_sale_sortable_current[0][0]'/></span>
                     </t>
                     <t t-else='1'>
                         <span>Sort by</span>
-                        <span class="caret"></span>
+                        <span class="caret"/>
                     </t>
                 </a>
                 <ul class="dropdown-menu" role="menu">
                     <li t-foreach="website_sale_sortable" t-as="sortby">
-                        <a t-att-href="keep('/catalogue', order=sortby[1])">
+                        <a t-att-href="keep('/catalogue', order=sortby[1])"
+                           t-attf-alt="Sort by #{sortby[0]}"
+                           t-attf-title="Sort by #{sortby[0]}"
+                           rel="nofollow, noindex">
                             <span t-raw="sortby[0]"/>
                         </a>
                     </li>
@@ -159,11 +165,13 @@
 
     <!-- Add to cart button-->
     <template id="categories_recursive_catalogue" name="Category list Catalogue">
-        <li t-att-class="'active' if c.id == int(category or 0) else None">
-            <a t-att-href="keep('/catalogue/category/' + slug(c), category=0)" t-field="c.name"></a>
-            <ul t-if="c.child_id" class="nav nav-pills nav-stacked nav-hierarchy">
-                <t t-foreach="c.child_id" t-as="c">
-                    <t t-call="theme_rias.categories_recursive_catalogue" />
+        <li t-att-class="'active' if categ.id == int(category or 0) else None">
+            <i t-if="categ.child_id" t-attf-class="text-primary fa #{'fa-chevron-down' if categ.id in parent_category_ids else 'fa-chevron-right'}" />
+            <a t-att-href="'/catalogue/category/%s' % categ.slug if categ.slug else keep('/catalogue/category/' + slug(categ), category=0)"
+               t-field="categ.name" t-att-alt="categ.name" t-att-title="categ.name"/>
+            <ul t-if="categ.child_id" class="nav nav-pills nav-stacked nav-hierarchy" t-att-style="'display:block;' if categ.id in parent_category_ids else 'display:none;'">
+                <t t-foreach="categ.child_id" t-as="categ">
+                    <t t-if="categ.product_ids" t-call="theme_rias.categories_recursive_catalogue" />
                 </t>
             </ul>
         </li>
@@ -171,12 +179,11 @@
 
     <template id="products_categories_catalogue" inherit_id="theme_rias.products_catalogue" active="True" customize_show="True" name="eCommerce Categories Catalogue">
         <xpath expr="//div[@id='products_grid_before']" position="inside">
-            <ul class="nav nav-pills nav-stacked mt16">
+            <ul class="nav nav-pills nav-stacked mt16" id="o_shop_collapse_category">
                 <li t-att-class=" '' if category else 'active' ">
-                    <a t-att-href="keep('/catalogue',category=0)" class="o_not_editable">All Products</a>
+                    <a t-att-href="keep('/catalogue',category=0)" class="o_not_editable" alt="All Products" title="All Products">All Products</a>
                 </li>
-                <t t-set="categories" t-value="website.get_child_category(category)" />
-                <t t-foreach="categories" t-as="c">
+                <t t-foreach="categories" t-as="categ">
                     <t t-call="theme_rias.categories_recursive_catalogue" />
                 </t>
             </ul>
@@ -186,31 +193,6 @@
         </xpath>
         <xpath expr="//div[@id='products_grid']" position="attributes">
             <attribute name="class">col-md-9 col-sm-8</attribute>
-        </xpath>
-    </template>
-
-    <template id="option_collapse_categories_recursive_catalogue" name="Collapse Category Recursive Catalogue">
-        <li t-att-class="'active' if categ.id == int(category or 0) else None">
-            <i t-if="categ.child_id" t-attf-class="text-primary fa #{'fa-chevron-down' if categ.id in parent_category_ids else 'fa-chevron-right'}" />
-            <a t-att-href="keep('/catalogue/category/' + slug(categ), category=0)" t-field="categ.name"></a>
-            <ul t-if="categ.child_id" class="nav nav-pills nav-stacked nav-hierarchy" t-att-style="'display:block;' if categ.id in parent_category_ids else 'display:none;'">
-                <t t-foreach="categ.child_id" t-as="categ">
-                    <t t-call="theme_rias.option_collapse_categories_recursive_catalogue" />
-                </t>
-            </ul>
-        </li>
-    </template>
-
-    <template id="option_collapse_products_categories_catalogue" name="Collapsible Category List Catalogue" inherit_id="theme_rias.products_categories_catalogue" active="False" customize_show="True">
-        <xpath expr="//div[@id='products_grid_before']/ul" position="replace">
-            <ul class="nav nav-pills nav-stacked mt16" id="o_shop_collapse_category">
-                <li t-att-class=" '' if category else 'active' ">
-                    <a t-att-href="keep('/catalogue',category=0)" class="o_not_editable">All Products</a>
-                </li>
-                <t t-foreach="categories" t-as="categ">
-                    <t t-call="theme_rias.option_collapse_categories_recursive_catalogue" />
-                </t>
-            </ul>
         </xpath>
     </template>
 
@@ -265,17 +247,6 @@
         </xpath>
     </template>
 
-    <template id="products_list_view_catalogue" inherit_id="theme_rias.products_catalogue" active="False" customize_show="True" name="Catalogue List View">
-        <xpath expr="//div[@id='products_grid']//table" position="replace">
-            <t t-foreach="products" t-as="product">
-                <div class="oe_product oe_list oe_product_cart" t-att-data-publish="product.website_published and 'on' or 'off'">
-                    <t t-call="theme_rias.products_item_catalogue">
-                        <t t-set="show_publish" t-value="True" />
-                    </t>
-                </div>
-            </t>
-        </xpath>
-    </template>
 
     <!-- /shop/product product page -->
     <template id="product_edit_options_catalogue" inherit_id="website.user_navbar" name="Catalogue Edit Product Options">
@@ -283,75 +254,75 @@
             <t t-if="main_object._name == 'product.template'" t-set="action" t-value="'product.product_template_action'" />
         </xpath>
     </template>
-    
+
     <template id="products_description_catalogue" inherit_id="theme_rias.products_item_catalogue" active="False" customize_show="True" name="Catalogue Product Description">
         <xpath expr="//section[hasclass('text-center')]" position="inside">
             <div class="text-info oe_subdescription" contenteditable="false">
-                <div itemprop="description" t-field="product.description_sale"></div>
+                <div itemprop="description" t-field="product.description_sale"/>
             </div>
         </xpath>
     </template>
 
     <template id="variants_catalogue">
-      <t t-set="attribute_value_ids" t-value="get_attribute_value_ids(product)"/>
-      <ul t-attf-class="list-unstyled js_add_cart_variants #{ul_class}" t-att-data-attribute_value_ids="json.dumps(attribute_value_ids)">
-        <t t-foreach="product.attribute_line_ids.sorted(key=lambda x: x.attribute_id.sequence)" t-as="variant_id">
-          <li t-if="len(variant_id.value_ids) > 1">
+        <t t-set="attribute_value_ids" t-value="get_attribute_value_ids(product)"/>
+        <ul t-attf-class="list-unstyled js_add_cart_variants #{ul_class}" t-att-data-attribute_value_ids="json.dumps(attribute_value_ids)">
+            <t t-foreach="product.attribute_line_ids.sorted(key=lambda x: x.attribute_id.sequence)" t-as="variant_id">
+                <li t-if="len(variant_id.value_ids) > 1">
 
-            <strong t-field="variant_id.attribute_id.name"/>
+                    <strong t-field="variant_id.attribute_id.name"/>
 
-            <t t-if="variant_id.attribute_id.type == 'select'">
-              <select t-attf-class="form-control #{'js_variant_change' if variant_id.attribute_id.create_variant else ''}" t-att-name="'attribute-%s-%s' % (product.id, variant_id.attribute_id.id)">
-                <t t-foreach="variant_id.value_ids" t-as="value_id">
-                  <option t-att-value="value_id.id">
-                      <span t-field="value_id.name"/>
-                  </option>
-                </t>
-              </select>
+                    <t t-if="variant_id.attribute_id.type == 'select'">
+                        <select t-attf-class="form-control #{'js_variant_change' if variant_id.attribute_id.create_variant else ''}" t-att-name="'attribute-%s-%s' % (product.id, variant_id.attribute_id.id)">
+                            <t t-foreach="variant_id.value_ids" t-as="value_id">
+                                <option t-att-value="value_id.id">
+                                    <span t-field="value_id.name"/>
+                                </option>
+                            </t>
+                        </select>
+                    </t>
+
+                    <t t-if="variant_id.attribute_id.type == 'radio'">
+                        <ul class="list-unstyled">
+                            <t t-set="inc" t-value="0"/>
+                            <t t-foreach="variant_id.value_ids" t-as="value_id">
+                                <li class="form-group js_attribute_value" style="margin: 0;">
+                                    <label class="control-label" style="margin: 0 20px;">
+                                        <input type="radio" t-att-class="'js_variant_change' if variant_id.attribute_id.create_variant else None" t-att-checked="'checked' if not inc else None" t-att-name="'attribute-%s-%s' % (product.id, variant_id.attribute_id.id)" t-att-value="value_id.id" style="vertical-align: top; margin-right: 10px;"/>
+                                        <span t-field="value_id.name"/>
+                                    </label>
+                                </li>
+                                <t t-set="inc" t-value="inc+1"/>
+                            </t>
+                        </ul>
+                    </t>
+
+                    <t t-if="variant_id.attribute_id.type == 'color'">
+                        <ul class="list-inline">
+                            <t t-set="inc" t-value="0"/>
+                            <li t-foreach="variant_id.value_ids" t-as="value_id">
+                                <label t-attf-style="background-color:#{value_id.html_color or value_id.name}"
+                                       t-attf-class="css_attribute_color #{'active' if not inc else ''}">
+                                    <input type="radio" t-att-class="'js_variant_change' if variant_id.attribute_id.create_variant else None"
+                                           t-att-checked="'checked' if not inc else None"
+                                           t-att-name="'attribute-%s-%s' % (product.id, variant_id.attribute_id.id)"
+                                           t-att-value="value_id.id"
+                                           t-att-title="value_id.name"/>
+                                </label>
+                                <t t-set="inc" t-value="inc+1"/>
+                            </li>
+                        </ul>
+                    </t>
+
+                </li>
             </t>
-
-            <t t-if="variant_id.attribute_id.type == 'radio'">
-              <ul class="list-unstyled">
-                  <t t-set="inc" t-value="0"/>
-                  <t t-foreach="variant_id.value_ids" t-as="value_id">
-                      <li class="form-group js_attribute_value" style="margin: 0;">
-                          <label class="control-label" style="margin: 0 20px;">
-                              <input type="radio" t-att-class="'js_variant_change' if variant_id.attribute_id.create_variant else None" t-att-checked="'checked' if not inc else None" t-att-name="'attribute-%s-%s' % (product.id, variant_id.attribute_id.id)" t-att-value="value_id.id" style="vertical-align: top; margin-right: 10px;"/>
-                              <span t-field="value_id.name"/>
-                          </label>
-                      </li>
-                      <t t-set="inc" t-value="inc+1"/>
-                  </t>
-              </ul>
-            </t>
-
-            <t t-if="variant_id.attribute_id.type == 'color'">
-              <ul class="list-inline">
-                  <t t-set="inc" t-value="0"/>
-                  <li t-foreach="variant_id.value_ids" t-as="value_id">
-                      <label t-attf-style="background-color:#{value_id.html_color or value_id.name}"
-                          t-attf-class="css_attribute_color #{'active' if not inc else ''}">
-                        <input type="radio" t-att-class="'js_variant_change' if variant_id.attribute_id.create_variant else None"
-                          t-att-checked="'checked' if not inc else None"
-                          t-att-name="'attribute-%s-%s' % (product.id, variant_id.attribute_id.id)"
-                          t-att-value="value_id.id"
-                          t-att-title="value_id.name"/>
-                      </label>
-                      <t t-set="inc" t-value="inc+1"/>
-                  </li>
-              </ul>
-            </t>
-
-          </li>
-        </t>
-      </ul>
+        </ul>
     </template>
 
     <!-- User Navbar -->
     <template id="content_new_product_catalogue" inherit_id="website.user_navbar">
         <xpath expr="//div[@id='o_new_content_menu_choices']//ul" position="inside">
             <li groups="sales_team.group_sale_manager">
-                <a id="create-new-product" href="#" data-action="new_product">
+                <a id="create-new-product" href="#" data-action="new_product" alt="New Product" title="New Product" rel="nofollow, noindex">
                     <i class="fa fa-shopping-cart" />
                     <p>New Product</p>
                 </a>
@@ -359,9 +330,14 @@
         </xpath>
     </template>
 
-    <template id="portal_order_page_products_links_catalogue" name=" Catalogue Orders Followup Products Links" inherit_id="sale.portal_order_page">
+    <template id="portal_order_page_products_links_catalogue" name="Catalogue Orders Followup Products Links" inherit_id="sale.portal_order_page">
+        <xpath expr="//div[@id='product_name']/../div/span" position="replace">
+            <a t-if="ol.product_id.website_published" t-att-href="ol.product_id.website_url" t-att-alt="ol.name" t-att-title="ol.name" rel="nofollow, noindex">
+                <span t-field="ol.product_image" t-options="{'widget': 'image', 'class': 'img-rounded', 'style':'width: 48px;height:48px'}" />
+            </a>
+        </xpath>
         <xpath expr="//div[@id='product_name']/*" position="replace">
-            <a t-if="ol.product_id.website_published" t-att-href="ol.product_id.website_url">
+            <a t-if="ol.product_id.website_published" t-att-href="ol.product_id.website_url" t-att-alt="ol.name" t-att-title="ol.name">
                 <span t-esc="ol.name" />
             </a>
             <t t-if="not ol.product_id.website_published">
@@ -374,19 +350,19 @@
     <!-- Tags -->
     <template id="categories_top_catalogue" name="Catalogue Categories Top">
         <div class="row mb8 ml8 mr8 mt8">
-            <a href="#" class="product-tag btn btn-primary btn-xs to-toggle-menu hidden-sm hidden-md hidden-lg">
+            <a href="#" class="product-tag btn btn-primary btn-xs to-toggle-menu hidden-sm hidden-md hidden-lg" alt="Categories" title="Categories" rel="nofollow, noindex">
                 <span data-oe-model="website.menu" data-oe-id="37" data-oe-field="name" data-oe-type="char" data-oe-expression="submenu.name">Categories</span>
             </a>
             <t t-set="cats" t-value="website.get_child_category(False)" />
             <t t-if="len(cats) &gt; 0">
-            <t t-foreach="cats" t-as="cat">
-                <div class="col-12 col-sm-4 col-md-2 mt8 mb8 hidden-xs">
-                    <a class="" t-att-title="cat.name"
-                        t-att-href="'/catalogue/category/%s' % cat.slug if cat.slug else '/catalogue/category/%s' % slug(cat)">
-                        <img class="img-responsive cat-image" t-attf-alt="cat.name" t-attf-src="/web/image/product.public.category/#{cat.id}/image"/>
-                    </a>
-                </div>
-            </t>
+                <t t-foreach="cats" t-as="cat">
+                    <div class="col-12 col-sm-4 col-md-2 mt8 mb8 hidden-xs">
+                        <a class="" t-att-title="cat.name" t-att-alt="cat.name"
+                           t-att-href="'/catalogue/category/%s' % cat.slug if cat.slug else '/catalogue/category/%s' % slug(cat)">
+                            <img class="img-responsive cat-image" t-attf-alt="cat.name" t-attf-src="/web/image/product.public.category/#{cat.id}/image"/>
+                        </a>
+                    </div>
+                </t>
             </t>
         </div>
         <div class="row container cat-dynamic-menu-div">
@@ -395,18 +371,18 @@
     </template>
 
     <template id="dynamic_category">
-		<ul class="custom-menu-inside-div custom-menu-inside-div-nth dropdown-menu hidden-sm hidden-md hidden-lg">
+        <ul class="custom-menu-inside-div custom-menu-inside-div-nth dropdown-menu hidden-sm hidden-md hidden-lg">
             <div class="custom-menu-inside-maxW">
                 <div class="first_li">
-                    <t t-set="category_fetch" t-value="website.category_check()"></t>
+                    <t t-set="category_fetch" t-value="website.category_check()"/>
                     <t t-foreach="category_fetch" t-as="category_individual">
                         <t t-if="not category_individual.parent_id">
                             <li class="first-level-category-li dropdown-submenu" t-att-id="'genrate_categ_id-%s' % category_individual.id">
                                 <div class="first-level-left-div">
                                     <div class="first-level-category-image" itemprop="image"
-                                        t-field="category_individual.image" t-options='{"widget": "image", "alt-field": "name"}' />
+                                         t-field="category_individual.image" t-options='{"widget": "image", "alt-field": "name"}' />
                                     <a class="first-level-category-a " t-att-href="'/catalogue/category/%s' %slug(category_individual)"
-                                        t-field="category_individual.display_name" ></a>
+                                       t-field="category_individual.display_name" />
                                 </div>
                                 <span tabindex="-1" class="submenu-a first-level-category-caret fa fa-chevron-right" />
                                 <div class="toggel_div toggel-div-effect" t-att-id="category_individual.id">
@@ -418,13 +394,13 @@
                                                         <t t-foreach="category_individual.child_id" t-as="c">
                                                             <li class="dropdown-submenu sub-menu-ul-heading">
                                                                 <a class="second-level-a menu_heading " t-att-href="'/catalogue/category/%s' %slug(c)"
-                                                                    t-field="c.name" ></a>
+                                                                   t-field="c.name" t-att-alt="c" t-att-title="c"/>
                                                                 <span tabindex="-1" class="submenu-a second-level-category-caret fa fa-chevron-right" />
                                                                 <ul class="third-level-ul dropdown-menu">
                                                                     <t t-foreach="c.child_id" t-as="child">
                                                                         <li class="third-level-li">
                                                                             <a class="sub_menu_list" t-att-href="'/catalogue/category/%s' %slug(child)"
-                                                                                t-field="child.name" />
+                                                                               t-field="child.name" t-att-alt="child.name" t-att-title="child.name"/>
                                                                         </li>
                                                                     </t>
                                                                 </ul>
@@ -442,7 +418,7 @@
                 </div>
             </div>
         </ul>
-	</template>
+    </template>
 
     <template id="dynamic_category_menu" inherit_id="theme_rias.dynamic_category" name="Category dynamic menu">
         <xpath expr="//a[hasclass('first-level-category-a')]" position="attributes">
@@ -471,35 +447,28 @@
     <template id="las_website_sale_header" inherit_id="website_sale.header" name="Rías Website_sale Header Shop My Cart Link">
         <xpath expr="//header//ul[@id='top_menu']/li[@id='my_cart']/a/i" position="replace">
             <t t-if="website_sale_order.campaign_id.name">
-                <i class="fa fa-cart-plus text-danger"></i>
+                <i class="fa fa-cart-plus text-danger"/>
             </t>
             <t t-else="">
-                <i class="fa fa-shopping-cart"></i>
+                <i class="fa fa-shopping-cart"/>
             </t>
             <t t-esc="website_sale_order.name"/>
         </xpath>
     </template>
 
     <template id="las_template_current_cart" name="Current cart breadcrumb">
-        
         <ol class="breadcrumb">
             <li t-if="not request.env.user._is_public()">
-                <a href="/shop/cart"><i class="fa fa-shopping-cart"/></a>
+                <a href="/shop/cart" alt="Cart" title="Cart"><i class="fa fa-shopping-cart"/></a>
             </li>
             <t t-set="cart" t-value="request.website.sale_get_order()"/>
             <t t-if="cart">
                 <li t-att-class="'active'">
-                    <span t-esc="cart.name"/>
-                    <t t-if="cart.campaign_id.name">
-                            - <span t-esc="cart.campaign_id.name"/>
-                    </t>
+                    <span t-esc="cart.name"/><t t-if="cart.campaign_id.name"> - <span t-esc="cart.campaign_id.name"/></t>
                 </li>
             </t>
         </ol>
-
     </template>
-
-    <!-- <a t-else="" t-att-href="crumb.url" t-esc="crumb.name"/> -->
 
     <template id="las_template_catalogue_tags" inherit_id="breadcrumbs_base.bcb_main_wrap">
         <xpath expr="//t[@t-foreach='breadcrumbs']" position="replace">
@@ -507,7 +476,7 @@
                 <t t-foreach="breadcrumbs" t-as="crumb">
                     <li t-att-class="'active' if crumb.active else None">
                         <span t-if="crumb.active" t-esc="crumb.name"/>
-                        <a t-else="" t-att-href="website.crumb_for_catalogue(crumb.url)" t-esc="crumb.name"/>
+                        <a t-else="" t-att-href="website.crumb_for_catalogue(crumb.url)" t-esc="crumb.name" t-att-alt="crumb.name" t-att-title="crumb.name" rel="nofollow, noindex"/>
                     </li>
                 </t>
             </t>
@@ -515,7 +484,7 @@
                 <t t-foreach="breadcrumbs" t-as="crumb">
                     <li t-att-class="'active' if crumb.active else None">
                         <span t-if="crumb.active" t-esc="crumb.name"/>
-                        <a t-else="" t-att-href="crumb.url" t-esc="crumb.name"/>
+                        <a t-else="" t-att-href="crumb.url" t-esc="crumb.name" t-att-alt="crumb.name" t-att-title="crumb.name" rel="nofollow, noindex"/>
                     </li>
                 </t>
             </t>
@@ -538,7 +507,7 @@
                 <section t-attf-class="container mt8 oe_website_sale #{(compute_currency(product.lst_price) - product.website_price) &gt; 0.01 and website.get_current_pricelist().discount_policy == 'without_discount'  and 'discount'}" id="product_detail">
                     <div class="row">
                         <div class="col-sm-4">
-                            
+
                         </div>
                         <div class="col-sm-3 mb8">
                             <t t-call="website_sale.search" />
@@ -556,40 +525,40 @@
                                 <t t-set="variant_img" t-value="any(product.mapped('product_variant_ids.image_variant'))"/>
                                 <t t-set="image_ids"  t-value="product.product_image_ids"/>
                                 <div id="o-carousel-product" class="carousel slide" data-ride="carousel" data-interval="0">
-                                  <div class="carousel-outer">
-                                    <div class="carousel-inner">
-                                        <div t-if="variant_img" class="item active" itemprop="image" t-field="product[:1].product_variant_id.image" t-options="{'widget': 'image', 'class': 'product_detail_img js_variant_img', 'alt-field': 'name', 'zoom': 'image', 'unique': product['__last_update'] + (product.product_variant_id['__last_update'] or '')}"/>
-                                        <div t-attf-class="item#{'' if variant_img else ' active'}" itemprop="image" t-field="product.image" t-options="{'widget': 'image', 'class': 'product_detail_img', 'alt-field': 'name', 'zoom': 'image', 'unique': product['__last_update']}"/>
-                                        <t t-if="len(image_ids)" t-foreach="image_ids" t-as="pimg">
-                                            <div class="item" t-field="pimg.image" t-options='{"widget": "image", "class": "product_detail_img", "alt-field": "name", "zoom": "image" }'/>
+                                    <div class="carousel-outer">
+                                        <div class="carousel-inner">
+                                            <div t-if="variant_img" class="item active" itemprop="image" t-field="product[:1].product_variant_id.image" t-options="{'widget': 'image', 'class': 'product_detail_img js_variant_img', 'alt-field': 'name', 'zoom': 'image', 'unique': product['__last_update'] + (product.product_variant_id['__last_update'] or '')}"/>
+                                            <div t-attf-class="item#{'' if variant_img else ' active'}" itemprop="image" t-field="product.image" t-options="{'widget': 'image', 'class': 'product_detail_img', 'alt-field': 'name', 'zoom': 'image', 'unique': product['__last_update']}"/>
+                                            <t t-if="len(image_ids)" t-foreach="image_ids" t-as="pimg">
+                                                <div class="item" t-field="pimg.image" t-options='{"widget": "image", "class": "product_detail_img", "alt-field": "name", "zoom": "image" }'/>
+                                            </t>
+                                        </div>
+
+                                        <t t-if="len(image_ids) or variant_img">
+                                            <a class="carousel-control left" href="#o-carousel-product" role="button" data-slide="prev" alt="Previous" title="Previous" rel="nofollow, noindex">
+                                                <span class="fa fa-chevron-left" aria-hidden="true"/>
+                                                <span class="sr-only">Previous</span>
+                                            </a>
+                                            <a class="carousel-control right" href="#o-carousel-product" role="button" data-slide="next" alt="Next" title="Next" rel="nofollow, noindex">
+                                                <span class="fa fa-chevron-right" aria-hidden="true"/>
+                                                <span class="sr-only">Next</span>
+                                            </a>
                                         </t>
                                     </div>
 
-                                    <t t-if="len(image_ids) or variant_img">
-                                        <a class="carousel-control left" href="#o-carousel-product" role="button" data-slide="prev" >
-                                            <span class="fa fa-chevron-left" aria-hidden="true"/>
-                                            <span class="sr-only">Previous</span>
-                                        </a>
-                                        <a class="carousel-control right" href="#o-carousel-product" role="button" data-slide="next">
-                                            <span class="fa fa-chevron-right" aria-hidden="true"/>
-                                            <span class="sr-only">Next</span>
-                                        </a>
-                                    </t>
-                                  </div>
-
-                                  <ol class="carousel-indicators" t-if="len(image_ids) or variant_img">
-                                    <li t-if="variant_img" data-target="#o-carousel-product" data-slide-to="0" class="active">
-                                        <img class="img img-responsive js_variant_img_small" t-attf-src="/website/image/product.product/{{product.product_variant_id.id}}/image/90x90" t-att-alt="product.name"/>
-                                    </li>
-                                    <li data-target="#o-carousel-product" t-att-data-slide-to="1 if variant_img else '0'" t-att-class="'' if variant_img else 'active'">
-                                        <img class="img img-responsive" t-attf-src="/website/image/product.template/{{product.id}}/image/90x90" t-att-alt="product.name"/>
-                                    </li>
-                                    <t t-if="len(image_ids)" t-foreach="image_ids" t-as="pimg">
-                                        <li data-target="#o-carousel-product" t-att-data-slide-to="pimg_index + (variant_img and 2 or 1)">
-                                            <img class="img img-responsive" t-attf-src="/website/image/product.image/{{pimg.id}}/image/90x90" t-att-alt="pimg.name"/>
+                                    <ol class="carousel-indicators" t-if="len(image_ids) or variant_img">
+                                        <li t-if="variant_img" data-target="#o-carousel-product" data-slide-to="0" class="active">
+                                            <img class="img img-responsive js_variant_img_small" t-attf-src="/website/image/product.product/{{product.product_variant_id.id}}/image/90x90" t-att-alt="product.name"/>
                                         </li>
-                                    </t>
-                                  </ol>
+                                        <li data-target="#o-carousel-product" t-att-data-slide-to="1 if variant_img else '0'" t-att-class="'' if variant_img else 'active'">
+                                            <img class="img img-responsive" t-attf-src="/website/image/product.template/{{product.id}}/image/90x90" t-att-alt="product.name"/>
+                                        </li>
+                                        <t t-if="len(image_ids)" t-foreach="image_ids" t-as="pimg">
+                                            <li data-target="#o-carousel-product" t-att-data-slide-to="pimg_index + (variant_img and 2 or 1)">
+                                                <img class="img img-responsive" t-attf-src="/website/image/product.image/{{pimg.id}}/image/90x90" t-att-alt="pimg.name"/>
+                                            </li>
+                                        </t>
+                                    </ol>
                                 </div>
                             </t>
                         </div>
@@ -642,16 +611,16 @@
                 <h3>Alternative Products:</h3>
                 <div class="row mt16" style="">
                     <t t-foreach="product.alternative_product_ids" t-as="alt_product">
-                        <div class="col-md-2 thumbnail" style="width: 170px; height:130px; float:left; display:inline; margin-right: 10px; overflow:hidden;">
-                            <div class="mt16 text-center" style="height: 100%;">
-                                <div t-field="alt_product.image_small" t-options="{'widget': 'image', 'class': 'img-rounded shadow o_alternative_product' }" />
-                                <h5>
-                                    <a t-attf-href="/catalogue/product/#{ slug(alt_product) }" style="display: block">
-                                        <span t-att-title="alt_product.name" t-field="alt_product.name" class="o_text_overflow" style="display: block;" />
-                                    </a>
-                                </h5>
+                        <a t-attf-href="/catalogue/product/#{ slug(alt_product) }" style="display: block" t-att-alt="alt_product.name" t-att-title="alt_product.name">
+                            <div class="col-md-2 thumbnail" style="width: 170px; height:130px; float:left; display:inline; margin-right: 10px; overflow:hidden;">
+                                <div class="mt16 text-center" style="height: 100%;">
+                                    <div t-field="alt_product.image_small" t-options="{'widget': 'image', 'class': 'img-rounded shadow o_alternative_product' }" />
+                                    <h5>
+                                        <span t-field="alt_product.name" class="o_text_overflow mt16" style="display: block;" />
+                                    </h5>
+                                </div>
                             </div>
-                        </div>
+                        </a>
                     </t>
                 </div>
             </div>
@@ -664,7 +633,8 @@
             <p class="text-muted" id="product_attributes_simple">
                 <t t-foreach="product.attribute_line_ids.sorted(key=lambda x: x.attribute_id.sequence)" t-as="variant_id">
                     <t t-if="len(variant_id.value_ids)==1">
-                        <span t-field="variant_id.attribute_id" />: <span t-field="variant_id.value_ids[0].name" /><br /></t>
+                        <span t-field="variant_id.attribute_id" />: <span t-field="variant_id.value_ids[0].name" /><br/>
+                    </t>
                 </t>
             </p>
         </xpath>
@@ -690,20 +660,20 @@
     </template>
 
     <template id="product_catalogue_product_variants" inherit_id="theme_rias.product_catalogue" active="False" customize_show="True" name="Product Catalogue List View of Variants">
-      <xpath expr="//t[@t-placeholder='select']" position="replace">
-        <input type="hidden" t-if="len(product.product_variant_ids) == 1" class="product_id" name="product_id" t-att-value="product.product_variant_id.id"/>
-        <t t-if="len(product.product_variant_ids) &gt; 1">
-          <label label-default="label-default" class="radio" t-foreach="product.product_variant_ids" t-as="variant_id">
-            <input type="radio" name="product_id" class="js_product_change" t-att-checked="'checked' if variant_id_index == 0 else None" t-att-value="variant_id.id" t-att-data-lst_price="compute_currency(variant_id.lst_price)" t-att-data-price="variant_id.price"/>
-            <span t-esc="variant_id.name_get()[0][1]"/>
-            <t t-set="diff_price" t-value="variant_id.price - variant_id.product_tmpl_id.price"/>
-          </label>
-        </t>
-        <t t-else="">
-            <t t-set="attribute_value_ids" t-value="get_attribute_value_ids(product)"/>
-            <ul class="hidden js_add_cart_variants" t-att-data-attribute_value_ids="json.dumps(attribute_value_ids)"/>
-        </t>
-      </xpath>
+        <xpath expr="//t[@t-placeholder='select']" position="replace">
+            <input type="hidden" t-if="len(product.product_variant_ids) == 1" class="product_id" name="product_id" t-att-value="product.product_variant_id.id"/>
+            <t t-if="len(product.product_variant_ids) &gt; 1">
+                <label label-default="label-default" class="radio" t-foreach="product.product_variant_ids" t-as="variant_id">
+                    <input type="radio" name="product_id" class="js_product_change" t-att-checked="'checked' if variant_id_index == 0 else None" t-att-value="variant_id.id" t-att-data-lst_price="compute_currency(variant_id.lst_price)" t-att-data-price="variant_id.price"/>
+                    <span t-esc="variant_id.name_get()[0][1]"/>
+                    <t t-set="diff_price" t-value="variant_id.price - variant_id.product_tmpl_id.price"/>
+                </label>
+            </t>
+            <t t-else="">
+                <t t-set="attribute_value_ids" t-value="get_attribute_value_ids(product)"/>
+                <ul class="hidden js_add_cart_variants" t-att-data-attribute_value_ids="json.dumps(attribute_value_ids)"/>
+            </t>
+        </xpath>
     </template>
 
     <template id="product_catalogue_product_description" name="Product catalogue product description" inherit_id="theme_rias.product_catalogue">
@@ -725,5 +695,72 @@
             </div>
         </xpath>
     </template>
-    
+
+    <!-- infinite scroll -->
+
+    <template id="products_catalogue_list_view" inherit_id="theme_rias.products_catalogue" active="False" customize_show="True" name="Products Catalogue List View" priority="50">
+        <xpath expr="//div[@id='products_grid']//table" position="replace">
+            <t t-foreach="products" t-as="product">
+                <div class="oe_product oe_list oe_product_cart sgeede-infinite-get" t-att-data-publish="product.website_published and 'on' or 'off'">
+                    <t t-call="theme_rias.products_item_catalogue">
+                        <t t-set="show_publish" t-value="True" />
+                    </t>
+                </div>
+            </t>
+            <t t-if="category">
+                <div class="sgeede-infinite-pagination">
+                    <t t-if="int(pager['page']['num']) + 1 &lt;= int(pager['page_count'])">
+                        <a t-att-href="pager['page_next']['url']" style="display: none" t-attf-alt="Page #{int(pager['page']['num']) + 1}"
+                           t-att-title="Page #{int(pager['page']['num']) + 1}" rel="nofollow, noindex">Page <span t-esc="int(pager['page']['num']) + 1"/>
+                        </a>
+                    </t>
+                    <span class="max-page" t-esc="pager['page_count']" style="display: none"/>
+                </div>
+            </t>
+            <t t-if="not category">
+                <div class="sgeede-infinite-pagination">
+                    <t t-if="int(pager['page']['num']) + 1 &lt;= int(pager['page_count'])">
+                        <a t-att-href="pager['page_next']['url']" style="display: none" t-attf-alt="Page #{int(pager['page']['num']) + 1}"
+                           t-att-title="Page #{int(pager['page']['num']) + 1}" rel="nofollow, noindex">Page <span t-esc="int(pager['page']['num']) + 1"/>
+                        </a>
+                    </t>
+                    <span class="max-page" t-esc="pager['page_count']" style="display: none"/>
+                </div>
+            </t>
+        </xpath>
+    </template>
+
+    <template id="products_catalogue_infinite_scroll" inherit_id="theme_rias.products_catalogue" active="True" customize_show="True" name="Products Catalogue SGEEDE Infinite Scroll" priority="40">
+        <xpath expr="//div[@id='products_grid']" position="attributes">
+            <attribute name="class" add="sgeede-infinite-scroll" separator=" "/>
+        </xpath>
+
+        <xpath expr="//div[@id='products_grid']//table//tbody//tr[@t-foreach='bins']" position="attributes">
+            <attribute name="t-attf-class">sgeede-infinite-get</attribute>
+        </xpath>
+
+        <xpath expr="//div[@id='products_grid']//table//tbody" position="inside">
+            <t t-if="category">
+                <tr class="sgeede-infinite-pagination">
+                    <t t-if="int(pager['page']['num']) + 1 &lt;= int(pager['page_count'])">
+                        <td><a t-att-href="pager['page_next']['url']" style="display: none" t-attf-alt="Page #{int(pager['page']['num']) + 1}"
+                               t-att-title="Page #{int(pager['page']['num']) + 1}" rel="nofollow, noindex">Page <span t-esc="int(pager['page']['num']) + 1"/>
+                        </a></td>
+                    </t>
+                    <td><span class="max-page" t-esc="pager['page_count']" style="display: none"/></td>
+                </tr>
+            </t>
+            <t t-if="not category">
+                <tr class="sgeede-infinite-pagination">
+                    <t t-if="int(pager['page']['num']) + 1 &lt;= int(pager['page_count'])">
+                        <td><a t-att-href="pager['page_next']['url']" style="display: none" t-attf-alt="Page #{int(pager['page']['num']) + 1}"
+                               t-att-title="Page #{int(pager['page']['num']) + 1}" rel="nofollow, noindex">Page <span t-esc="int(pager['page']['num']) + 1"/>
+                        </a></td>
+                    </t>
+                    <td><span class="max-page" t-esc="pager['page_count']" style="display: none"/></td>
+                </tr>
+            </t>
+        </xpath>
+    </template>
+
 </odoo>

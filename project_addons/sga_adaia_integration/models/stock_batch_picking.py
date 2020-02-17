@@ -68,7 +68,7 @@ class StockBatchPickingSGA(models.Model):
             new_sga_file = self.env['sga.file'].with_context(ctx).\
                     check_sga_file('stock.batch.picking', self.id, self.picking_type_id.sgavar_file_id.code)
             if not new_sga_file:
-                raise ValidationError("No hay albaranes para enviar a Adaia")
+                raise ValidationError("No se ha podido generar el fichero, comprueba que hay un fichero asociado al tipo de picking.")
         return True
 
     @api.multi

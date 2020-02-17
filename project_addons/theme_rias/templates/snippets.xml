@@ -21,42 +21,42 @@
                     </div>
                     <div class="col-md-4 mt32 mb48">
                         <a href="/theme_rias/static/pdf/catalogues/jardin2019es.pdf" target="_blank">
-                            <img class="img img-responsive" src="/theme_rias/static/img/catalogues/jardin.jpeg" alt="Catálogo Jardines 2019"/>
+                            <img class="img img-responsive" src="/theme_rias/static/img/catalogues/jardin.jpeg" alt="Catálogo Jardines 2019" title="Catálogo Jardines 2019"/>
                         </a>
                         <h3 class="mt16 text-center">JARDINES 2019</h3>
                         <div class="col-md-12 mt48 text-center">
                             <a class="btn btn-primary" href="/theme_rias/static/pdf/catalogues/jardin2019es.pdf" target="_blank" role="button">
                                 PDF
                             </a>
-                            <a class="btn btn-primary" href="/slides/slide/jardin-2019-3" role="button">
+                            <a class="btn btn-primary" href="/slides/slide/jardin-2019-3" role="button" alt="CATÁLOGO INTERACTIVO" title="CATÁLOGO INTERACTIVO">
                                 CATÁLOGO INTERACTIVO
                             </a>
                         </div>
                     </div>
                     <div class="col-md-4 mt32 mb48">
                         <a href="/theme_rias/static/pdf/catalogues/reformas2019es.pdf" target="_blank">
-                            <img class="img img-responsive" src="/theme_rias/static/img/catalogues/reformas.jpeg" alt="Catálogo Reformas 2019"/>
+                            <img class="img img-responsive" src="/theme_rias/static/img/catalogues/reformas.jpeg" alt="Catálogo Reformas 2019" title="Catálogo Reformas 2019"/>
                         </a>
                         <h3 class="mt16 text-center">REFORMAS 2019</h3>
                         <div class="col-md-12 mt48 text-center">
                             <a class="btn btn-primary" href="/theme_rias/static/pdf/catalogues/reformas2019es.pdf" target="_blank" role="button">
                                 PDF
                             </a>
-                            <a class="btn btn-primary" href="/slides/slide/reformas-2019-1" role="button">
+                            <a class="btn btn-primary" href="/slides/slide/reformas-2019-1" role="button" alt="CATÁLOGO INTERACTIVO" title="CATÁLOGO INTERACTIVO">
                                 CATÁLOGO INTERACTIVO
                             </a>
                         </div>
                     </div>
                     <div class="col-md-4 mt32 mb48">
                         <a href="/theme_rias/static/pdf/catalogues/piscinas2019es.pdf" target="_blank">
-                            <img class="img img-responsive" src="/theme_rias/static/img/catalogues/piscinas.jpeg" alt="Catálogo Piscinas 2019"/>
+                            <img class="img img-responsive" src="/theme_rias/static/img/catalogues/piscinas.jpeg" alt="Catálogo Piscinas 2019" title="Catálogo Piscinas 2019"/>
                         </a>
                         <h3 class="mt16 text-center">PISCINAS 2019</h3>
                         <div class="col-md-12 mt48 text-center">
                             <a class="btn btn-primary" href="/theme_rias/static/pdf/catalogues/piscinas2019es.pdf" target="_blank" role="button">
                                 PDF
                             </a>
-                            <a class="btn btn-primary" href="/slides/slide/piscinas-2019-2" role="button">
+                            <a class="btn btn-primary" href="/slides/slide/piscinas-2019-2" role="button" alt="CATÁLOGO INTERACTIVO" title="CATÁLOGO INTERACTIVO">
                                 CATÁLOGO INTERACTIVO
                             </a>
                         </div>
@@ -72,9 +72,9 @@
                 <div class="row">
                     <div class="col-md-6 mt32 mb32">
                         <div class="media_iframe_video" data-oe-expression="//www.youtube.com/embed/mx6-6PLJQk4?autoplay=0&amp;rel=0&amp;modestbranding=1">
-                            <div class="css_editable_mode_display" data-original-title="" title=""></div>
-                            <div class="media_iframe_video_size"></div>
-                            <iframe src="//www.youtube.com/embed/mx6-6PLJQk4?autoplay=0&amp;rel=0&amp;modestbranding=1" frameborder="0"></iframe>
+                            <div class="css_editable_mode_display" data-original-title="" title=""/>
+                            <div class="media_iframe_video_size"/>
+                            <iframe src="//www.youtube.com/embed/mx6-6PLJQk4?autoplay=0&amp;rel=0&amp;modestbranding=1" frameborder="0"/>
                         </div>
                     </div>
                     <div class="col-md-6 mt64 mb32 text-left">
@@ -105,9 +105,9 @@
                     </div>
                     <div class="col-md-6 mt32 mb32">
                         <div class="media_iframe_video" data-oe-expression="//www.youtube.com/embed/e4XLx1bSKCc?autoplay=0&amp;rel=0&amp;modestbranding=1">
-                            <div class="css_editable_mode_display"></div>
-                            <div class="media_iframe_video_size"></div>
-                            <iframe src="//www.youtube.com/embed/e4XLx1bSKCc?autoplay=0&amp;rel=0&amp;modestbranding=1" frameborder="0"></iframe>
+                            <div class="css_editable_mode_display"/>
+                            <div class="media_iframe_video_size"/>
+                            <iframe src="//www.youtube.com/embed/e4XLx1bSKCc?autoplay=0&amp;rel=0&amp;modestbranding=1" frameborder="0"/>
                         </div>
                     </div>
                 </div>
@@ -121,9 +121,9 @@
                 <div class="row">
                     <div class="col-md-6 mt32 mb32">
                         <div class="media_iframe_video" data-oe-expression="//www.youtube.com/embed/OxKDWoDyGUo?autoplay=0&amp;rel=0&amp;modestbranding=1">
-                            <div class="css_editable_mode_display" data-original-title="" title=""></div>
-                            <div class="media_iframe_video_size"></div>
-                            <iframe src="//www.youtube.com/embed/OxKDWoDyGUo?autoplay=0&amp;rel=0&amp;modestbranding=1" frameborder="0"></iframe>
+                            <div class="css_editable_mode_display" data-original-title="" title=""/>
+                            <div class="media_iframe_video_size"/>
+                            <iframe src="//www.youtube.com/embed/OxKDWoDyGUo?autoplay=0&amp;rel=0&amp;modestbranding=1" frameborder="0"/>
                         </div>
                     </div>
                     <div class="col-md-6 mt64 mb32 text-left">
@@ -339,7 +339,7 @@
                         <h3>Donde estamos</h3>
                     </div>
                     <div class="col-md-12 mt48 mb32 iframe-container">
-                        <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d5806.788184157562!2d-8.299227!3d43.306009!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0xf8c6847d8100398d!2zTGFzIFLDrWFz!5e0!3m2!1ses!2sus!4v1562162861345!5m2!1ses!2sus" frameborder="0" style="border:0" allowfullscreen="true"></iframe>
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d5806.788184157562!2d-8.299227!3d43.306009!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0xf8c6847d8100398d!2zTGFzIFLDrWFz!5e0!3m2!1ses!2sus!4v1562162861345!5m2!1ses!2sus" frameborder="0" style="border:0" allowfullscreen="true"/>
                     </div>
                     <div class="col-md-12 mt32 mb32">
                         <t t-esc="res_company.name"/><br/>

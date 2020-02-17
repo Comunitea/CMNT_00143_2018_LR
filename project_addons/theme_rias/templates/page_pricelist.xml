@@ -32,7 +32,8 @@
                                         </td>
                                         <td>
                                             <t t-foreach="attachments.filtered(lambda a: a.res_id == pricelist.id)" t-as="attach">
-                                                <a t-att-href="'/web/content/%i?download=true' % attach.id" target="_blank">
+                                                <a t-att-href="'/web/content/%i?download=true' % attach.id" target="_blank"
+                                                   t-att-alt="attach.name" t-att-title="attach.name" rel="nofollow, noindex">
                                                     <span t-esc="attach.name" class="fa fa-download"/>
                                                 </a>
                                             </t>

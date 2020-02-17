@@ -113,8 +113,8 @@ odoo.define('theme_rias.website_sale', function(require) {
 
     $(".oe_website_sale").on('click', 'a.barcode-call', function (event) {
         event.preventDefault();
-        var product_id = $(event.target).closest('tr').attr('product-id');
-        var variant_id = $(event.target).closest('tr').attr('variant-id');
+        var product_id = $(event.target).closest('section').attr('product-id');
+        var variant_id = $(event.target).closest('section').attr('variant-id');
         var model = 'product.template';
 
         if (variant_id) {
@@ -165,8 +165,8 @@ odoo.define('theme_rias.website_sale', function(require) {
 
     $(".oe_website_sale").on('click', 'a.image-call', function (event) {
         event.preventDefault();
-        var product_id = $(event.target).closest('tr').attr('product-id');
-        var variant_id = $(event.target).closest('tr').attr('variant-id');
+        var product_id = $(event.target).closest('section').attr('product-id');
+        var variant_id = $(event.target).closest('section').attr('variant-id');
         var model = 'product.template';
 
         if (variant_id) {
@@ -240,7 +240,7 @@ odoo.define('website_sale.website_sale', function (require) {
         if (isNaN(value)) {
             value = 1;
         }
-        var $dom = $(this).closest('tr');
+        var $dom = $(this).closest('section');
         //var default_price = parseFloat($dom.find('.text-danger > span.oe_currency_value').text());
         var $dom_optional = $dom.nextUntil(':not(.optional_product.info)');
         var line_id = parseInt($input.data('line-id'),10);
@@ -304,7 +304,7 @@ odoo.define('website_sale.website_sale', function (require) {
 
     $(".oe_website_sale").on('click', '.js_delete_product', function(e) {
         e.preventDefault();
-        $(this).closest('tr').find('.js_quantity').val(0).trigger('change');
+        $(this).closest('section').find('.js_quantity').val(0).trigger('change');
     });
 
     // hack to add and remove from cart with json

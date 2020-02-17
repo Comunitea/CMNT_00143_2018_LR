@@ -27,19 +27,19 @@ class UlmaProcessedContainers(models.Model):
         _logger.info("Número de paquetes encontrados: {}.".format(len(packages)))
         for package in packages:
             _logger.info("Buscando paquete con matrícula: {}.".format(package[0]))
-            package_odoo = self.env['stock.quant.package'].search_read([('name', '=', package[0])], fields=['id'])
+            package_odoo = self.env['stock.quant.package'].search([('name', '=', package[0])])
             
             if package_odoo:
                 _logger.info("Actualizando paquete con matrícula: {}.".format(package_odoo.name))
                 if package[1].startswith('C'):
                     _logger.info("Moviendo paquete {} con ID {} a cajas.".format(package_odoo.name, package_odoo.id))
-                    location_dest_id = self.env['stock.location'].search_read([('ulma_type', '=', 'SUBUNI')], fields=['id'])
+                    location_dest_id = self.env['stock.location'].search_read([('ulma_type', '=', 'SUBUNI')], fields=['id'], limit=1)[0]["id"]
                 else:
                     _logger.info("Moviendo paquete {} con ID {} a palés.".format(package_odoo.name, package_odoo.id))
-                    location_dest_id = self.env['stock.location'].search_read([('ulma_type', '=', 'SUBPAL')], fields=['id'])
-
-                self.env['stock.picking'].transfer_package(package_odoo, location_dest_id)
-                sql_update = "update ulma_cajas set ('procesado') values ('Y') where matricula = {}".format(package[0])
+                    location_dest_id = self.env['stock.location'].search_read([('ulma_type', '=', 'SUBPAL')], fields=['id'], limit=1)[0]["id"]
+                
+                self.env['stock.picking'].transfer_package(package_odoo.id, location_dest_id)
+                sql_update = "update ulma_cajas set procesado = 'Y' where matricula = '{}'".format(package[0])
                 self.create({
                     'matricula': package[0],
                     'tipo': 'Cajas' if package[1].startswith('C') else 'Palés',
@@ -48,7 +48,7 @@ class UlmaProcessedContainers(models.Model):
                 if activated:
                     _logger.info('Marco como procesado el contenedor/paquete {} ... '.format(package[0]))
                     self._cr.execute(sql_update)
-                    done = self._cr.fetchall()
+                    
                     _logger.info('Ok')
                 else:
                     _logger.info("Procesado paquete {} con ID {}.".format(package_odoo.name, package_odoo.id))

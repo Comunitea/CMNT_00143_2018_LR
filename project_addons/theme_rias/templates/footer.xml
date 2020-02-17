@@ -12,15 +12,15 @@
                         <t t-esc="res_company.name"/>
                     </div>
                     <div class="text-center row mb16">
-                        <a href="https://goo.gl/maps/GDHmgREq3oNuDYGs7" target="_blank" alt="Open en Google Maps" title="Open en Google Maps" rel="nofollow">
+                        <a href="https://goo.gl/maps/GDHmgREq3oNuDYGs7" target="_blank" alt="Open en Google Maps" title="Open en Google Maps" rel="nofollow, noindex">
                             <t t-esc="res_company.street"/>,
                             <t t-esc="res_company.zip"/>,
                             <t t-esc="res_company.city"/>,
                         </a>
                     </div>
                     <div class="text-center row mb8">
-                        <a href="/contactus" alt="Contáctenos" title="Contáctenos" rel="nofollow">Contáctenos</a> - 
-                        <a href="/aboutus" alt="Sobre nosotros" title="Sobre nosotros" rel="nofollow">Sobre nosotros</a>
+                        <a href="/contactus" alt="Contáctenos" title="Contáctenos" rel="nofollow, noindex">Contáctenos</a> - 
+                        <a href="/aboutus" alt="Sobre nosotros" title="Sobre nosotros" rel="nofollow, noindex">Sobre nosotros</a>
                     </div>
                 </div>                
             </div>
@@ -38,15 +38,15 @@
                         <t t-esc="res_company.name"/>
                     </div>
                     <div class="text-center row mb16">
-                        <a href="https://goo.gl/maps/GDHmgREq3oNuDYGs7" target="_blank" alt="Open en Google Maps" title="Open en Google Maps" rel="nofollow">
+                        <a href="https://goo.gl/maps/GDHmgREq3oNuDYGs7" target="_blank" alt="Open en Google Maps" title="Open en Google Maps" rel="nofollow, noindex">
                             <t t-esc="res_company.street"/>,
                             <t t-esc="res_company.zip"/>,
                             <t t-esc="res_company.city"/>,
                         </a>
                     </div>
                     <div class="text-center row mb8">
-                        <a href="/contactus" alt="Contáctenos" title="Contáctenos" rel="nofollow">Contáctenos</a> - 
-                        <a href="/aboutus" alt="Sobre nosotros" title="Sobre nosotros" rel="nofollow">Sobre nosotros</a>
+                        <a href="/contactus" alt="Contáctenos" title="Contáctenos" rel="nofollow, noindex">Contáctenos</a> - 
+                        <a href="/aboutus" alt="Sobre nosotros" title="Sobre nosotros" rel="nofollow, noindex">Sobre nosotros</a>
                     </div>
                 </div>                
             </div>

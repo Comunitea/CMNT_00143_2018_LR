@@ -15,7 +15,7 @@ from odoo.addons.website_sale.controllers.main import TableCompute
 from odoo.addons.website_sale.controllers.main import WebsiteSale
 from odoo.addons.website_form.controllers.main import WebsiteForm
 import json
-from pprint import pprint
+from werkzeug.exceptions import NotFound
 
 
 PPG = 20
@@ -90,7 +90,7 @@ class WebsiteSaleCatalogue(WebsiteSale):
         # id is added to be sure that order is a unique sort key
         return 'website_published desc,%s , id desc' % post.get('order', 'website_sequence desc')
 
-    def _get_search_domain(self, search, category, attrib_values):
+    def _get_search_domain(self, search, category, attrib_values, check_campaign=False):
         domain = request.website.sale_product_domain()
         if search:
             for srch in search.split(" "):
@@ -122,15 +122,14 @@ class WebsiteSaleCatalogue(WebsiteSale):
     @http.route([
         '/catalogue',
         '/catalogue/page/<int:page>',
-        '/catalogue/category/<model("product.public.category"):category>',
-        '/catalogue/category/<model("product.public.category"):category>/page/<int:page>',
         '/catalogue/category/<path:path>',
         '/catalogue/category/<path:path>/page/<int:page>'
+        '/catalogue/category/<model("product.public.category"):category>',
+        '/catalogue/category/<model("product.public.category"):category>/page/<int:page>'
     ], type='http', auth="public", website=True)
     def catalogue(self, page=0, category=None, search='', ppg=False, path=False, **post):
         if path:
-            category_list = http.request.env['product.public.category']
-            category = category_list.sudo().search([('slug', '=', path)], limit=1)
+            category = request.env['product.public.category'].search([('slug', '=', path)], limit=1)
              # Set new PPG from back-end settings
             if not 'ppg' in request.httprequest.args:
                 IrConfigParam = request.env['ir.config_parameter']
@@ -138,7 +137,7 @@ class WebsiteSaleCatalogue(WebsiteSale):
             if category:
                 return self.catalogue(page=page, category=category, search=search, ppg=ppg, **post)
             else:
-                return http.request.env['ir.http'].reroute('/404')
+                raise NotFound()
 
         if ppg:
             try:
@@ -149,7 +148,7 @@ class WebsiteSaleCatalogue(WebsiteSale):
         else:
             ppg = PPG
 
-        if category:
+        if category and not path:
             category = request.env['product.public.category'].search([('id', '=', int(category))], limit=1)
             if not category:
                 raise NotFound()
@@ -173,7 +172,10 @@ class WebsiteSaleCatalogue(WebsiteSale):
         if attrib_list:
             post['attrib'] = attrib_list
 
-        categs = request.env['product.public.category'].search([('parent_id', '=', False)])
+        categs = request.env['product.public.category'].search([
+            ('product_ids.website_published', '=', True), 
+            ('product_ids', '!=', False)
+        ]).mapped('parent_id')
         Product = request.env['product.template']
 
         parent_category_ids = []
@@ -234,7 +236,10 @@ class WebsiteSaleCatalogue(WebsiteSale):
 
         keep = QueryURL('/catalogue', category=category and category.id, search=search, attrib=attrib_list)
 
-        categs = ProductCategory.search([('parent_id', '=', False)])
+        categs = request.env['product.public.category'].search([
+            ('product_ids.website_published', '=', True), 
+            ('product_ids', '!=', False)
+        ]).mapped('parent_id')
 
         pricelist = request.website.get_current_pricelist()
 
@@ -323,6 +328,39 @@ class WebsiteSaleCatalogue(WebsiteSale):
 
             return request.render('theme_rias.rias_pricelist_form_template')
 
+class WebsiteSaleFilteredCategories(WebsiteSale):
+
+    @http.route([
+        '/shop',
+        '/shop/page/<int:page>',
+        '/shop/category/<model("product.public.category"):category>',
+        '/shop/category/<model("product.public.category"):category>/page/<int:page>'
+    ], type='http', auth="public", website=True)
+    def shop(self, page=0, category=None, search='', ppg=False, **post):
+        res = super(WebsiteSaleFilteredCategories, self).shop(page=page, category=category, search=search, ppg=ppg, **post)
+        categories_in_products = request.env['product.public.category'].search([
+            ('product_ids.website_published', '=', True), 
+            ('product_ids', '!=', False)
+        ]).mapped('parent_id')
+        res.qcontext.update({
+            'categories': categories_in_products
+        })
+        return res        
+
+    @http.route([
+        '/category/<path:path>',
+        '/category/<path:path>/page/<int:page>'
+    ], type='http', auth='public', website=True)
+    def _shop(self, path, page=0, category=None, search='', ppg=False, **post):
+        res = super(WebsiteSaleFilteredCategories, self)._shop(path=path, page=page, category=category, search=search, ppg=ppg, **post)
+        categories_in_products = request.env['product.public.category'].search([
+            ('product_ids.website_published', '=', True), 
+            ('product_ids', '!=', False)
+        ]).mapped('parent_id')
+        res.qcontext.update({
+            'categories': categories_in_products
+        })
+        return res     
 
 class WebsiteForm(WebsiteForm):
 

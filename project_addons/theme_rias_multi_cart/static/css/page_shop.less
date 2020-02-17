@@ -1,7 +1,5 @@
+/* List view elements */
 div.shoppage > main {
-    > div:nth-of-type(1) {
-        display: none;
-    }
 
     i.info-button-campaign {
         color: red;
@@ -9,5 +7,44 @@ div.shoppage > main {
 
     td.text-right.td-img > a.image-call {
         float: right;
+    }
+
+    div.oe_product.oe_list.oe_product_cart.sgeede-infinite-get {
+        padding-left: unset;
+        min-height: 50px;
+        padding-bottom: unset;
+        margin-top: 0.8rem;
+    }
+
+    div.col-header{
+        border-bottom: solid black 1px;
+        margin-bottom: 1rem;
+    }
+
+    div.product_price {
+        margin-top: 0.8rem;
+    }
+}
+
+/* Website publish button on shop and catalogue views by list view active */
+#website_published_button {
+    // Shop
+    & .btn-success, button.dropdown-toggle {
+        padding: 2px 6px 2px 6px;
+    }
+    & .btn-danger {
+        padding: 2px 3px 2px 3px;
+    }
+    & div {
+        float: none !important;
+    }
+    // Catalogue
+    &.products_item_multi_cart {
+        & div {
+            float: right !important;
+        }
+        & button.dropdown-toggle {
+            padding: 12px 7px 8px 6px;
+        }
     }
 }

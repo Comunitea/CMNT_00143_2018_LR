@@ -10,7 +10,7 @@
                             <a t-att-id="menu['id']"
                                     t-attf-href="{{ menu['url'] if menu['url'] else ''}}">
                                 <div class="row"> 
-                                    <span t-attf-class="fa {{ menu['menu_icon'] if menu['menu_icon'] else '' }} fa-4x"></span>
+                                    <span t-attf-class="fa {{ menu['menu_icon'] if menu['menu_icon'] else '' }} fa-4x"/>
                                     <div class="menu-title">
                                         <h4 class="mt16 text-muted">
                                             <t t-esc="menu['name']" />

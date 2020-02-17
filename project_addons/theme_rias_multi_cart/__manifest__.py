@@ -9,15 +9,15 @@
     'author': "Comunitea, ",
     'depends': [
         'theme_rias',
-        'campaign',
+        'campaign'
     ],
     'data': [
         'data/page_data.xml',
-        'data/menu_data.xml',
         'templates/head.xml',
         'templates/shop.xml',
         'templates/portal.xml',
         'templates/header.xml',
+        'templates/wishlist.xml',
         ],
     'images': [
         '/static/description/icon.png',

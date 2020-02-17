@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="assets_backend" name="Signature pda assets" inherit_id="web.assets_backend">
+        <xpath expr="." position="inside">
+            <script type="text/javascript" src="/pda_signature/static/js/signature_pda.js"/>
+        </xpath>
+    </template>
+
+    <record model="ir.ui.view" id="stock_batch_picking_pda_form">
+        <field name="name">stock.batch.picking.move.selection.form</field>
+        <field name="model">stock.batch.picking</field>
+        <field name="inherit_id" ref="stock_batch_picking.stock_batch_picking_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Firma">
+                <h2>
+                    <label for="signature_image_data" string="Firmar" class="oe_edit_only"/>
+                </h2>
+                    <field name="signature_image_data" widget="signature" readonly="1"/>
+                    <group>
+                        <field name="signature_firstName"/>
+                        <field name="signature_lastName"/>
+                        <field name="signature_email"/>
+                        <field name="signature_location"/>
+                        <button name="send_to_signature_pda" class="pda_call"  type="object" string="Send" />
+                    </group>
+                    <group>
+                        <field name="signature_error" attrs="{'invisible': [('signature_is_signed', '=', True)]}" readonly="1"/>
+                        <field name="signature_is_signed" attrs="{'invisible': [('signature_is_signed', '=', False)]}" readonly="1"/>
+                        <field name="signature_pad_info" attrs="{'invisible': [('signature_is_signed', '=', False)]}" readonly="1"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>
