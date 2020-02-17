@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="sqp_tree" model="ir.ui.view">
+        <field name="name">sqp.tree.sel</field>
+        <field name="model">stock.quant.package</field>
+        <field name="arch" type="xml">
+
+                  <!--decoration-muted="decoration=='muted'"
+                  decoration-success="decoration=='success'"
+                  decoration-info="decoration=='info'"
+                  decoration-danger="decoration=='danger'"
+                  decoration-warning="decoration=='warning'"
+                  -->
+               <tree
+                       decoration-muted="state_progress == 'no_state'"
+                       decoration-success="state_progress == 'customer'"
+                       decoration-warning="state_progress == 'loading' and batch_delivery_id == False"
+                       string="Paquetes"
+                     edit="0"
+                     create="0"
+                     delete="0"
+                     default_order="name">
+               <field name="id" groups="base.group_no_one" invisible="1"/>
+               <field name="name"/>
+               <field name="partner_id" />
+               <field name="info_route_str"/>
+               <field name="batch_delivery_id" string="Carga"/>
+               <button name="add_package_to_batch_delivery"
+                        string="(Des) Cargar"
+                        type="object"
+                        icon="fa-truck"
+                        class="text-primary"
+                        attrs="{'invisible': [('state_progress', 'not in', ('preparation','locading'))]}"
+                        />
+               <field name="location_id"/>
+               <button name="show_package_move_ids"
+                        string="Contenido"
+                        type="object"
+                        icon="fa-list"
+                        class="text-primary"
+                        />
+               <field name="state_progress"/>
+            </tree>
+        </field>
+    </record>
+    <record id="sqp_search_view" model="ir.ui.view">
+        <field name="name">stock.quant.package.search</field>
+        <field name="model">stock.quant.package</field>
+        <field eval="20" name="priority"/>
+        <field name="arch" type="xml">
+            <search string="Package">
+                <field name="name" string="Paquete"/>
+                <field name="packaging_id"/>
+                <field name="delivery_route_path_id"/>
+                <field name="shipping_type"/>
+                <field name="partner_to_load" string="Paquetes de ..." domain="[]" context="{'partner_to_load': self}"/>
+                <separator/>
+                <filter name="package_to_load" string="En preparación" domain="[]" context="{'package_to_load': True}"/>
+
+
+                <filter name="no_cargados" string="Sin carga" domain="[('batch_delivery_id','=', False)]"/>
+                <group  expand='0' string='Group by...'>
+                   <!-- FORWARD-PORT UP TO v11 -->
+                   <filter string='Packaging' domain="[]" context="{'group_by' : 'packaging_id'}"/>
+                   <filter string='Cliente' domain="[]" context="{'group_by' : 'partner_id'}"/>
+                   <filter string='Envío' domain="[]" context="{'group_by' : 'shipping_type'}"/>
+                   <filter string='Ruta' domain="[]" context="{'group_by' : 'delivery_route_path_id'}"/>
+
+               </group>
+            </search>
+        </field>
+    </record>
+     <record id="view_quant_package_form_sqpw" model="ir.ui.view">
+        <field name="name">view.quant.package.form.sqpw</field>
+        <field name="model">stock.quant.package</field>
+        <field name="inherit_id" ref="stock.view_quant_package_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+               <field name="state_progress" widget="statusbar" statusbar_visible="preparation,loading,internal,customer,supplier"/>
+
+            </xpath>
+        </field>
+     </record>
+     <record id="action_add_package_to_delivery" model="ir.actions.server">
+        <field name="name">Añadir a carga</field>
+        <field name="type">ir.actions.server</field>
+        <field name="state">code</field>
+        <field name="model_id" ref="stock.model_stock_quant_package"/>
+        <field name="binding_model_id" ref="stock.model_stock_quant_package"/>
+
+        <field name="code">
+            records.add_package_to_batch_delivery()
+        </field>
+    </record>
+
+    <record id="sqp_form" model="ir.ui.view">
+        <field name="name">sqp.form.sel</field>
+        <field name="model">stock.quant.package</field>
+        <field name="sequence">999</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <field name="state_progress" widget="statusbar" statusbar_visible="preparation,loading,internal,customer,supplier"/>
+                </header>
+                <group>
+                    <field name="name" readonly="1"></field>
+                </group>
+                <group>
+                    <field name="move_line_ids" readonly="1" nolabel="1">
+                    </field>
+                </group>
+            </form>
+        </field>
+    </record>
+</odoo>

@@ -229,9 +229,31 @@ class StockBatchPicking(models.Model):
         action['domain'] = [('id', 'in', packages.ids)]
         return action
 
-
     @api.multi
     def action_see_moves(self):
+
+        self.ensure_one()
+        action = self.env.ref(
+            'stock_move_selection_wzd.stock_move_sel_action2').read()[0]
+
+        ctx = self._context.copy()
+        ctx.update(eval(action['context']))
+
+        ctx.update({
+                'search_default_by_sale_id': True
+            })
+        if self.state == 'done':
+            ctx.update(hide_state=True)
+            ctx.update(hide_reserved_availability=True)
+        action['domain'] = [('batch_picking_id', '=', self.id)]
+        action['name'] = "Grupo: {}".format(self.name)
+        action['display_name'] = "Grupo: {}".format(self.name)
+        action['context'] = ctx
+        return action
+
+        stock_move_selection_wzd.stock_move_sel_action2
+
+
 
         self.ensure_one()
         ctx = self._context.copy()
@@ -255,7 +277,6 @@ class StockBatchPicking(models.Model):
         if self.state == 'done':
             ctx.update(hide_state=True)
             ctx.update(hide_reserved_availability=True)
-
         action = self.with_context(ctx).picking_type_id.get_action_tree()
         action['domain'] = [('batch_picking_id', '=', self.id)]
         action['context'] = ctx
@@ -330,7 +351,7 @@ class StockBatchPicking(models.Model):
                                 'info_route_str': move.info_route_str,
                                 'product_id': move.product_id.id,
                                 'product_uom_qty': move.product_uom_qty,
-                                'result_package_id': move.result_package_id.id,
+                                'result_package_ids': [(6,0, move.result_package_id.ids)],
                                 'state': move.state,
                                 'batch_picking_id': move.batch_picking_id.id
                                 })
@@ -370,7 +391,6 @@ class StockBatchPicking(models.Model):
 
     @api.multi
     def open_tree_to_add(self):
-
         self.ensure_one()
         model = self._context.get('model', 'stock.move')
         if not self.picking_type_id:
@@ -440,4 +460,24 @@ class StockBatchPicking(models.Model):
 
         action['res_id'] = wzd_id.id
 
+        return action
+
+    @api.multi
+    def add_more_moves(self):
+        self.ensure_one()
+        action = self.env.ref('stock_move_selection_wzd.stock_move_to_orders_action').read()[0]
+        domain = [('batch_picking_id', '=', False), ('state', '=', 'assigned'), ('picking_type_id', '=', self.picking_type_id.id)]
+        if self.delivery_route_path_ids:
+            domain += [('delivery_route_path_id', 'in', self.delivery_route_path_ids.ids)]
+        if self.shipping_type:
+            domain += [('shipping_type', '=', self.shipping_type)]
+        action['domain'] = domain
+        self.env['stock.picking'].search(domain).write({'to_batch': self.id})
+        ctx = self._context.copy()
+        ctx.update(eval(action['context']))
+        ctx.update(default_batch_picking_id=self.id)
+        name = self.picking_type_id.batch_name
+        action['name'] = "{} : {}".format(name, self.name)
+        action['display_name'] ="{} : {}".format(name, self.name)
+        action['context'] = ctx
         return action

@@ -15,7 +15,7 @@ class StockMoveLine(models.Model):
     @api.model
     def update_object_from_apk(self, values):
         ctx = self._context.copy()
-        ctx.update(write_from_package=True)
+
         move_line_ids = self.env['stock.move.line'].browse(values['move_line_ids'])
         action = values.get('action', '')
         package_ids = self.env['stock.quant.package']
@@ -25,36 +25,30 @@ class StockMoveLine(models.Model):
                 package_ids = line.with_context(ctx).update_to_new_package(package_ids)
 
         elif action == 'unlink':
-            move_line_ids.mapped('move_id').with_context(ctx).write({'result_package_id': False})
+            move_line_ids.with_context(ctx).write({'result_package_id': False})
 
         elif action == "new_partner_pack":
             partner_id = self.env['res.partner'].browse[(values.get('partner_id'))]
             vals_0 = partner_id.update_info_route_vals()
             new_result_package_id = self.env['stock.quant.package'].create(vals_0)
-            package_ids += new_result_package_id
+            package_ids |= new_result_package_id
 
         else:
-            package_ids = self.env['stock.quant.package'].browse(values['result_package_id'])
-            ##Si ya tienen moviemintos, entonces todos lo movimeitneos pasana tener info ruta del pack
-            if package_ids.move_line_ids:
-                move_vals = {'result_package_id': package_ids.id}
-                move_vals.update(package_ids.update_info_route_vals())
-                move_line_ids.mapped('move_id').with_context(ctx).write(move_vals)
-            else:
-                for line in move_line_ids:
-                    line.write({'result_package_id': package_ids.id})
-
+            package_id = self.env['stock.quant.package'].browse(values['result_package_id'])
+            if move_line_ids:
+                move_line_ids.write({'result_package_id': values['result_package_id']})
+            package_ids |= package_id
         return package_ids.ids
 
 
-    def get_domain_for_apk_list(self, vals):
-        
-        partner_id = vals.get('partner_id', False)
+    def get_domain_for_apk_list(self, default_domain =[]):
+
         domain = [('location_dest_id.usage', '=', 'customer'),
+                  ('result_package_id.batch_delivery_id', '=', False),
                   ('state', 'in', ['assigned', 'partially_available']),
                   ]
-        if partner_id:
-            domain += [('move_id.partner_id', '=', partner_id)]
+        if default_domain:
+            domain += default_domain
 
         return domain
 
@@ -88,9 +82,10 @@ class StockMoveLine(models.Model):
 
     @api.model
     def get_apk_info_full(self, vals):
-
-
-        domain = self.get_domain_for_apk_list(vals)
+        search_domain = []
+        if vals.get('partner_id', False):
+            search_domain = [('partner_id', '=', vals['partner_id'])]
+        domain = self.get_domain_for_apk_list(search_domain)
         move_lines = self.env['stock.move.line'].search(domain)
 
         full_stock_moves = []
@@ -99,7 +94,6 @@ class StockMoveLine(models.Model):
 
         for move_line in move_lines:
             full_stock_moves.append(move_line.get_apk_info())
-
 
         package_ids = move_lines.mapped('package_id')
         for pack in package_ids:
@@ -114,50 +108,22 @@ class StockMoveLine(models.Model):
             'result_package_ids': current_partner_pkg_list,
             'arrival_package_ids': current_partner_arrival_pkgs_list
         }
-
         return res
+
 
 
     @api.model
     def get_users_list_for_apk(self, vals):
-        domain = self.env['stock.move.line'].get_domain_for_apk_list({})
-        if len(self.env['stock.move'].search(domain)) > 0:
-            partner_ids = self.env['stock.move'].search(domain).mapped('partner_id')
-            partner_list = []
-            for partner in partner_ids:
-                partner_obj = {
-                    'id': partner.id,
-                    'name': partner.name,
-                    'shipping_type': partner.shipping_type
-                }
-                partner_list.append(partner_obj)
-            return partner_list
-        else:
-            partner_list = []
-            return partner_list
+        domain = self.env['stock.move.line'].get_domain_for_apk_list()
+        partner_ids = self.env['stock.move.line'].search(domain).mapped('move_id').mapped('partner_id')
+        return partner_ids.get_dict_values()
     
     @api.model
     def get_users_list_for_apk_from_search_box(self, vals):
-
-        domain = self.env['stock.move.line'].get_domain_for_apk_list({})
-        name = vals.get('name', False)
-        if name:
-            domain +=[('partner_id.name', 'ilike', name)]
-
-        if len(self.env['stock.move'].search(domain)) > 0:
-            partner_ids = self.env['stock.move'].search(domain).mapped('partner_id')
-            partner_list = []
-            for partner in partner_ids:
-                partner_obj = {
-                    'id': partner.id,
-                    'name': partner.name,
-                    'shipping_type': partner.shipping_type
-                }
-                partner_list.append(partner_obj)
-            return partner_list
-        else:
-            partner_list = []
-            return partner_list
+        domain = []
+        if vals.get('name', False):
+            domain += [('partner_id.name', 'ilike', vals['name'])]
+        return self.get_users_list_for_apk(domain)
 
     @api.model
     def assign_package(self, vals):
@@ -192,6 +158,5 @@ class StockMoveLine(models.Model):
         }
         move_line = self.browse(move_line_id)
         ctx = self._context.copy()
-        ctx.update(write_from_package=True)
         move_line.move_id.write(vals)
         return True

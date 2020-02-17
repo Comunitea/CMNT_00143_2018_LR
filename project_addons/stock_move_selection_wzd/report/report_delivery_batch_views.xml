@@ -19,7 +19,7 @@
     <report id="delivery_batch_report"
             model="stock.batch.delivery"
             string="Orden de carga"
-            report_type="qweb-pdf"
+            report_type="qweb-html"
             name="stock_move_selection_wzd.delivery_batch_view"
             file="stock_move_selection_wzd.delivery_batch_view"
             paperformat="paperformat_delivery_batch_report"
@@ -57,6 +57,7 @@
                         </span>
                     </div>
                 </div>
+
 
             </div>
         </div>
@@ -224,8 +225,8 @@
                         <div name="invoice_address_commercial" class="col-xs-6 pull-right" style="border: 1px solid black; border-radius: 25px;">
                             <address t-field="doc.driver_id"
                                 t-options='{"widget": "contact", "fields": ["address", "name", "vat"], "no_marker": True}' />
-
                         </div>
+
                         <div name="invoice_address_commercial" class="row col-xs-6 pull-left" style="border: 1px solid black; border-radius: 25px;">
                              <div>
                                 <strong style="font-weight: bold; color: rgb(0,51,102); font-family: Arial">Fecha: </strong>
@@ -239,8 +240,8 @@
                                 <strong style="font-weight: bold; color: rgb(0,51,102); font-family: Arial">Peso: </strong>
                                 <span t-esc="doc.weight"/> Kgrs.
                             </div>
-                        </div>
 
+                        </div>
                     </div>
                     <t t-call="stock_move_selection_wzd.body_delivery"/>
                     <div class="row">
@@ -289,28 +290,37 @@
                 <div class="page" style="font-weight: bold; font-family: Courier New">
                     <div class="oe_structure"/>
                     <div class="row">
-                        <div class="col-xs-6" style="width: 45%; border: 1px solid black; border-radius: 25px; margin-top:25px;">
-                            <div class="row">
-                                <div class="col-xs-2" style="width: 33%">
-                                    <strong style="font-weight: bold; color: rgb(0,51,102); font-family: Arial">MATRÍCULA</strong>
-                                    <p t-if="doc.plate_id" t-field="doc.plate_id.name"/>
-                                </div>
-                                <div class="col-xs-2" style="width: 33%">
-                                        <strong style="font-weight: bold; color: rgb(0,51,102); font-family: Arial">FECHA</strong>
-                                        <p  t-esc="doc.date_done or doc.date"/>
-
-                                </div>
-                                <div class="col-xs-2" style="width: 33%">
-                                    <strong style="font-weight: bold; color: rgb(0,51,102); font-family: Arial">Peso:</strong>
-                                    <p><span t-esc="doc.weight"/> Kgrs.</p>
-                                </div>
-                            </div>
-                        </div>
                         <div name="invoice_address_commercial" class="col-xs-6 pull-right" style="border: 1px solid black; margin-top:5px; border-radius: 25px;">
                             <address t-field="doc.driver_id"
                                 t-options='{"widget": "contact", "fields": ["address", "name", "vat"], "no_marker": True}' />
 
                         </div>
+                        <div class="col-xs-8" style="width: 70%; border: 1px solid black; border-radius: 25px; margin-top:25px;">
+                            <div class="row">
+                                <div class="col-xs-2" style="width: 25%">
+                                    <strong style="font-weight: bold; color: rgb(0,51,102); font-family: Arial">MATRÍCULA</strong>
+                                    <p t-if="doc.plate_id" t-field="doc.plate_id.name"/>
+                                </div>
+                                <div class="col-xs-2" style="width: 25%">
+                                        <strong style="font-weight: bold; color: rgb(0,51,102); font-family: Arial">FECHA</strong>
+                                        <p  t-esc="doc.date_done or doc.date"/>
+
+                                </div>
+                                <div class="col-xs-2" style="width: 25%">
+                                    <strong style="font-weight: bold; color: rgb(0,51,102); font-family: Arial">Peso:</strong>
+                                    <span t-esc="doc.weight"/> Kgrs.</p>
+                                </div>
+
+                                <div class="col-xs-2" style="width: 25%">
+                                    <strong style="font-weight: bold; color: rgb(0,51,102); font-family: Arial">Rutas: </strong>
+                                    <p/>
+                                    <t t-foreach="doc.delivery_route_path_ids" t-as="route">
+                                        <span t-esc="route.name"/>-
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                     <t t-call="stock_move_selection_wzd.body_delivery"/>
 

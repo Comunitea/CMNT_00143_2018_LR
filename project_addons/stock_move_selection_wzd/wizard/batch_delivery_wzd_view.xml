@@ -60,7 +60,7 @@
                                 <field name="info_route_str" readonly="1"/>
                                 <field name="product_id" readonly="1"/>
                                 <field name="product_uom_qty" readonly="1"/>
-                                <field name="result_package_id" readonly="1"/>
+                                <field name="result_package_ids" widget="many2many_tags" readonly="1"/>
                                 <field name="state" readonly="1"/>
                                 <field name="batch_picking_id" invisible="1" readonly="1"/>
                             </tree>
@@ -85,7 +85,7 @@
                             <tree>
                                 <field name="name"/>
                                 <field name="product_uom_qty"/>
-                                <field name="result_package_id"/>
+                                <field name="result_package_ids" widget="many2many_tags" />
                                 <field name="state"/>
                             </tree>
                         </field>
@@ -98,7 +98,7 @@
                                 <field name="product_uom_qty"/>
                                 <field name="sale_id"/>
                                 <field name="partner_id"/>
-                                <field name="result_package_id"/>
+                                <field name="result_package_ids" widget="many2many_tags" />
                                 <field name="state"/>
                             </tree>
                         </field>

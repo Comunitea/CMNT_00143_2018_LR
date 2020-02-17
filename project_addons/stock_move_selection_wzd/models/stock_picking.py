@@ -20,10 +20,11 @@ class StockPicking(models.Model):
     group_code = fields.Many2one(related='picking_type_id.group_code')
     sga_integrated = fields.Boolean('Sga', help='Marcar si tiene un tipo de integración con el sga')
     sga_state = fields.Selection(SGA_STATES, default='no_integrated', string="SGA Estado", copy=False)
-    batch_delivery_id = fields.Many2one(related='batch_picking_id.batch_delivery_id', string='Orden de carga')
+    batch_delivery_id = fields.Many2one(related='batch_picking_id.batch_delivery_id', store=True, string='Orden de carga')
     excess = fields.Boolean(string='Franquicia')
     count_move_lines = fields.Integer('Nº líneas', compute="_get_nlines")
     delivery_route_group_id = fields.Many2one('delivery.route.path.group', 'Grupo de entrega', store=False)
+    to_batch = fields.Many2one('stock.batch.picking', store=False)
 
     @api.multi
     @api.depends('state', 'is_locked')
@@ -56,6 +57,45 @@ class StockPicking(models.Model):
             second_moves.mapped('move_line_ids').write({'picking_id': second_pick.id})
             second_pick.action_assign()
         return second_pick
+
+
+    def get_batch_domain(self):
+        domain = super().get_batch_domain()
+        delivery_id = self.move_line_ids.mapped('batch_delivery_id')
+        if delivery_id:
+            domain += [('batch_delivery_id', '=', delivery_id.id)]
+        return domain
+
+    def add_picking_to_expedition(self):
+        picking_ids = self.filtered(lambda x: x.to_batch != False)
+        picking_ids.write({'batch_picking_id': picking_ids[0].to_batch})
+
+    @api.multi
+    def _assign_picking_batch(self):
+        if any(x.batch_picking_id for x in self):
+            raise ValidationError (_('Hay albaranes que ya tienen un batch asignado: {}'.format(self.filtered(lambda x: x.batch_picking_id).mapped('name'))))
+        batch_ids = self.env['stock.batch.picking']
+        for picking in self:
+            batch_domain = picking.get_batch_domain()
+            batch_id = self.env['stock.batch.picking'].search(batch_domain)
+            if not batch_id:
+                batch_id = picking.create_batch_picking()
+            picking.batch_picking_id = batch_id
+            batch_ids |= batch_id
+        return batch_ids
+
+    def get_values_for_new_batch(self):
+        return {'batch_delivery_id': self.batch_delivery_id,
+                     'shipping_type': self.shipping_type,
+                     'delivery_route_path_id': self.delivery_route_path_id.id,
+                     'payment_term_id': self.payment_term_id.id,
+                     'picking_type_id': self.picking_type_id.id,
+                     'partner_id': self.partner_id.id,
+                     }
+
+    def create_batch_picking(self):
+        batch_vals= self.get_values_for_new_batch()
+        return self.env['stock.batch.picking'].create(batch_vals)
 
     @api.model
     def create(self, vals):
@@ -114,11 +154,8 @@ class StockPicking(models.Model):
 
     @api.multi
     def button_unlink_from_batch(self):
-        batch_picking_id = self._context.get('batch_picking_id', False)
-        if batch_picking_id:
-            val = ({'batch_picking_id': False})
-            self.write(val)
-            self.mapped('move_lines').write(val)
+        self.write({'batch_picking_id': False})
+
 
     @api.multi
     def transfer_package(self, package_id, location_dest_id, auto=False, unpack=False):
@@ -173,8 +210,14 @@ class StockPicking(models.Model):
         return action
 
 
+
     @api.multi
     def action_add_to_batch_picking(self):
+
+        if self._context.get('default_batch_picking_id', False) and len(self) == 1:
+            self.write({'batch_picking_id': self._context['default_batch_picking_id']})
+            return
+
         if any(x.state in ('done', 'cancel') for x in self):
             raise ValidationError (_('Estado incorrecto para los pedidos: {}'.format([x.name for x in self.filtered(lambda x: x.state in ('cancel', 'done'))])))
         to_add = self.filtered(lambda x: not x.batch_picking_id)

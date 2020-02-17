@@ -16,7 +16,7 @@ class StockMoveLine(models.Model):
 
     @api.constrains('result_package_id', 'partner_id')
     def check_partner(self):
-        import ipdb; ipdb.set_trace()
+
         for line in self.filtered(lambda x: x.move_id.picking_type_id.group_code.code =='outgoing'):
             if not line.result_package_id:
                 continue
@@ -26,9 +26,6 @@ class StockMoveLine(models.Model):
 
     @api.multi
     def write(self, vals):
-        if 'result_package_id' in vals:
-            result_package_id = self.env['stock.quant.package'].browse(vals.get('result_package_id'))
-
         return super().write(vals)
 
     @api.multi
@@ -50,6 +47,8 @@ class StockMoveLine(models.Model):
 
     @api.multi
     def split_move_reserved_qty(self, qty=0):
+        raise ValueError(_('No implementado'))
+
         moves = []
         self.ensure_one()
         for move_line in self:

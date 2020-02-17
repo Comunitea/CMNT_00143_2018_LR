@@ -68,7 +68,7 @@
                         <field name="info_route_str"/>
                         <field name="shipping_type" context="{'force_route_vals': True}"/>
                         <field name="delivery_route_path_id" context="{'force_route_vals': True}"/>
-                        <!--field name="urgent" context="{'write_from_package': True}"/-->
+
                     </group>
                 </group>
             </xpath>

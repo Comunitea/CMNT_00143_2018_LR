@@ -24,15 +24,15 @@ class StockMove(models.Model):
                 move.decoration = 'warning'
             elif move.state == 'done':
                 move.decoration = 'success'
-            elif move.group_code != 'outgoing' and move.state in ('waiting', 'confirmed'):
+            elif move.group_code.code != 'outgoing' and move.state in ('waiting', 'confirmed'):
                 move.decoration = 'muted'
-            elif move.group_code in ('location', 'outgoing') and move.state == 'confirmed':
+            elif move.group_code.code in ('location', 'outgoing') and move.state == 'confirmed':
                 move.decoration = 'danger'
-            elif move.group_code == 'picking':
+            elif move.group_code.code == 'picking':
                 if move.quantity_done >= 0:
                     move.decoration == 'primary'
-            elif move.group_code == 'outgoing':
-                if move.result_package_id and move.batch_picking_id:
+            elif move.group_code.code == 'outgoing':
+                if move.result_package_ids and move.batch_picking_id:
                     move.decoration = 'primary'
                 else:
                     move.decoration = 'warning'
@@ -41,14 +41,12 @@ class StockMove(models.Model):
                 move.decoration = ''
 
     ##NEcesito traer estos campos de stock_move_line
-    package_id = fields.Many2one('stock.quant.package', 'Paquete origen',
-                                 inverse='set_package_id_to_lines',
-                                 compute="get_package_id_from_line",
-                                 copy=False)
-    result_package_id = fields.Many2one('stock.quant.package', 'Paquete destino',
-                                        inverse='set_result_package_id_to_lines',
-                                        compute="get_result_package_id_from_line",
-                                        store=True,
+    # package_id = fields.Many2one('stock.quant.package', 'Paquete origen',
+    #                              inverse='set_package_id_to_lines',
+    #                              compute="get_package_id_from_line",
+    #                              copy=False)
+    result_package_ids = fields.Many2many('stock.quant.package', string='Paquete destino',
+                                        compute="compute_result_package_ids",
                                         copy=False)
     lot_id = fields.Many2one('stock.production.lot', 'Lote')
     dunmy_picking_id = fields.Many2one('stock.picking', 'Transfer Reference', store=False)
@@ -57,7 +55,6 @@ class StockMove(models.Model):
     sga_state = fields.Selection(SGA_STATES, default='no_integrated', string="SGA Estado", copy=False)
     batch_delivery_id = fields.Many2one(related='picking_id.batch_delivery_id', string='Orden de carga', copy=False, store=True)
     batch_picking_id = fields.Many2one(related='picking_id.batch_picking_id', string='Grupo', store=True)
-    draft_batch_picking_id = fields.Many2one('stock.batch.picking', string='Grupo', copy=False)
     code = fields.Selection(related='picking_type_id.code')
     group_code = fields.Many2one(related='picking_type_id.group_code', store=True)
     decoration = fields.Char(compute = get_color_status)
@@ -69,6 +66,20 @@ class StockMove(models.Model):
     visible_count_move_unpacked = fields.Boolean(related='picking_type_id.visible_count_move_unpacked')
     orig_picking_id = fields.Many2one(related='move_orig_ids.picking_id', string="Origen ...")
     product_uom_qty_orig = fields.Float('Demanda Original', digits=dp.get_precision('Product Unit of Measure'))
+    packed = fields.Boolean('Empaquetado', compute="compute_packed", store=True)
+    to_batch = fields.Many2one('stock.batch.picking', store=False)
+    count_move_line_ids = fields.Integer('N# lineas', compute="compute_count_move_lines")
+
+    @api.multi
+    def compute_count_move_lines(self):
+        for move in self:
+            move.count_move_line_ids= len(move.move_line_ids)
+
+
+    @api.depends('move_line_ids.result_package_id')
+    def compute_packed(self):
+        for move in self:
+            move.packed = all(x.result_package_id for x in move.move_line_ids)
 
     def _action_done(self):
         for move in self:
@@ -95,8 +106,7 @@ class StockMove(models.Model):
     def unpack(self):
         for move in self:
             if move.state != 'done':
-                move.write({'result_package_id': False})
-        move.move_line_ids.unpack()
+                move.move_line_ids.unpack()
         return True
 
     @api.multi
@@ -109,24 +119,20 @@ class StockMove(models.Model):
             elif move.sga_state == 'ready':
                 move.sga_state = 'no_send'
 
-    def _assign_package(self, package):
-        if self.result_package_id:
-            if self.result_package_id.batch_delivery_id:
-                raise ValidationError ('No puedes cambiar un paquete de una orden de carga. Primero deberás quitarlo de la orden de carga')
+    @api.multi
+    def assign_package(self, package):
+        self.ensure_one()
+        if len(self) != 1:
+            raise ValidationError(
+                'No puedes cambiar el paquete en un movieminto de más de una línea. Debes hacerlo en cada línea')
+
+        if self.result_package_ids and self.batch_delivery_id:
+            raise ValidationError ('No puedes cambiar un paquete de una orden de carga. Primero deberás quitarlo de la orden de carga')
         if self.state == 'done':
             raise ValidationError(
                 'No puedes cambiar un paquete en un movimiento ya realizado')
-        self.result_package_id = package
-        #if package:
-        #    vals = package.update_info_route_vals()
-        #    if package.batch_delivery_id:
-        #        vals.update(batch_delivery_id=package.batch_delivery_id.id)
-        #    self.write(vals)
+        self.move_line_ids.write({'result_package_id': package.id})
 
-    @api.multi
-    def assign_package(self, package):
-        for move in self:
-            move._assign_package(package)
 
     def get_new_location_vals(self, location_field, location):
         vals = super().get_new_location_vals(location_field, location)
@@ -159,40 +165,31 @@ class StockMove(models.Model):
         else:
             return self
 
-    def action_add_moves_to_batch_picking(self):
-
-        if any(x.result_package_id for x in self):
-            raise ValidationError (_('No puedes modificar los grupos de movimientos empaquetados'))
-        moves_ids = self
-        ## Cuando selecciono un movimiento o varios debo seleccionar todos los que van en el mismo paquete
-        ctx = self._context.copy()
-        if 'active_domain' in ctx.keys():
-            ctx.pop('active_domain')
-        obj = self.env['stock.batch.picking.wzd']
-        wzd_id = obj.create_from('stock.move', moves_ids.ids)
-        action = wzd_id.get_formview_action()
-        action['target'] = 'new'
-        #return action
-
-        action = self.env.ref('stock_move_selection_wzd.open_view_create_batch_picking').read()[0]
-        action['res_id'] = wzd_id.id
-
-        return action
-
+    # def action_add_moves_to_batch_picking(self):
+    #
+    #     if any(x.result_package_id for x in self):
+    #         raise ValidationError (_('No puedes modificar los grupos de movimientos empaquetados'))
+    #     moves_ids = self
+    #     ## Cuando selecciono un movimiento o varios debo seleccionar todos los que van en el mismo paquete
+    #     ctx = self._context.copy()
+    #     if 'active_domain' in ctx.keys():
+    #         ctx.pop('active_domain')
+    #     obj = self.env['stock.batch.picking.wzd']
+    #     wzd_id = obj.create_from('stock.move', moves_ids.ids)
+    #     action = wzd_id.get_formview_action()
+    #     action['target'] = 'new'
+    #     #return action
+    #
+    #     action = self.env.ref('stock_move_selection_wzd.open_view_create_batch_picking').read()[0]
+    #     action['res_id'] = wzd_id.id
+    #
+    #     return action
     @api.multi
-    def action_remove_moves_to_batch_picking(self):
-        if any(x.result_package_id for x in self):
+    def button_unlink_from_batch(self):
+        if any(x.result_package_ids for x in self):
             raise ValidationError(_('No puedes modificar los grupos de movimientos empaquetados'))
-        for move in self:
-            if move.batch_delivery_id:
-                raise ValidationError(_(
-                    'No puedes quitar de un albarán un movimiento que está en una orden de carga. Primero quita el albarán de la orden de carga'))
-            if move.result_package_id:
-                raise ValidationError(
-                    _('No puedes quitar de un albarán un movimiento empaquetado, desempaquetalo primero'))
-            move.picking_id = False
-            move.batch_picking_id = False
-            move._assign_picking()
+        return self.mapped('picking_id').button_unlink_from_batch()
+
 
     @api.multi
     def assign_batch_picking_id(self, batch_picking_id):
@@ -237,27 +234,25 @@ class StockMove(models.Model):
                     pick_moves.write({'picking_id': False})
                     pick_moves._assign_picking()
 
-    @api.multi
-    def button_unlink_from_batch(self):
-        return self.action_remove_moves_to_batch_picking()
 
-    @api.multi
-    def action_add_to_batch_delivery(self):
-        action = self.env.ref('stock_move_selection_wzd.batch_delivery_wzd_act_window').read()[0]
-        if self._context.get('object') == 'move':
-            self.get_affected_moves().filtered(lambda x: x.batch_delivery_id).write({'batch_delivery_id': False})
-            return
-        elif self._context.get('object') == 'package':
-            if self.result_package_id and self.batch_delivery_id:
-                ctx = self._context.copy()
-                ctx.update(force_route_vals=True)
-                package = self.with_context(ctx).result_package_id
-                package.batch_delivery_id = False
-                package.move_line_ids.write({'batch_delivery_id': False})
 
-                return
-            object = 'package'
-        return action
+    # @api.multi
+    # def action_add_to_batch_delivery(self):
+    #     action = self.env.ref('stock_move_selection_wzd.batch_delivery_wzd_act_window').read()[0]
+    #     if self._context.get('object') == 'move':
+    #         self.get_affected_moves().filtered(lambda x: x.batch_delivery_id).write({'batch_delivery_id': False})
+    #         return
+    #     elif self._context.get('object') == 'package':
+    #         if self.result_package_id and self.batch_delivery_id:
+    #             ctx = self._context.copy()
+    #             ctx.update(force_route_vals=True)
+    #             package = self.with_context(ctx).result_package_id
+    #             package.batch_delivery_id = False
+    #             package.move_line_ids.write({'batch_delivery_id': False})
+    #
+    #             return
+    #         object = 'package'
+    #     return action
 
     @api.multi
     def assign_info_envio(self, vals):
@@ -271,13 +266,14 @@ class StockMove(models.Model):
             picking_id.write(vals)
             if moves_to_unlink:
                 moves_to_unlink._assign_picking()
+
     @api.multi
     def action_add_to_batch_picking(self):
-
-        if any(x.result_package_id for x in self):
+        if any(x.result_package_ids for x in self):
             raise ValidationError(_('No puedes modificar los grupos de movimientos empaquetados'))
         if any(x.state in ('done', 'cancel') for x in self):
             raise ValidationError(_('Algunos movieminteos están en estado incorrecto'))
+
         to_add = self.filtered(lambda x: not x.batch_picking_id)
         to_remove = self.filtered(lambda x: x.batch_picking_id)
 
@@ -369,7 +365,6 @@ class StockMove(models.Model):
 
     @api.multi
     def move_sel_assign_picking(self):
-
         moves = self.get_domain_moves_to_asign()
         for move in moves:
             move.action_force_assign_picking()
@@ -411,12 +406,14 @@ class StockMove(models.Model):
 
     @api.multi
     def action_tree_manage_pack(self):
+        self.ensure_one()
+        if len(self) != 1:
+            return
         if any(x.state == 'done' for x in self):
             raise ValidationError (_('No puedes asignar un paquete a un movimiento hecho. Deberás empaquetar posteriormente'))
 
-        if self.result_package_id:
-            package = self.result_package_id
-            self.result_package_id = False
+        if self.result_package_ids:
+            self.move_line_ids.result_package_id = False
             return True
         else:
             wzd_id = self.env['stock.move.pack.wzd'].create_from_moves(self)
@@ -426,45 +423,33 @@ class StockMove(models.Model):
             return action
 
     @api.multi
-    def move_de_sel_assign_picking(self):
-        self.write({'picking_id': False})
-        self.mapped('move_line_ids').write({'picking_id': False})
-        res = self._return_action_show_moves()
-        res['context'] = {'search_default_without_pick': 1}
-        res['domain'] = [('id', 'in', self.ids)]
-        return res
-
-    @api.multi
     def write(self, vals):
-        #if 'picking_id' in vals:
-        #    self.mapped('move_line_ids').write({'picking_id': vals['picking_id']})
         return super().write(vals)
 
-    @api.multi
-    def set_package_id_to_lines(self):
-        for move in self:
-            move.mapped('move_line_ids').write({'result_package_id': move.package_id.id})
+    # @api.multi
+    # def set_package_id_to_lines(self):
+    #     for move in self:
+    #         move.mapped('move_line_ids').write({'result_package_id': move.package_id.id})
+    #
+    # @api.multi
+    # @api.depends('move_line_ids.package_id')
+    # def get_package_id_from_line(self):
+    #     for move in self:
+    #         package_id = move.move_line_ids.mapped('package_id')
+    #         move.package_id = package_id and package_id[0] or False
+
+    # @api.multi
+    # def set_result_package_id_to_lines(self):
+    #
+    #     for move in self:
+    #         p_ids = move.mapped('move_line_ids').mapped('result_package_id')
+    #         move.write({'result_package_ids': [(6,0,p_ids.ids)]})
 
     @api.multi
-    @api.depends('move_line_ids.package_id')
-    def get_package_id_from_line(self):
-        for move in self:
-            package_id = move.move_line_ids.mapped('package_id')
-            move.package_id = package_id and package_id[0] or False
-
-    @api.multi
-    def set_result_package_id_to_lines(self):
+    def compute_result_package_ids(self):
 
         for move in self:
-            move.mapped('move_line_ids').write({'result_package_id': move.result_package_id.id})
-
-    @api.multi
-    @api.depends('move_line_ids.result_package_id')
-    def get_result_package_id_from_line(self):
-
-        for move in self:
-            result_package_id = move.move_line_ids.mapped('result_package_id')
-            move.result_package_id = result_package_id and result_package_id[0] or False
+            move.result_package_ids = move.mapped('move_line_ids').mapped('result_package_id')
 
     def _get_new_picking_domain(self):
         domain = super()._get_new_picking_domain()

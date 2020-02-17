@@ -30,16 +30,12 @@
         <field name="arch" type="xml">
             <form string="Batch delivery">
                 <header>
-
-
-                    <!--button name="action_assign" class="oe_highlight" string="Reserve All"
-                            states="draft" type="object"/-->
+                    <button name="action_draft" states="ready" string="Cancelar" type="object"/>
                     <button name="action_transfer" states="ready" string="Validar" type="object"/>
                     <button name="action_confirm" states="draft" string="Confirmar" type="object"/>
-                    <button name="action_draft" states="ready" string="Cancelar" type="object"/>
-
                     <field name="state" widget="statusbar" statusbar_visible="draft,confirm"/>
-                    <button name="action_show_filter_wzd" states="draft" string="Contenido" type="object"/>
+                    <button name="action_show_filter_wzd" states="ready,done" string="Contenido" type="object"/>
+
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
@@ -65,32 +61,35 @@
                         <button name="action_view_delivery_partner_orders"
                                 class="oe_stat_button"
                                 icon="fa-arrows"
-
                                 type="object">
                                 <field name="count_partner_ids" widget="statinfo" string="Ruta"/>
                         </button>
 
                     </div>
                     <div class="oe_title">
-                        <div class="oe_edit_only">
-                            <label for="name" string="Delivery Name"/>
-                        </div>
-                        <h1>
-                            <field name="name"/>
-                        </h1>
+                            <div class="oe_edit_only">
+                                <label for="name" string="Delivery Name"/>
+                            </div>
+                            <h1>
+                                <field name="name"/>
+                            </h1>
                     </div>
                     <group>
-                        <field name="partner_ids" widget="many2many_tags" />
-                        <field name="picker_id"/>
-                        <field name="date_expected"/>
-                        <field name="date_done"/>
-                    </group>
-                    <group string="Información de envío">
-                        <field name="shipping_type"/>
-                        <field name="delivery_route_path_id"/>
-                        <field name="carrier_id"/>
-                        <field name="plate_id"/>
-                        <field name="driver_id"/>
+                        <group>
+                            <field name="picker_id"/>
+                            <h3 style="color: #7C7BAD">Información de envío</h3>
+                            <field name="carrier_id"/>
+                            <field name="plate_id"/>
+                            <field name="driver_id"/>
+                        </group>
+                        <group>
+                            <field name="date_expected"/>
+                            <field name="date_done"/>
+                            <h3 style="color: #7C7BAD">Para filtrar antes de abrir el listado de paquetes</h3>
+                            <field name="shipping_type"/>
+                            <field name="delivery_route_path_ids" widget="many2many_tags"/>
+                            <field name="partner_ids" widget="many2many_tags"/>
+                        </group>
                     </group>
                     <notebook colspan="4">
                         <page string='Notes'>
@@ -101,17 +100,11 @@
                                 <field name="move_lines" widget="many2many_tags" />
                             </group-->
                         </page>
-                        <page string='Orden de carga'>
+                        <page string='Contenido'>
                              <button class="oe_link oe_right"
                                     name="update_partner_order" type="object"
                                      string="↳Actualizar orden de la ruta" states="draft,ready"/>
-                            <field name="partner_order_ids" editable="bottom">
-                                <tree>
-                                    <field name="sequence" widget="handle"/>
-                                    <field name="partner_id" readonly="1"/>
-                                </tree>
-
-                            </field>
+                             <field name="package_ids" widget="many2many_tags"/>
                         </page>
                     </notebook>
                 </sheet>
@@ -167,7 +160,6 @@
                 <filter name="to_do" string="Preparados" domain="[('state','=', 'ready')]"/>
                 <filter name="last_day" string="Ultimos"
                         domain="['|', ('state', '=', 'ready'),
-
                         ('date_done','&gt;', (context_today() - datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d') )]"/>
                 <filter name="no_picker_id" string="Unassigned" domain="[('picker_id','=', False)]"/>
                 <filter name="no_route" string="Sin ruta" domain="[('delivery_route_path_id','=', False)]"/>

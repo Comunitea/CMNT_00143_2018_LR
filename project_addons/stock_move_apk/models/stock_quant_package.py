@@ -80,7 +80,6 @@ class StockQuantPackage(models.Model):
         }
 
         ctx = self._context.copy()
-        ctx.update(write_from_package=True)
         package_obj = self.env['stock.quant.package'].browse(package_id)
         package_obj.write(values)
         return True
@@ -97,7 +96,6 @@ class StockQuantPackage(models.Model):
     @api.model
     def update_object_from_apk(self, values):
         ctx = self._context.copy()
-        ctx.update(write_from_package=True)
         package_id = self.browse(values.get('package_id', False))
         move_line_ids = self.env['stock.move.line'].browse(values.get('move_line_ids', False))
         action = values.get('action')

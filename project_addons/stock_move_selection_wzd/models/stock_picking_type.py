@@ -279,7 +279,7 @@ class PickingType(models.Model):
         without_delivery = [('batch_delivery_id', '=', False)]
 
         with_result_package = [('result_package_id', '!=', False )]
-        without_result_package = [('result_package_id', '=', False)]
+        without_result_package = [('packed', '=', False)]
         later = expression.AND([to_do_state, [('date_expected', '<', yesterday)]])
         pasaran = [('shipping_type', '=', 'pasaran')]
 
@@ -660,6 +660,15 @@ class PickingType(models.Model):
             'stock_move_selection_wzd.batch_excess_wzd_action').read()[0]
         action['res_id'] = wzd_id.id
         return action
+
+    @api.multi
+    def action_open_new_delivery(self):
+        vals = {'picking_type_id': self.id, 'picker_id': self.env.user.id}
+        new_batch = self.env['stock.batch.delivery'].create(vals)
+        action = new_batch.get_formview_action()
+
+        return action
+
 
     @api.multi
     def action_open_new_batch(self):

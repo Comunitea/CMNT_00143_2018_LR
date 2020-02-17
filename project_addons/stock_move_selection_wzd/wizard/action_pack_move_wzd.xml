@@ -43,7 +43,6 @@
                 </field>
 
                 <footer>
-                    <!--button name="action_assign_package" context="{'force_route_vals': True}" string="Asignar seleccionado" type="object" class="oe_highlight"/-->
                     <button name="action_assign_new_package" context="{'force_route_vals': True}"  string="Crear y asignar nuevo" type="object" class="oe_highlight" />
                     <button name="action_unassign_package" context="{'force_route_vals': True}"  string="Desempaquetar" type="object" class="oe_highlight" />
                     <button string="Cancel" class="oe_link" special="cancel"/>

@@ -27,7 +27,6 @@ class StockMoveLine(models.Model):
     def write(self, vals):
         return super().write(vals)
 
-
     def update_to_new_package(self, new_package_ids):
         ## revisar esto
         create = True

@@ -19,9 +19,9 @@ class StockMovePackListWzd(models.TransientModel):
 
     @api.multi
     def action_assign_this_package(self):
-
         package = self.package_id
-        self.wzd_id.move_ids.assign_package(package)
+        for move in self.wzd_id.move_ids:
+            move.assign_package(package)
         self.wzd_id.autorefresh()
 
 class StockMovePackWzd(models.TransientModel):
@@ -54,11 +54,10 @@ class StockMovePackWzd(models.TransientModel):
         self.move_ids.unpack()
 
     def action_assign_package(self):
-
-        ctx = self._context.copy()
-        ctx.update(force_route_vals=True)
+        ##TODO DELETE FUNCTION
         package = self.list_packages_ids.filtered(lambda x: x.selected).package_id
-        self.with_context(ctx).move_ids.assign_package(package)
+        for move in self.move_ids:
+            move.assign_package(package)
 
     def action_assign_new_package(self):
         new_package_vals = {'partner_id': self.partner_id.id,
@@ -66,7 +65,8 @@ class StockMovePackWzd(models.TransientModel):
                             'delivery_route_path_id': self.delivery_route_path_id.id,
                             'carrier_id': self.carrier_id.id}
         new_pack = self.env['stock.quant.package'].create(new_package_vals)
-        self.move_ids.assign_package(new_pack)
+        for move in self.move_ids:
+            move.assign_package(new_pack)
         return True
 
     @api.multi
@@ -92,7 +92,7 @@ class StockMovePackWzd(models.TransientModel):
             raise ValidationError(_('Algunos movimientos ya tienen orden de carga seleccionada'))
         if moves.filtered(lambda x: x.state not in ('partially_available', 'assigned')):
             raise ValidationError(_("Tienes movimientos en estado distinto a 'Reservado'"))
-        if moves.filtered(lambda x: x.result_package_id):
+        if moves.filtered(lambda x: x.result_package_ids):
             raise ValidationError(_("Tienes movimientos ya empaquetados"))
 
         if len(moves.mapped('partner_id')) != 1 and moves.mapped('picking_type_id').mapped('code') == 'outgoing':

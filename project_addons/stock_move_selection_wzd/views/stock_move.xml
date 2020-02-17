@@ -7,6 +7,9 @@
         <field name="inherit_id" ref="stock.view_move_form" />
         <field name="groups_id" eval="[(4, ref('stock.group_stock_manager'))]"/>
         <field name="arch" type="xml">
+            <field name="location_dest_id" position="after">
+                 <field name="result_package_ids" widget="many2many_tags"/>
+            </field>
             <field name="product_id" position="after">
                  <field name="is_locked" invisible="1"/>
             </field>
@@ -108,7 +111,11 @@
                         context="{'model': 'move'}"
                         icon="fa-tasks"
                         class="text-primary"
-                        attrs="{'invisible': [ '|','|', ('visible_count_move_to_pick', '=', False), ('state', 'not in', ('assigned', 'partially_available')), ('batch_delivery_id', '!=', False)]}"
+                        attrs="{'invisible': [ '|','|', '|',
+                                ('visible_count_move_to_pick', '=', False),
+                                ('result_package_ids', '!=', False),
+                                ('state', 'not in', ('assigned', 'partially_available')),
+                                ('batch_delivery_id', '!=', False)]}"
                         />
 
                 <field name="picking_id" invisible="not context.get('group_code', False) =='all'"/>
@@ -129,17 +136,24 @@
                 <!--field name="reference" string="Reference"/-->
                 <field name="product_id"/>
                 <field name="location_id" invisible="context.get('group_code', False) in ('outgoing', 'incoming')"/>
-                <field name="package_id" invisible="1"/>
+<!--                <field name="package_id" invisible="1"/>-->
+
                 <field name="location_dest_id" invisible="not context.get('group_code', False) in ('picking', 'internal', 'location', 'reposition')"/>
-                <field name="result_package_id" attrs="{'invisible': [('visible_count_move_unpacked', '=', False)]}"/>
+                <field name="result_package_ids" widget="many2many_tags" attrs="{'invisible': [('visible_count_move_unpacked', '=', False)]}"/>
+                <field name="count_move_line_ids" invisible="1"/>
 
                 <button name="action_tree_manage_pack"
                         string="(Des) Empaquetar"
                         type="object"
                         icon="fa-dropbox"
                         class="text-primary"
-                        attrs="{'invisible': ['|', ('batch_delivery_id', '!=', False), ('state', 'not in', ('assigned', 'partially_available'))]}"
+                        attrs="{'invisible': [ '|','|', ('count_move_line_ids', '!=', 1), ('batch_delivery_id', '!=', False), ('state', 'not in', ('assigned', 'partially_available'))]}"
                         />
+                <button name="action_show_details"
+                        string="(Des) Empaquetar"
+                        type="object" icon="fa-list"
+                        attrs="{'invisible': [ '|', '|', ('count_move_line_ids', '=', 1), ('batch_delivery_id', '!=', False), ('state', 'not in', ('assigned', 'partially_available'))]}"
+                />
                 <field name="product_uom_qty"/>
                 <field name="reserved_availability" invisible="context.get('hide_reserved_availability', False)"/>
                 <field name="quantity_done" options='{"fg_color": "green: quantity_done &gt; 0.00"}'/>
@@ -149,7 +163,10 @@
                             icon="fa-code-fork"
                             class="text-primary"
                             groups="base.group_user"
-                            attrs="{'invisible':['|',('code','=','incoming'),('state','not in',('confirmed','assigned','partially_available'))]}"/>
+                            attrs="{'invisible':['|', '|',
+                            ('result_package_ids', '!=', False),
+                            ('code','=','incoming'),
+                            ('state','not in',('confirmed','assigned','partially_available'))]}"/>
                 <field name="show_details_visible" invisible="1"/>
                 <!--button name="action_show_details" string="Registrar detalles del movimiento"
                         type="object" icon="fa-list"
@@ -164,7 +181,10 @@
 
                  <button name="action_cancel_move" string="Cancelar el movimiento y sus asociados" type="object"  icon="fa-window-close-o "
                         class ="text-danger"
-                        attrs="{'invisible': ['|', ('move_dest_ids', '=', []), ('state', 'in', ('cancel', 'done'))]}"/>
+                        attrs="{'invisible': ['|', '|',
+                        ('result_package_ids', '!=', False),
+                        ('move_dest_ids', '=', []),
+                        ('state', 'in', ('cancel', 'done'))]}"/>
             </tree>
         </field>
     </record>
@@ -186,8 +206,8 @@
                 <field name="delivery_route_path_id"/>
                 <field name="delivery_route_group_id" context="{'delivery_route_group_id': self}"/>
                 <field name="sale_id" groups="stock.group_stock_multi_locations"/>
-                <field name="package_id"/>
-                <field name="result_package_id"/>
+                <!--field name="package_id"/-->
+                <!--field name="result_package_id"/-->
 
 
                 <field name="product_id"/>
@@ -228,8 +248,8 @@
                 <filter string="Reposition" name="reposition" domain="[('picking_type_id.group_code.code','=','reposition')]"/>
                 <filter string="Other" name="other" domain="[('picking_type_id.group_code.code','=','other')]"/>
                 <separator/>
-                <filter string="With package" name="with_package" domain="[('result_package_id','!=', False)]"/>
-                <filter string="With no package" name="with_no_package" domain="[('result_package_id','=', False)]"/>
+                <filter string="With package" name="with_package" domain="[('result_package_ids','!=', False)]"/>
+                <filter string="With no package" name="with_no_package" domain="[('result_package_ids','=', False)]"/>
                 <separator/>
                 <filter string="Sin carta de porte" name="batch_picking_id_false" domain="[('batch_delivery_id','=', False)]"/>
                 <filter string="Con carte de porte" name="batch_picking_id_true" domain="[('batch_delivery_id','=', True)]"/>
@@ -261,7 +281,7 @@
                     <filter string="Tipo de albarán" name="by_type" domain="[]"  context="{'group_by':'picking_type_id'}"/>
                     <filter string="Picking" name="by_picking" domain="[]"  context="{'group_by':'picking_id'}"/>
                     <filter string="Paquete" name="by_package" domain="[]"  context="{'group_by':'package_id'}"/>
-                    <filter string="Dest. Paquete" name="by_dest_package" domain="[]"  context="{'group_by':'result_package_id'}"/>
+                    <!--filter string="Dest. Paquete" name="by_dest_package" domain="[]"  context="{'group_by':'result_package_id'}"/-->
                 </group>
             </search>
         </field>

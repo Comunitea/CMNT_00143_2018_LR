@@ -230,6 +230,11 @@
                                                           <div class="col-xs-6 text-muted">
                                                             <span class="text-muted h3">O. de carga</span>
                                                         </div>
+                                                         <div class="col-xs-3">
+                                                          <button class="btn btn-primary badge" name="action_open_new_delivery" type="object">
+                                                                +
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                     <div class="row">
                                                         <div class="col-xs-6 text-primary" title="Pendientes (Todos)">

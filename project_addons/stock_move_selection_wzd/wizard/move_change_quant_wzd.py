@@ -101,7 +101,6 @@ class MoveChangeQuantWzd(models.TransientModel):
         return vals
 
     def action_apply_quant(self):
-        import ipdb; ipdb.set_trace()
         quant_ids = self.quant_ids.filtered(lambda x: x.new_quantity>0.00)
         if not quant_ids:
             return

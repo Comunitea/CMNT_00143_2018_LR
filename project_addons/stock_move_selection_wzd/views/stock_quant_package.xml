@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    <record model="ir.ui.view" id="view_quant_package_tree_smsw">
+        <field name="name">view.quant.package.tree.smsw</field>
+        <field name="model">stock.quant.package</field>
+        <field name="inherit_id" ref="stock.view_quant_package_tree"/>
+        <field name="arch" type="xml">
+            <field name="company_id" position="before">
+                <field name="batch_delivery_id"/>
+            </field>
+        </field>
+    </record>
     <!-- stock.quant.package kanban ulma status view -->
     <record model="ir.ui.view" id="view_quant_package_kanban_move_wzd">
         <field name="name">view.quant.package.kanban.mov_wzd</field>
@@ -36,7 +46,6 @@
                 <field name="sga_state"/>
                 <separator/>
             </field>
-
             <xpath expr="//group" position="inside">
                 <filter name="sga_state" context="{'group_by': 'sga_State'}"/>
 
@@ -56,12 +65,11 @@
             <xpath expr="//header" position="inside">
                 <button class="oe_stat_button" name="action_cancel_delivery_batch_assigment" string="Desalbaranar" type="object" widget="statinfo" icon="fa-arrows-v"
                 attrs="{'invisible':[('batch_delivery_id','=',False)]}"/>
-                <field name="sga_state" widget="statusbar" statusbar_visible="no_send,pending,done"/>
             </xpath>
             <xpath expr="//field[@name='location_id']" position="after">
                 <field name="partner_id" readonly="1"/>
                 <field name="batch_delivery_id" readonly="1"/>
-
+                <field name="sga_state" widget="statusbar" statusbar_visible="no_send,pending,done"/>
             </xpath>
             <xpath expr="//div[@name='button_box']" position="inside">
                 <button class="oe_stat_button" name="action_view_moves_line" string="Movimientos de stock" type="object" widget="statinfo" icon="fa-list-ul"/>

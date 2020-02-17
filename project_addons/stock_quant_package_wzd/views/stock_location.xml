@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_stock_location_sqpwk" model="ir.ui.view">
+        <field name="name">Stock Location Form sqpw</field>
+        <field name="model">stock.location</field>
+        <field name="inherit_id" ref="stock.view_location_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='scrap_location']" position="after">
+                <field name="preparation_location"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -23,7 +23,7 @@
                         <field name="product_uom_qty"/>
                         <!--field name="ordered_qty"/-->
                         <field name="state"/>
-                         <button name="split_move_reserved_qty"
+                        <button name="split_move_reserved_qty"
                             string="SPLIT"
                             type="object"
                             icon="fa-tags"

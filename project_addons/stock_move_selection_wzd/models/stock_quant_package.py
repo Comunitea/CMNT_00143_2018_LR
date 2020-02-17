@@ -5,7 +5,7 @@
 from odoo import models, fields, api, _
 
 from .stock_picking_type import SGA_STATES
-from odoo import exceptions
+from odoo.exceptions import UserError, ValidationError
 
 class StockQuantPackagePackLine(models.Model):
     _name = 'stock.quant.package.pack.line'
@@ -33,51 +33,28 @@ class StockQuantPackage(models.Model):
     _inherit = 'stock.quant.package'
 
     @api.multi
-    def get_picking_ids(self):
+    def compute_picking_ids(self):
         for pack in self:
             pack.picking_ids = pack.move_line_ids.mapped('picking_id')
             pack.move_lines = pack.move_line_ids.mapped('move_id')
-
+            pack.batch_picking_ids = pack.picking_ids.mapped('batch_picking_id')
 
 
     sga_state = fields.Selection(SGA_STATES, default='no_integrated', string="SGA Estado")
-    batch_picking_ids = fields.Many2many('stock.batch.picking', compute='get_batch_picking_ids', string='Grupos')
-    batch_delivery_id = fields.Many2one('stock.batch.delivery', compute='get_batch_delivery_id', inverse='set_batch_delivery_id', string='Orden de carga')
+    batch_picking_ids = fields.Many2many('stock.batch.picking', compute='compute_picking_ids', string='Grupos')
+    batch_delivery_id = fields.Many2one('stock.batch.delivery', string='Orden de carga')
     partner_id = fields.Many2one(related='move_line_ids.partner_id', store=True)
-    #partner_id = fields.Many2one('res.partner', string='Delivery Address')
-    picking_ids = fields.One2many('stock.picking', compute=get_picking_ids)
+    picking_ids = fields.One2many('stock.picking', compute='compute_picking_ids')
     packaging_line_ids = fields.One2many('stock.quant.package.pack.line', 'package_id', 'Empaquetado')
-    move_lines = fields.One2many('stock.move', compute=get_picking_ids)
+    move_lines = fields.One2many('stock.move', compute='compute_picking_ids')
 
-    @api.constrains('move_line_ids.partner_id', 'move_line_ids.picking_type_id')
+    @api.constrains('move_lines.partner_id', 'move_line.picking_type_id')
     def check_partner(self):
-        import ipdb; ipdb.set_trace()
         for pack in self:
             group_code_ids = pack.move_line_ids.mapped('picking_type_id').mapped('group_code')
             if any(x.code == 'outgoing' for x in group_code_ids):
                 if len(pack.move_line_ids.mapped('partner_id'))!=1:
-                    raise ValueError (_('No es posible empaquetar para distintos clientes en las operaciones de salida'))
-
-    @api.multi
-    @api.depends('move_line_ids.state', 'move_line_ids.batch_delivery_id')
-    def get_batch_delivery_id(self):
-        for pack in self.filtered(lambda x: x.move_lines):
-            batch_delivery_id = pack.move_lines.mapped('batch_delivery_id')
-            if len(batch_delivery_id) > 1:
-                raise exceptions.ValidationError (_('Error. El paquete tiene movimientos en varias ordenes de carga'))
-            pack.batch_delivery_id = batch_delivery_id
-
-
-    @api.multi
-    def set_batch_delivery_id(self):
-        for pack in self.filtered(lambda x: x.move_lines):
-            pack.move_lines.write({'batch_delivery_id': pack.batch_delivery_id.id})
-
-
-    @api.multi
-    def get_batch_picking_ids(self):
-        for pack in self.filtered(lambda x: x.move_lines):
-            pack.batch_picking_ids = pack.move_lines.mapped('batch_picking_id')
+                    raise ValidationError (_('No es posible empaquetar para distintos clientes en las operaciones de salida'))
 
     def get_packaging_lines(self, vals):
         package_id = vals.get('package_id', False)
@@ -96,9 +73,9 @@ class StockQuantPackage(models.Model):
             return  pack_lines
         return []
 
+
     @api.model
     def set_packaging_lines(self, vals):
-
         package_id = vals.get('package_id', False)
         if package_id:
             package = self.env['stock.quant.package'].browse(package_id)
@@ -137,11 +114,10 @@ class StockQuantPackage(models.Model):
                 if qty > 0:
                     package_id.write({'packaging_line_ids': [(6, 0, {'product_id': product_id.id, 'qty': qty})]})
 
-
     @api.onchange('delivery_route_path_id', 'shipping_type', 'carrier_id')
     def onchange_route_fields(self):
         if self._context.get('force_route_fields', False) and (self.batch_picking_id or self.batch_delivery_id):
-            raise exceptions.ValidationError ('No puedes cambiar los datos de envío si el paquete está en un grupo')
+            raise ValidationError ('No puedes cambiar los datos de envío si el paquete está en un grupo')
 
     @api.model
     def create(self, vals):
@@ -163,13 +139,13 @@ class StockQuantPackage(models.Model):
         batch_picking_id = self.env['stock.batch.picking'].browse(self._context.get('batch_picking_id'))
 
         if batch_picking_id.state not in ['draft', 'assigned']:
-            raise exceptions.ValidationError(_('You can not add packages to a batch picking done or canceled.'))
+            raise ValidationError(_('You can not add packages to a batch picking done or canceled.'))
 
         move_domain = [('result_package_id', '=', self.id)]
         moves = self.env['stock.move.line'].search(move_domain).mapped('move_id')
 
         if not moves:
-            raise exceptions.ValidationError("This pack is empty!")
+            raise ValidationError("This pack is empty!")
 
         for move in moves:
             if batch_picking_id.shipping_type == 'pasaran':
@@ -188,14 +164,14 @@ class StockQuantPackage(models.Model):
 
     @api.multi
     def delete_package_from_batch(self, package_id):
-
+        raise ValueError (_('No implementado'))
         ctx = self._context.copy()
         ctx.update(batch_picking_id=ctx.get('batch_picking_id'))
 
         batch_picking_id = self.env['stock.batch.picking'].browse(ctx.get('batch_picking_id'))
 
         if batch_picking_id.state not in ['draft', 'assigned']:
-            raise exceptions.ValidationError(_('You can not add packages to a batch picking done or canceled.'))
+            raise ValidationError(_('You can not add packages to a batch picking done or canceled.'))
         else:
             move_lines = self.env['stock.quant.package'].browse(package_id).move_line_ids
             picking_ids = move_lines.mapped('move_id').mapped('picking_id')
@@ -227,10 +203,10 @@ class StockQuantPackage(models.Model):
         action['context'] = {}
         return action
 
-
-    @api.multi
-    def write(self, vals):
-        return super().write(vals)
+    #
+    # @api.multi
+    # def write(self, vals):
+    #     return super().write(vals)
     #
     #
     # def update_package_shipping_values(self, shipping_type=False, delivery_route_path_id=False, carrier_id=False):
@@ -325,6 +301,15 @@ class StockQuantPackage(models.Model):
 
 
 
+    @api.multi
+    def action_cancel_delivery_batch_assigment(self):
+        for package in self:
+            if package.batch_delivery_id:
+                if package.batch_delivery_id.state == 'done':
+                    raise ValidationError(_('No es posible sacar el paquete {} de la orden de carga {}. Ya está realizada'.format(package.name, package.batch_delivery_id.name)))
+                if package.batch_delivery_id.state == 'ready':
+                    raise ValidationError(_('Debes poner la orden de carga {} en estado borrador para poder sacar el paquete'.format(package.batch_delivery_id.name)))
+            package.batch_delivery_id = False
 
 
 

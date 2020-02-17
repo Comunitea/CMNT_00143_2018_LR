@@ -23,7 +23,7 @@ class SBDWMoveLine(models.TransientModel):
     product_uom_qty = fields.Float(related='move_id.product_uom_qty')
     origin = fields.Char(related='move_id.origin')
     info_route_str = fields.Char(related='move_id.info_route_str')
-    result_package_id = fields.Many2one(related='move_id.result_package_id')
+    result_package_ids = fields.Many2many(related='move_id.result_package_ids')
     state = fields.Selection(related='move_id.state')
     batch_picking_id = fields.Many2one(related='move_id.batch_picking_id')
 
@@ -197,7 +197,6 @@ class StockBatchDeliveryWzd(models.TransientModel):
 
     @api.model
     def default_get(self, fields):
-
         active_ids = self._context.get('active_ids')
         if not active_ids:
             raise ValidationError(_('No hay nada seleccionado'))

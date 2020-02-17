@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem
+            id="stock_quant_package_wzd.sqp_parent_menu"
+            parent="stock.menu_stock_root"
+            sequence="2" name="Empaquetado"/>
+
+    <record id="action_sqp_tree" model="ir.actions.act_window">
+        <field name="name">Lista de paquetes</field>
+        <field name="res_model">stock.quant.package</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="stock_quant_package_wzd.sqp_tree"/>
+        <field name="search_view_id" ref="stock_quant_package_wzd.sqp_search_view"/>
+        <field name="context">{}</field>
+    </record>
+
+    <menuitem
+        action="action_sqp_tree"
+        parent="stock_quant_package_wzd.sqp_parent_menu"
+        id="stock_quant_package_wzd.menu_action_sqp_tree"
+        sequence="0" name="Listado de paquetes"/>
+
+    <record id="action_act_package_state" model="ir.actions.server">
+        <field name="name">Actualizar estado</field>
+        <field name="type">ir.actions.server</field>
+        <field name="state">code</field>
+        <field name="model_id" ref="stock.model_stock_quant_package"/>
+        <field name="binding_model_id" ref="stock.model_stock_quant_package"/>
+        <field name="code">
+            records.compute_package_state_progress()
+        </field>
+    </record>
+    <!-- MENUS PICKING TYPE KANBAN >> MONITOR DE ALMACEN -->
+
+
+
+</odoo>

@@ -25,7 +25,6 @@ class DeliveryBatchReport(models.AbstractModel):
         if not seq_partner_ids:
             seq_partner_ids = delivery_id.create_partner_order()
 
-
         for order_line in seq_partner_ids:
 
             partner_id = order_line.partner_id

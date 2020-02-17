@@ -56,11 +56,11 @@
 
     <record id="picking_type_pickings_view" model="ir.actions.server">
             <field name="name">Picking</field>
-            <field name="res_model">stock.picking.type</field>
+<!--            <field name="res_model">stock.picking.type</field>-->
             <field name="model_id" ref="model_stock_picking_type"/>
             <field name="type">ir.actions.server</field>
             <field name="state">code</field>
-            <field name="context">{}</field>
+<!--            <field name="context">{}</field>-->
             <field name="code">
                 action = env['stock.picking.type']._return_action_show_types('picking')
             </field>
@@ -73,11 +73,11 @@
 
     <record id="picking_type_incoming_view" model="ir.actions.server">
             <field name="name">Entradas</field>
-            <field name="res_model">stock.picking.type</field>
+<!--            <field name="res_model">stock.picking.type</field>-->
             <field name="model_id" ref="model_stock_picking_type"/>
             <field name="type">ir.actions.server</field>
             <field name="state">code</field>
-            <field name="context">{}</field>
+<!--            <field name="context">{}</field>-->
             <field name="code">
                 action = env['stock.picking.type']._return_action_show_types('incoming')
             </field>
@@ -90,7 +90,7 @@
 
     <record id="picking_type_outgoing_view" model="ir.actions.server">
             <field name="name">Salidas</field>
-            <field name="res_model">stock.picking.type</field>
+<!--            <field name="res_model">stock.picking.type</field>-->
             <field name="model_id" ref="model_stock_picking_type"/>
             <field name="type">ir.actions.server</field>
             <field name="state">code</field>
@@ -113,7 +113,7 @@
 
     <record id="stock_move_sel_action_all" model="ir.actions.server">
             <field name="name">Product Moves</field>
-            <field name="res_model">stock.move</field>
+<!--            <field name="res_model">stock.move</field>-->
             <field name="model_id" ref="model_stock_move"/>
             <field name="type">ir.actions.server</field>
             <field name="state">code</field>
@@ -130,7 +130,7 @@
 
      <record id="stock_move_sel_action_incoming" model="ir.actions.server">
             <field name="name">Incoming Moves</field>
-            <field name="res_model">stock.move</field>
+<!--            <field name="res_model">stock.move</field>-->
             <field name="model_id" ref="model_stock_move"/>
             <field name="type">ir.actions.server</field>
             <field name="state">code</field>
@@ -146,7 +146,7 @@
 
     <record id="stock_move_sel_action_picking" model="ir.actions.server">
             <field name="name">Picking Moves</field>
-            <field name="res_model">stock.move</field>
+<!--            <field name="res_model">stock.move</field>-->
             <field name="model_id" ref="model_stock_move"/>
             <field name="type">ir.actions.server</field>
             <field name="state">code</field>
@@ -162,7 +162,7 @@
 
     <record id="stock_move_sel_action_outgoing" model="ir.actions.server">
             <field name="name">Outgoing Moves</field>
-            <field name="res_model">stock.move</field>
+<!--            <field name="res_model">stock.move</field>-->
             <field name="model_id" ref="model_stock_move"/>
             <field name="type">ir.actions.server</field>
             <field name="state">code</field>
@@ -178,7 +178,7 @@
 
     <record id="stock_move_sel_action_location" model="ir.actions.server">
             <field name="name">Location Moves</field>
-            <field name="res_model">stock.move</field>
+<!--            <field name="res_model">stock.move</field>-->
             <field name="model_id" ref="model_stock_move"/>
             <field name="type">ir.actions.server</field>
             <field name="state">code</field>
@@ -194,7 +194,7 @@
 
     <record id="stock_move_sel_action_internal" model="ir.actions.server">
             <field name="name">Internal Moves</field>
-            <field name="res_model">stock.move</field>
+<!--            <field name="res_model">stock.move</field>-->
             <field name="model_id" ref="model_stock_move"/>
             <field name="type">ir.actions.server</field>
             <field name="state">code</field>
@@ -210,7 +210,7 @@
 
     <record id="stock_move_sel_action_reposition" model="ir.actions.server">
             <field name="name">Reposition Moves</field>
-            <field name="res_model">stock.move</field>
+<!--            <field name="res_model">stock.move</field>-->
             <field name="model_id" ref="model_stock_move"/>
             <field name="type">ir.actions.server</field>
             <field name="state">code</field>
@@ -226,7 +226,7 @@
 
      <record id="stock_move_sel_action_other" model="ir.actions.server">
             <field name="name">Other Moves</field>
-            <field name="res_model">stock.move</field>
+<!--            <field name="res_model">stock.move</field>-->
             <field name="model_id" ref="model_stock_move"/>
             <field name="type">ir.actions.server</field>
             <field name="state">code</field>
