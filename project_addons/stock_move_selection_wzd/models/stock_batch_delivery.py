@@ -208,7 +208,7 @@ class StockBatchDelivery(models.Model):
             route_ids = delivery.delivery_route_path_ids
             #partner_picking_ids = delivery.partner_picking_ids
             #if not partner_picking_ids:
-            partner_picking_ids = delivery.picking_ids.partner_id
+            partner_picking_ids = delivery.picking_ids.mapped('partner_id')
             route_partner = []
             if route_ids:
                 if len(route_ids) == 1:
@@ -270,9 +270,14 @@ class StockBatchDelivery(models.Model):
 
     @api.multi
     def unlink(self):
+        #import ipdb; ipdb.set_trace()
         if any(x.state == 'done' for x in self):
-            raise ValidationError(_('No puedes boorar una orden de carga ya realizada'))
+            raise ValidationError(_('No puedes borrar una orden de carga ya realizada'))
+        batch_ids = self.mapped('batch_ids')
         super().unlink()
+        batch_ids.unlink()
+
+
 
     @api.multi
     def _get_picking_ids(self):
@@ -290,6 +295,7 @@ class StockBatchDelivery(models.Model):
         for batch in self.filtered(lambda x:x.state=='ready'):
             batch.batch_ids.action_transfer()
             batch.state = 'done'
+            batch.date_done  = fields.datetime.now()
 
     @api.multi
     def action_draft(self):

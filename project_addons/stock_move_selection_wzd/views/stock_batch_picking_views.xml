@@ -87,8 +87,10 @@
                 <button name="action_send_to_sga" string="Enviar a SGA" type="object" class="oe_highlight"
                         attrs="{'invisible': ['|', ('state','!=', 'assigned'), ('sga_state', 'not in', ('export_error', 'import_error', 'no_send'))]}"/>
             </xpath>
-            <xpath expr="//field[@name='picker_id']" position="after">
+            <xpath expr="//field[@name='picker_id']" position="before">
                     <field name="partner_id" attrs="{'invisible': [('partner_id', '=',False)]}"></field>
+            </xpath>
+            <field name="payment_term_id" position="after" />
                     <field name="code"  invisible="1"/>
                     <field name="excess" attrs="{'invisible': [('code', '!=', 'outgoing')]}"/>
                     <field name="picking_type_id"/>
@@ -96,7 +98,8 @@
 
                 <field name="sga_state" widget="statusbar" statusbar_visible="no_send,pending,done" attrs="{'invisible': [('sga_integrated', '!=', True)]}"/>
                     <field name="sga_integrated" invisible="1"/>
-            </xpath>
+            </field>
+
              <field name="picking_ids" position="attributes">
                 <attribute name="domain">[
                     ('state', '=', 'assigned'),
@@ -105,9 +108,14 @@
                     ]
                 </attribute>
             </field>
-            <xpath expr="//field[@name='payment_term_id']" position="after">
-                <field name="pack_lines_picking_id" attrs = "{'invisible': [('code', '!=', 'outgoing')]}"/>
-                <field name="orig_batch_picking_id" attrs = "{'invisible': [('code', '!=', 'outgoing')]}"/>
+            <xpath expr="//group[@name='info_envio']" position="after">
+                <group>
+                    <field name="delivery_route_path_ids" widget="many2many_tags" attrs="{'readonly': [('state','!=', 'draft')]}"/>
+                    <field name="payment_term_ids" widget="many2many_tags" attrs="{'readonly': [('state','!=', 'draft')]}"/>
+                    <field name="partner_ids" widget="many2many_tags" attrs="{'readonly': [('state','!=', 'draft')]}"/>
+                </group>
+                <!--field name="pack_lines_picking_id" attrs = "{'invisible': [('code', '!=', 'outgoing')]}"/>
+                <field name="orig_batch_picking_id" attrs = "{'invisible': [('code', '!=', 'outgoing')]}"/-->
             </xpath>
             <!--xpath expr="//group[@name='info_envio']" position="after">
                 <group name="manage_drafts" string="Gestión de contenido" attrs = "{'invisible': [('state', 'in', ('done', 'cancel'))]}">
@@ -248,6 +256,7 @@
         <field name="context">{'group_code': 'outgoing'}</field>
     </record>
 </odoo>
+
 
 
 

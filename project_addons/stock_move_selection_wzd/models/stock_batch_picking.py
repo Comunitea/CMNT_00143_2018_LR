@@ -51,8 +51,8 @@ class StockBatchPicking(models.Model):
         help='List of picking managed by this batch.'
     )
 
-    batch_delivery_id = fields.Many2one('stock.batch.delivery', string="Delivery batch")
-    picking_type_id = fields.Many2one('stock.picking.type', string='Picking type', required=True, readonly=True,
+    batch_delivery_id = fields.Many2one('stock.batch.delivery', string="Orden de carga")
+    picking_type_id = fields.Many2one('stock.picking.type', string='Tipo de alabrán type', required=True, readonly=True,
                                       states={'draft': [('readonly', False)]}, )
     sga_integrated = fields.Boolean(related='picking_type_id.sga_integrated')
     sga_state = fields.Selection(SGA_STATES, default='no_integrated', string="SGA Estado", compute="get_sga_state")
@@ -68,7 +68,6 @@ class StockBatchPicking(models.Model):
     count_move_lines = fields.Integer('Nº líneas', compute="_get_nlines")
     delivery_route_path_ids = fields.Many2many('delivery.route.path', string="Rutas de transporte")
     payment_term_ids = fields.Many2many('account.payment.term', string='Plazos de pago')
-    shipping_type_ids = fields.Selection(related='shipping_type')
     partner_ids = fields.Many2many('res.partner', string='Clientes', domain=_get_parner_ids_domain)
     pack_count = fields.Integer('Nº de paquetes')
     move_count = fields.Integer('Nº de líneas')
@@ -182,8 +181,14 @@ class StockBatchPicking(models.Model):
 
     @api.multi
     def unlink(self):
+
         if self.mapped('batch_delivery_id'):
             raise ValidationError(_('No puedes eliminar un grupo que ya está en una orden de carga. Priemro debes sacarlo de la orden de carga'))
+        for batch in self.filtered(lambda x: x.picking_type_id.sga_integrated):
+            if any(x.sga_state == 'done' for x in batch.move_lines):
+                raise ValidationError(_(
+                    'No puedes eliminar un grupo que ya tiene movimientos hechos en los SGA'))
+            batch.move_lines.write({'sga_state': 'no_send'})
         return super().unlink()
 
     @api.multi
@@ -299,6 +304,7 @@ class StockBatchPicking(models.Model):
 
     @api.multi
     def send_to_sga(self):
+
         for batch in self:
             lines = batch.move_lines
             sga_done_vals = {'sga_state': 'pending'}
@@ -334,6 +340,7 @@ class StockBatchPicking(models.Model):
         return True
 
     def return_move_vals(self, moves, picking_ids, complete=False):
+
         # pickings = moves.mapped('picking_id')
 
         vals = []
@@ -345,14 +352,14 @@ class StockBatchPicking(models.Model):
             for move in moves.filtered(lambda x: x.picking_id == pick):
                 val = {'move_id': move.id, 'selected': selected}
                 if complete:
-                    val.update({'origin': move.origin,
-                                'name': move.name,
+                    val.update({#'origin': move.origin,
+                                #'name': move.name,
                                 'selected': selected,
-                                'info_route_str': move.info_route_str,
-                                'product_id': move.product_id.id,
-                                'product_uom_qty': move.product_uom_qty,
-                                'result_package_ids': [(6,0, move.result_package_id.ids)],
-                                'state': move.state,
+                                #'info_route_str': move.info_route_str,
+                                #'product_id': move.product_id.id,
+                                #'product_uom_qty': move.product_uom_qty,
+                                #'result_package_ids': [(6,0, move.move_line_ids.mapped('result_package_id').ids)],
+                                #'state': move.state,
                                 'batch_picking_id': move.batch_picking_id.id
                                 })
                 vals.append((0, 0, val))
@@ -363,13 +370,14 @@ class StockBatchPicking(models.Model):
         for pick in picking_ids:
             val = {'picking_id': pick.id}
             if complete:
-                val.update({'origin': pick.origin,
-                            'name': pick.name,
+                val.update({
+                    #'origin': pick.origin,
+                     #       'name': pick.name,
                             'selected': True,
-                            'info_route_str': pick.info_route_str,
-                            'count_move_lines': pick.count_move_lines,
-                            'partner_id': pick.partner_id.id,
-                            'state': pick.state,
+                     #       'info_route_str': pick.info_route_str,
+                     #       'count_move_lines': pick.count_move_lines,
+                     #       'partner_id': pick.partner_id.id,
+                     #       'state': pick.state,
                             'batch_picking_id': pick.batch_picking_id.id
                             })
             vals.append((0, 0, val))
@@ -391,6 +399,7 @@ class StockBatchPicking(models.Model):
 
     @api.multi
     def open_tree_to_add(self):
+
         self.ensure_one()
         model = self._context.get('model', 'stock.move')
         if not self.picking_type_id:
@@ -460,24 +469,4 @@ class StockBatchPicking(models.Model):
 
         action['res_id'] = wzd_id.id
 
-        return action
-
-    @api.multi
-    def add_more_moves(self):
-        self.ensure_one()
-        action = self.env.ref('stock_move_selection_wzd.stock_move_to_orders_action').read()[0]
-        domain = [('batch_picking_id', '=', False), ('state', '=', 'assigned'), ('picking_type_id', '=', self.picking_type_id.id)]
-        if self.delivery_route_path_ids:
-            domain += [('delivery_route_path_id', 'in', self.delivery_route_path_ids.ids)]
-        if self.shipping_type:
-            domain += [('shipping_type', '=', self.shipping_type)]
-        action['domain'] = domain
-        self.env['stock.picking'].search(domain).write({'to_batch': self.id})
-        ctx = self._context.copy()
-        ctx.update(eval(action['context']))
-        ctx.update(default_batch_picking_id=self.id)
-        name = self.picking_type_id.batch_name
-        action['name'] = "{} : {}".format(name, self.name)
-        action['display_name'] ="{} : {}".format(name, self.name)
-        action['context'] = ctx
         return action

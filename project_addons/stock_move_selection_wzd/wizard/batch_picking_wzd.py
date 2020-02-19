@@ -350,7 +350,7 @@ class StockBatchPickingWzd(models.TransientModel):
                 pick_moves_to_unlink = picking_id.move_lines - moves_to_assign.filtered(lambda x: x.picking_id == picking_id)
                 if pick_moves_to_unlink:
                     pick_moves_to_unlink.write({'picking_id': False})
-                    picking_id.batch_picking_id
+
 
             moves_to_link = self.move_ids.filtered(lambda x:x.selected).mapped('move_id')
             domain = [('batch_picking_id', '=', self.batch_picking_id.id), ('id', 'not in', moves_to_link.ids)]

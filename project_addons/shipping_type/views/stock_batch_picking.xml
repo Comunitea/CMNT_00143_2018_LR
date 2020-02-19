@@ -5,16 +5,14 @@
         <field name="model">stock.batch.picking</field>
         <field name="inherit_id" ref="stock_batch_picking.stock_batch_picking_form"/>
         <field name="arch" type="xml">
-            <field name="picker_id" position="before">
-                <field name="info_route_str"/>
-            </field>
             <xpath expr="//notebook" position="before">
                 <group>
-                <group name="info_envio" string="Info envío">
-                    <field name="shipping_type" readonly="1"/>
-                    <field name="delivery_route_path_id" readonly="1"/>
-                    <field name="payment_term_id" readonly="1"/>
-                </group>
+                    <group name="info_envio" string="Info envío">
+                        <field name="info_route_str"/>
+                        <field name="shipping_type" attrs="{'readonly': [('state','!=', 'draft')]}"/>
+                        <field name="delivery_route_path_id" readonly="1" invisible="1"/>
+                        <field name="payment_term_id" readonly="1"/>
+                    </group>
                 </group>
             </xpath>
         </field>

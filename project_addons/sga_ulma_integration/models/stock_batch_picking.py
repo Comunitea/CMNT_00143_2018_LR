@@ -42,7 +42,7 @@ class StockBatchPicking(models.Model):
             #creo la cabecera del batch
             vals = batch.get_ulma_vals()
 
-            line_ids = batch.draft_move_lines.filtered(
+            line_ids = batch.move_lines.filtered(
                 lambda x: x.state in MOVES_STATES_TO_SEND and x.sga_state in SGA_STATES_TO_SEND)
             if not line_ids:
                 continue

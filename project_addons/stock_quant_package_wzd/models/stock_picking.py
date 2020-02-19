@@ -24,7 +24,7 @@ class StockPicking(models.Model):
                     _(
                         'Se dividido en <a href="#" '
                         'data-oe-model="stock.picking" '
-                        'data-oe-id="%d">%s</a> desde la orden de carga {}.'
+                        'data-oe-id="%d">%s</a> desde la orden de carga %s.'
                     ) % (
                         backorder_picking.id,
                         backorder_picking.name,

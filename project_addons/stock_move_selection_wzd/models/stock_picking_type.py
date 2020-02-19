@@ -139,6 +139,7 @@ class PickingType(models.Model):
         return self.sga_integrated
 
     def get_parent_state(self, child_ids):
+
         ### LO PONGO AQUI PORQUE ES DONDE ESTA SGA_STATE
         if all(child.sga_state == 'no_integrated' for child in child_ids):
             sga_state = 'no_integrated'
@@ -569,6 +570,7 @@ class PickingType(models.Model):
         return action
 
     def get_action_tree(self):
+        #import ipdb; ipdb.set_trace()
         domain = self._context.get('default_domain', [])
         if not domain:
             domain = self._context.get('domain', [])

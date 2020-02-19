@@ -43,16 +43,16 @@ class StockQuantPackage(models.Model):
 
     @api.multi
     def add_package_to_batch_delivery(self):
+
         to_unlink = self.filtered(lambda x: x.batch_delivery_id)
         to_link = self.filtered(lambda x: not x.batch_delivery_id and x.to_delivery != False)
         for package_id in to_unlink:
             package_id.assign_delivery(False)
         if to_link:
             to_delivery_ctx = self._context.get('to_delivery', False)
+            to_delivery_ctx_id = self.env['stock.batch.picking'].browse(to_delivery_ctx)
             for package_id in to_link:
-                to_delivery = package_id.to_delivery
-                if not to_delivery and to_delivery_ctx:
-                    to_delivery = self.env['stock.batch.picking'].browse(to_delivery_ctx)
+                to_delivery = package_id.to_delivery or to_delivery_ctx_id or False
                 if to_delivery:
                     package_id.assign_delivery(to_delivery)
                     package_id.write({'to_delivery': False})

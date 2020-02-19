@@ -179,8 +179,6 @@
                                     <div class="container o_kanban_card_content">
                                         <div class="row">
                                             <div class="col-xs-8 o_kanban_primary_left">
-
-
                                                 <div name="sga_state" t-if="record.sga_integrated.raw_value == true">
                                                      <div class="row">
                                                            <div class="col-xs-6 text-muted">
@@ -239,7 +237,7 @@
                                                     <div class="row">
                                                         <div class="col-xs-6 text-primary" title="Pendientes (Todos)">
                                                             <a name="get_action_tree" type="object" context="{'dest_model': 'stock.batch.delivery',
-                                                                                                              'default_domain': [('state', 'in', ('draft', 'assigned'))],
+                                                                                                              'default_domain': [('state', 'in', ('draft', 'ready'))],
                                                                                                               'search_default_last_day': 1,
                                                                                                               'search_default_to_do': 1}">
                                                                 Pendientes

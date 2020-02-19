@@ -33,16 +33,12 @@ class StockBatchPicking(models.Model):
     def _compute_sale_ids(self):
         ##todo revisar Un batch no debería de tener draft move lines una vez validado
         for pick in self:
-            pick.sale_ids = pick.mapped("picking_ids.sale_id") + pick.mapped(
-                "draft_move_lines.picking_id.sale_id"
-            )
+            pick.sale_ids = pick.mapped("picking_ids.sale_id")
 
     def _compute_currency_id(self):
         ##todo revisar Un batch no debería de tener draft move lines una vez validado.
         for pick in self:
-            sale = pick.mapped("picking_ids.sale_id") + pick.mapped(
-                "draft_move_lines.picking_id.sale_id"
-            )
+            sale = pick.mapped("picking_ids.sale_id")
             if not sale:
                 pick.currency_id = False
             else:
@@ -61,7 +57,7 @@ class StockBatchPicking(models.Model):
                 amount_tax += round_curr(tax_group["amount"])
             amount_untaxed = sum(
                 l.sale_price_subtotal
-                for l in (pick.move_line_ids + pick.draft_move_line_ids)
+                for l in (pick.move_line_ids)
             )
             excess_line_vals = pick.get_excess_invoice_line_vals(
                 pick.sale_ids[0], get_tax_obj=True
@@ -90,7 +86,7 @@ class StockBatchPicking(models.Model):
             self.with_context(lang=self.partner_id.lang).env,
             currency_obj=currency,
         )
-        for line in self.move_line_ids + self.draft_move_line_ids:
+        for line in self.move_line_ids:
             if line.sale_line:
                 tax_id = line.sale_line.tax_id
             else:
@@ -225,7 +221,7 @@ class StockBatchPicking(models.Model):
 
             price = sum(
                 l.sale_price_unit * (l.qty_done or l.product_qty)
-                for l in (self.move_line_ids + self.draft_move_line_ids)
+                for l in (self.move_line_ids)
             ) * (shipping_cost_perc / 100)
             product = self.env.ref("stock_custom.shipping_product")
             return self.get_invoice_line_vals(

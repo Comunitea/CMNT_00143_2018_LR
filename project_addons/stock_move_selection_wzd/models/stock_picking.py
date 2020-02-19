@@ -72,6 +72,7 @@ class StockPicking(models.Model):
 
     @api.multi
     def _assign_picking_batch(self):
+
         if any(x.batch_picking_id for x in self):
             raise ValidationError (_('Hay albaranes que ya tienen un batch asignado: {}'.format(self.filtered(lambda x: x.batch_picking_id).mapped('name'))))
         batch_ids = self.env['stock.batch.picking']
@@ -85,7 +86,7 @@ class StockPicking(models.Model):
         return batch_ids
 
     def get_values_for_new_batch(self):
-        return {'batch_delivery_id': self.batch_delivery_id,
+        return {'batch_delivery_id': self.batch_delivery_id.id,
                      'shipping_type': self.shipping_type,
                      'delivery_route_path_id': self.delivery_route_path_id.id,
                      'payment_term_id': self.payment_term_id.id,
@@ -213,7 +214,6 @@ class StockPicking(models.Model):
 
     @api.multi
     def action_add_to_batch_picking(self):
-
         if self._context.get('default_batch_picking_id', False) and len(self) == 1:
             self.write({'batch_picking_id': self._context['default_batch_picking_id']})
             return
