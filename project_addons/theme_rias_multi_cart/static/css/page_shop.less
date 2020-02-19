@@ -24,12 +24,18 @@ div.shoppage > main {
     div.product_price {
         margin-top: 0.8rem;
     }
+
+    div.oe_product.oe_list.oe_product_cart.sgeede-infinite-get {
+        & a.input-group-addon.js_add_cart_json {
+            padding: 6px 8px;
+        }
+    }
 }
 
 /*
     CSS media part MAX-WIDTH 400 px
 */
-@media (max-width: 400px){
+@media (max-width: 992px){
     #wrapwrap.shoppage > main div.oe_product.oe_list.oe_product_cart.sgeede-infinite-get {
         margin-top: 5%;
         margin-bottom: 5%;
@@ -47,19 +53,6 @@ div.shoppage > main {
         div#website_published_button {
             float: right;
         }
-    }
-}
-
-@media screen and (min-width: 768px) {
-    #products_grid_before {
-        display: block;
-    }
-}
-
-/* toggle button style */
-@media screen and (max-width: 768px) {
-    #products_grid_before_toggle {
-        border: unset;
     }
 }
 

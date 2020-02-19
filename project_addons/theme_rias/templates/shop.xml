@@ -7,4 +7,21 @@
     </xpath>
 </template>
 
+
+<template id="product_grid_categories_toggle" name="Products grid Categories Toggle" inherit_id="website_sale.products">
+    <!-- Toggler button -->
+    <xpath expr="//div[hasclass('oe_website_sale')]/div[1]" position="inside">
+        <div type="button" id="products_grid_before_toggle" data-toggle="collapse" data-target="#products_grid_before" class="dropdown ml-2 hidden-sm hidden-md hidden-lg ml8 full collapsed">
+            <button class="btn btn-secondary">
+                <i class="fa fa-bars"/>
+            </button>
+        </div>
+    </xpath>
+
+    <xpath expr="//div[@id='products_grid_before']" position="attributes">
+        <attribute name="class" separator=" " add="collapse" />
+    </xpath>
+</template>
+
+
 </odoo>

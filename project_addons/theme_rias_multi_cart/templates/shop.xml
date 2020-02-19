@@ -232,19 +232,6 @@
         <xpath expr="//div[@id='wrap']/div[hasclass('oe_website_sale')]" position="inside">
             <div id="rpc_modal"/>
         </xpath>
-
-         <!-- Toggler button -->
-        <xpath expr="//div[hasclass('oe_website_sale')]/div[1]" position="inside">
-            <div type="button" id="products_grid_before_toggle" data-toggle="collapse" data-target="#products_grid_before" class="dropdown ml-2 hidden-sm hidden-md hidden-lg ml8 full collapsed">
-                <button class="btn btn-secondary">
-                    <i class="fa fa-bars"/>
-                </button>
-            </div>
-        </xpath>
-
-        <xpath expr="//div[@id='products_grid_before']" position="attributes">
-            <attribute name="class" separator=" " add="collapse" />
-        </xpath>
     </template>
 
     <template id="website_sale_products_attributes_las" name="Product Attribute's Filters Las Rías" inherit_id="website_sale.products_attributes">
