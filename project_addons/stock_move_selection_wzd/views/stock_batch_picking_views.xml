@@ -90,14 +90,14 @@
             <xpath expr="//field[@name='picker_id']" position="before">
                     <field name="partner_id" attrs="{'invisible': [('partner_id', '=',False)]}"></field>
             </xpath>
-            <field name="payment_term_id" position="after" />
+            <field name="payment_term_id" position="after">
                     <field name="code"  invisible="1"/>
                     <field name="excess" attrs="{'invisible': [('code', '!=', 'outgoing')]}"/>
                     <field name="picking_type_id"/>
                     <field name="date_done"/>
 
                 <field name="sga_state" widget="statusbar" statusbar_visible="no_send,pending,done" attrs="{'invisible': [('sga_integrated', '!=', True)]}"/>
-                    <field name="sga_integrated" invisible="1"/>
+                <field name="sga_integrated" invisible="1"/>
             </field>
 
              <field name="picking_ids" position="attributes">
