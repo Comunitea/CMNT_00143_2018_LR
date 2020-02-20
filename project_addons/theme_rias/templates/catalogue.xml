@@ -240,10 +240,26 @@
             </form>
         </xpath>
         <xpath expr="//div[@id='products_grid_before']" position="attributes">
-            <attribute name="class">col-md-3 hidden-xs</attribute>
+            <attribute name="class">col-md-3 col-sm-4 col-xs-12</attribute>
         </xpath>
         <xpath expr="//div[@id='products_grid']" position="attributes">
-            <attribute name="class">col-md-9</attribute>
+            <attribute name="class">col-md-9 col-sm-8</attribute>
+        </xpath>
+    </template>
+
+    <template id="products_catalogue_catagories_toogle" inherit_id="theme_rias.products_catalogue" name="Theme Rias Products Catalogue Toggle">
+        <!-- Toggler button -->
+        <xpath expr="//div[hasclass('oe_website_sale')]/div[1]" position="inside">
+            <div type="button" id="products_grid_before_toggle" data-toggle="collapse" data-target="#products_grid_before" class="dropdown ml-2 hidden-sm hidden-md hidden-lg ml8 full collapsed">
+                <button class="btn btn-default mt8">
+                    <span>Categorías</span>
+                    <span class="caret"></span>
+                </button>
+            </div>
+        </xpath>
+
+        <xpath expr="//div[@id='products_grid_before']" position="attributes">
+            <attribute name="class" separator=" " add="collapse" />
         </xpath>
     </template>
 
@@ -379,12 +395,14 @@
                         <t t-if="not category_individual.parent_id">
                             <li class="first-level-category-li dropdown-submenu" t-att-id="'genrate_categ_id-%s' % category_individual.id">
                                 <div class="first-level-left-div">
-                                    <div class="first-level-category-image" itemprop="image"
-                                         t-field="category_individual.image" t-options='{"widget": "image", "alt-field": "name"}' />
-                                    <a class="first-level-category-a " t-att-href="'/catalogue/category/%s' %slug(category_individual)"
-                                       t-field="category_individual.display_name" />
+                                    <a class="first-level-category-a " t-att-alt="category_individual.name" t-att-href="'/catalogue/category/%s' %slug(category_individual)">
+                                        <div class="first-level-category-image">
+                                            <img t-att-alt="category_individual.name" t-att-title="category_individual.name"
+                                                t-attf-src="/web/image/product.public.category/{{category_individual.id}}/image/200x64"/>
+                                            <span tabindex="-1" class="submenu-a first-level-category-caret fa fa-chevron-right" />
+                                        </div>
+                                    </a>
                                 </div>
-                                <span tabindex="-1" class="submenu-a first-level-category-caret fa fa-chevron-right" />
                                 <div class="toggel_div toggel-div-effect" t-att-id="category_individual.id">
                                     <div class="toggel-inside-div">
                                         <div class="menu_expand menu_1_div">
@@ -396,7 +414,7 @@
                                                                 <a class="second-level-a menu_heading " t-att-href="'/catalogue/category/%s' %slug(c)"
                                                                    t-field="c.name" t-att-alt="c" t-att-title="c"/>
                                                                 <span tabindex="-1" class="submenu-a second-level-category-caret fa fa-chevron-right" />
-                                                                <ul class="third-level-ul dropdown-menu">
+                                                                <ul class="third-level-ul dropdown-menu" style="position: relative; float:right;">
                                                                     <t t-foreach="c.child_id" t-as="child">
                                                                         <li class="third-level-li">
                                                                             <a class="sub_menu_list" t-att-href="'/catalogue/category/%s' %slug(child)"
@@ -424,7 +442,7 @@
         <xpath expr="//a[hasclass('first-level-category-a')]" position="attributes">
             <attribute name="t-att-href">'/catalogue/category/%s' %category_individual.slug if category_individual.slug else '/catalogue/category/%s' %slug(category_individual)</attribute>
         </xpath>
-        <xpath expr="//li[hasclass('first-level-category-li','dropdown-submenu')]/span" position="attributes">
+        <xpath expr="//li[hasclass('first-level-category-li','dropdown-submenu')]/div/a/div/span" position="attributes">
             <attribute name="t-if">category_individual.child_id</attribute>
         </xpath>
         <xpath expr="//a[hasclass('second-level-a','menu_heading')]" position="attributes">
@@ -432,12 +450,6 @@
         </xpath>
         <xpath expr="//a[hasclass('sub_menu_list')]" position="attributes">
             <attribute name="t-att-href">'/catalogue/category/%s' %child.slug if child.slug else '/catalogue/category/%s' %slug(child)</attribute>
-        </xpath>
-        <xpath expr="//div[hasclass('first-level-category-image')]" position="replace">
-            <div class="first-level-category-image">
-                <img t-att-alt="category_individual.name" t-att-title="category_individual.name"
-                     t-attf-src="/web/image/product.public.category/{{category_individual.id}}/image/200x64"/>
-            </div>
         </xpath>
         <xpath expr="//li[hasclass('dropdown-submenu','sub-menu-ul-heading')]/span" position="attributes">
             <attribute name="t-if">c.child_id</attribute>
