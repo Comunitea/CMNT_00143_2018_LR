@@ -205,8 +205,8 @@ $(document).ready(function(){
 	
 	// Dropdown manu
 	$('.dropdown-submenu span.submenu-a').on("click", function(e){
-		$(this).next('ul').toggle();
-		$(this).next('div.toggel-div-effect').toggle();
+		$(this).parent().find('ul').toggle();
+		$(this).parent().parent().parent().next('div.toggel-div-effect').toggle();
 		e.stopPropagation();
 		e.preventDefault();
 		

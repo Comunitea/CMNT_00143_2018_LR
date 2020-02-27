@@ -12,8 +12,9 @@
     <!-- Toggler button -->
     <xpath expr="//div[hasclass('oe_website_sale')]/div[1]" position="inside">
         <div type="button" id="products_grid_before_toggle" data-toggle="collapse" data-target="#products_grid_before" class="dropdown ml-2 hidden-sm hidden-md hidden-lg ml8 full collapsed">
-            <button class="btn btn-secondary">
-                <i class="fa fa-bars"/>
+            <button class="btn btn-default mt8">
+                <span>Categorías</span>
+                <span class="caret"></span>
             </button>
         </div>
     </xpath>
