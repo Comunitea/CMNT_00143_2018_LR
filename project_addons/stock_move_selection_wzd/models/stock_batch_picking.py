@@ -52,8 +52,6 @@ class StockBatchPicking(models.Model):
     )
 
     batch_delivery_id = fields.Many2one('stock.batch.delivery', string="Orden de carga")
-    picking_type_id = fields.Many2one('stock.picking.type', string='Tipo de alabrán type', required=True, readonly=True,
-                                      states={'draft': [('readonly', False)]}, )
     sga_integrated = fields.Boolean(related='picking_type_id.sga_integrated')
     sga_state = fields.Selection(SGA_STATES, default='no_integrated', string="SGA Estado", compute="get_sga_state")
     company_id = fields.Many2one(
@@ -82,8 +80,45 @@ class StockBatchPicking(models.Model):
         oldname="signature_image",
     )
     signup_url = fields.Char(compute='_compute_signup_url', string='Signup URL')
+    #carrier_id = fields.Many2one(related="batch_delivery_id.carrier_id")
+
+    #delivery_route_path_id = fields.Many2one(compute="compute_delivery_route_path_id")
+    #payment_term_id = fields.Many2one(compute="compute_payment_term_id")
+
+    @api.multi
+    def compute_delivery_route_path_id(self):
+        for batch in self:
+            batch.delivery_route_path_id = batch.delivery_route_path_ids[0] if len(batch.delivery_route_path_ids) == 1 else False
+
+    @api.multi
+    def compute_payment_term_id(self):
+        for batch in self:
+            batch.payment_term_id = batch.payment_term_ids[0] if len(
+                batch.payment_term_ids) == 1 else False
 
 
+    @api.multi
+    def get_info_route(self):
+
+        for obj in self:
+            if obj.shipping_type == 'pasaran':
+                name = 'Pasarán'
+            elif obj.shipping_type == 'urgent':
+                name = 'Urgente'
+            else:
+                name = 'Ruta'
+
+            if obj.delivery_route_path_ids:
+                name_r=''
+                for route_id in obj.delivery_route_path_ids:
+                    name_r='{} {}'.format(name_r, route_id.name)
+                name = '{}: {}'.format(name, name_r)
+
+            if 'carrier_id' in obj.fields_get_keys() and obj.carrier_id:
+                name = '{} ({})'.format(name, obj.carrier_id.name)
+            if obj.payment_term_id:
+                name = '{} / {}'.format(name, obj.payment_term_id.display_name)
+            obj.info_route_str = name
     @api.multi
     def set_notes(self):
         for batch in self:
@@ -181,7 +216,6 @@ class StockBatchPicking(models.Model):
 
     @api.multi
     def unlink(self):
-
         if self.mapped('batch_delivery_id'):
             raise ValidationError(_('No puedes eliminar un grupo que ya está en una orden de carga. Priemro debes sacarlo de la orden de carga'))
         for batch in self.filtered(lambda x: x.picking_type_id.sga_integrated):
@@ -352,15 +386,15 @@ class StockBatchPicking(models.Model):
             for move in moves.filtered(lambda x: x.picking_id == pick):
                 val = {'move_id': move.id, 'selected': selected}
                 if complete:
-                    val.update({#'origin': move.origin,
-                                #'name': move.name,
-                                'selected': selected,
-                                #'info_route_str': move.info_route_str,
-                                #'product_id': move.product_id.id,
-                                #'product_uom_qty': move.product_uom_qty,
-                                #'result_package_ids': [(6,0, move.move_line_ids.mapped('result_package_id').ids)],
-                                #'state': move.state,
-                                'batch_picking_id': move.batch_picking_id.id
+                    val.update({'origin': move.origin,
+                                'name': move.name,
+                                #'selected': selected,
+                                'info_route_str': move.info_route_str,
+                                'product_id': move.product_id.id,
+                                'product_uom_qty': move.product_uom_qty,
+                                'result_package_ids': [(6,0, move.move_line_ids.mapped('result_package_id').ids)],
+                                'state': move.state,
+                                #'batch_picking_id': move.batch_picking_id.id
                                 })
                 vals.append((0, 0, val))
         return vals
@@ -371,14 +405,14 @@ class StockBatchPicking(models.Model):
             val = {'picking_id': pick.id}
             if complete:
                 val.update({
-                    #'origin': pick.origin,
-                     #       'name': pick.name,
+                     'origin': pick.origin,
+                            'name': pick.name,
                             'selected': True,
-                     #       'info_route_str': pick.info_route_str,
-                     #       'count_move_lines': pick.count_move_lines,
-                     #       'partner_id': pick.partner_id.id,
-                     #       'state': pick.state,
-                            'batch_picking_id': pick.batch_picking_id.id
+                            'info_route_str': pick.info_route_str,
+                            'count_move_lines': pick.count_move_lines,
+                            'partner_id': pick.partner_id.id,
+                            'state': pick.state,
+                      #      'batch_picking_id': pick.batch_picking_id.id
                             })
             vals.append((0, 0, val))
         return vals

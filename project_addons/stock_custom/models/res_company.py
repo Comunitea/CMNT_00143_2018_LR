@@ -64,6 +64,8 @@ class ResCompany(models.Model):
         )
 
     def get_shipping_cost_line_percentage(self, shipping_type):
+        if not shipping_type:
+            return 0
         price_conf = self.shipping_type_price_configuration.filtered(
             lambda r: r.shipping_type == shipping_type
         )

@@ -22,6 +22,25 @@ class StockQuantPackage(models.Model):
     to_delivery = fields.Many2one('stock.batch.delivery', store=True)
 
 
+
+    def get_picking_package_domain(self):
+        domain = []
+        if self.partner_id:
+            domain += [('partner_id', '=', self.partner_id.id)]
+        if self.delivery_route_path_id:
+            domain += [('delivery_route_path_id', '=', self.delivery_route_path_id.id)]
+        if self.shipping_type:
+            domain += [('shipping_type', '=', self.shipping_type.id)]
+        return domain
+
+    @api.multi
+    def confirm_package_in_delivery(self):
+        ctx = self._context.copy()
+        for package in self:
+            moves_to_check = package.move_lines
+            ctx.update(result_package_id=package.id)
+            moves_to_check._assign_picking()
+
     @api.multi
     def show_package_move_ids(self):
         self.ensure_one()

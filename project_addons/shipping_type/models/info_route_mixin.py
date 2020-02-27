@@ -13,12 +13,18 @@ SHIPPING_TYPE_SEL =  [
     ('pasaran', 'Pasarán'),
     ('route', 'Ruta')]
 
+class ShippingType(models.Model):
+    _name = 'shipping.type'
+
+    code = fields.Char('Codigo')
+    name = fields.Char('Nombre')
 
 class InfoRouteMixin(models.AbstractModel):
     _name = 'info.route.mixin'
 
     shipping_type = fields.Selection(SHIPPING_TYPE_SEL, string=STRING_SHIPPING_TYPE,
                                      help=HELP_SHIPPING_TYPE)
+
     delivery_route_path_id = fields.Many2one('delivery.route.path', string="Ruta de transporte")
     info_route_str = fields.Char('Info ruta', compute='get_info_route')
     urgent = fields.Boolean('Urgent', help='Default urgent for partner orders\nPlus 3.20%', compute='_partner_urgent')
@@ -36,18 +42,14 @@ class InfoRouteMixin(models.AbstractModel):
     def write(self, vals):
         return super().write(vals)
 
-    def get_write_route_vals(self, vals):
-        child_vals = {}
-        r_vals = ['payment_term_id', 'shipping_type', 'delivery_route_path_id', 'carrier_id', 'campaign_id']
-        self_fields = self.fields_get_keys()
-        for vl in list(set(r_vals) & set(self_fields)):
-            child_vals.update({vl: vals[vl]})
-        return child_vals
-
     def update_info_route_vals(self):
 
         child_vals = {}
-        r_vals = ['payment_term_id', 'shipping_type', 'delivery_route_path_id', 'carrier_id', 'campaign_id']
+        r_vals = ['payment_term_id',
+                  'shipping_type',
+                  'delivery_route_path_id',
+                  'campaign_id']
+
         self_fields = self.fields_get_keys()
         for vl in list(set(r_vals) & set(self_fields)):
             if self[vl]:

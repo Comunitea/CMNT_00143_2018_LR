@@ -17,4 +17,5 @@ from . import \
     stock_picking_type, \
     stock_quant_package,\
     stock_location, \
-    product
+    product, \
+    print_report_delivery

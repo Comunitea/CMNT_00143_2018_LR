@@ -14,10 +14,10 @@ class DeliveryPartnerOrder(models.Model):
     _order = 'delivery_id, sequence asc'
 
     delivery_id = fields.Many2one('stock.batch.delivery', 'Orden de carga')
-    partner_id = fields.Many2one('res.partner')
-    sequence = fields.Integer(string="Sequence", default=10)
-    city = fields.Char(related='partner_id.city')
-    zip = fields.Char(related='partner_id.zip')
+    partner_id = fields.Many2one('res.partner', string="Cliente")
+    sequence = fields.Integer( default=10, string="Orden")
+    city = fields.Char(related='partner_id.city', string="Ciudad")
+    zip = fields.Char(related='partner_id.zip', string="C.P.")
 
 class StockBatchDelivery(models.Model):
     """ This object allow to manage multiple stock.batch.delivery
@@ -26,7 +26,8 @@ class StockBatchDelivery(models.Model):
     _inherit = ['info.route.mixin', 'mail.thread', 'mail.activity.mixin']
     _name = 'stock.batch.delivery'
 
-
+    def _default_picker(self):
+        return self.env.user.id
 
     @api.multi
     def _get_dates(self):
@@ -50,7 +51,7 @@ class StockBatchDelivery(models.Model):
         return domain
 
     name = fields.Char(
-        'Name',
+        'Nombre',
         required=True, index=True,
         copy=False, unique=True,
         states={'draft': [('readonly', False)]},
@@ -81,7 +82,7 @@ class StockBatchDelivery(models.Model):
         inverse=_set_dates,
         help='date on which the batch picking is to be processed'
     )
-    date_done = fields.Date(  'Date',
+    date_done = fields.Date('Fecha de salida',
         required=True, readonly=True,
         default=fields.Date.context_today,
         help='date on which the batch picking is processed'
@@ -89,6 +90,7 @@ class StockBatchDelivery(models.Model):
     picker_id = fields.Many2one(
         'res.users', 'Operario',
         readonly=True, index=True,
+        default=_default_picker,
         states={
             'ready': [('readonly', False)]
         },
@@ -112,7 +114,7 @@ class StockBatchDelivery(models.Model):
         help='List of picking related to this batch.'
 
     )
-    partner_picking_ids = fields.One2many('res.partner', compute='_get_picking_ids', string="Empresa")
+    partner_picking_ids = fields.One2many('res.partner', compute='_get_picking_ids', string="Empresas")
     count_partner_ids = fields.Integer('Nº clientes', compute='_get_picking_ids')
     package_ids = fields.One2many(
         'stock.quant.package', 'batch_delivery_id',
@@ -132,7 +134,7 @@ class StockBatchDelivery(models.Model):
         'res.company', 'Company',
         default=lambda self: self.env['res.company']._company_default_get(),
         index=True, required=True)
-    carrier_id = fields.Many2one("delivery.carrier", string="Carrier")
+    carrier_id = fields.Many2one("delivery.carrier", string="Transportista")
     shipping_type = fields.Selection(selection=SHIPPING_TYPE_SEL, string="Envío")
     #delivery_route_path_id = fields.Many2one('delivery.route.path', string="Ruta")
     # payment_term_id = fields.Many2one('account.payment.term', string='Plazos de pago', compute='compute_route_fields',
@@ -140,10 +142,31 @@ class StockBatchDelivery(models.Model):
     weight = fields.Float(
         'Peso', digits=2,
         help="The weight of the contents in Kg, not including any packaging, etc.")
-    partner_order_ids = fields.One2many('delivery.partner.order', 'delivery_id', string="Partner order")
-    delivery_route_path_ids = fields.Many2many('delivery.route.path', string="Rutas de transporte")
-    partner_ids = fields.Many2many('res.partner', string ="Clientes", help = "Campo para filtrar por clientes")
-    payment_term_ids = fields.Many2many('account.payment.term', string='Plazos de pago')
+    partner_order_ids = fields.One2many('delivery.partner.order', 'delivery_id', string="Clientes en ruta")
+    delivery_route_path_ids = fields.Many2many('delivery.route.path', string="Rutas de transporte", compute='compute_info_delivery')
+    partner_ids = fields.Many2many('res.partner', string ="Clientes", help = "Clientes", compute='compute_info_delivery')
+    payment_term_ids = fields.Many2many('account.payment.term', string='Plazos de pago', compute='compute_info_delivery')
+    shipping_type_ids = fields.Char('Tipos de envío', compute='compute_info_delivery')
+
+    @api.multi
+    def compute_info_delivery(self):
+        for delivery in self:
+            dt_str = ''
+            dt_ids = []
+            for st in delivery.picking_ids.mapped('shipping_type'):
+
+                if st and st not in dt_ids:
+                    dt_ids += [st]
+                    dt_str = '{} {}'.format(dt_str, st)
+            delivery.shipping_type_ids = dt_str
+            delivery.partner_ids = delivery.picking_ids.mapped('partner_id')
+            delivery.payment_term_ids = delivery.picking_ids.mapped('payment_term_id')
+            delivery.delivery_route_path_ids = delivery.picking_ids.mapped('delivery_route_path_id')
+
+
+
+
+
 
     #
     # @api.multi
@@ -392,7 +415,7 @@ class StockBatchDelivery(models.Model):
                'delivery_route_path_ids': [(6,0,self.delivery_route_path_id.ids)],
                'partner_ids': [(6,0, self.partner_ids.ids)],
                'package_ids': [(6,0, self.package_ids.ids)],
-               'move_ids': [(6,0,self.move_ids.ids)],
+               'move_ids': [(6,0,self.move_lines.ids)],
                'move_line_ids': [(6, 0, self.move_line_ids.ids)],
                'picking_ids': [(6, 0, self.picking_ids.ids)]}
 

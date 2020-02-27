@@ -141,8 +141,8 @@ class StockMove(models.Model):
                         sga_state='no_send' if location.picking_type_id.sga_integrated else 'no_integrated')
         return vals
 
-    def get_new_vals(self):
-        vals = super().get_new_vals()
+    def update_info_route_vals(self):
+        vals = super().update_info_route_vals()
         vals.update(sga_integrated=self.picking_type_id and self.picking_type_id.sga_integrated,
                     sga_state='no_send' if self.picking_type_id.sga_integrated else 'no_integrated')
         return vals

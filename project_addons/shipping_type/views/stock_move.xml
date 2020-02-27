@@ -11,7 +11,6 @@
                         <field name="campaign_id"/>
                         <field name="shipping_type"/>
                         <field name="delivery_route_path_id"/>
-                        <field name="carrier_id"/>
                         <field name="payment_term_id"/>
                         <!--field name="urgent" invisible="1"/-->
                     </group>
@@ -32,7 +31,6 @@
                         <field name="campaign_id"/>
                         <field name="shipping_type"/>
                         <field name="delivery_route_path_id"/>
-                        <field name="carrier_id"/>
                          <field name="payment_term_id"/>
                          <!--field name="urgent" invisible="1"/-->
                     </group>

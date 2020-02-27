@@ -8,10 +8,11 @@
             <xpath expr="//notebook" position="before">
                 <group>
                     <group name="info_envio" string="Info envío">
-                        <field name="info_route_str"/>
+                        <!--field name="info_route_str"/-->
                         <field name="shipping_type" attrs="{'readonly': [('state','!=', 'draft')]}"/>
                         <field name="delivery_route_path_id" readonly="1" invisible="1"/>
-                        <field name="payment_term_id" readonly="1"/>
+                        <field name="usage" invisible="1"/>
+                        <field name="payment_term_id" readonly="1" attrs="{'invisible': [('usage', '!=', 'customer')]}"/>
                     </group>
                 </group>
             </xpath>
@@ -27,7 +28,7 @@
                 <field name="delivery_route_path_id" invisible="context.get('group_code', False) != 'outgoing'"/>
                 <field name="payment_term_id" invisible="context.get('group_code', False) != 'outgoing'"/>
                 <field name="carrier_id" invisible="context.get('group_code', False) != 'outgoing'"/>
-                <field name="info_route_str"/>
+                <field name="info_route_str" invisible="1"/>
             </field>
 
         </field>

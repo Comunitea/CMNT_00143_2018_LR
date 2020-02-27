@@ -42,7 +42,7 @@ class StockBatchPicking(models.Model):
             if not sale:
                 pick.currency_id = False
             else:
-                pick.currency_id = sale.currency_id.id
+                pick.currency_id = sale.mapped('currency_id').id
 
     @api.multi
     def _compute_amount_all(self):

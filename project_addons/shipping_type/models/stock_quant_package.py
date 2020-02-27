@@ -18,7 +18,6 @@ class StockQuantPackage(models.Model):
 
     count_move_line = fields.Integer(compute=_count_move_line_ids)
     picking_ids = fields.One2many('stock.picking', compute='get_stock_pickings')
-    payment_term_id = fields.Many2one('account.payment.term', string='Plazos de pago')
     carrier_id = fields.Many2one("delivery.carrier", string="Carrier")
 
     @api.depends('quant_ids.package_id', 'quant_ids.location_id', 'quant_ids.company_id', 'quant_ids.owner_id')
@@ -52,28 +51,7 @@ class StockQuantPackage(models.Model):
     @api.multi
     def write(self, vals):
         return super().write(vals)
-        res = super().write(vals)
-        r_vals = ['shipping_type', 'delivery_route_path_id', 'carrier_id']
-        vals  = list(set([x for x in vals.keys()]) & set(r_vals))
-        if not vals:
-            return res
-        for pack in self:
 
-            if not self._context.get('from_parent', False):
-                ## Si no viene de una orden de carga, entonces ....
-                picking_ids = pack.move_line_ids.mapped('picking_id')
-
-                if any(x in ('done', 'cancel') for x in pack.move_line_ids.mapped('state')):
-                    raise ValidationError (_('No puedes hacer cambiar estos valores en movimientos ya realizados'))
-                if any(x.batch_picking_id for x in picking_ids):
-                    raise ValidationError(_('No puedes hacer cambiar estos valores en movimientos ya albaranados'))
-            move_vals = {}
-            for val in vals:
-
-                move_vals[val] = pack[val]
-            pack.move_line_ids.mapped('move_id').write(move_vals)
-
-        return res
 
 
 

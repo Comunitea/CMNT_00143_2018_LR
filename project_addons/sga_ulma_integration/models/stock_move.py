@@ -39,9 +39,6 @@ class StockMove(models.Model):
 
     _inherit = "stock.move"
 
-    def get_new_vals(self):
-        return super().get_new_vals()
-
     def get_move_ulma_vals(self, cont=0, picking_id=False):
 
         if self.picking_id.shipping_type == 'pasaran':

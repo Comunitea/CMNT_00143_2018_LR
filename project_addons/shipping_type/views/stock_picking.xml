@@ -8,9 +8,9 @@
             <xpath expr="//group/field[@name='carrier_id']" position="before">
 
                 <field name="info_route_str"/>
-                <field name="shipping_type" readonly="1"/>
-                <field name="delivery_route_path_id" readonly="1"/>
-                <field name="payment_term_id" readonly="1"/>
+                <field name="shipping_type" attrs ="{'readonly': [('batch_picking_id', '!=', False)]}"/>
+                <field name="delivery_route_path_id" attrs ="{'readonly': [('batch_picking_id', '!=', False)]}"/>
+                <field name="payment_term_id" attrs ="{'readonly': [('batch_picking_id', '!=', False)]}"/>
 
             </xpath>
         </field>

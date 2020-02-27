@@ -12,11 +12,9 @@ class StockMoveLine(models.Model):
     _inherit = ['stock.move.line', 'info.route.mixin']
     _name = 'stock.move.line'
 
-    carrier_id = fields.Many2one(related="move_id.carrier_id")
     delivery_route_path_id = fields.Many2one(related="move_id.delivery_route_path_id")
     shipping_type = fields.Selection(related="move_id.shipping_type")
     campaign_id = fields.Many2one(related="move_id.campaign_id")
-
 
     @api.model
     def create(self, vals):
@@ -48,20 +46,22 @@ class StockMove(models.Model):
     _inherit = ['stock.move', 'info.route.mixin']
     _name = 'stock.move'
 
-    carrier_id = fields.Many2one("delivery.carrier", string="Carrier")
+    #carrier_id = fields.Many2one("delivery.carrier", string="Carrier")
     campaign_id = fields.Many2one('campaign', 'Campaign')
+
+    #carrier_id = fields.Many2one(related="picking_id.carrier_id", string="Carrier")
+    delivery_route_path_id = fields.Many2one(related="picking_id.delivery_route_path_id", store=True)
+    shipping_type = fields.Selection(related="picking_id.shipping_type", store=True)
+    payment_term_id = fields.Many2one(related="picking_id.payment_term_id", store=True)
 
     def _get_new_picking_values(self):
         vals = super(StockMove, self)._get_new_picking_values()
-        vals.update(self.update_info_route_vals())
+        if self.sale_line_id:
+            vals.update(self.sale_line_id.order_id.update_info_route_vals())
         return vals
 
     def _get_new_picking_domain(self):
         return super()._get_new_picking_domain()
-
-    def get_new_vals(self):
-        vals = self.update_info_route_vals()
-        return vals
 
     def _prepare_procurement_values(self):
         res = super()._prepare_procurement_values()

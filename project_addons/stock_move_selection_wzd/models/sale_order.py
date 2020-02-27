@@ -76,9 +76,6 @@ class SaleOrderLine(models.Model):
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
-    def get_new_vals(self):
-        return super().get_new_vals()
-
     @api.multi
     def _compute_picking_ids_state(self):
         for order in self:

@@ -10,6 +10,9 @@ class SaleOrder(models.Model):
     _inherit = ['sale.order', 'info.route.mixin']
     _name = 'sale.order'
 
+    shipping_type = fields.Selection(required=True)
+    delivery_route_path_id = fields.Many2one(required=True)
+
     @api.multi
     @api.onchange('partner_id')
     def onchange_partner_id(self):
@@ -18,15 +21,11 @@ class SaleOrder(models.Model):
         self.delivery_route_path_id = self.partner_id and self.partner_id.delivery_route_path_id or False
         return res
 
-    def get_new_vals(self):
-        vals = self.update_info_route_vals()
-        return vals
-
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
 
     @api.multi
     def _prepare_procurement_values(self, group_id=False):
         values = super(SaleOrderLine, self)._prepare_procurement_values(group_id)
-        values.update(self.order_id.get_new_vals())
+        values.update(self.order_id.update_info_route_vals())
         return values

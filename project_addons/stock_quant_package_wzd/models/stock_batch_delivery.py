@@ -46,7 +46,7 @@ class StockBatchDelivery(models.Model):
 
             # 4º CREO LOS ALBARANES DE CLIENTE
             ctx.update(default_batch_picking_id=self.id)
-
+            moves_in_delivery.mapped('move_line_ids').mapped('result_package_id').confirm_package_in_delivery()
             batch_ids = moves_in_delivery.mapped('picking_id').with_context(ctx)._assign_picking_batch()
 
             # 5º ESCRIBO LA ORDEN DE ENTREGA EN LOS ALBARANES

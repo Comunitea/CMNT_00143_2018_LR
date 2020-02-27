@@ -129,7 +129,7 @@ class StockMoveLine(models.Model):
 
     def _compute_computed_discount(self):
 
-        for line in self.filtered (lambda x: x.sale_line and (x.move_id.shipping_type or line.batch_picking_id.shipping_type)):
+        for line in self.filtered (lambda x: x.sale_line and (x.move_id.shipping_type or x.move_id.batch_picking_id.shipping_type)):
             discount = line.sale_discount
             discount -= line.move_id.company_id.get_discount_decrease_shipping(
                 line.move_id.shipping_type

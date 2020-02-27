@@ -13,7 +13,7 @@ class StockBatchPickingSGA(models.Model):
     @api.multi
     def get_adaia_picking_ids(self):
         for batch in self:
-            batch.adaia_picking_ids = batch.draft_move_line_ids.mapped('picking_id')
+            batch.adaia_picking_ids = batch.move_line_ids.mapped('picking_id')
 
     sga_state = fields.Selection(SGA_STATES)
     #draft_move_line_ids = fields.One2many('stock.move.line', 'draft_batch_picking_id', string='Líneas de Movimientos')

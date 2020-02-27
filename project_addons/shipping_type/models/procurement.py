@@ -11,6 +11,6 @@ class ProcurementRule(models.Model):
         result = super(ProcurementRule, self)._get_stock_move_values(product_id, product_qty, product_uom, location_id, name, origin, values, group_id)
         if values.get('sale_id', False):
             sale = self.env['sale.order'].browse(values.get('sale_id', False))
-            result.update(sale.get_new_vals())
+            result.update(sale.update_info_route_vals())
         return result
 

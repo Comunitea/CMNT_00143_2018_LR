@@ -11,9 +11,20 @@ class StockMove(models.Model):
 
     _inherit = "stock.move"
 
+    def _get_new_picking_values(self):
+        vals = super(StockMove, self)._get_new_picking_values()
+        if self._context.get('result_package_id', False):
+            package = self.env['stock.quant.package'].browse(self._context['result_package_id'])
+            vals.update(package.update_info_route_vals())
+        return vals
+
     def _get_new_picking_domain(self):
         domain = super()._get_new_picking_domain()
-        if self.move_line_ids.mapped('result_package_id'):
-            batch_delivery_id = self.move_line_ids.mapped('result_package_id')
-            domain += [('batch_delivery_id', '=', batch_delivery_id.id)]
-        return domain
+        if self._context.get('result_package_id', False):
+            package = self.env['stock.quant.package'].browse(self._context['result_package_id'])
+            if package.delivery_route_path_id:
+                domain += [('result_package_id', '=', package.delivery_route_path_id.id)]
+            if package.shipping_type:
+                domain += [('shipping_type', '=', package.shipping_type)]
+        return super()._get_new_picking_domain()
+

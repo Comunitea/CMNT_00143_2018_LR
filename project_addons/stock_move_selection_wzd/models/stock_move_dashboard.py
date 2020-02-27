@@ -46,9 +46,10 @@ class StockPickingType(models.Model):
             hoy_domain = comun_domain + wait_domain + ['&', ('date_expected', '>=', today), ('date_expected', '<', tomorrow)]
             done_today = stock_move.search_count(hoy_domain)
 
-            sql= "select count(*) from stock_move sm " \
-                  "where sm.picking_type_id = {} and sm.state = 'done' and date > (current_date - interval '{} day') and " \
-                  "(sm.product_uom_qty != sm.ordered_qty or sm.product_uom_qty != sm.product_uom_qty_orig or sm.sga_state in ('export_error', 'import_error'))".format(type.id, type.num_error_day)
+            sql= "select count(*) from stock_move_line sml " \
+                 "join stock_move sm on sm.id = sml.move_id " \
+                 "where sm.picking_type_id = {} and sm.state = 'done' and sm.date > (current_date - interval '{} day') " \
+                 "group by sm.id having sm.ordered_qty != sm.product_uom_qty".format(type.id, type.num_error_day)
 
             #sql = "select count(*) from stock_move sm where sm.picking_type_id = {} and sm.state = 'done'".format(type.id)
             print (sql)

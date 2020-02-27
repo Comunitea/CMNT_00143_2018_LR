@@ -6,6 +6,14 @@ from odoo.exceptions import UserError
 
 from odoo.addons.shipping_type.models.info_route_mixin import SHIPPING_TYPE_SEL, DEFAULT_SHIPPING_TYPE, STRING_SHIPPING_TYPE,HELP_SHIPPING_TYPE
 
+MOVE_STATE = [
+        ('draft', 'Borrador'), ('cancel', 'Cancelado'),
+        ('waiting', 'Esperando otro movimiento'),
+        ('confirmed', 'En espera'),
+        ('partially_available', 'Parcialmente disponible'),
+        ('assigned', 'Reservado'),
+        ('done', 'Hecho')]
+
 class OpenBatchWzd(models.TransientModel):
     _name = 'open.batch.wzd'
 
@@ -20,17 +28,18 @@ class SBPWMoveLine(models.TransientModel):
     wzd_id = fields.Many2one('stock.batch.picking.wzd')
     selected = fields.Boolean(string="Seleccionado")
     move_id = fields.Many2one('stock.move')
-    product_id = fields.Many2one(related='move_id.product_id')
+    product_id = fields.Many2one('product.product', 'Artículo')
     partner_id = fields.Many2one(related='move_id.partner_id')
     orig_picking_id = fields.Many2one(related='move_id.orig_picking_id')
     product_uom_qty = fields.Many2one(related='move_id.product_uom_qty')
     quantity_done = fields.Float(related='move_id.quantity_done')
-    reserved_availability = fields.Float(related='move_id.reserved_availability')
-    product_uom_qty = fields.Float(related='move_id.product_uom_qty')
-    origin = fields.Char(related='move_id.origin')
-    info_route_str = fields.Char(related='move_id.info_route_str')
-    result_package_ids = fields.Many2many(related='move_id.result_package_ids')
-    state = fields.Selection(related='move_id.state')
+    reserved_availability = fields.Float(string="Reservado")
+    product_uom_qty = fields.Float(string='Cantidad')
+    origin = fields.Char('Origen')
+    info_route_str = fields.Char('Ruta')
+    result_package_ids = fields.Many2many('stock.quant.package', string="Paquete destino")
+    state = fields.Selection(selection=MOVE_STATE, string="Estado")
+
     batch_picking_id = fields.Many2one(related='move_id.batch_picking_id')
 
 class SBPWPickLine(models.TransientModel):
@@ -39,12 +48,12 @@ class SBPWPickLine(models.TransientModel):
     wzd_id = fields.Many2one('stock.batch.picking.wzd')
     picking_id = fields.Many2one('stock.picking')
     batch_picking_id = fields.Many2one(related='picking_id.batch_picking_id')
-    partner_id = fields.Many2one(related='picking_id.partner_id')
-    info_route_str = fields.Char(related='picking_id.info_route_str')
-    name = fields.Char(related='picking_id.name')
-    origin = fields.Char(related='picking_id.origin')
-    count_move_lines = fields.Integer(related='picking_id.count_move_lines')
-    state = fields.Selection(related='picking_id.state')
+    partner_id = fields.Many2one('res.partner', string="Cliente")
+    info_route_str = fields.Char('Ruta')
+    name = fields.Char('Referencia')
+    origin = fields.Char('Origen')
+    count_move_lines = fields.Integer(string="# líneas")
+    state = fields.Selection(selection=MOVE_STATE, string="Estado")
 
 
     def button_unlink_from_batch(self):
@@ -135,7 +144,7 @@ class StockBatchPickingWzd(models.TransientModel):
             delivery_route_path_id = False
 
 
-        carrier_id = moves.mapped('carrier_id')
+        carrier_id = moves.mapped('picking_id').mapped('carrier_id')
         if len(carrier_id) >1 :
             if 'carrier_id' in g_fields:
                 raise UserError (_('No se puede agrupar este tipo de albaranes por distintas valores para el campo entrega: {}'.format([x.name for x in carrier_id])))
@@ -269,7 +278,7 @@ class StockBatchPickingWzd(models.TransientModel):
         return batch.get_formview_action()
 
     def get_wzd_values(self):
-        return {
+        vals =  {
             'date': self.date,
             'notes': self.notes,
             'picker_id': self.picker_id.id,
@@ -278,8 +287,17 @@ class StockBatchPickingWzd(models.TransientModel):
             'payment_term_id': self.payment_term_id and self.payment_term_id.id or False,
             'carrier_id': self.carrier_id and self.carrier_id.id or False,
             'delivery_route_path_id': self.delivery_route_path_id and self.delivery_route_path_id.id or False,
-            'shipping_type': self.shipping_type
+            'shipping_type': self.shipping_type,
+
         }
+        if self.delivery_route_path_id:
+            vals.update(delivery_route_path_ids=[(6,0, self.delivery_route_path_id.ids)])
+        if self.payment_term_id:
+            vals.update(payment_term_ids=[(6, 0, self.payment_term_id.ids)])
+
+        return vals
+
+
 
     @api.multi
     def action_apply_info_envio(self):

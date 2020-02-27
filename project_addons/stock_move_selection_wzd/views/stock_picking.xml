@@ -134,8 +134,8 @@
                     <field name="origin"/>
                     <field name="shipping_type" invisible="context.get('filter_group_code', True) != True"/>
                     <field name="delivery_route_path_id" invisible="context.get('filter_group_code', True) != True"/>
-                    <field name="info_route_str" invisible="context.get('filter_group_code', True) != False"/>
-                    <field name="batch_delivery_id" invisible="context.get('group_code', False) != 'outgoing'"/>
+                    <field name="info_route_str" />
+                    <field name="batch_delivery_id"/>
                      <!-- Quitamos la opción de agregar desde pickings a ordenes de entrega
                     <button name="action_add_to_batch_delivery" string="Enviar" type="object"
                             context="{'object': 'stock.picking'}" icon="fa-truck" class="text-primary"

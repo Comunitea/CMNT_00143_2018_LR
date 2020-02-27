@@ -108,9 +108,9 @@ class StockMovePackWzd(models.TransientModel):
         if len(moves.mapped('delivery_route_path_id')) == 1:
             vals.update(delivery_route_path_id=moves[0].delivery_route_path_id.id)
             package_domain += [('delivery_route_path_id', '=', moves[0].delivery_route_path_id.id)]
-        if len(moves.mapped('carrier_id')) == 1:
-            vals.update(carrier_id=moves[0].carrier_id.id)
-            package_domain += [('carrier_id', '=', moves[0].carrier_id.id)]
+        #if len(moves.mapped('picking_id').mapped('carrier_id')) == 1:
+        #    vals.update(carrier_id=moves[0].picking_id.carrier_id.id)
+        #    package_domain += [('carrier_id', '=', moves[0].picking_id.carrier_id.id)]
         if len(moves.mapped('partner_id')) == 1:
             vals.update(partner_id=moves[0].partner_id.id)
             package_domain += [('partner_id', '=', moves[0].partner_id.id)]

@@ -27,7 +27,7 @@
                 <group invisible="context.get('hide_conf_vals', False)">
                     <group>
                         <field name="id" invisible="1"/>
-                        <field name="batch_picking_id" domain="[('id', 'in', batch_picking_ids)]"/>
+                        <field name="batch_picking_id" context="{'default_picking_type_id': picking_type_id}" domain="[('id', 'in', batch_picking_ids)]"/>
                         <field name="batch_picking_ids" invisible="1" />
                         <field name="picking_type_id" required="1" readonly="1"/>
                         <field name="sga_integrated" invisible="1"/>

@@ -78,21 +78,27 @@ class StockPicking(models.Model):
         batch_ids = self.env['stock.batch.picking']
         for picking in self:
             batch_domain = picking.get_batch_domain()
-            batch_id = self.env['stock.batch.picking'].search(batch_domain)
+            batch_id = self.env['stock.batch.picking'].search(batch_domain, limit=1)
+
             if not batch_id:
                 batch_id = picking.create_batch_picking()
+                print ('No encuentro batch para {}'.format(batch_domain))
+            print ('Batch {}: {}'.format(picking.name, batch_id.name))
             picking.batch_picking_id = batch_id
             batch_ids |= batch_id
         return batch_ids
 
     def get_values_for_new_batch(self):
-        return {'batch_delivery_id': self.batch_delivery_id.id,
+        vals = {'batch_delivery_id': self.batch_delivery_id.id,
                      'shipping_type': self.shipping_type,
                      'delivery_route_path_id': self.delivery_route_path_id.id,
                      'payment_term_id': self.payment_term_id.id,
                      'picking_type_id': self.picking_type_id.id,
                      'partner_id': self.partner_id.id,
                      }
+        if self.carrier_id:
+            vals.update(carrier_id = self.carrier_id.id)
+        return vals
 
     def create_batch_picking(self):
         batch_vals= self.get_values_for_new_batch()

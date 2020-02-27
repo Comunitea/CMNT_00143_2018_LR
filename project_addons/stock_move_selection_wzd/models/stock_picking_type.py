@@ -349,8 +349,8 @@ class PickingType(models.Model):
         excess_domain = self.env['stock.batch.picking'].get_excess_domain()
         batch_domains = {
             'count_batch': context_domain + expression.OR([[('state', 'in', ('assigned', 'draft'))], ['&', ('state','=','done'), ('date', '>', yesterday)]]),
-            'count_batch_ready': context_domain + [('state', '=', 'assigned')],
-            'count_all_batch': context_domain + [('state', '!=', 'cancel')],
+            'count_batch_ready': context_domain + [('state', 'in', ('assigned', 'draft'))],
+            'count_all_batch': context_domain + [('state', 'in', ('draft', 'assigned', 'done'))],
             'affected_excess': context_domain + excess_domain
         }
         return move_domains, picking_domains, batch_domains
