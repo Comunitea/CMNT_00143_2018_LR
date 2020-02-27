@@ -49,7 +49,7 @@ class StockMove(models.Model):
     #carrier_id = fields.Many2one("delivery.carrier", string="Carrier")
     campaign_id = fields.Many2one('campaign', 'Campaign')
 
-    #carrier_id = fields.Many2one(related="picking_id.carrier_id", string="Carrier")
+    carrier_id = fields.Many2one(related="picking_id.carrier_id", string="Carrier")
     delivery_route_path_id = fields.Many2one(related="picking_id.delivery_route_path_id", store=True)
     shipping_type = fields.Selection(related="picking_id.shipping_type", store=True)
     payment_term_id = fields.Many2one(related="picking_id.payment_term_id", store=True)
