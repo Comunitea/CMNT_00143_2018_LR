@@ -393,5 +393,5 @@ class AccountInvoice(models.Model):
                 supplier_invoices = self.search(domain)
                 supplier_invoices.write({'date': date})
                 supplier_invoices.action_invoice_open()
-        self.recalculate_maturity_date()
+            from_supplier_invoices.recalculate_maturity_date()
         return res
