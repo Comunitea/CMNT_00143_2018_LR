@@ -2,10 +2,8 @@
 # © 2019 Comunitea Servicios Tecnológicos S.L.
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 from odoo import _, api, fields, models
-from odoo.exceptions import UserError
-
 from odoo.addons.shipping_type.models.info_route_mixin import SHIPPING_TYPE_SEL, DEFAULT_SHIPPING_TYPE, STRING_SHIPPING_TYPE,HELP_SHIPPING_TYPE
-from odoo.exceptions import ValidationError
+from odoo.exceptions import ValidationError, UserError
 
 class StockMovePackListWzd(models.TransientModel):
     _name = 'stock.move.pack.list.wzd'

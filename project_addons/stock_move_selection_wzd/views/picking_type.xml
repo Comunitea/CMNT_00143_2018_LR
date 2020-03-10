@@ -145,7 +145,7 @@
                     <field name="rate_undone"/>
                     <field name="rate_late"/>
                     <field name="affected_excess"/>
-
+                    <field name="show_moves_in_kanban"/>
 
                     <field name="description"/>
                     <field name="batch_name"/>
@@ -321,7 +321,7 @@
                                                     </div>
                                                 </div>
                                                 <div name="purchase_orders"
-                                                     t-if="record.group_code and record.group_code.code == 'location'">
+                                                     t-if="record.need_purchase_order.raw_value == true">
                                                     <div class="row">
                                                          <div class="col-xs-6 text-muted">
                                                             <span class="text-muted h3">Compras</span>
@@ -361,7 +361,7 @@
                                                     </div>
                                                 </div>
 
-                                                <div name="moves" t-if="record.need_purchase_order.raw_value == true">
+                                                <div name="moves" t-if="record.show_moves_in_kanban.raw_value == true">
                                                     <div class="row">
                                                          <div class="col-xs-6 text-muted">
                                                             <span class="text-muted h3">Movimientos</span>
@@ -483,7 +483,7 @@
                                                     </span>
                                                 </div>
 
-                                                <div t-if="record.rate_packed_undone and record.visible_count_move_unpacked.raw_value == true" >
+                                                <div name="rate_packed_undone_gauge" t-if="record.rate_packed_undone and record.visible_count_move_unpacked.raw_value == true" >
                                                     <span class="o_label">
                                                         <field name="rate_packed_undone" widget="gauge" style="cursor: pointer;"/>
                                                     </span>
@@ -493,7 +493,7 @@
                                                        <field name="rate_sga_undone" widget="gauge" style="cursor: pointer;"/>
                                                     </span>
                                                 </div>
-                                                <div t-if="record.rate_undone">
+                                                <div t-if="record.rate_undone and record.visible_count_move_unpacked.raw_value != true">
                                                     <span class="o_label">
                                                         <field name="rate_undone" widget="gauge" style="cursor: pointer;"/>
                                                     </span>

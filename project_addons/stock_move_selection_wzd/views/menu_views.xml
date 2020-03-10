@@ -46,6 +46,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">kanban</field>
             <field name="view_id" ref="stock_move_selection_wzd.stock_picking_type_kanban_moves"/>
+            <field name="context">{'search_default_is_bookmarked': True}</field>
     </record>
     <menuitem
         action="stock_move_kanban_view"
@@ -60,7 +61,7 @@
             <field name="model_id" ref="model_stock_picking_type"/>
             <field name="type">ir.actions.server</field>
             <field name="state">code</field>
-<!--            <field name="context">{}</field>-->
+            <field name="context">{'search_default_is_bookmarked': True}</field>
             <field name="code">
                 action = env['stock.picking.type']._return_action_show_types('picking')
             </field>
@@ -77,7 +78,7 @@
             <field name="model_id" ref="model_stock_picking_type"/>
             <field name="type">ir.actions.server</field>
             <field name="state">code</field>
-<!--            <field name="context">{}</field>-->
+            <field name="context">{'search_default_is_bookmarked': True}</field>
             <field name="code">
                 action = env['stock.picking.type']._return_action_show_types('incoming')
             </field>
@@ -94,7 +95,8 @@
             <field name="model_id" ref="model_stock_picking_type"/>
             <field name="type">ir.actions.server</field>
             <field name="state">code</field>
-            <field name="code">
+            <field name="context">{'search_default_is_bookmarked': True}</field>
+        <field name="code">
                 action = env['stock.picking.type']._return_action_show_types('outgoing')
             </field>
     </record>

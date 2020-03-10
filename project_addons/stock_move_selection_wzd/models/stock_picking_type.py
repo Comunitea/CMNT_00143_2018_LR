@@ -129,6 +129,7 @@ class PickingType(models.Model):
                                      help="Si está marcado, se visualiza la opción de ventas")
     need_purchase_order = fields.Boolean('Mostrar compras', default=False,
                                      help="Si está marcado, se visualiza la opción de compras")
+    show_moves_in_kanban = fields.Boolean('Mostrar movimientos', default= False)
     partner_id = fields.Many2one('res.partner', 'Cliente/Proveedor', store=False)
     description = fields.Char("Descripción")
     batch_name = fields.Char('Nombre de los lotes', default='Batch')
@@ -253,7 +254,6 @@ class PickingType(models.Model):
 
     def get_moves_domain(self, default = []):
 
-
         context_domain = expression.AND([[('picking_id', '!=', False)], self.get_context_domain(),  self.date_domain('date_expected')])
 
         today = datetime.now().strftime(DEFAULT_SERVER_DATE_FORMAT)
@@ -357,13 +357,13 @@ class PickingType(models.Model):
 
     @api.model
     def search(self, args, offset=0, limit=None, order=None, count=False):
-        """Include commercial name in direct name search."""
+
         args = expression.normalize_domain(args)
 
         for token in args:
             if isinstance(token, (list, tuple)) and token[0] in SEARCH_F:
                 self = self.env['stock.picking.type'].search([]).filtered(lambda x:x.count_move)
-                args = [('id', 'in', self.ids)]
+                args = expression.AND([args, [('id', 'in', self.ids)]])
                 break
         return super(PickingType, self).search(
             args, offset=offset, limit=limit, order=order, count=count,
@@ -611,9 +611,7 @@ class PickingType(models.Model):
             action['display_name'] = "---------> {} Moves".format(name)
         action['domain'] = [('id', '=', type_id.ids)]
         action['views'] = [(kanban and kanban.id or False, 'kanban')]
-        action['context'] = {
 
-        }
         return action
 
     @api.multi

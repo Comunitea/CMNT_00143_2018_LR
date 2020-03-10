@@ -139,6 +139,9 @@ class StockQuantPackage(models.Model):
                     package.state_progress = 'internal'
                     continue
             elif move_line_ids and all(x.location_id.preparation_location for x in move_line_ids):
+                if package.batch_delivery_id:
+                    package.state_progress = 'loading'
+                    continue
                 package.state_progress = 'preparation'
                 continue
             package.state_progress = 'no_state'

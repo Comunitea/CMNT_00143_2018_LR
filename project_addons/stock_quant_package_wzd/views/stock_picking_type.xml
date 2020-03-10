@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="stock_picking_type_kanban_moves_sqp_wzd" model="ir.ui.view">
+        <field name="name">stock.picking.type.kanban.moves.sqp.wzd</field>
+        <field name="model">stock.picking.type</field>
+        <field name="inherit_id" ref="stock_move_selection_wzd.stock_picking_type_kanban_moves"/>
+        <field name="arch" type="xml">
+            <field name="count_move_pasaran" position="after">
+                <!--field name="package_to_load_ids"/-->
+                <field name="count_package_to_load_ids"/>
+                <field name="count_package_loaded_ids"/>
+                <field name="visible_package"/>
+                <field name="rate_unloaded"/>
+            </field>
+            <xpath expr="//div[@name='moves']" position="after">
+                <div name="packages" t-if="record.visible_package.raw_value == true">
+                        <div class="row">
+                             <div class="col-xs-6 text-muted">
+                                <span class="text-muted h3">Paquetes</span>
+                            </div>
+                        </div>
+
+                        <div t-if="record.visible_package.raw_value == true" class="row">
+                            <div class="col-xs-6 text-primary" title="Para cargar">
+                                <a name="get_action_tree" type="object" context="{'dest_model': 'stock.quant.package'}">
+                                    Para cargar
+                                </a>
+                            </div>
+                            <div class="col-xs-3">
+                                <span><t t-esc="record.count_package_to_load_ids.value"/>
+                                de <t t-esc="record.count_package_loaded_ids.value"/>
+                                </span>
+                            </div>
+                        </div>
+                </div>
+
+            </xpath>
+            <xpath expr="//div[@name='rate_packed_undone_gauge']" position="after">
+                <div t-if="record.rate_packed_undone">
+                    <span class="o_label">
+                        <field name="rate_unloaded" widget="gauge" style="cursor: pointer;"/>
+                    </span>
+                </div>
+            </xpath>
+
+        </field>
+    </record>
+    <record id="view_picking_type_kanban_form_sqp_wzd" model="ir.ui.view">
+        <field name="name">stock.picking.type.form.sqp.wzd</field>
+        <field name="model">stock.picking.type</field>
+        <field name="inherit_id" ref="stock_move_selection_wzd.view_picking_type_kanaban_form"/>
+        <field name="arch" type="xml">
+            <field name="visible_count_batch_ready" position="after">
+                <field name="visible_package"/>
+            </field>
+        </field>
+    </record>
+</odoo>

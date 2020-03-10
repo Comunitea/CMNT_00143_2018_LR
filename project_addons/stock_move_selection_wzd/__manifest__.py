@@ -17,6 +17,7 @@
         'stock_available_global',
         'purchase_sale_inter_company_custom',
         'stock_custom',
+        'stock_picking_type_bookmark'
         #'portal'
     ],
     'data': [
@@ -39,10 +40,10 @@
         'wizard/batch_picking_wzd_view.xml',
         'wizard/batch_delivery_wzd_view.xml',
         'wizard/move_change_quant_wzd.xml',
-        'wizard/config_stock_delivery.xml',
+        #'wizard/config_stock_delivery.xml',
         'wizard/batch_picking_excess.xml',
         'wizard/move_complete_package.xml',
-        'wizard/create_package_picking_from_package.xml',
+        #'wizard/create_package_picking_from_package.xml',
         'views/menu_views.xml',
         'views/menu_views_stock_picking.xml',
     ],

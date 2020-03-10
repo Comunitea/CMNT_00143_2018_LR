@@ -39,11 +39,14 @@
                 <attribute name="confirm">
                     Estás seguro que quieres validar un albarán sin asignarlo a una expedición o una orden de carga?
                 </attribute>
+
             </button>
 
-            <field name="picking_type_id" position="after">
+
+
+            <!--field name="picking_type_id" position="after">
                 <field name="sga_integrated"></field>
-            </field>
+            </field-->
             <notebook position="inside">
                 <page string="Integración SGA" attrs="{'invisible': [('sga_state','=', 'no_integrated')]}">
                     <header>
@@ -52,7 +55,7 @@
                     </header>
                     <group>
                         <group>
-                            <field name="sga_integrated" invisible="0"></field>
+                            <field name="sga_integrated" invisible="1"></field>
                         </group>
                         <group name="buttons">
                         </group>
@@ -131,18 +134,23 @@
                       decoration-danger="state not in ('cancel', 'done') and scheduled_date &lt; current_date"
                       string="Picking list">
                     <field name="picking_type_id" invisible="context.get('filter_group_code', '') == 'all'"/>
-                    <field name="origin"/>
-                    <field name="shipping_type" invisible="context.get('filter_group_code', True) != True"/>
-                    <field name="delivery_route_path_id" invisible="context.get('filter_group_code', True) != True"/>
-                    <field name="info_route_str" />
+                    <field name="origin" invisible="1"/>
+                    <field name="sale_id" string="Venta" invisible="not context.get('group_code', False) in ('outgoing', 'picking')"/>
+                    <field name="purchase_id" string="Compra" invisible="not context.get('group_code', False) in ('incoming', 'location')"/>
+                    <field name="name" invisible="context.get('group_code', False) in ('incoming', 'location', 'outgoing', 'picking')"/>
+                    <field name="partner_id"/>
+                    <field name="shipping_type" invisible="1"/>
+                    <field name="delivery_route_path_id" invisible="1"/>
+                    <field name="info_route_str" invisible="not context.get('group_code', False) in ('outgoing', 'picking')"/>
                     <field name="batch_delivery_id"/>
                      <!-- Quitamos la opción de agregar desde pickings a ordenes de entrega
                     <button name="action_add_to_batch_delivery" string="Enviar" type="object"
                             context="{'object': 'stock.picking'}" icon="fa-truck" class="text-primary"
                             attrs="{'invisible': ['|', '|', ('group_code', 'not in', ('outgoing', 'dropship')), ('batch_picking_id', '=', False), ('state', '!=', 'assigned')]}"/>
                             -->
+
                     <field name="carrier_id" invisible="context.get('filter_group_code', True) != False"/>
-                    <field name="name"/>
+
                     <field name="count_move_lines"/>
                     <field name="batch_picking_id"/>
                     <button name="action_add_to_batch_picking"
@@ -150,9 +158,8 @@
                             context="{'model': 'picking'}" icon="fa-tasks"
                             class="text-primary"
                             attrs="{'invisible': [ '|', ('state', 'not in', ('assigned', 'partially_available')), ('batch_delivery_id', '!=', False)]}"/>
-                    <field name="location_id" invisible="context.get('hide_location_id', False) != False" groups="stock.group_stock_multi_locations"/>
-                    <field name="location_dest_id" invisible="context.get('hide_location_dest_id', False) != False" groups="stock.group_stock_multi_locations"/>
-                    <field name="partner_id"/>
+                    <field name="location_id" invisible="1" groups="stock.group_stock_multi_locations"/>
+                    <field name="location_dest_id" invisible="1" groups="stock.group_stock_multi_locations"/>
                     <field name="date" invisible="1"/>
                     <field name="scheduled_date"/>
                     <field name="group_id" invisible="1"/>

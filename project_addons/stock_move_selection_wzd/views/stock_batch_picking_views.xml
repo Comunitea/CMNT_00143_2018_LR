@@ -114,10 +114,11 @@
                 </attribute>
             </field>
             <xpath expr="//group[@name='info_envio']" position="after">
-                <group>
-                    <field name="delivery_route_path_ids" widget="many2many_tags" attrs="{'readonly': [('state','!=', 'draft')]}"/>
-                    <field name="payment_term_ids" widget="many2many_tags" attrs="{'readonly': [('state','!=', 'draft')]}"/>
-                    <field name="partner_ids" widget="many2many_tags" attrs="{'readonly': [('state','!=', 'draft')]}"/>
+                <group string="Contenido">
+                    <field name="shipping_type"/>
+                    <field name="delivery_route_path_ids" widget="many2many_tags"/>
+                    <field name="payment_term_ids" widget="many2many_tags" />
+                    <field name="partner_ids" widget="many2many_tags"/>
                 </group>
                 <!--field name="pack_lines_picking_id" attrs = "{'invisible': [('code', '!=', 'outgoing')]}"/>
                 <field name="orig_batch_picking_id" attrs = "{'invisible': [('code', '!=', 'outgoing')]}"/-->

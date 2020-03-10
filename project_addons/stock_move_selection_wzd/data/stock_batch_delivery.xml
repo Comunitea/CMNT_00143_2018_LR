@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <record id="seq_stock_batcvh_delivery" model="ir.sequence">
-            <field name="name">Deliveries</field>
+            <field name="name">Entregas</field>
             <field name="code">stock.batch.delivery</field>
             <field name="prefix">O.CARGA-</field>
             <field name="padding">6</field>
