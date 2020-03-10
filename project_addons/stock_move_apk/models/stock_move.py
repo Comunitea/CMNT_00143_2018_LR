@@ -44,8 +44,8 @@ class StockMoveLine(models.Model):
     def get_domain_for_apk_list(self, default_domain =[]):
 
         domain = [('location_dest_id.usage', '=', 'customer'),
-                  ('result_package_id.batch_delivery_id', '=', False),
-                  ('state', 'in', ['assigned', 'partially_available']),
+                  ('state', 'in', ['assigned', 'partially_available']), '|', ('result_package_id', '=', False),
+                   ('result_package_id.batch_delivery_id', '=', False)
                   ]
         if default_domain:
             domain += default_domain
@@ -72,12 +72,11 @@ class StockMoveLine(models.Model):
                                         'name': self.delivery_route_path_id.name}
         else:
             vals['delivery_route_id'] = {'id': False, 'name': ''}
-        if self.carrier_id:
-            vals['carrier_id'] = {'id': self.carrier_id.id,
-                                     'name': self.carrier_id.name}
+        if self.picking_id.carrier_id:
+            vals['carrier_id'] = {'id': self.picking_id.carrier_id.id,
+                                     'name': self.picking_id.carrier_id.name}
         else:
             vals['carrier_id'] = {'id': False, 'name': ''}
-
         return vals
 
     @api.model
@@ -114,16 +113,14 @@ class StockMoveLine(models.Model):
 
     @api.model
     def get_users_list_for_apk(self, vals):
+
         domain = self.env['stock.move.line'].get_domain_for_apk_list()
+        if vals.get('search_name', False):
+            domain += [('partner_id.name', 'ilike', vals['search_name'])]
         partner_ids = self.env['stock.move.line'].search(domain).mapped('move_id').mapped('partner_id')
         return partner_ids.get_dict_values()
     
-    @api.model
-    def get_users_list_for_apk_from_search_box(self, vals):
-        domain = []
-        if vals.get('name', False):
-            domain += [('partner_id.name', 'ilike', vals['name'])]
-        return self.get_users_list_for_apk(domain)
+
 
     @api.model
     def assign_package(self, vals):
@@ -137,13 +134,13 @@ class StockMoveLine(models.Model):
     def update_to_new_package(self, new_package_ids):
         create = True
         for pack in new_package_ids:
-            self.move_id.write({'result_package_id': pack.id})
+            self.write({'result_package_id': pack.id})
             create = False
             break
         if create:
             vals_0 = self.update_info_route_vals()
             new_result_package_id = self.env['stock.quant.package'].create(vals_0)
-            self.move_id.write({'result_package_id': new_result_package_id.id})
+            self.write({'result_package_id': new_result_package_id.id})
             new_package_ids += new_result_package_id
         return new_package_ids
 
