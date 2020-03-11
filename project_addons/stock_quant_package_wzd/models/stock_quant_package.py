@@ -14,7 +14,7 @@ class StockQuantPackage(models.Model):
                               ('internal', 'Almacén'),
                               ('customer', 'Cliente'),
                               ('supplier', 'Proveedor')],
-                                      compute="compute_package_state_progress", store=True,
+                                      compute="compute_package_state_progress", store=True, string="Estado",
                                       help="Paquetes en preparación y no incluidos en una orden de carga",)
 
     package_to_load = fields.Boolean('Paquetes para cargar', store=False)

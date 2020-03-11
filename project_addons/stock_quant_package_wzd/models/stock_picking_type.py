@@ -38,3 +38,4 @@ class StockPickingType(models.Model):
             domain = [('state_progress', '=', 'preparation')]
             action['domain'] = domain
             return action
+        return super().get_action_tree()
