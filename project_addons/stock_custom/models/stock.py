@@ -65,11 +65,12 @@ class StockMove(models.Model):
 
             vals = {"invoice_id": invoice_id}
             if move.sale_line_id:
+
                 vals.update(
                     {
                         "sale_line_ids": [(6, 0, [move.sale_line_id.id])],
                         "shipping_type_decrease": move.company_id.get_discount_decrease_shipping(
-                            move.shipping_type
+                            move.batch_picking_id and move.batch_picking_id.shipping_type or move.shipping_type
                         ),
                     }
                 )
@@ -129,11 +130,10 @@ class StockMoveLine(models.Model):
 
     def _compute_computed_discount(self):
 
-        for line in self.filtered (lambda x: x.sale_line and (x.move_id.shipping_type or x.move_id.batch_picking_id.shipping_type)):
+        for line in self.filtered (lambda x: x.sale_line and (x.move_id.batch_picking_id.shipping_type or x.move_id.shipping_type)):
             discount = line.sale_discount
             discount -= line.move_id.company_id.get_discount_decrease_shipping(
-                line.move_id.shipping_type
-                or line.batch_picking_id.shipping_type
+               line.batch_picking_id.shipping_type or line.move_id.shipping_type
             )
             if line.sale_line.order_id.financiable_payment:
                 discount -= (
@@ -152,7 +152,8 @@ class StockMoveLine(models.Model):
         sale_lines = self.filtered(lambda x: x.sale_line)
         no_sale_lines = self - sale_lines
         for line in sale_lines:
-            discount = line.move_id.shipping_type and line.computed_discount or 0.0
+            shipping_type = line.move_id.batch_picking_id and line.move_id.batch_picking_id.shipping_type or line.move_id.shipping_type
+            discount = shipping_type and line.computed_discount or 0.0
             sale_line = line.sale_line
             price_unit = line.sale_price_unit * (1 - (discount or 0.0) / 100.0)
             taxes = line.sale_tax_id.compute_all(
