@@ -71,22 +71,25 @@ class ConfigFTPConnection(models.TransientModel):
         ftp_port = self.env['ir.config_parameter'].get_param('ftp_folder_sync.ftp_port', False)
         ftp_login = self.env['ir.config_parameter'].get_param('ftp_folder_sync.ftp_login', False)
         ftp_password = self.env['ir.config_parameter'].get_param('ftp_folder_sync.ftp_password', False)
-        
-        try:
-            _logger.info("Conectando al ftp")
-            ftp = FTP()
-            ftp.connect(ftp_server, int(ftp_port))
-            _logger.info("Conectando al ftp: {}".format(ftp_server))
-            ftp.login(ftp_login, ftp_password)
-        except Exception as e:
-            raise UserError(_('Error: {}').format(e))
-
         activated = self.env['ir.config_parameter'].get_param('ftp_folder_sync.activated', False)
+
         if activated:
+        
+            try:
+                _logger.info("Conectando al ftp")
+                ftp = FTP()
+                ftp.connect(ftp_server, int(ftp_port))
+                _logger.info("Conectando al ftp: {}".format(ftp_server))
+                ftp.login(ftp_login, ftp_password)
+            except Exception as e:
+                raise UserError(_('Error: {}').format(e))
+            
             self.get_files(ftp)
             ftp.cwd('..')
             self.send_files(ftp)
             ftp.quit()
+        else:
+            _logger.info("Opción de enviar a FTP desactivada.")
     
     @api.model
     def get_files(self, ftp):
