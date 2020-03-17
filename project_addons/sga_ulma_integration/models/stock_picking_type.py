@@ -16,9 +16,9 @@ class StockPickingTypeSGA(models.Model):
 
     def get_ulma_vals(self, type='', partner_id=None, picking_id=None):
 
-        if self.group_code == 'picking':
+        if self.group_code.code == 'picking':
             mmmCMDREF = 'SAL'
-        elif self.group_code == 'location':
+        elif self.group_code.code == 'location':
             mmmCMDREF = 'ENT'
         else:
             raise ValidationError ('Tipo no permitido')
