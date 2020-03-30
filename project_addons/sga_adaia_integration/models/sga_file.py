@@ -582,8 +582,6 @@ class AdaiaFileHeader(models.Model):
             if sgavar.file_filter:
                 model_pool = model_pool.with_context(ctx).filtered(eval(sgavar.file_filter))
             for model in model_pool:
-                model
-
                 cont += 1
                 model_str = ''
                 var_str = ''

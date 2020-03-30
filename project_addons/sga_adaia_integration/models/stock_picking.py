@@ -419,7 +419,7 @@ class StockPickingSGA(models.Model):
             picking_ids = move_line_ids.mapped('picking_id')
             print("picking_ids: {}".format(picking_ids))
         
-        batch_ids = picking_ids.mapped('draft_batch_picking_id')
+        batch_ids = picking_ids.mapped('batch_picking_id')
         print("batch_ids: {}".format(batch_ids))
         for batch in batch_ids:
             if batch.picking_type_id and batch.picking_type_id.sga_auto_validate:
