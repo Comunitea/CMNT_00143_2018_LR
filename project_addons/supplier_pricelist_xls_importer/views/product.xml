@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="product_template_search_view" model="ir.ui.view">
+        <field name="name">product.template.inherit.view.search</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_search_view"/>
+        <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field name="brand_partner"/>
+            </field>
+            <filter name="filter_to_sell" position="after">
+                <filter string="Show imported products" name="filter_xls_archived" domain="[('xls_imported','=',1), ('active', '!=', True)]"/>
+            </filter>
+        </field>
+    </record>
+
+    <record id="product_template_form_view" model="ir.ui.view">
+        <field name="name">product.template.inherit.view.form</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <field name="product_variant_id" position="after">
+                <field name="ecotasa"/>
+                <field name="uom_factor"/>
+                <field name="uos_factor"/>
+                <field name="brand_partner"/>
+            </field>
+        </field>
+    </record>
+</odoo>
