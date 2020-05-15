@@ -27,13 +27,15 @@ class AccountVoucher(models.Model):
                 'payment_mode_id': self.payment_mode_id.id,
                 'mandate_id': self.mandate_id.id,
                 'partner_bank_id': self.mandate_id.partner_bank_id.id,
-                'name': self.number
+                'name': '/',
+                'ref': self.number
             })
         else:
             res.update({
                 'payment_mode_id': self.payment_mode_id.id,
                 'partner_bank_id': self.res_partner_bank_id.id,
-                'name': self.number
+                'name': '/',
+                'ref': self.number
             })
         return res
 
