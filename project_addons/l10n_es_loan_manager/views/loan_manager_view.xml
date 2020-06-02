@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+<odoo>
+    <act_window id="action_loan_manager"
+    name="Gestor de Préstamos"
+    res_model="loan.manager"
+    view_mode="tree,form" />
+    
+    <!-- This Menu Item must have a parent and an action -->
+    <menuitem id="menu_loan_manager" name="Préstamos" parent="account.menu_finance" />
+    <menuitem id="submenu_loan_manager" name="Préstamos" parent="menu_loan_manager" action="action_loan_manager" />
+    <menuitem id="submenu_loan_line" name="Líneas préstamos" parent="menu_loan_manager" action="action_loan_line" />
+
+    <!-- model.name form view -->
+    <record id="loan_manager_view_form" model="ir.ui.view">
+        <field name="name">Formualario Préstamos</field>
+        <field name="model">loan.manager</field>
+        <field name="arch" type="xml">
+            <form string="">
+                <sheet>
+                    <header>
+                       <button name="calcular_cuadro" type="object" string="Calcular cuadro préstamo" />
+                    </header>
+                    <group>
+                        <field name="journal_id" placeholder="Cuenta bancaria" />
+                        <field name="entidad" placeholder="Nombre del banco" />
+                        <field name="name" placeholder="Número préstamo asignado por el banco"/>
+                        <field name="fecha_firma" />
+                        <field name="tipo_prestamo" />
+                        <field name="ratio" />
+                    </group>
+                    <group col="4">
+                        <field name="nominal" style="text-align: right"/>
+                        <field name="coste_apertura" style="text-align: right"/>
+                    </group>
+                    <group col="3">
+                        <field name="plazo" style="text-align: right"/>
+                        <field name="k" nolabel="1"/>
+                        <newline/>
+                        <field name="carencia" style="text-align: right"/>
+                        <newline/>
+                        <field name="iAnual" style="text-align: right"/>
+                        <field name="i_k" nolabel="1"/>
+                    </group>
+                    <!--
+                    <group>
+                        <field name="account_journal_id" string="Diario" />
+                    </group>
+                    -->
+                    <group>
+                        <field name="lineas_prestamo" nolabel="1" />
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- model.name tree view -->
+    <record id="loan_manager_view_tree" model="ir.ui.view">
+        <field name="name">loan.manager.view.tree</field>
+        <field name="model">loan.manager</field>
+        <field name="arch" type="xml">
+            <tree>
+                <!-- Add your fields here -->
+                <field name="entidad"  />
+                <field name="name" />
+                <field name="nominal" />
+                <field name="coste_apertura" />
+                <field name="iAnual" />
+                <field name="plazo" />
+                <field name="carencia" />
+                <field name="k" />
+                <field name="fecha_firma" />
+                <field name="tipo_prestamo" />
+                <field name="ratio" />
+            </tree>
+        </field>
+    </record>
+
+
+
+
+
+
+
+</odoo>
