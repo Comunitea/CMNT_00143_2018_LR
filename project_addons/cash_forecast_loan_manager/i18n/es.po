@@ -1,0 +1,43 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* cash_forecast_loan_manager
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 11.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-06-02 08:29+0000\n"
+"PO-Revision-Date: 2020-06-02 10:31+0200\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: es_ES\n"
+"X-Generator: Poedit 2.3.1\n"
+
+#. module: cash_forecast_loan_manager
+#: model:ir.model.fields,field_description:cash_forecast_loan_manager.field_cash_forecast_line_loan_line_ids
+msgid "Loan Lines"
+msgstr "Líneas de préstamos"
+
+#. module: cash_forecast_loan_manager
+#: model:ir.model.fields,field_description:cash_forecast_loan_manager.field_cash_forecast_line_loan_lines
+msgid "Loans"
+msgstr "Préstamos"
+
+#. module: cash_forecast_loan_manager
+#: model:ir.ui.view,arch_db:cash_forecast_loan_manager.cash_forecast_line_loan_view_tree
+msgid "Show Loan Lines"
+msgstr "Mostrar líneas de préstamos"
+
+#. module: cash_forecast_loan_manager
+#: model:ir.model,name:cash_forecast_loan_manager.model_cash_forecast
+msgid "cash.forecast"
+msgstr "cash.forecast"
+
+#. module: cash_forecast_loan_manager
+#: model:ir.model,name:cash_forecast_loan_manager.model_cash_forecast_line
+msgid "cash.forecast.line"
+msgstr "cash.forecast.line"
