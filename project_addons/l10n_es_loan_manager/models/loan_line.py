@@ -17,6 +17,7 @@ class LoanLine(models.Model):
     cap_pdte = fields.Float(string='Cap. pendiente')
 
     nombre_entidad = fields.Many2one('res.bank', related='loan_manager_id.entidad', store = True, readonly=True)
+    journal_id = fields.Many2one('account.journal', related='loan_manager_id.journal_id', store = True, readonly=True)
     numero_prestamo = fields.Char('número', related='loan_manager_id.name', store=True, readonly=True)
     company_id = fields.Many2one('res.company', related='loan_manager_id.company_id')
 

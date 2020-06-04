@@ -13,7 +13,7 @@
       <field name="arch" type="xml">
         <tree colors="decoration-muted: is_done==True">
                 <field name="name"  />
-                <field name="nombre_entidad"  />
+                <field name="journal_id"  />
                 <field name="numero_prestamo"  />
                 <field name="fecha" />
                 <field name="mensualidad" />
@@ -30,7 +30,7 @@
       <field name="model">loan.line</field>
       <field name="arch" type="xml">
         <pivot string="Pivot Description">
-          <field name="nombre_entidad"  type="row"/>
+          <field name="journal_id"  type="row"/>
           <field name="fecha" type="col" interval="month" />
           <field name="mensualidad" type="measure" />
         </pivot>
@@ -45,7 +45,7 @@
         <graph type="bar" stacked="True" string="Calendario">
           <!-- Add your fields here -->
             <field name="fecha" interval="year"/>
-            <field name="nombre_entidad" type="col" />
+            <field name="journal_id" type="col" />
             <field name="mensualidad" type="measure" />
         </graph>
       </field>
@@ -59,7 +59,7 @@
       <calendar string="Calendario pagos" date_start="fecha" color="nombre_entidad">
         <!-- Add your fields here -->
         <field name="nombre_entidad" />
-        <field name="numero_prestamo" />
+        <field name="journal_id" />
         <field name="mensualidad"/>
       </calendar>
     </field>
