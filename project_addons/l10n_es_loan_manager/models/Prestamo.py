@@ -2,7 +2,7 @@
 import datetime
 from dateutil.relativedelta import *
 from . import Asiento
-#import numpy as np
+import numpy as np
 
 
 
@@ -41,7 +41,7 @@ class Prestamo:
         self.tipo_int = float(tipo_int)
         self.plazo = int(plazo)
         self.capital = float(capital)
-
+        
         self.carencia = int(carencia)
 
         if isinstance(fecha,datetime.datetime):
@@ -251,7 +251,7 @@ class MensualidadCte(Prestamo):
                 if(self.clavePr == clave[1]):
                     # Clave [365/360]
                     dif = (fechaC - self.cuotas[i - 1].fecha).days
-                    interes = round(self.cuotas[i - 1].cap_pdte * self.tipo_int * (dif / 30), 2)
+                    interes = round(self.cuotas[i - 1].cap_pdte * self.tipo_int * ( dif / (self.intervalo * 30)), 2)
                 else:
                     # Clave [360/360] o [365/365]
                     interes = round(self.cuotas[i - 1].cap_pdte * self.tipo_int, 2)
@@ -268,7 +268,7 @@ class MensualidadCte(Prestamo):
 
                 if(self.clavePr == clave[1]):
                     dif = (fechaC - self.cuotas[i - 1].fecha).days
-                    interes = round(self.cuotas[i - 1].cap_pdte * self.tipo_int * (dif / 30), 2)
+                    interes = round(self.cuotas[i - 1].cap_pdte * self.tipo_int * (dif / (self.intervalo * 30)), 2)
                 else:
                     interes = round(self.cuotas[i - 1].cap_pdte * self.tipo_int, 2)
 
@@ -320,7 +320,7 @@ class CuotaAmortizCte(Prestamo):
                 if(self.clavePr == clave[1]):
                     # Clave [365/360]
                     dif = (fechaC - self.cuotas[i - 1].fecha).days
-                    interes = round(self.cuotas[i - 1].cap_pdte * self.tipo_int * (dif / 30), 2)
+                    interes = round(self.cuotas[i - 1].cap_pdte * self.tipo_int * (dif / (self.intervalo * 30)), 2)
                 else:
                     # Clave [360/360] o [365/365]
                     interes = round(self.cuotas[i - 1].cap_pdte * self.tipo_int, 2)
@@ -335,7 +335,7 @@ class CuotaAmortizCte(Prestamo):
                 fechaC = self.cuotas[i - 1].fecha + relativedelta(months=+self.intervalo) + relativedelta(day=self.fecha.day)
                 if self.clavePr == clave[1]:
                     dif = (fechaC - self.cuotas[i - 1].fecha).days
-                    interes = round(self.cuotas[i - 1].cap_pdte * self.tipo_int * (dif / 30), 2)
+                    interes = round(self.cuotas[i - 1].cap_pdte * self.tipo_int * (dif / (self.intervalo * 30)), 2)
                 else:
                     interes = round(self.cuotas[i - 1].cap_pdte * self.tipo_int, 2)
 
