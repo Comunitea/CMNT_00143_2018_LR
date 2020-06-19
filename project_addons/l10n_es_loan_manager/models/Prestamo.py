@@ -299,7 +299,7 @@ class CuotaAmortizCte(Prestamo):
     def calcular(self):
 
         plazo_amortizacion = self.plazo - self.carencia    
-        capAm=round(self.capital/float(plazo_amortizacion), 2)
+        amortizacion=round(self.capital/float(plazo_amortizacion), 2)
 
         for i in range(self.plazo+1):
 
@@ -339,10 +339,12 @@ class CuotaAmortizCte(Prestamo):
                 else:
                     interes = round(self.cuotas[i - 1].cap_pdte * self.tipo_int, 2)
 
-                if i<self.plazo:
+                if i < self.plazo:
+                    capAm = amortizacion
                     mensual = round(capAm+interes, 2)
+
                 else:
-                    capAm = self.cuotas[i-1].cap_pdte
+                    capAm = self.cuotas[i - 1].cap_pdte
                     mensual = round(capAm+interes,2)
 
                 capPdte = self.cuotas[i - 1].cap_pdte - capAm
