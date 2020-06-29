@@ -20,7 +20,7 @@ class AccountInvoice(models.Model):
     @api.onchange('partner_id', 'company_id')
     def _onchange_partner_id(self):
         res = super(AccountInvoice, self)._onchange_partner_id()
-        if self.partner_id 
+        if self.partner_id:
             if self.partner_id.user_id:
                 self.user_id = self.partner_id.user_id.id or self.env.uid
             if self.type == 'out_refund':
