@@ -22,6 +22,9 @@ TAX_MAPPING = {
     'P_IVA21_IC_BC': 'S_IVA21B',
     'P_IVA4_IC_BC': 'S_IVA4B',
     'P_IVA10_IC_BC': 'S_IVA10B',
+    'P_IVA21_ISP': 'S_IVA21B',
+    'P_IVA4_ISP': 'S_IVA4B',
+    'P_IVA10_ISP': 'S_IVA10B',
 }
 
 class DirectInvoiceWzd(models.TransientModel):
@@ -133,6 +136,10 @@ class DirectInvoiceWzd(models.TransientModel):
                 }
                 if tax_ids:
                     line_vals['invoice_line_tax_ids'] = [(6, 0, tax_ids)]
+                if len(invoices) == 1 and invoices[0].invoice_line_ids[0].product_id:
+                    line_vals['product_id'] = invoices[0].invoice_line_ids[0].product_id.id
+                    line_vals['account_id'] = invoices[0].invoice_line_ids[0].product_id.property_account_income_id.id
+                    
                 res.append((0, 0, line_vals))
         return res
 
