@@ -56,7 +56,7 @@
     <field name="name">loan.line.view.calendar</field>
     <field name="model">loan.line</field>
     <field name="arch" type="xml">
-      <calendar string="Calendario pagos" date_start="fecha" color="nombre_entidad">
+      <calendar string="Calendario pagos" date_start="fecha" color="nombre_entidad" mode="month">
         <!-- Add your fields here -->
         <field name="nombre_entidad" />
         <field name="journal_id" />
