@@ -33,7 +33,7 @@ class SupplierPricelistImporter(models.TransientModel):
         products_to_remove = supplierinfo.mapped("product_tmpl_id")
         supplierinfo.unlink()
         df = pandas.read_excel(BytesIO(b64decode(self.import_file)))
-        discount_groups = df["grupo_dto NETO/ZZZ"].values
+        discount_groups = df["grupo_dto  o NETO"].values
         for discount_group in set(discount_groups.flatten()):
             if pandas.isnull(discount_group) or not discount_group:
                 continue
