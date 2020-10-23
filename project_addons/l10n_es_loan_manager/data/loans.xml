@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <record id="Bankia" model="loan.manager">
+        <field name="entidad">Bankia</field>
+        <field name="name">24421460-45</field>
+        <field name="fecha_firma">2020-04-15</field>
+        <field name="tipo_prestamo">0</field>
+        <field name="ratio">0</field>
+        <field name="nominal">750000</field>
+        <field name="coste_apertura">1500</field>      
+        <field name="plazo">60</field>
+        <field name="k">12</field>                
+        <field name="carencia">12</field>
+        <field name="iAnual">0.0175</field>  
+    </record>
+        <record id="Caixabank" model="loan.manager">
+        <field name="entidad">Caixabank</field>
+        <field name="name">8618.01.0001759.90</field>
+        <field name="fecha_firma">2020-04-15</field>
+        <field name="tipo_prestamo">0</field>
+        <field name="ratio">0</field>
+        <field name="nominal">600000</field>
+        <field name="coste_apertura">600</field>      
+        <field name="plazo">60</field>
+        <field name="k">12</field>                
+        <field name="carencia">12</field>
+        <field name="iAnual">0.016</field>  
+    </record>
+        <record id="Ibercaja" model="loan.manager">
+        <field name="entidad">Ibercaja</field>
+        <field name="name">68146-796.150018-38</field>
+        <field name="fecha_firma">2020-04-15</field>
+        <field name="tipo_prestamo">0</field>
+        <field name="ratio">0</field>
+        <field name="nominal">500000</field>
+        <field name="coste_apertura">0</field>      
+        <field name="plazo">60</field>
+        <field name="k">12</field>                
+        <field name="carencia">12</field>
+        <field name="iAnual">0.015</field>  
+    </record>
+        <record id="BBVA" model="loan.manager">
+        <field name="entidad">BBVA</field>
+        <field name="name">0182-2503-83-4870</field>
+        <field name="fecha_firma">2020-04-15</field>
+        <field name="tipo_prestamo">0</field>
+        <field name="ratio">0</field>
+        <field name="nominal">450000</field>
+        <field name="coste_apertura">0</field>      
+        <field name="plazo">20</field>
+        <field name="k">4</field>                
+        <field name="carencia">4</field>
+        <field name="iAnual">0.0265</field>  
+    </record>
+
+</odoo>

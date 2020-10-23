@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="cash_forecast_line_loan_view_tree" model="ir.ui.view">
+        <field name="name">cash.forecast.line.loan.view.tree</field>
+        <field name="model">cash.forecast.line</field>
+        <field name="inherit_id" ref="cash_forecast.cash_forecast_line_view_tree"/>
+       <field name="arch" type="xml">
+            <field name="period_balance" position="before">
+                <field name="loan_lines"/>
+                <button name="get_calculated_loan_lines"
+                    type="object"
+                    help="Show Loan Lines"
+                    icon="fa-search-plus"/>
+            </field>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<odoo>
+
+<act_window id="action_loan_line"
+    name="Cuadro amortización préstamo"
+    res_model="loan.line"
+    view_mode="tree,pivot,graph,calendar" />
+
+ <!-- To-Do Task List view -->
+    <record id="view_tree_loan_line" model="ir.ui.view">
+      <field name="name">Cuotas Préstamo</field>
+      <field name="model">loan.line</field>
+      <field name="arch" type="xml">
+        <tree colors="decoration-muted: is_done==True">
+                <field name="name"  />
+                <field name="journal_id"  />
+                <field name="numero_prestamo"  />
+                <field name="fecha" />
+                <field name="mensualidad" />
+                <field name="intereses" />
+                <field name="cap_amort" />                        
+                <field name="cap_pdte" />                                                                       
+        </tree>
+      </field>
+    </record>
+
+    <!-- model.name pivot view -->
+    <record id="loan_line_view_pivot" model="ir.ui.view">
+      <field name="name">loan.line.view.pivot</field>
+      <field name="model">loan.line</field>
+      <field name="arch" type="xml">
+        <pivot string="Pivot Description">
+          <field name="journal_id"  type="row"/>
+          <field name="fecha" type="col" interval="month" />
+          <field name="mensualidad" type="measure" />
+        </pivot>
+      </field>
+    </record>
+
+    <!-- model.name graph view -->
+    <record id="loan_line_view_graph" model="ir.ui.view">
+      <field name="name">loan.line.view.graph</field>
+      <field name="model">loan.line</field>
+      <field name="arch" type="xml">
+        <graph type="bar" stacked="True" string="Calendario">
+          <!-- Add your fields here -->
+            <field name="fecha" interval="year"/>
+            <field name="journal_id" type="col" />
+            <field name="mensualidad" type="measure" />
+        </graph>
+      </field>
+    </record>
+
+  <!-- model.name calendar view -->
+  <record id="loan_line_view_calendar" model="ir.ui.view">
+    <field name="name">loan.line.view.calendar</field>
+    <field name="model">loan.line</field>
+    <field name="arch" type="xml">
+      <calendar string="Calendario pagos" date_start="fecha" color="nombre_entidad" mode="month">
+        <!-- Add your fields here -->
+        <field name="nombre_entidad" />
+        <field name="journal_id" />
+        <field name="mensualidad"/>
+      </calendar>
+    </field>
+  </record>
+</odoo>

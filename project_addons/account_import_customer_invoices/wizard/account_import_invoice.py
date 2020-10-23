@@ -57,6 +57,7 @@ class AccountInvoiceImportWizard(models.TransientModel):
                 'partner_id': customer.id,
                 'journal_id': journal.id,
                 'type': type,
+                'name': purchase_number,
             }
             if payment_term_eid:
                 invoice_vals['payment_term_id'] = self.env.ref(
