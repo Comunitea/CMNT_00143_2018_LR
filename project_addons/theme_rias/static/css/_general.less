@@ -23,7 +23,27 @@ body {
 @color-text: #000;
 @color-crumb-link: #337ab7;
 
-/* Breadcrumbs colors */
+// == Override 'set default colours' by standard variables
+//
+//##
+@body-bg:                           @white;
+@brand-primary:                     #23a9db;
+
+// == Override styles by global modules variables
+//
+//##
 :root {
-    --color-href: @color-crumb-link;
+
+    // Breadcrumbs colors
+    --color-bg: @body-bg;
+    --color-href: @brand-primary;
+//     --color-current: @brand-secondary;
+
+    // website_sale_affix_header
+    --affix-header-bg-color: linear-gradient(#23a9db, #234ddb);
+//     --affix-header-z-index: you_index or 999;
+    // Just if NOT want use animation
+    --affix-header-animation-name: none;
+    --affix-header-animation-duration: none;
+    --affix-header-animation-delay: none;
 }
