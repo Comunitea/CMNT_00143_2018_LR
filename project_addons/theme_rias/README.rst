@@ -1,4 +1,5 @@
-Las Rías website theme
+======================
+Las Rías Website Theme
 ======================
 
 Front-end customization for Las Rías website
@@ -15,6 +16,8 @@ Contributors
 ~~~~~~~~~~~~
 
 Pavel Smirnov, pavel@comunitea.com
+
+Vicente Ángel Gutiérrez, vicente@comunitea.com
 
 Rubén Seijas, ruben@comunitea.com
 

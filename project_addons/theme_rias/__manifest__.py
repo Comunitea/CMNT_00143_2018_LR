@@ -23,8 +23,8 @@
 
 {
     'name': 'Las Rías website theme',
-    'version': '1.0',
-    'summary': 'Front-end customization for Las Rías website',
+    'version': '11.0.0.0.1',
+    'summary': 'Customization for Las Rías website',
     'description': '',
     'category': 'Theme',
     'author': 'Comunitea',
@@ -32,12 +32,18 @@
     'license': 'AGPL-3',
     'contributors': [
         'Pavel Smirnov <pavel@comunitea.com>',
+        'Vicente Ángel Gutiérrez <vicente@comunitea.com>',
         'Rubén Seijas <ruben@comunitea.com>',
     ],
     'depends': [
+        # Custom
+        'breadcrumbs_base',
+        'website_base_rias',
+        # OCA
+        'website',
+        'website_sale',
         'website_slides',
         'website_form',
-        'website_base_rias',
         'website_sale_hide_empty_category'
     ],
     'data': [

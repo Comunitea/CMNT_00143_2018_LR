@@ -363,30 +363,34 @@
     </template>
 
 
-    <!-- Tags -->
+    <!-- Catalogue Categories Top -->
     <template id="categories_top_catalogue" name="Catalogue Categories Top">
-        <div class="row mb8 ml8 mr8 mt8">
-            <a href="#" class="product-tag btn btn-primary btn-xs to-toggle-menu hidden-sm hidden-md hidden-lg" alt="Categories" title="Categories" rel="nofollow, noindex">
-                <span data-oe-model="website.menu" data-oe-id="37" data-oe-field="name" data-oe-type="char" data-oe-expression="submenu.name">Categories</span>
-            </a>
-            <t t-set="cats" t-value="website.get_child_category(False)" />
-            <t t-if="len(cats) &gt; 0">
-                <t t-foreach="cats" t-as="cat">
-                    <div class="col-12 col-sm-4 col-md-2 mt8 mb8 hidden-xs">
-                        <a class="" t-att-title="cat.name" t-att-alt="cat.name"
-                           t-att-href="'/catalogue/category/%s' % cat.slug if cat.slug else '/catalogue/category/%s' % slug(cat)">
-                            <img class="img-responsive cat-image" t-attf-alt="cat.name" t-attf-src="/web/image/product.public.category/#{cat.id}/image"/>
-                        </a>
-                    </div>
+        <div class="container mt8">
+            <div class="row mb8 text-right">
+                <a href="#" class="product-tag btn btn-primary btn-xs mr16 to-toggle-menu hidden-sm hidden-md hidden-lg" alt="Categories" title="Categories" rel="nofollow, noindex">
+                    <span data-oe-model="website.menu" data-oe-id="37" data-oe-field="name" data-oe-type="char" data-oe-expression="submenu.name">Show Categories</span>
+                </a>
+                <t t-set="cats" t-value="website.get_child_category(False)" />
+                <t t-if="len(cats) &gt; 0">
+                    <t t-foreach="cats" t-as="cat">
+                        <div class="col-12 col-sm-4 col-md-2 mt8 mb8 hidden-xs" t-if="cat.image">
+                            <a class="" t-att-title="cat.name" t-att-alt="cat.name"
+                               t-att-href="'/catalogue/category/%s' % cat.slug if cat.slug else '/catalogue/category/%s' % slug(cat)">
+                                <img class="img-responsive cat-image" t-att-alt="cat.name" t-attf-src="/web/image/product.public.category/#{cat.id}/image"
+                                     style="height: 50px; width: 220px; margin: 0px auto;"/>
+                            </a>
+                        </div>
+                    </t>
                 </t>
-            </t>
-        </div>
-        <div class="row container cat-dynamic-menu-div">
-            <t t-call="theme_rias.dynamic_category"/>
+            </div>
+            <div class="row cat-dynamic-menu-div">
+                <t t-call="theme_rias.dynamic_category"/>
+            </div>
         </div>
     </template>
 
-    <template id="dynamic_category">
+    <!-- Category Dynamic Menu -->
+    <template id="dynamic_category" name="Category Dynamic Menu">
         <ul class="custom-menu-inside-div custom-menu-inside-div-nth dropdown-menu hidden-sm hidden-md hidden-lg">
             <div class="custom-menu-inside-maxW">
                 <div class="first_li">
@@ -395,11 +399,12 @@
                         <t t-if="not category_individual.parent_id">
                             <li class="first-level-category-li dropdown-submenu" t-att-id="'genrate_categ_id-%s' % category_individual.id">
                                 <div class="first-level-left-div">
-                                    <a class="first-level-category-a " t-att-alt="category_individual.name" t-att-href="'/catalogue/category/%s' %slug(category_individual)">
-                                        <div class="first-level-category-image">
+                                    <a class="first-level-category-a" t-att-alt="category_individual.name" t-att-href="'/catalogue/category/%s' % category_individual.slug if category_individual.slug else '/catalogue/category/%s' % slug(category_individual)">
+                                        <div class="first-level-category-image ml16 mr16">
                                             <img t-att-alt="category_individual.name" t-att-title="category_individual.name"
-                                                t-attf-src="/web/image/product.public.category/{{category_individual.id}}/image/200x64"/>
-                                            <span tabindex="-1" class="submenu-a first-level-category-caret fa fa-chevron-right" />
+                                                 t-attf-src="/web/image/product.public.category/{{category_individual.id}}/image/200x64"/>
+                                            <span tabindex="-1" class="submenu-a first-level-category-caret fa fa-chevron-right" t-if="category_individual.child_id"/>
+                                            <span t-esc="category_individual.name" t-if="not category_individual.image"/>
                                         </div>
                                     </a>
                                 </div>
@@ -411,13 +416,13 @@
                                                     <t t-if="category_individual.child_id">
                                                         <t t-foreach="category_individual.child_id" t-as="c">
                                                             <li class="dropdown-submenu sub-menu-ul-heading">
-                                                                <a class="second-level-a menu_heading " t-att-href="'/catalogue/category/%s' %slug(c)"
+                                                                <a class="second-level-a menu_heading " t-att-href="'/catalogue/category/%s' % c.slug if c.slug else '/catalogue/category/%s' % slug(c)"
                                                                    t-field="c.name" t-att-alt="c" t-att-title="c"/>
-                                                                <span tabindex="-1" class="submenu-a second-level-category-caret fa fa-chevron-right" />
+                                                                <span tabindex="-1" class="submenu-a second-level-category-caret fa fa-chevron-right" t-if="c.child_id"/>
                                                                 <ul class="third-level-ul dropdown-menu" style="position: relative; float:right;">
                                                                     <t t-foreach="c.child_id" t-as="child">
                                                                         <li class="third-level-li">
-                                                                            <a class="sub_menu_list" t-att-href="'/catalogue/category/%s' %slug(child)"
+                                                                            <a class="sub_menu_list" t-att-href="'/catalogue/category/%s' % child.slug if child.slug else '/catalogue/category/%s' % slug(child)"
                                                                                t-field="child.name" t-att-alt="child.name" t-att-title="child.name"/>
                                                                         </li>
                                                                     </t>
@@ -438,51 +443,8 @@
         </ul>
     </template>
 
-    <template id="dynamic_category_menu" inherit_id="theme_rias.dynamic_category" name="Category dynamic menu">
-        <xpath expr="//a[hasclass('first-level-category-a')]" position="attributes">
-            <attribute name="t-att-href">'/catalogue/category/%s' %category_individual.slug if category_individual.slug else '/catalogue/category/%s' %slug(category_individual)</attribute>
-        </xpath>
-        <xpath expr="//li[hasclass('first-level-category-li','dropdown-submenu')]/div/a/div/span" position="attributes">
-            <attribute name="t-if">category_individual.child_id</attribute>
-        </xpath>
-        <xpath expr="//a[hasclass('second-level-a','menu_heading')]" position="attributes">
-            <attribute name="t-att-href">'/catalogue/category/%s' %c.slug if c.slug else '/catalogue/category/%s' %slug(c)</attribute>
-        </xpath>
-        <xpath expr="//a[hasclass('sub_menu_list')]" position="attributes">
-            <attribute name="t-att-href">'/catalogue/category/%s' %child.slug if child.slug else '/catalogue/category/%s' %slug(child)</attribute>
-        </xpath>
-        <xpath expr="//li[hasclass('dropdown-submenu','sub-menu-ul-heading')]/span" position="attributes">
-            <attribute name="t-if">c.child_id</attribute>
-        </xpath>
-    </template>
-
-    <template id="las_website_sale_header" inherit_id="website_sale.header" name="Rías Website_sale Header Shop My Cart Link">
-        <xpath expr="//header//ul[@id='top_menu']/li[@id='my_cart']/a/i" position="replace">
-            <t t-if="website_sale_order.campaign_id.name">
-                <i class="fa fa-cart-plus text-danger"/>
-            </t>
-            <t t-else="">
-                <i class="fa fa-shopping-cart"/>
-            </t>
-            <t t-esc="website_sale_order.name"/>
-        </xpath>
-    </template>
-
-    <template id="las_template_current_cart" name="Current cart breadcrumb">
-        <ol class="breadcrumb">
-            <li t-if="not request.env.user._is_public()">
-                <a href="/shop/cart" alt="Cart" title="Cart"><i class="fa fa-shopping-cart"/></a>
-            </li>
-            <t t-set="cart" t-value="request.website.sale_get_order()"/>
-            <t t-if="cart">
-                <li t-att-class="'active'">
-                    <span t-esc="cart.name"/><t t-if="cart.campaign_id.name"> - <span t-esc="cart.campaign_id.name"/></t>
-                </li>
-            </t>
-        </ol>
-    </template>
-
-    <template id="las_template_catalogue_tags" inherit_id="breadcrumbs_base.bcb_main_wrap">
+    <!-- Catalogue Categories Top with Category Dynamic Menu over Breadcrumbs Bar -->
+    <template id="las_template_catalogue_tags" name="Top Catalogue Tags" inherit_id="breadcrumbs_base.bcb_main_wrap" active="True" customize_show="True">
         <xpath expr="//t[@t-foreach='breadcrumbs']" position="replace">
             <t t-if="pageName == 'cataloguepage' or pageName == 'catalogueproductpage'">
                 <t t-foreach="breadcrumbs" t-as="crumb">
@@ -509,6 +471,32 @@
         <!-- <xpath expr="//ol[hasclass('breadcrumb')]" position="before">
             <t t-call="theme_rias.las_template_current_cart"/>
         </xpath> -->
+    </template>
+
+    <template id="las_website_sale_header" inherit_id="website_sale.header" name="Rías Website_sale Header Shop My Cart Link">
+        <xpath expr="//header//ul[@id='top_menu']/li[@id='my_cart']/a/i" position="replace">
+            <t t-if="website_sale_order.campaign_id.name">
+                <i class="fa fa-cart-plus text-danger"/>
+            </t>
+            <t t-else="">
+                <i class="fa fa-shopping-cart"/>
+            </t>
+            <t t-esc="website_sale_order.name"/>
+        </xpath>
+    </template>
+
+    <template id="las_template_current_cart" name="Current cart breadcrumb">
+        <ol class="breadcrumb">
+            <li t-if="not request.env.user._is_public()">
+                <a href="/shop/cart" alt="Cart" title="Cart"><i class="fa fa-shopping-cart"/></a>
+            </li>
+            <t t-set="cart" t-value="request.website.sale_get_order()"/>
+            <t t-if="cart">
+                <li t-att-class="'active'">
+                    <span t-esc="cart.name"/><t t-if="cart.campaign_id.name"> - <span t-esc="cart.campaign_id.name"/></t>
+                </li>
+            </t>
+        </ol>
     </template>
 
     <template id="product_catalogue" name="Catalogue Product">
