@@ -1,27 +1,38 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <template id="snippet_features_lasrias_menu" name="Menú Las Rías">
-        <section class="s_features">
+
+    <template id="snippet_cover_lasrias" name="Cover Las Rías">
+        <section id="cover_las_rias" class="hidden-xs hidden-sm s_features s_text_block_image_fw oe_img_bg oe_custom_bg" style="background-image: url('/theme_rias_menu/static/img/covers/cover.jpg'); background-position: 50% 100%">
             <div class="container">
-                <div class="row mt64 mb16">
-                    <t t-set="menus" t-value="website.allowed_menus(website.menu_id.child_id)"/>
-                    <t t-foreach="menus" t-as="menu">
-                        <div t-attf-class="hidden-xs hidden-sm col-md-2 text-center #{ website.calculate_offset(menus) if menu_first and len(menus) &lt; 6 else '' }">
-                            <a t-att-id="menu['id']"
-                                    t-attf-href="{{ menu['url'] if menu['url'] else ''}}">
-                                <div class="row"> 
-                                    <span t-attf-class="fa {{ menu['menu_icon'] if menu['menu_icon'] else '' }} fa-4x"/>
-                                    <div class="menu-title">
-                                        <h4 class="mt16 text-muted">
-                                            <t t-esc="menu['name']" />
-                                        </h4>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    </t>
+                <t t-call="theme_rias_menu.snippet_features_lasrias_menu"/>
+                <div class="row">
+                    <div class="hidden-xs hidden-sm col-md-offset-1 col-md-10 mb32 bg-black-50">
+                        <h1>Hablando de <b>FERRETERÍA</b> !Nos vamos a entender!</h1>
+                    </div>
                 </div>
             </div>
         </section>
+    </template>
+
+    <template id="snippet_features_lasrias_menu" name="Menú Las Rías">
+        <div class="row">
+            <t t-set="menus" t-value="website.allowed_menus(website.menu_id.child_id)"/>
+            <t t-foreach="menus" t-as="menu">
+                <div t-attf-class="hidden-xs hidden-sm col-md-2 text-center #{ website.calculate_offset(menus) if menu_first and len(menus) &lt; 6 else '' }">
+                    <a t-att-id="menu['id']"
+                            t-attf-href="{{ menu['url'] if menu['url'] else ''}}">
+                        <div class="row">
+
+                            <div class="menu-title">
+                                <span t-attf-class="fa {{ menu['menu_icon'] if menu['menu_icon'] else '' }} fa-2x"/>
+                                <h5 class="mt8 text-muted">
+                                    <t t-esc="menu['name']" />
+                                </h5>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </t>
+        </div>
     </template>
 </odoo>

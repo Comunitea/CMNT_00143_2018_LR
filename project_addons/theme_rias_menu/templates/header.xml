@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
 
-    <!-- <template id="snippet_cover_lasrias_menu" inherit_id="theme_rias.snippet_cover_lasrias" name="Snippet LasRias Menu">
-        <xpath expr="//section/div[hasclass('container')]/div[hasclass('container')]" position="before">
-            <t t-call="theme_rias_menu.snippet_features_lasrias_menu"/>
+    <template id="layout_website" inherit_id="website.layout" name="Snippet Content Menu" active="True" customize_show="True">
+        <xpath expr="//header" position="inside">
+            <t t-snippet="theme_rias_menu.snippet_cover_lasrias" />
         </xpath>
     </template>
- -->
+
 </odoo>

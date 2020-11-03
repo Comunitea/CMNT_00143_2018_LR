@@ -2,9 +2,8 @@
 <odoo>
 
     <!-- Add custom styles -->
-    <template id="rias_menu_website_assets_frontend" inherit_id="theme_rias.rias_website_assets_frontend">
+    <template id="rias_menu_website_assets_frontend" inherit_id="website.assets_frontend" name="Website Frontend Assets Rias Snippet Content Menu">
         <xpath expr="link[last()]" position="after">
-            <link href="/theme_rias_menu/static/css/page_home.less" rel="stylesheet" type="text/less"/>
             <link href="/theme_rias_menu/static/css/pages.less" rel="stylesheet" type="text/less"/>
         </xpath>
     </template>

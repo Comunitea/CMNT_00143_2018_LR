@@ -2,19 +2,10 @@
 # © 2019 Comunitea
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 
-from odoo import http, api, models, fields, _
-
-from odoo.http import request
-from pprint import pprint
-
-class Menu(models.Model):
-
-    _inherit = "website.menu"
-
-    menu_icon = fields.Char('Icon', default='', help='You can check the full list of icons at https://fontawesome.com/cheatsheet?from=io')
+from odoo import api, fields, models, http, _
 
 
-class WebsiteBlog(models.Model):
+class Website(models.Model):
     _inherit = 'website'
 
     def dynamic_category_list(self):

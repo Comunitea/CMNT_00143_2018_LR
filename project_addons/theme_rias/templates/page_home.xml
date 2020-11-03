@@ -17,12 +17,6 @@
         </t>
     </template>
 
-    <template id="las_template_our_shops_lasrias_menu" inherit_id="breadcrumbs_base.bcb_main_wrap">
-        <xpath expr="//div[hasclass('wp_breadcrumbs_base')]"  position="before">
-            <t t-snippet="theme_rias.snippet_cover_lasrias" t-thumbnail="/theme_rias/static/src/img/ui/snippet_cover_thumb.jpg"/>
-        </xpath>
-    </template>
-
     <record id="website.homepage" model="ir.ui.view">
         <field name="name">Home</field>
         <field name="type">qweb</field>

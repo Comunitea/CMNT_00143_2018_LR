@@ -1,55 +1,46 @@
-main {
-    & .s_features {
-        & div.container > div.row > div.text-center {
+.s_features {
+    & div.container > div.row > div.text-center {
+        & div.row {
+            background-color: @color-alt-background;
+            border-radius: 30px;
+            padding: 20px 0px 0px 0px;
+        }
+        & .fa {
+            color: @color-icon-home;
+        }
+        & p.text-muted {
+            color: @color-hv;
+        }
+        & h5 {
+            font-size: 16px;
+        }
+        &:hover {
             & div.row {
-                background-color: @color-alt-background;
-                border-radius: 25px;
-                padding: 20px;
+                background-color: @color-alt-background-hover;
+                border-radius: 30px;
+                padding: 20px 0px 0px 0px;
             }
             & .fa {
-                color: @color-icon-home;
+                color: @color-icon-home-hover;
             }
             & p.text-muted {
                 color: @color-hv;
+                background-color: @white;
             }
-            & h4 {
+            & h5 {
+                color: @white;
                 font-size: 16px;
             }
-            &:hover {
-                & div.row {
-                    background-color: @color-alt-background-hover;
-                    border-radius: 25px;
-                    padding: 20px;
-                }
-                & .fa {
-                    color: @color-icon-home-hover;
-                }
-                & p.text-muted {
-                    color: @color-hv;
-                    background-color: @white;
-                }
-                & h4 {
-                    color: @white;
-                    font-size: 16px;
-                }
-            }
-            & a:hover {
-                text-decoration: none;
-            }
-            & div.menu-title {
+        }
+        & a:hover {
+            text-decoration: none;
+        }
+        & div.menu-title {
+            min-height: 35.2px;
+            & h5.text-muted {
                 min-height: 35.2px;
-                & h4.text-muted {
-                    min-height: 35.2px;
-                }
             }
         }
     }
 }
 
-div {
-    &:not(.homepage) {
-        & div > section > div > div.container {
-            display: none;
-        }
-    }
-}
