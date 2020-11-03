@@ -23,7 +23,7 @@
 
 {
     'name': 'Las Rías website theme',
-    'version': '11.0.0.0.1',
+    'version': '11.0.0.0.2',
     'summary': 'Customization for Las Rías website',
     'description': '',
     'category': 'Theme',
@@ -38,6 +38,7 @@
     'depends': [
         # Custom
         'breadcrumbs_base',
+        'ecommerce_base',
         'website_base_rias',
         # OCA
         'website',

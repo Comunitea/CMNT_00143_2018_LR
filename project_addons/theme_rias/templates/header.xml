@@ -31,11 +31,11 @@
                 </li>
             </t>
         </xpath>
+    </template>
 
-        <xpath expr="//header//a[hasclass('navbar-brand')]" position="replace">
-            <a class="navbar-brand" href="/" t-if="website" alt="Home" title="Home">
-                <img t-att-src="'/theme_rias/static/img/logos/logo_transp.png'" t-att-alt="res_company.name" t-att-title="res_company.name"/>
-            </a>
+    <template id="ecommerce_base_website_logo_layout_logo_show" inherit_id="ecommerce_base.website_logo_layout_logo_show" name="Show Logo Las Rías">
+        <xpath expr="//header//a[hasclass('navbar-brand', 'logo')][last()]" position="attributes">
+            <attribute name="class" add="mt8" separator=" "/>
         </xpath>
     </template>
 

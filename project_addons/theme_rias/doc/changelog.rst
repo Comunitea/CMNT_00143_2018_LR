@@ -1,3 +1,7 @@
+`11.0.0.0.2`
+------------
+- **[UDP]** Make logo work with website_logo module by ecommerce_base module
+
 `11.0.0.0.1`
 ------------
 - **[UDP]** Catalogue Categories Top with Category Dynamic Menu over Breadcrumbs Bar
