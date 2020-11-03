@@ -1,0 +1,41 @@
+/**********************************************************************************
+* 
+*    Copyright (C) 2017 MuK IT GmbH
+*
+*    This program is free software: you can redistribute it and/or modify
+*    it under the terms of the GNU Affero General Public License as
+*    published by the Free Software Foundation, either version 3 of the
+*    License, or (at your option) any later version.
+*
+*    This program is distributed in the hope that it will be useful,
+*    but WITHOUT ANY WARRANTY; without even the implied warranty of
+*    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*    GNU Affero General Public License for more details.
+*
+*    You should have received a copy of the GNU Affero General Public License
+*    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*
+**********************************************************************************/
+
+/* Define this variables in your archive css to override them */
+// :root {
+//     --scroll-bg-color: you_color or #fff;
+//     --scroll-font-size: you_size or 2.5em;
+//     --scroll-bottom: you_bottom or 20px;
+//     --scroll-right: you_right 20px;
+//     --scroll-padding: you_padding or 10px 20px;
+// }
+
+#scrollUp {
+    bottom: var(--scroll-bottom, 20px);
+    right: var(--scroll-right, 20px);
+    padding: var(--scroll-padding, 10px 20px);
+//     mix-blend-mode: difference; // Make change circle background color over others colors
+    .fa {
+    	font-size: var(--scroll-font-size, 2.5em);
+    }
+}
+
+#scrollUp > i {
+    color: var(--scroll-bg-color, #fff);
+}
