@@ -1,4 +1,8 @@
-`11.0.0.0.1`
+`11.0.1.0.1`
+------------
+- **[UPD]** Move Snippet from header to after header for hide on affix header scroll
+
+`11.0.1.0.0`
 ------------
 - **[ADD]** Snippet Content Menu by customizable view
 - **[ADD]** Snippet Content Menu cover image

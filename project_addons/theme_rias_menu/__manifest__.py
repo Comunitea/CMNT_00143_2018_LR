@@ -3,7 +3,7 @@
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 {
     'name': 'Theme Rías Menu',
-    'version': '11.0.1.0.0',
+    'version': '11.0.1.0.1',
     'summary': 'Add an Snippet Content Menu by customizable view',
     'category': 'Custom',
     'license': 'AGPL-3',
