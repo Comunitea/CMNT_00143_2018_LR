@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
 {
-    'name': 'Las Rías website theme',
-    'version': '11.0.1.0.0',
-    'summary': 'Customization for Las Rías website',
+    'name': 'Las Rías Theme',
+    'version': '11.0.1.0.1',
+    'summary': 'Theme for Las Rías website',
     'description': '',
     'category': 'Theme',
     'author': 'Comunitea',
     'website': 'http://www.comunitea.com',
     'license': 'AGPL-3',
     'contributors': [
-        'Pavel Smirnov <pavel@comunitea.com>',
         'Vicente Ángel Gutiérrez <vicente@comunitea.com>',
         'Rubén Seijas <ruben@comunitea.com>',
     ],

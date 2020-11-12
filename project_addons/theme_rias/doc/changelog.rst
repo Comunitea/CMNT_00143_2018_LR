@@ -1,3 +1,8 @@
+`11.0.1.0.1`
+------------
+- **[ADD]** Styles for Cookies Message Notice
+- **[UDP]** Module documentation
+
 `11.0.1.0.0`
 ------------
 - **[UDP]** Menu data from Theme Rias Menu (Keep menu_icon field to show menus)

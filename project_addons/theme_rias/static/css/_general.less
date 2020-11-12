@@ -27,13 +27,31 @@ body {
 //
 //##
 @body-bg:                           @white;
-@brand-primary:                     #23a9db;
-@brand-secondary:                   #234ddb;
+@brand-primary:                     #23a9db; // Claro
+@brand-secondary:                   #234ddb; // Oscuro
 
 // == Override styles by global modules variables
 //
 //##
 :root {
+
+    // ecommerce_base - Cookies Message Notice
+    // --------------------------------------------------
+    // Warning Panel
+    --state-warning-text: @body-bg;
+    --state-warning-bg: @brand-secondary;
+    --state-warning-border: @brand-secondary;
+//     --state-warning-margin: 2em;
+    // Links
+    --state-warning-link-color: @body-bg;
+    --state-warning-link-decoration: underline;
+    --state-warning-link-hover-color: lighten(@brand-primary, 15%);
+    --state-warning-link-hover-decoration: none;
+    // Ok Button
+    --state-warning-btn-color: @brand-secondary;
+    --state-warning-btn-bg: @body-bg;
+    --state-warning-btn-hover-color: @body-bg;
+    --state-warning-btn-hover-bg: @brand-secondary;
 
     // Breadcrumbs colors
     --color-bg: @body-bg;
