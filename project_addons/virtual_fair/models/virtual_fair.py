@@ -2,7 +2,7 @@
 # © 2018 Comunitea
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from odoo import models, fields
+from odoo import models, fields, api, _
 
 
 class VirtualFair(models.Model):
@@ -103,6 +103,19 @@ class SupplierLines(models.Model):
     condition_type = fields.Char('Condition Type')
     value = fields.Char('Value')
     supplier_id = fields.Many2one('res.partner', 'Supplier')
+    
+    @api.multi
+    def _search_term_id(self, amount):
+        term_id = False
+        if self.condition_type not in ['DESCUENTO_EUR', 'DESCUENTO_PCT']:
+            for cond in self.condition_ids:
+                if cond.condition_type in ('PLAZO', 'PLAZO_TODOS'):
+                    for s in cond.section_ids:
+                        if amount >= s.linf and amount <= s.lsup:
+                            term_id = s.term_id.id
+                            break
+        return term_id
+        
 
 
 class ConditionLine(models.Model):

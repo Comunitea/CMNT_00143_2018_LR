@@ -205,6 +205,30 @@ class AccountInvoice(models.Model):
             inv.write(vals)
         return
 
+   
+
+    def _search_fair_line(self):
+        domain = [
+                ('supplier_id', '=', self.partner_id.id),
+                ('condition_type', 'not in', ['DESCUENTO_EUR',
+                                                      'DESCUENTO_PCT']),
+                ('fair_id', '=', self.fair_id.id),
+                
+            ]
+        line = self.env['fair.supplier.line'].search(domain, limit=1)
+        return line
+
+    @api.onchange('fair_id')
+    def _onchange_fair_id(self):
+        if self.fair_id:
+            line = self._search_fair_line()
+            if line:
+                amount = self.amount_total
+                term_id = line._search_term_id(amount)
+                if term_id:
+                    self.payment_term_id = term_id
+                        
+
     @api.multi
     def set_customer_fair_conditions(self):
         """
