@@ -24,9 +24,10 @@ class SupplierPricelistImporter(models.TransientModel):
             print ("CREA PRECIO")
             self.env["product.supplierinfo"].create(
                 {
-   
+                    "active": product.active,
                     "name": self.supplier.id,
                     "product_id": product.id,
+                    "product_tmpl_id": product.product_tmpl_id.id,
                     "min_qty": min_units,
                     "price": unit_price,
                     "xls_imported": True,
@@ -47,7 +48,8 @@ class SupplierPricelistImporter(models.TransientModel):
             [("name", "=", self.supplier.id), ("xls_imported", "=", True)]
         )
         products_to_remove = supplierinfo.mapped("product_id")
-        si_no_end = supplierinfo.filtered(lambda r: r.date_end == False)
+        si_no_end = self.env["product.supplierinfo"].search(
+            [("name", "=", self.supplier.id), ("date_end", "=", False)])
         date_end = datetime.strftime(datetime.
                                  strptime(self.valid_from,
                                           '%Y-%m-%d') +
@@ -150,7 +152,7 @@ class SupplierPricelistImporter(models.TransientModel):
                 {
                     "uom_factor": uom_factor,
                     "uos_factor": uos_factor,
-                    #"standard_price": new_standard_price,
+                    "standard_price": new_standard_price,
                     "brand_partner": brand_partner_id,
                 }
             )

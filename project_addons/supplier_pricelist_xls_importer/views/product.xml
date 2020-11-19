@@ -35,14 +35,17 @@
         <field name="inherit_id" ref="purchase.view_product_supplier_inherit"/>
         <field name="arch" type="xml">
             <field name="seller_ids" position="attributes">
-                <attribute name="domain">[
-                        ('active', '=', active)
-                        ]</attribute>
+                <attribute name="context">{
+                    'default_product_tmpl_id':context.get('product_tmpl_id',active_id),
+                    'product_template_invisible_variant': True,
+                    'active_test': False
+                }</attribute>
             </field>
             <field name="variant_seller_ids" position="attributes">
-                <attribute name="domain">[
-                    ('active', '=', active)
-                    ]</attribute>
+                <attribute name="context">{
+                    'default_product_tmpl_id': context.get('product_tmpl_id', active_id),
+                    'active_test': False
+                }</attribute>
             </field>
         </field>
     </record>

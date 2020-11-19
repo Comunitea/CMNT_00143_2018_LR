@@ -12,6 +12,8 @@ class ProductTemplate(models.Model):
     uom_factor = fields.Integer()
     uos_factor = fields.Integer()
     brand_partner = fields.Many2one('res.partner')
+    seller_ids = fields.One2many(context={'active_test': False})
+    variant_seller_ids = fields.One2many(context={'active_test': False})
 
     @api.model
     def create(self, vals):
