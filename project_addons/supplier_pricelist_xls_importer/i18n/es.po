@@ -1,0 +1,293 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* supplier_pricelist_xls_importer
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 11.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-11-19 19:00+0000\n"
+"PO-Revision-Date: 2020-11-19 19:00+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: supplier_pricelist_xls_importer
+#: model:ir.model.fields,field_description:supplier_pricelist_xls_importer.field_product_supplierinfo_active
+msgid "Active"
+msgstr "Activo"
+
+#. module: supplier_pricelist_xls_importer
+#: model:ir.model.fields,field_description:supplier_pricelist_xls_importer.field_product_product_brand_partner
+#: model:ir.model.fields,field_description:supplier_pricelist_xls_importer.field_product_template_brand_partner
+msgid "Brand Partner"
+msgstr "Marca empresa"
+
+#. module: supplier_pricelist_xls_importer
+#: code:addons/supplier_pricelist_xls_importer/wizard/supplier_pricelist_importer.py:149
+#, python-format
+msgid "Brand partner {} not found"
+msgstr "Marca empresa {} no encontrado"
+
+#. module: supplier_pricelist_xls_importer
+#: model:ir.ui.view,arch_db:supplier_pricelist_xls_importer.supplier_pricelist_importer_form
+msgid "Cancel"
+msgstr "Cancelar"
+
+#. module: supplier_pricelist_xls_importer
+#: model:ir.model,name:supplier_pricelist_xls_importer.model_res_partner
+msgid "Contact"
+msgstr "Contacto"
+
+#. module: supplier_pricelist_xls_importer
+#: model:ir.model.fields,field_description:supplier_pricelist_xls_importer.field_log_import_spl_create_uid
+#: model:ir.model.fields,field_description:supplier_pricelist_xls_importer.field_supplier_discount_group_create_uid
+#: model:ir.model.fields,field_description:supplier_pricelist_xls_importer.field_supplier_pricelist_importer_create_uid
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: supplier_pricelist_xls_importer
+#: model:ir.model.fields,field_description:supplier_pricelist_xls_importer.field_log_import_spl_create_date
+#: model:ir.model.fields,field_description:supplier_pricelist_xls_importer.field_supplier_discount_group_create_date
+#: model:ir.model.fields,field_description:supplier_pricelist_xls_importer.field_supplier_pricelist_importer_create_date
+msgid "Created on"
+msgstr "Creado en"
+
+#. module: supplier_pricelist_xls_importer
+#: model:ir.model.fields,field_description:supplier_pricelist_xls_importer.field_log_import_spl_date
+msgid "Date"
+msgstr "Fecha"
+
+#. module: supplier_pricelist_xls_importer
+#: model:ir.model.fields,field_description:supplier_pricelist_xls_importer.field_supplier_discount_group_desciption
+msgid "Desciption"
+msgstr "Descripción"
+
+#. module: supplier_pricelist_xls_importer
+#: model:ir.model.fields,field_description:supplier_pricelist_xls_importer.field_supplier_discount_group_discount
+msgid "Discount (%)"
+msgstr "Descuento (%)"
+
+#. module: supplier_pricelist_xls_importer
+#: model:ir.model.fields,field_description:supplier_pricelist_xls_importer.field_res_partner_discount_groups
+#: model:ir.model.fields,field_description:supplier_pricelist_xls_importer.field_res_users_discount_groups
+msgid "Discount Groups"
+msgstr "Grupos de descuento"
+
+#. module: supplier_pricelist_xls_importer
+#: sql_constraint:supplier.discount.group:0
+msgid "Discount group names must be unique !"
+msgstr "¡Los nombres de los grupos de descuento deben ser únicos !"
+
+#. module: supplier_pricelist_xls_importer
+#: code:addons/supplier_pricelist_xls_importer/wizard/supplier_pricelist_importer.py:73
+#, python-format
+msgid "Discount group {} not found"
+msgstr "Grupo de descuento {} no encontrado"
+
+#. module: supplier_pricelist_xls_importer
+#: model:ir.ui.view,arch_db:supplier_pricelist_xls_importer.view_partner_form
+msgid "Discount groups"
+msgstr "Grupos de descuento"
+
+#. module: supplier_pricelist_xls_importer
+#: model:ir.model.fields,field_description:supplier_pricelist_xls_importer.field_log_import_spl_display_name
+#: model:ir.model.fields,field_description:supplier_pricelist_xls_importer.field_supplier_discount_group_display_name
+#: model:ir.model.fields,field_description:supplier_pricelist_xls_importer.field_supplier_pricelist_importer_display_name
+msgid "Display Name"
+msgstr "Nombre mostrado"
+
+#. module: supplier_pricelist_xls_importer
+#: model:ir.model.fields,field_description:supplier_pricelist_xls_importer.field_product_product_ecotasa
+#: model:ir.model.fields,field_description:supplier_pricelist_xls_importer.field_product_template_ecotasa
+msgid "Ecotasa"
+msgstr "Ecotasa"
+
+#. module: supplier_pricelist_xls_importer
+#: model:ir.ui.view,arch_db:supplier_pricelist_xls_importer.supplierinfo_group_discount_form
+#: model:ir.ui.view,arch_db:supplier_pricelist_xls_importer.supplierinfo_imported_tree_view
+msgid "En almacén"
+msgstr "En almacén"
+
+#. module: supplier_pricelist_xls_importer
+#: code:addons/supplier_pricelist_xls_importer/models/supplier_discount_group.py:36
+#, python-format
+msgid "Format must be something like 10.5 or 10.5+2+3.4 etc                     No strings or ',' allowwed"
+msgstr "El formato debe ser algo como 10.5 or 10.5+2+3.4 etc                     Las cadenas  o',' no están permitidas"
+
+#. module: supplier_pricelist_xls_importer
+#: model:ir.model.fields,field_description:supplier_pricelist_xls_importer.field_log_import_spl_id
+#: model:ir.model.fields,field_description:supplier_pricelist_xls_importer.field_supplier_discount_group_id
+#: model:ir.model.fields,field_description:supplier_pricelist_xls_importer.field_supplier_pricelist_importer_id
+msgid "ID"
+msgstr "ID (identificación)"
+
+#. module: supplier_pricelist_xls_importer
+#: model:ir.model.fields,help:supplier_pricelist_xls_importer.field_product_supplierinfo_active
+msgid "If unchecked, it will allow you to hide the product without removing it."
+msgstr "Si no está marcado, permitirá ocultar el producto sin eliminarlo."
+
+#. module: supplier_pricelist_xls_importer
+#: model:ir.ui.view,arch_db:supplier_pricelist_xls_importer.supplier_pricelist_importer_form
+msgid "Import"
+msgstr "Importar"
+
+#. module: supplier_pricelist_xls_importer
+#: model:ir.model.fields,field_description:supplier_pricelist_xls_importer.field_supplier_pricelist_importer_import_file
+msgid "Import File"
+msgstr "Importar fichero"
+
+#. module: supplier_pricelist_xls_importer
+#: model:ir.actions.act_window,name:supplier_pricelist_xls_importer.supplier_pricelist_importer_log_action
+msgid "Import supplier log"
+msgstr "Log de importaciones de tarifas"
+
+#. module: supplier_pricelist_xls_importer
+#: model:ir.actions.act_window,name:supplier_pricelist_xls_importer.supplier_pricelist_importer_action
+#: model:ir.ui.menu,name:supplier_pricelist_xls_importer.import_supplier_pricelist_menu_act
+#: model:ir.ui.view,arch_db:supplier_pricelist_xls_importer.supplier_pricelist_importer_form
+msgid "Import supplier pricelist"
+msgstr "Importar tarifa de proveedor"
+
+#. module: supplier_pricelist_xls_importer
+#: model:ir.ui.view,arch_db:supplier_pricelist_xls_importer.supplierinfo_log_form
+msgid "Import supplier pricelist Log"
+msgstr "Log de importaciones de tarifas"
+
+#. module: supplier_pricelist_xls_importer
+#: model:ir.ui.menu,name:supplier_pricelist_xls_importer.import_supplier_pricelist_log_menu_act
+msgid "Import supplier pricelist logs"
+msgstr "Log de importaciones de tarifas"
+
+#. module: supplier_pricelist_xls_importer
+#: model:ir.model,name:supplier_pricelist_xls_importer.model_product_supplierinfo
+msgid "Information about a product vendor"
+msgstr "Información acerca del proveedor de un producto"
+
+#. module: supplier_pricelist_xls_importer
+#: model:ir.model.fields,field_description:supplier_pricelist_xls_importer.field_log_import_spl___last_update
+#: model:ir.model.fields,field_description:supplier_pricelist_xls_importer.field_supplier_discount_group___last_update
+#: model:ir.model.fields,field_description:supplier_pricelist_xls_importer.field_supplier_pricelist_importer___last_update
+msgid "Last Modified on"
+msgstr "Última modificación en"
+
+#. module: supplier_pricelist_xls_importer
+#: model:ir.model.fields,field_description:supplier_pricelist_xls_importer.field_log_import_spl_write_uid
+#: model:ir.model.fields,field_description:supplier_pricelist_xls_importer.field_supplier_discount_group_write_uid
+#: model:ir.model.fields,field_description:supplier_pricelist_xls_importer.field_supplier_pricelist_importer_write_uid
+msgid "Last Updated by"
+msgstr "Última actualización de"
+
+#. module: supplier_pricelist_xls_importer
+#: model:ir.model.fields,field_description:supplier_pricelist_xls_importer.field_log_import_spl_write_date
+#: model:ir.model.fields,field_description:supplier_pricelist_xls_importer.field_supplier_discount_group_write_date
+#: model:ir.model.fields,field_description:supplier_pricelist_xls_importer.field_supplier_pricelist_importer_write_date
+msgid "Last Updated on"
+msgstr "Última actualización en"
+
+#. module: supplier_pricelist_xls_importer
+#: model:ir.model.fields,field_description:supplier_pricelist_xls_importer.field_product_supplierinfo_log_id
+#: model:ir.model.fields,field_description:supplier_pricelist_xls_importer.field_supplier_pricelist_importer_log_id
+msgid "Log"
+msgstr "Log"
+
+#. module: supplier_pricelist_xls_importer
+#: model:ir.model.fields,field_description:supplier_pricelist_xls_importer.field_log_import_spl_name
+#: model:ir.model.fields,field_description:supplier_pricelist_xls_importer.field_supplier_discount_group_name
+msgid "Name"
+msgstr "Nombre"
+
+#. module: supplier_pricelist_xls_importer
+#: model:ir.model.fields,field_description:supplier_pricelist_xls_importer.field_log_import_spl_supplier_pricelist_ids
+msgid "Pricelist registers"
+msgstr "Registros de tarifas"
+
+#. module: supplier_pricelist_xls_importer
+#: model:ir.model,name:supplier_pricelist_xls_importer.model_product_template
+msgid "Product Template"
+msgstr "Plantilla de producto"
+
+#. module: supplier_pricelist_xls_importer
+#: model:ir.model,name:supplier_pricelist_xls_importer.model_purchase_order_line
+msgid "Purchase Order Line"
+msgstr "Línea de pedido de compra"
+
+#. module: supplier_pricelist_xls_importer
+#: model:ir.ui.view,arch_db:supplier_pricelist_xls_importer.supplierinfo_imported_search_view
+msgid "Show imported prices"
+msgstr "Mostrar importadas"
+
+#. module: supplier_pricelist_xls_importer
+#: model:ir.ui.view,arch_db:supplier_pricelist_xls_importer.product_template_search_view
+msgid "Show imported products"
+msgstr "Mostrar importados"
+
+#. module: supplier_pricelist_xls_importer
+#: model:ir.model.fields,field_description:supplier_pricelist_xls_importer.field_log_import_spl_supplier_id
+#: model:ir.model.fields,field_description:supplier_pricelist_xls_importer.field_supplier_discount_group_partner_id
+#: model:ir.model.fields,field_description:supplier_pricelist_xls_importer.field_supplier_pricelist_importer_supplier
+msgid "Supplier"
+msgstr "Proveedor"
+
+#. module: supplier_pricelist_xls_importer
+#: model:ir.model.fields,field_description:supplier_pricelist_xls_importer.field_product_supplierinfo_supplier_discount_group_id
+msgid "Supplier Discount Group"
+msgstr "Grupo de descuento de proveedor"
+
+#. module: supplier_pricelist_xls_importer
+#: model:ir.model.fields,field_description:supplier_pricelist_xls_importer.field_product_product_uom_factor
+#: model:ir.model.fields,field_description:supplier_pricelist_xls_importer.field_product_template_uom_factor
+msgid "Uom Factor"
+msgstr "Uom Factor"
+
+#. module: supplier_pricelist_xls_importer
+#: model:ir.model.fields,field_description:supplier_pricelist_xls_importer.field_product_product_uos_factor
+#: model:ir.model.fields,field_description:supplier_pricelist_xls_importer.field_product_template_uos_factor
+msgid "Uos Factor"
+msgstr "Uos Factor"
+
+#. module: supplier_pricelist_xls_importer
+#: model:ir.model.fields,field_description:supplier_pricelist_xls_importer.field_supplier_pricelist_importer_valid_from
+msgid "Valid From"
+msgstr "Válido desde"
+
+#. module: supplier_pricelist_xls_importer
+#: model:ir.model.fields,field_description:supplier_pricelist_xls_importer.field_supplier_pricelist_importer_valid_to
+msgid "Valid To"
+msgstr "Válido hasta"
+
+#. module: supplier_pricelist_xls_importer
+#: model:ir.ui.view,arch_db:supplier_pricelist_xls_importer.view_partner_form
+msgid "XLS import data"
+msgstr "Datos XLS"
+
+#. module: supplier_pricelist_xls_importer
+#: model:ir.model.fields,field_description:supplier_pricelist_xls_importer.field_product_product_xls_imported
+#: model:ir.model.fields,field_description:supplier_pricelist_xls_importer.field_product_supplierinfo_xls_imported
+#: model:ir.model.fields,field_description:supplier_pricelist_xls_importer.field_product_template_xls_imported
+msgid "Xls Imported"
+msgstr "Importados"
+
+#. module: supplier_pricelist_xls_importer
+#: model:ir.model,name:supplier_pricelist_xls_importer.model_log_import_spl
+msgid "log.import.spl"
+msgstr "log.import.spl"
+
+#. module: supplier_pricelist_xls_importer
+#: model:ir.ui.view,arch_db:supplier_pricelist_xls_importer.supplier_pricelist_importer_form
+msgid "or"
+msgstr "o"
+
+#. module: supplier_pricelist_xls_importer
+#: model:ir.model,name:supplier_pricelist_xls_importer.model_supplier_discount_group
+msgid "supplier.discount.group"
+msgstr "supplier.discount.group"
+
+#. module: supplier_pricelist_xls_importer
+#: model:ir.model,name:supplier_pricelist_xls_importer.model_supplier_pricelist_importer
+msgid "supplier.pricelist.importer"
+msgstr "supplier.pricelist.importer"
+
