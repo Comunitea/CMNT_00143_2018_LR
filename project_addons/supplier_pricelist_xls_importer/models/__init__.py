@@ -5,3 +5,4 @@ from . import res_partner
 from . import product_supplierinfo
 from . import product
 from . import purchase
+from . import log_import_spl

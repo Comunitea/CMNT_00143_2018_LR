@@ -28,4 +28,23 @@
             </field>
         </field>
     </record>
+
+    <record id="view_product_supplier_inherit_seller_no_active" model="ir.ui.view">
+        <field name="name">product.template.supplier.seller_no_active.form.inherit</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="purchase.view_product_supplier_inherit"/>
+        <field name="arch" type="xml">
+            <field name="seller_ids" position="attributes">
+                <attribute name="domain">[
+                        ('active', '=', active)
+                        ]</attribute>
+            </field>
+            <field name="variant_seller_ids" position="attributes">
+                <attribute name="domain">[
+                    ('active', '=', active)
+                    ]</attribute>
+            </field>
+        </field>
+    </record>
+
 </odoo>

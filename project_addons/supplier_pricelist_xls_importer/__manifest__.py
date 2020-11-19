@@ -16,5 +16,6 @@
         "views/res_partner.xml",
         "security/ir.model.access.csv",
         "views/product.xml",
+        "views/product_supplierinfo.xml",
     ],
 }

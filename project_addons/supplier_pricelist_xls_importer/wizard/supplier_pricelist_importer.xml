@@ -9,6 +9,8 @@
             <form string="Import supplier pricelist">
                 <group>
                     <field name="supplier"/>
+                    <field name="valid_from" required="True"/>
+                    <field name="valid_to"/>
                     <field name="import_file"/>
                 </group>
                 <footer>

@@ -1,2 +1,3 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_supplier_discount_group,access_supplier_discount_group,model_supplier_discount_group,base.group_user,1,1,1,1
+access_log_import_spl,access_log_import_spl,model_log_import_spl,base.group_user,1,1,1,1

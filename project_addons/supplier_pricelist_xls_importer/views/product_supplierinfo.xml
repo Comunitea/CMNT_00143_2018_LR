@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- res.partner inherit form view -->
+    <record id="supplierinfo_group_discount_form" model="ir.ui.view">
+        <field name="name">supplierinfo.group_discount.view.form</field>
+        <field name="model">product.supplierinfo</field>
+        <field name="inherit_id" ref="product.product_supplierinfo_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//label[@for='date_start']" position="before">
+                <field name="supplier_discount_group_id" class="oe_inline" domain="[('partner_id', '=', name)]"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="supplierinfo_log_form" model="ir.ui.view">
+        <field name="name">supplierinfo.log.view.form</field>
+        <field name="model">log.import.spl</field>
+        <field name="arch" type="xml">
+            <form string="Import supplier pricelist Log">
+                <group>
+                    <field name="supplier_id"/>
+                    <field name="name" required="True"/>
+                    <field name="date"/>
+                    
+                </group>
+    
+            </form>
+        </field>
+    </record>
+
+    <act_window name="Import supplier log"
+        res_model="log.import.spl"
+        
+        view_mode="form"
+        
+        id="supplier_pricelist_importer_log_action"/>
+
+
+    <menuitem id="import_supplier_pricelist_log_menu_act"
+        name="Import supplier pricelist logs" parent="purchase.menu_purchase_config" action="supplier_pricelist_importer_log_action" sequence="999"/>>
+
+</odoo>

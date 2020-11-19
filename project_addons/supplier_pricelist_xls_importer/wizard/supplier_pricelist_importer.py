@@ -2,6 +2,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 from base64 import b64decode
 from io import BytesIO
+from datetime import date, datetime, time, timedelta
 
 import pandas
 from odoo import _, fields, models
@@ -13,25 +14,50 @@ class SupplierPricelistImporter(models.TransientModel):
     _name = "supplier.pricelist.importer"
 
     supplier = fields.Many2one("res.partner", required=True)
+    valid_from = fields.Date("Valid From", required=True)
+    valid_to = fields.Date("Valid To")
     import_file = fields.Binary(required=True)
+    log_id = fields.Many2one("log.import.spl")
 
     def import_pricelist(self):
-        def create_supplierinfo(product, unit_price, min_units):
+        def create_supplierinfo(product, unit_price, min_units, discount_group):
+            print ("CREA PRECIO")
             self.env["product.supplierinfo"].create(
                 {
+   
                     "name": self.supplier.id,
-                    "product_tmpl_id": product.id,
+                    "product_id": product.id,
                     "min_qty": min_units,
                     "price": unit_price,
                     "xls_imported": True,
+                    'supplier_discount_group_id': discount_group.id,
+                    "date_start": self.valid_from,
+                    "date_end": self.valid_to,
+                    "log_id": self.log_id.id
                 }
             )
-
+        log_name = self.supplier.name + " - " + fields.Date.context_today(self)
+        self.log_id = self.env['log.import.spl'].create(
+            {
+                'name': log_name,
+                'supplier_id': self.supplier.id
+            }
+        )
         supplierinfo = self.env["product.supplierinfo"].search(
             [("name", "=", self.supplier.id), ("xls_imported", "=", True)]
         )
-        products_to_remove = supplierinfo.mapped("product_tmpl_id")
-        supplierinfo.unlink()
+        products_to_remove = supplierinfo.mapped("product_id")
+        si_no_end = supplierinfo.filtered(lambda r: r.date_end == False)
+        date_end = datetime.strftime(datetime.
+                                 strptime(self.valid_from,
+                                          '%Y-%m-%d') +
+                                 timedelta(days=-1),
+                                 '%Y-%m-%d')
+        si_no_end.write(
+            {
+                'date_end': date_end
+            }
+        )
         df = pandas.read_excel(BytesIO(b64decode(self.import_file)))
         discount_groups = df["grupo_dto  o NETO"].values
         for discount_group in set(discount_groups.flatten()):
@@ -44,26 +70,35 @@ class SupplierPricelistImporter(models.TransientModel):
                 raise UserError(
                     _("Discount group {} not found").format(discount_group)
                 )
+        count = 0
         for line in df.index:
+            print("Nueva Linea %d" % count)
             product = False
+            wh_product = True
             product_name = df["descripcion (max. 100 caracteres)"][line]
             product_ref = df["ref (max. 40 caracteres)"][line]
             product_ean = df["ean_unitario (13 digitos consecutivos)"][line]
+            discount_group = df["grupo_dto  o NETO"][line]
+            discount_group_r = self.supplier.discount_groups.filtered(
+                lambda r: r.name == discount_group
+            )
             if not pandas.isnull(product_ean) and product_ean:
                 product_ean = str(int(product_ean))
                 product = (
-                    self.env["product.template"]
+                    self.env["product.product"]
                     .with_context(active_test=False)
                     .search([("barcode", "=", product_ean)])
                 )
             if not product:
                 product = (
-                    self.env["product.template"]
+                    self.env["product.product"]
                     .with_context(active_test=False)
                     .search([("default_code", "=", product_ref)])
                 )
                 if not product:
-                    product = self.env["product.template"].create(
+                    wh_product = False
+                    print ("CREA PRODUCTO")
+                    product = self.env["product.product"].create(
                         {
                             "name": not pandas.isnull(product_name)
                             and product_name,
@@ -76,7 +111,9 @@ class SupplierPricelistImporter(models.TransientModel):
                             "type": "product",
                         }
                     )
-
+                    product.product_tmpl_id.active = False
+                else:
+                    wh_product = product.active
             uos_factor = df["unidad envase (número natural)"][line]
             uom_factor = df["unidad embalaje (número natural)"][line]
             if pandas.isnull(uos_factor):
@@ -113,21 +150,24 @@ class SupplierPricelistImporter(models.TransientModel):
                 {
                     "uom_factor": uom_factor,
                     "uos_factor": uos_factor,
-                    "standard_price": new_standard_price,
+                    #"standard_price": new_standard_price,
                     "brand_partner": brand_partner_id,
                 }
             )
-
+            create_supplierinfo(product, unit_price, 0, discount_group_r)
             if product in products_to_remove:
                 products_to_remove -= product
-
+            created_si = False
             for i in range(1, 6):
                 qty_tag = "cant_dsd{}".format(i)
                 price_tag = "precio{}".format(i)
                 if not pandas.isnull(df[qty_tag][line]) and df[qty_tag][line]:
                     unit_price = df[price_tag][line]
                     min_units = df[qty_tag][line]
-                    create_supplierinfo(product, unit_price, min_units)
+                    create_supplierinf(product, unit_price, min_units, discount_group_r)
+                    created_si = True
+            
+            count = count + 1
         if products_to_remove:
             self.env.cr.execute(
                 "select id from product_product where product_tmpl_id in {}".format(
