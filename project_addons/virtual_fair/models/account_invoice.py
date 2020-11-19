@@ -161,11 +161,13 @@ class AccountInvoice(models.Model):
         """
         Change conditions based on virtual fair. Only search for payment terms
         """
+        # Holgura fecha fin ferias
+        slack_days = 15
         for inv in self:
             amount = inv.amount_total
             date_ref = fields.Date.from_string(inv.date_invoice)
             date_ref = fields.Datetime.to_string(date_ref - timedelta(
-                days=30))
+                days=slack_days))
             domain = [
                 ('supplier_id', '=', inv.partner_id.id),
                 ('condition_type', 'not in', ['DESCUENTO_EUR',
