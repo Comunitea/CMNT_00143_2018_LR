@@ -29,12 +29,12 @@ class SupplierDiscountGroup(models.Model):
 
     @api.onchange('discount')
     def onchange_discount(self):
-        if not self.chained_discount:
-            self.chained_discount = '0.00'
+        if not self.discount:
+            self.discount = '0.00'
         valid = self.validate_chained_discount(self.chained_discount)
         if not valid:
             msg = _("Format must be something like 10.5 or 10.5+2+3.4 etc \
                     No strings or ',' allowwed")
-            self.chained_discount = '0.00'
+            self.discount = '0.00'
             return {'warning': {'title': 'Warning',
                                 'message': msg}}
