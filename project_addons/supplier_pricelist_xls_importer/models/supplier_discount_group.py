@@ -31,7 +31,7 @@ class SupplierDiscountGroup(models.Model):
     def onchange_discount(self):
         if not self.discount:
             self.discount = '0.00'
-        valid = self.validate_chained_discount(self.chained_discount)
+        valid = self.validate_chained_discount(self.discount)
         if not valid:
             msg = _("Format must be something like 10.5 or 10.5+2+3.4 etc \
                     No strings or ',' allowwed")
