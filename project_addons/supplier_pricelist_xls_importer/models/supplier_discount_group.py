@@ -11,11 +11,20 @@ class SupplierDiscountGroup(models.Model):
     desciption = fields.Char()
     partner_id = fields.Many2one('res.partner', 'Supplier')
     discount = fields.Char('Discount (%)')
+    calculated_discount = fields.Float("Discount", compute="_compute_calculated_discount")
 
     _sql_constraints = [
         ('name_partner_unique', 'unique(name, partner_id)', 'Discount group names must be unique !'),
     ]
 
+    def _compute_calculated_discount(self):
+        for sdg in records:
+            discount = 1 
+            splited_discount = sdg.discount.split('+')
+            for val in splited_discount:
+                discount *= 1-float(val)/100
+            discount = (1 - discount) * 100
+                
 
     @api.model
     def validate_chained_discount(self, discount_str):

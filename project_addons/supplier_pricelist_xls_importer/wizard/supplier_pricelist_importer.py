@@ -126,8 +126,9 @@ class SupplierPricelistImporter(models.TransientModel):
             factor = df["factor"][line]
             if pandas.isnull(factor) or factor == 0:
                 factor = 1
+
             new_standard_price = (unit_price / factor) * (
-                1 - discount_group_r.discount / 100
+                1 - discount_group_r.calculated_discount / 100
             )
 
             brand = df["MARCA"][line]
