@@ -18,7 +18,7 @@ class SupplierDiscountGroup(models.Model):
     ]
 
     def _compute_calculated_discount(self):
-        for sdg in records:
+        for sdg in self:
             discount = 1 
             splited_discount = sdg.discount.split('+')
             for val in splited_discount:
