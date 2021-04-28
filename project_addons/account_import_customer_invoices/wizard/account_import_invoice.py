@@ -38,6 +38,7 @@ class AccountInvoiceImportWizard(models.TransientModel):
         type = root_element.attrib.get('type', 'out_invoice')
         for invoice_data in root_element.iter('PA'):
             purchase_number = invoice_data.attrib.get('num', False)
+            comment = invoice_data.attrib.get('comment', '')
 
             partners = invoice_data.find('partes')
             customer_tag = partners.find('cliente')
@@ -58,6 +59,7 @@ class AccountInvoiceImportWizard(models.TransientModel):
                 'journal_id': journal.id,
                 'type': type,
                 'name': purchase_number,
+                'comment': comment
             }
             if payment_term_eid:
                 invoice_vals['payment_term_id'] = self.env.ref(
